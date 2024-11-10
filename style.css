@@ -1,0 +1,315 @@
+/* General Styles */
+:root {
+    --primary-color: #51aae6;
+    --secondary-color: #0062ff;
+    --background-color-light: #FFFFFF;
+    --background-color-dark: #1A1A1A;
+    --text-color-light: #000000;
+    --text-color-dark: #dbdbdb;
+    --light-gray-light: #000000;
+    --light-gray-dark: #ffffff;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+/* Light mode */
+@media (prefers-color-scheme: light) {
+    body {
+        background-color: var(--background-color-light);
+        color: var(--text-color-light);
+    }
+
+    nav ul li a {
+        color: var(--text-color-light);
+    }
+
+    nav ul li a:hover {
+        color: var(--primary-color);
+    }
+
+    .card {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    button {
+        color: var(--background-color-light);
+    }
+
+    button:hover {
+        color: var(--text-color-light);
+    }
+
+    .tagline {
+        color: var(--light-gray-light);
+    }
+
+    .progress-bar {
+        background-color: var(--light-gray-light);
+    }
+
+    header {
+        background-color: rgba(255, 255, 255, 0.8);
+    }
+
+    nav {
+        background-color: rgba(255, 255, 255, 0.8);
+    }
+
+    footer {
+        background-color: rgba(255, 255, 255, 0.8);
+        color: var(--text-color-light);
+    }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: var(--background-color-dark);
+        color: var(--text-color-dark);
+    }
+
+    nav ul li a {
+        color: var(--text-color-dark);
+    }
+
+    nav ul li a:hover {
+        color: var(--primary-color);
+    }
+
+    .card {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    button {
+        color: var(--background-color-dark);
+    }
+
+    button:hover {
+        color: var(--text-color-dark);
+    }
+
+    .tagline {
+        color: var(--light-gray-dark);
+    }
+
+    .progress-bar {
+        background-color: var(--light-gray-dark);
+    }
+
+    header {
+        background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    nav {
+        background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    footer {
+        background-color: rgba(0, 0, 0, 0.8);
+        color: var(--text-color-dark);
+    }
+}
+
+/* Other existing styles */
+h1, h2, h3 {
+    color: var(--primary-color);
+}
+
+/* Header and Navigation */
+header {
+    /* Removed the fixed background color to adhere to light/dark mode */
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+}
+
+nav ul {
+    display: flex;
+    justify-content: center;
+    list-style-type: none;
+    padding: 0;
+}
+
+nav ul li {
+    margin: 0 15px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+/* Main Content */
+main {
+    padding-top: 60px;
+}
+
+section {
+    padding: 60px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Home Section */
+#home {
+    text-align: center;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#home h1 {
+    font-size: 4em;
+    margin-bottom: 10px;
+}
+
+.tagline {
+    font-size: 1.5em;
+    color: var(--light-gray);
+}
+
+.card-container {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 50px;
+}
+
+.card {
+    border-radius: 10px;
+    padding: 20px;
+    margin: 0 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 255, 255, 0.2);
+}
+
+.card i {
+    font-size: 3em;
+    color: var(--primary-color);
+}
+
+/* About Section */
+.headshot {
+    width: 200px;
+    border-radius: 50%;
+    border: 3px solid var(--primary-color);
+}
+
+.skills {
+    margin-top: 30px;
+}
+
+.skill {
+    margin-bottom: 20px;
+}
+
+.progress-bar {
+    background-color: var(--light-gray);
+    height: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar div {
+    background-color: var(--primary-color);
+}
+
+/* Projects Section */
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.project {
+    border-radius: 10px;
+    padding: 20px;
+    transition: transform 0.3s ease;
+}
+
+.project:hover {
+    transform: scale(1.05);
+}
+
+.tags span {
+    background-color: var(--secondary-color);
+    color: var(--text-color-dark);
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.8em;
+    margin-right: 5px;
+}
+
+button {
+    background-color: var(--primary-color);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: var(--secondary-color);
+}
+
+/* Contact Section */
+form {
+    display: flex;
+    flex-direction: column;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+input, textarea {
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.contact-info {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.social-links a {
+    color: var(--primary-color);
+    font-size: 1.5em;
+    margin: 0 10px;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 20px;
+    /* Removed the fixed background color to adhere to light/dark mode */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .card-container {
+        flex-direction: column;
+    }
+
+    .card {
+        margin-bottom: 20px;
+    }
+
+    .project-grid {
+        grid-template-columns: 1fr;
+    }
+}
