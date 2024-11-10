@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jacob Barkin - Home</title>
+    <link rel="stylesheet" href="CSS/style.css">
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <style>
+        body {
+            padding: 20px;
+        }
+        .card-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+        .card-container .card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            height: 250px; /* Adjust height as needed */
+            width: 200%; /* Full width for responsiveness */
+            max-width: 400px; /* Max width to maintain card size */
+            padding: 20px;
+            box-sizing: border-box;
+            margin: 10px; /* Margin for spacing between cards */
+        }
+        .card-container .card .btn {
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+            padding: 10px;
+            box-sizing: border-box;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .main-header {
+            text-align: center;
+        }
+        @media (max-width: 600px) {
+            .card-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .card-container .card {
+                max-width: 100%; /* Full width for smaller screens */
+            }
+        }
+    </style>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About Me</a></li>
+                <li><a href="projects.html">My Projects</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="main-header">
+            <h1>Jacob Barkin</h1>
+            <p class="tagline">Student at Kent Denver</p>
+        </div>
+        <div class="card-container">
+            <div class="card">
+                <i class="fas fa-user"></i>
+                <h2>About Me</h2>
+                <p>Learn more about my background and skills</p>
+                <a href="about.html" class="btn">Explore</a>
+            </div>
+            <div class="card">
+                <i class="fas fa-code"></i>
+                <h2>My Projects</h2>
+                <p>Explore my IT projects and achievements</p>
+                <a href="projects.html" class="btn">Discover</a>
+            </div>
+            <div class="card">
+                <i class="fas fa-envelope"></i>
+                <h2>Contact</h2>
+                <p>Get in touch with me</p>
+                <a href="contact.html" class="btn">Connect</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Jacob Barkin. All rights reserved.</p>
+    </footer>
+</body>
+</html>
