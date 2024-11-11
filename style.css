@@ -163,6 +163,14 @@ h3 {
     color: var(--heading3-color);
 }
 
+.markdown-content h3 {
+    color: var(--heading3-color);
+}
+
+.markdown-content p {
+    margin-bottom: 20px;
+}
+
 /* Header and Navigation */
 header {
     /* Removed the fixed background color to adhere to light/dark mode */
@@ -303,8 +311,12 @@ section {
 /* About Section */
 .headshot {
     width: 200px;
+    height: 200px; /* Ensure the height is equal to the width */
     border-radius: 50%;
     border: 3px solid var(--primary-color);
+    margin: 20px auto; /* Center the image */
+    display: block; /* Make the image a block element */
+    object-fit: cover; /* Maintain aspect ratio and cut off the bottom if necessary */
 }
 
 .skills {
@@ -324,6 +336,53 @@ section {
 
 .progress-bar div {
     background-color: var(--primary-color);
+}
+
+.interests {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.interests h3 {
+    color: var(--heading3-color);
+    margin-top: 0;
+}
+
+.interests p {
+    max-width: 400px;
+    text-align: justify;
+    letter-spacing: 0.5px; /* Reduce spacing between words */
+}
+
+.interests div {
+    flex: 1 1 300px;
+    margin: 10px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.interests div:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+button {
+    background-color: var(--primary-color);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: var(--secondary-color);
 }
 
 /* Projects Section */
@@ -350,19 +409,6 @@ section {
     border-radius: 15px;
     font-size: 0.8em;
     margin-right: 5px;
-}
-
-button {
-    background-color: var(--primary-color);
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-button:hover {
-    background-color: var(--secondary-color);
 }
 
 /* Contact Section */
