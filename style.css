@@ -8,26 +8,29 @@
     --text-color-dark: #dbdbdb;
     --light-gray-light: #000000;
     --light-gray-dark: #ffffff;
+    --heading1-color: #4a9cd3; /* Slightly different shade of blue for h1 */
+    --heading2-color: #4390c0; /* Slightly different shade of blue for h2 */
+    --heading3-color: #3c84ad; /* Slightly different shade of blue for h3 */
 }
 
 body {
     font-family: 'Arial', sans-serif;
     line-height: 1.6;
     margin: 0;
-    padding: 0 20px; /* Add padding for buffer */
+    padding: 0; /* Remove padding from body */
     box-sizing: border-box;
 }
 
 /* Adjust padding based on screen width */
 @media (min-width: 768px) {
     body {
-        padding: 0 40px;
+        padding: 0; /* Remove padding from body */
     }
 }
 
 @media (min-width: 1024px) {
     body {
-        padding: 0 60px;
+        padding: 0; /* Remove padding from body */
     }
 }
 
@@ -66,11 +69,7 @@ body {
         background-color: var(--light-gray-light);
     }
 
-    header {
-        background-color: rgba(255, 255, 255, 0.8);
-    }
-
-    nav {
+    header, nav {
         background-color: rgba(255, 255, 255, 0.8);
     }
 
@@ -115,11 +114,7 @@ body {
         background-color: var(--light-gray-dark);
     }
 
-    header {
-        background-color: rgba(0, 0, 0, 0.8);
-    }
-
-    nav {
+    header, nav {
         background-color: rgba(0, 0, 0, 0.8);
     }
 
@@ -130,17 +125,43 @@ body {
 }
 
 /* Other existing styles */
-h1, h2, h3 {
-    color: var(--primary-color);
+h1 {
+    color: var(--heading1-color);
+}
+
+h2 {
+    color: var(--heading2-color);
+}
+
+h3 {
+    color: var(--heading3-color);
 }
 
 /* Header and Navigation */
 header {
     /* Removed the fixed background color to adhere to light/dark mode */
     position: fixed;
-    width: 100%;
+    width: calc(100% + 40px); /* Expand the whole width of the page */
+    left: -20px; /* Adjust to maintain margin */
     top: 0;
     z-index: 1000;
+    padding: 0 20px; /* Maintain margin between text and edge */
+}
+
+@media (min-width: 768px) {
+    header {
+        width: calc(100% + 80px); /* Adjust for larger screens */
+        left: -40px;
+        padding: 0 40px;
+    }
+}
+
+@media (min-width: 1024px) {
+    header {
+        width: calc(100% + 120px); /* Adjust for larger screens */
+        left: -60px;
+        padding: 0 60px;
+    }
 }
 
 nav ul {
@@ -163,12 +184,30 @@ nav ul li a {
 /* Main Content */
 main {
     padding-top: 60px;
+    padding-left: 20px; /* Add margin between main text and side of screen */
+    padding-right: 20px; /* Add margin between main text and side of screen */
+}
+
+@media (min-width: 768px) {
+    main {
+        padding-left: 40px; /* Adjust for larger screens */
+        padding-right: 40px; /* Adjust for larger screens */
+    }
+}
+
+@media (min-width: 1024px) {
+    main {
+        padding-left: 60px; /* Adjust for larger screens */
+        padding-right: 60px; /* Adjust for larger screens */
+    }
 }
 
 section {
     padding: 60px 20px;
     max-width: 1200px;
     margin: 0 auto;
+    padding-left: 0; /* Remove padding from section */
+    padding-right: 0; /* Remove padding from section */
 }
 
 /* Home Section */
@@ -310,7 +349,26 @@ input, textarea {
 footer {
     text-align: center;
     padding: 20px;
-    /* Removed the fixed background color to adhere to light/dark mode */
+    width: calc(100% + 40px); /* Expand the whole width of the page */
+    left: -20px; /* Adjust to maintain margin */
+    position: relative;
+    padding: 0 20px; /* Maintain margin between text and edge */
+}
+
+@media (min-width: 768px) {
+    footer {
+        width: calc(100% + 80px); /* Adjust for larger screens */
+        left: -40px;
+        padding: 0 40px;
+    }
+}
+
+@media (min-width: 1024px) {
+    footer {
+        width: calc(100% + 120px); /* Adjust for larger screens */
+        left: -60px;
+        padding: 0 60px;
+    }
 }
 
 /* Responsive Design */
