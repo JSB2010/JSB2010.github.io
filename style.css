@@ -414,6 +414,44 @@ footer {
     }
 }
 
+.footer-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.footer-buttons a {
+    display: inline-block;
+    padding: 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: #fff;
+    background-color: var(--primary-color);
+    transition: background-color 0.3s ease;
+    font-size: 1.5em; /* Adjust icon size */
+}
+
+.footer-buttons a:hover {
+    background-color: var(--secondary-color);
+}
+
+.footer-buttons a.linkedin {
+    background-image: url('https://img.icons8.com/ios-filled/50/000000/linkedin.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    color: transparent; /* Hide text */
+}
+
+.footer-buttons a.email {
+    background-image: url('https://img.icons8.com/ios-filled/50/000000/email.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    color: transparent; /* Hide text */
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .card-container {
