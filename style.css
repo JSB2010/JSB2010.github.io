@@ -144,6 +144,10 @@ body {
         background-color: rgba(0, 0, 0, 0.8);
         color: var(--text-color-dark);
     }
+
+    .footer-buttons a {
+        filter: invert(1);
+    }
 }
 
 /* Other existing styles */
