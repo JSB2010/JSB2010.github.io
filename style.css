@@ -280,6 +280,10 @@ section {
     z-index: 1;
     text-decoration: none; /* Remove underline */
     color: inherit; /* Revert to original color */
+    display: flex; /* Center the text inside the card */
+    flex-direction: column;
+    justify-content: center; /* Center vertically */
+    align-items: center; /* Center horizontally */
 }
 
 .card:hover {
