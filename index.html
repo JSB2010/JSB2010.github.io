@@ -49,17 +49,7 @@
             }
         }
     </style>
-    <header>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="about.html">About Me</a></li>
-                <li><a href="projects.html">My Projects</a></li>
-                <li><a href="contact.html">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
-
+    <div id="header"></div>
     <main>
         <div class="main-header">
             <h1>Jacob Barkin</h1>
@@ -96,9 +86,19 @@
             </div>
         </div>
     </main>
+    <div id="footer"></div>
+    <script>
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header').innerHTML = data;
+            });
 
-    <footer>
-        <p>&copy; 2024 Jacob Barkin. All rights reserved.</p>
-    </footer>
+        fetch('footer.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('footer').innerHTML = data;
+            });
+    </script>
 </body>
 </html>
