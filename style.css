@@ -452,6 +452,14 @@ footer {
     color: transparent; /* Hide text */
 }
 
+.footer-buttons a.github {
+    background-image: url('https://img.icons8.com/ios-filled/50/000000/github.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    color: transparent; /* Hide text */
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .card-container {
