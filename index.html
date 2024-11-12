@@ -50,7 +50,7 @@
     <main>
         <div class="main-header">
             <h1>Jacob Barkin</h1>
-            <p class="tagline"></p>
+            <p class="tagline" id="dynamic-greeting"></p>
         </div>
         <div class="card-container">
             <div class="card project">
@@ -96,6 +96,11 @@
             .then(data => {
                 document.getElementById('footer').innerHTML = data;
             });
+
+        // Dynamic greeting message
+        const greetings = ["Welcome to my portfolio!", "Hello! Explore my work.", "Hi there! Check out my projects."];
+        const greetingElement = document.getElementById('dynamic-greeting');
+        greetingElement.textContent = greetings[Math.floor(Math.random() * greetings.length)];
     </script>
 </body>
 </html>
