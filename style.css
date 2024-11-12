@@ -379,6 +379,7 @@ section {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     gap: 20px; /* Add gap to prevent overlap */
     justify-content: space-between; /* Distribute space between items */
+    flex-wrap: wrap; /* Allow items to wrap to the next line if necessary */
 }
 
 .interests h3 {
@@ -389,11 +390,10 @@ section {
 }
 
 .interests p {
-    max-width: 400px;
+    flex: 1; /* Allow the description to take up available space */
+    margin: 0; /* Remove margin to prevent overlap */
     text-align: justify;
     letter-spacing: 0.5px; /* Reduce spacing between words */
-    flex: 2;
-    margin: 0; /* Remove margin to prevent overlap */
 }
 
 .interests button {
