@@ -97,6 +97,15 @@ body {
         background-color: rgba(255, 255, 255, 0.8);
         color: var(--text-color-light);
     }
+
+    .login-container {
+        background-color: var(--background-color-light);
+    }
+
+    .login-form {
+        background-color: var(--background-color-light);
+        color: var(--text-color-light);
+    }
 }
 
 /* Dark mode */
@@ -153,6 +162,15 @@ body {
 
     .footer-buttons a {
         filter: invert(1);
+    }
+
+    .login-container {
+        background-color: var(--background-color-dark);
+    }
+
+    .login-form {
+        background-color: var(--background-color-dark);
+        color: var(--text-color-dark);
     }
 }
 
@@ -467,6 +485,14 @@ input, textarea {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
+input:invalid, textarea:invalid {
+    border: 2px solid red;
+}
+
+input:valid, textarea:valid {
+    border: 2px solid green;
+}
+
 .contact-info {
     text-align: center;
     margin-top: 30px;
@@ -618,4 +644,57 @@ footer {
 
 .file-tree .caret.active + iframe {
     display: block;
+}
+
+/* Login Page */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: var(--background-color-light);
+}
+
+.login-form {
+    background-color: var(--background-color-dark);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.login-form input {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+}
+
+.login-form button {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: var(--primary-color);
+    color: var(--text-color-dark);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.login-form button:hover {
+    background-color: var(--secondary-color);
+}
+
+/* Admin Page */
+.admin-container {
+    padding: 20px;
+}
+
+.message {
+    border: 1px solid var(--primary-color);
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
 }
