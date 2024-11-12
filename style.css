@@ -275,7 +275,8 @@ section {
 
 .card-container {
     display: flex;
-    justify-content: space-around;
+    justify-content: center; /* Center align the card container */
+    flex-wrap: wrap;
     margin-top: 50px;
     animation: fadeIn 2s ease-in-out;
 }
