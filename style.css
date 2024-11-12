@@ -583,3 +583,38 @@ footer {
 .project-grid .project {
     animation: fadeIn 2s ease-in-out;
 }
+
+/* File Tree Structure */
+.file-tree {
+    text-align: left;
+    margin: 20px 0;
+}
+
+.file-tree ul {
+    list-style-type: none;
+    padding-left: 20px;
+}
+
+.file-tree li {
+    margin-bottom: 10px;
+}
+
+.file-tree .caret {
+    font-weight: bold;
+    cursor: pointer;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.file-tree iframe {
+    display: none;
+    margin-top: 10px;
+}
+
+.file-tree .caret:hover {
+    color: var(--primary-color);
+}
+
+.file-tree .caret.active + iframe {
+    display: block;
+}

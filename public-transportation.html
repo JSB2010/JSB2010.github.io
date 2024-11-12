@@ -9,21 +9,36 @@
 </head>
 <body>
     <div id="header"></div>
-    <main>
+    <main style="text-align: left;">
         <h1>Public Transportation</h1>
         <p>Because of my vision, I am unable to drive, so I take public transit as much as possible. I like to do research on our current systems, and how to improve them.</p>
         <h2>An Overview</h2>
         <p>I conducted a comprehensive project centered on public transportation in Colorado, with a particular emphasis on identifying and exploring potential improvements within the system. This project was structured into two distinct components: a rigorous research and writing phase and an action phase.</p>
         <h2>Research Paper</h2>
         <p>During the research and writing phase, I extensively reviewed existing literature and data related to public transit, analyzing current challenges and best practices in various regions. This analysis provided a solid foundation for understanding the complexities of the public transportation landscape.</p>
-        <iframe src="https://docs.google.com/document/d/e/2PACX-1vQlbGwHq8AUTKXV0h2dKypdXnucepaBRKKXizWur2H7pe-hf_Zejf5w2hrJfIoN4fP4db9ENy6qHqYM/pub?embedded=true" style="width: 100%; height: 80vh;" frameborder="0"></iframe>
         <h2>Action Piece</h2>
         <p>In the action phase, I actively engaged with the community by interviewing individuals directly involved in initiatives to enhance public transit services. These interactions offered valuable insights into the ongoing efforts and challenges transit professionals and advocates face. By combining theoretical knowledge with real-world perspectives, this project heightened my understanding of public transportation issues and contributed to the broader conversation about improving transit systems in Colorado.</p>
-        <iframe src="https://1drv.ms/p/s!Av-6eo6o9gE9gYlXpXRUGVHd2TjNEA?embed=1&amp;em=2&amp;wdAr=1.7777777777777777" style="width: 100%; height: 56.25vw;" frameborder="0">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
         <h2>Final Presentation</h2>
         <p>Below is the final presentation I created to summarize my research and action steps.</p>
-        <iframe src="https://1drv.ms/p/s!Av-6eo6o9gE9gYpXE1OVwenzG1vWJw?embed=1&amp;em=2&amp;wdAr=1.7777777777777777" style="width: 100%; height: 56.25vw;" frameborder="0">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
         
+        <!-- Materials Section -->
+        <h2>Materials</h2>
+        <div class="file-tree">
+            <ul>
+                <li>
+                    <span class="caret">▶ Research Paper</span>
+                    <iframe data-src="https://docs.google.com/document/d/e/2PACX-1vQlbGwHq8AUTKXV0h2dKypdXnucepaBRKKXizWur2H7pe-hf_Zejf5w2hrJfIoN4fP4db9ENy6qHqYM/pub?embedded=true" style="width: 100%; height: 80vh;" frameborder="0"></iframe>
+                </li>
+                <li>
+                    <span class="caret">▶ Action Piece Presentation</span>
+                    <iframe data-src="https://1drv.ms/p/s!Av-6eo6o9gE9gYlXpXRUGVHd2TjNEA?embed=1&amp;em=2&amp;wdAr=1.7777777777777777" style="width: 100%; height: 56.25vw;" frameborder="0">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
+                </li>
+                <li>
+                    <span class="caret">▶ Final Presentation</span>
+                    <iframe data-src="https://1drv.ms/p/s!Av-6eo6o9gE9gYpXE1OVwenzG1vWJw?embed=1&amp;em=2&amp;wdAr=1.7777777777777777" style="width: 100%; height: 56.25vw;" frameborder="0">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
+                </li>
+            </ul>
+        </div>
     </main>
     <div id="footer"></div>
     <script>
@@ -38,6 +53,17 @@
             .then(data => {
                 document.getElementById('footer').innerHTML = data;
             });
+
+        document.querySelectorAll('.file-tree .caret').forEach(caret => {
+            caret.addEventListener('click', () => {
+                caret.classList.toggle('active');
+                caret.textContent = caret.classList.contains('active') ? '▼ ' + caret.textContent.slice(2) : '▶ ' + caret.textContent.slice(2);
+                const iframe = caret.nextElementSibling;
+                if (iframe && iframe.tagName === 'IFRAME' && !iframe.src) {
+                    iframe.src = iframe.getAttribute('data-src');
+                }
+            });
+        });
     </script>
 </body>
 </html>
