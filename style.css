@@ -277,6 +277,7 @@ section {
     display: flex;
     justify-content: space-around;
     margin-top: 50px;
+    animation: fadeIn 2s ease-in-out;
 }
 
 .card {
@@ -284,7 +285,7 @@ section {
     border-radius: 10px;
     padding: 20px;
     margin: 0 15px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
     text-align: center; /* Center the text inside the card */
     display: flex;
     flex-direction: column;
@@ -305,16 +306,28 @@ section {
     flex-direction: column;
     justify-content: center; /* Center vertically */
     align-items: center; /* Center horizontally */
+    transition: color 0.3s ease;
 }
 
 .card:hover {
     transform: translateY(-10px);
     box-shadow: 0 10px 20px rgba(0, 255, 255, 0.2);
+    background-color: var(--primary-color);
+    color: var(--text-color-dark);
+}
+
+.card a:hover {
+    color: var(--text-color-dark);
 }
 
 .card i {
     font-size: 3em;
     color: var(--primary-color);
+    transition: color 0.3s ease;
+}
+
+.card i:hover {
+    color: var(--secondary-color);
 }
 
 /* About Section */
@@ -417,6 +430,7 @@ button:hover {
     padding: 20px;
     border-radius: 10px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: fadeIn 2s ease-in-out;
 }
 
 .project:hover {
@@ -544,4 +558,25 @@ footer {
     .project-grid {
         grid-template-columns: 1fr;
     }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.main-header {
+    animation: fadeIn 2s ease-in-out;
+}
+
+.card-container {
+    animation: fadeIn 2s ease-in-out;
+}
+
+.project-grid .project {
+    animation: fadeIn 2s ease-in-out;
 }
