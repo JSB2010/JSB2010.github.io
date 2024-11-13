@@ -8,7 +8,7 @@
 </head>
 <body>
     <div id="header"></div>
-    <main>
+    <main class="content-main">
         <h1><!-- Project Title --></h1>
         <section>
             <h2>Description</h2>
@@ -36,17 +36,17 @@
     </main>
     <div id="footer"></div>
     <script>
-        fetch('header.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('header').innerHTML = data;
-            });
+        async function loadContent() {
+            const headerResponse = await fetch('header.html');
+            const headerData = await headerResponse.text();
+            document.getElementById('header').innerHTML = headerData;
 
-        fetch('footer.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('footer').innerHTML = data;
-            });
+            const footerResponse = await fetch('footer.html');
+            const footerData = await footerResponse.text();
+            document.getElementById('footer').innerHTML = footerData;
+        }
+
+        loadContent();
     </script>
 </body>
 </html>

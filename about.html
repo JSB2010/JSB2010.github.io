@@ -8,7 +8,7 @@
 </head>
 <body>
     <div id="header"></div>
-    <main>
+    <main class="content-main">
         <h1>About Me</h1>
         <img src="Jacob City.png" alt="Jacob Barkin" class="headshot">
         <p>Born with a rare genetic condition called <a href="https://www.mayoclinic.org/diseases-conditions/albinism/symptoms-causes/syc-20369184">Albinism</a>, my vision has never been very good. In elementary school, I needed an iPad to see the screen/board, and this need for technology turned into a hobby.</p>
@@ -38,17 +38,17 @@
     </main>
     <div id="footer"></div>
     <script>
-        fetch('header.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('header').innerHTML = data;
-            });
+        async function loadContent() {
+            const headerResponse = await fetch('header.html');
+            const headerData = await headerResponse.text();
+            document.getElementById('header').innerHTML = headerData;
 
-        fetch('footer.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('footer').innerHTML = data;
-            });
+            const footerResponse = await fetch('footer.html');
+            const footerData = await footerResponse.text();
+            document.getElementById('footer').innerHTML = footerData;
+        }
+
+        loadContent();
     </script>
 </body>
 </html>
