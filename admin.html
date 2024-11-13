@@ -10,10 +10,12 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
 </head>
 <body>
+    <div id="header"></div>
     <div class="admin-container">
         <h1>Submitted Messages</h1>
         <div id="messages"></div>
     </div>
+    <div id="footer"></div>
     <script>
         // Your web app's Firebase configuration
         const firebaseConfig = {
@@ -51,6 +53,18 @@
                 });
             }
         });
+
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header').innerHTML = data;
+            });
+
+        fetch('footer.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('footer').innerHTML = data;
+            });
     </script>
 </body>
 </html>
