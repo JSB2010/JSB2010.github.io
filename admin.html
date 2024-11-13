@@ -9,7 +9,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
 </head>
-<body>
+<body class="admin-page">
     <div id="header"></div>
     <div class="admin-container">
         <h1>Submitted Messages</h1>
@@ -54,17 +54,17 @@
             }
         });
 
-        fetch('header.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('header').innerHTML = data;
-            });
+        async function loadContent() {
+            const headerResponse = await fetch('header.html');
+            const headerData = await headerResponse.text();
+            document.getElementById('header').innerHTML = headerData;
 
-        fetch('footer.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('footer').innerHTML = data;
-            });
+            const footerResponse = await fetch('footer.html');
+            const footerData = await footerResponse.text();
+            document.getElementById('footer').innerHTML = footerData;
+        }
+
+        loadContent();
     </script>
 </body>
 </html>
