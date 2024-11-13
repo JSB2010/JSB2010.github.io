@@ -25,21 +25,26 @@ html {
 
 body {
     font-family: 'Arial', sans-serif;
-    line-height: 1.6;
+    line-height: 1.4 !important; /* Make text more dense */
+    font-size: 0.9em !important; /* Make text size smaller */
     margin: 0 10px;
     box-sizing: border-box;
+    padding-top: 60px; /* Adjust this value based on the height of your header */
+    transition: background-color 0.3s ease, color 0.3s ease, padding-top 0.3s ease;
 }
 
 /* Adjust padding based on screen width */
 @media (min-width: 768px) {
     body {
         margin: 0 20px;
+        padding-top: 60px; /* Adjust this value based on the height of your header */
     }
 }
 
 @media (min-width: 1024px) {
     body {
         margin: 0 30px;
+        padding-top: 60px; /* Adjust this value based on the height of your header */
     }
 }
 
@@ -60,14 +65,53 @@ body {
 
     a {
         color: var(--primary-color);
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    a:hover {
+        color: var(--secondary-color);
     }
 
     .card {
         background-color: rgba(0, 0, 0, 0.1);
     }
 
+    .card:hover {
+        background-color: var(--primary-color);
+        color: var(--text-color-dark);
+    }
+
+    .card a:hover {
+        color: var(--text-color-dark);
+    }
+
+    .project {
+        background-color: var(--background-color-light);
+    }
+
+    .project:hover {
+        background-color: var(--primary-color);
+        color: var(--text-color-dark);
+    }
+
+    .project .tags span {
+        background-color: var(--secondary-color);
+        color: var(--text-color-dark);
+    }
+
     button {
         color: var(--background-color-light);
+        background-color: var(--primary-color);
+        color: var(--text-color-light);
+        transition: background-color 0.3s ease, color 0.3s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    button:hover {
+        background-color: var(--secondary-color);
+        color: var(--text-color-dark);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
     }
 
     .tagline, .progress-bar {
@@ -80,6 +124,17 @@ body {
 
     footer {
         color: var(--text-color-light);
+    }
+
+    .footer-buttons a {
+        filter: invert(1);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .footer-buttons a:hover {
+        background-color: rgba(0, 0, 0, 0.1); /* Subtle hover effect */
+        transform: scale(1.1);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
     }
 
     .login-container, .login-form {
@@ -110,14 +165,53 @@ body {
 
     a {
         color: var(--primary-color);
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    a:hover {
+        color: var(--secondary-color);
     }
 
     .card {
         background-color: rgba(255, 255, 255, 0.1);
     }
 
+    .card:hover {
+        background-color: var(--primary-color);
+        color: var(--text-color-dark);
+    }
+
+    .card a:hover {
+        color: var(--text-color-dark);
+    }
+
+    .project {
+        background-color: var(--background-color-dark);
+    }
+
+    .project:hover {
+        background-color: var(--primary-color);
+        color: var(--text-color-dark);
+    }
+
+    .project .tags span {
+        background-color: var(--secondary-color);
+        color: var(--text-color-dark);
+    }
+
     button {
         color: var(--background-color-dark);
+        background-color: var(--primary-color);
+        color: var(--text-color-dark);
+        transition: background-color 0.3s ease, color 0.3s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    button:hover {
+        background-color: var(--secondary-color);
+        color: var(--text-color-light);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
     }
 
     .tagline, .progress-bar {
@@ -134,6 +228,13 @@ body {
 
     .footer-buttons a {
         filter: invert(1);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .footer-buttons a:hover {
+        background-color: rgba(0, 0, 0, 0.1); /* Subtle hover effect */
+        transform: scale(1.1);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
     }
 
     .login-container, .login-form {
@@ -195,16 +296,104 @@ nav ul {
     justify-content: center;
     list-style-type: none;
     padding: 0;
+    flex-direction: column; /* Default to vertical layout */
+    align-items: center;
 }
 
 nav ul li {
-    margin: 0 15px;
+    margin: 10px 0; /* Add margin between items */
 }
 
 nav ul li a {
     text-decoration: none;
     font-weight: bold;
     transition: color 0.3s ease;
+    padding: 10px 15px; /* Add padding for better click area */
+    border-radius: 5px; /* Add border radius for rounded corners */
+}
+
+nav ul li a:hover {
+    background-color: var(--primary-color); /* Add background color on hover */
+    color: var(--text-color-dark); /* Change text color on hover */
+}
+
+.dropdown {
+    display: none; /* Hide dropdown by default */
+    position: absolute;
+    top: 60px; /* Adjust based on header height */
+    right: 10px;
+    background-color: var(--background-color-light);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    z-index: 1001;
+    opacity: 0; /* Start hidden */
+    transform: translateY(-10px); /* Start slightly above */
+    transition: opacity 0.3s ease, transform 0.3s ease; /* Smooth transition */
+}
+
+.dropdown.show {
+    display: block; /* Show dropdown when 'show' class is added */
+    opacity: 1; /* Fully visible */
+    transform: translateY(0); /* Move to original position */
+}
+
+.dropdown ul {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.dropdown ul li {
+    margin: 0;
+}
+
+.dropdown ul li a {
+    padding: 10px 20px;
+    width: 100%;
+    display: block;
+}
+
+.dropdown-toggle {
+    display: block;
+    cursor: pointer;
+    padding: 10px 15px;
+    border-radius: 5px;
+    background-color: var(--primary-color);
+    color: var(--text-color-dark);
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.dropdown-toggle:hover {
+    background-color: var(--secondary-color);
+}
+
+.hamburger-icon {
+    width: 25px;
+    height: 3px;
+    background-color: var(--text-color-dark);
+    margin: 5px 0;
+    transition: 0.4s;
+}
+
+@media (min-width: 768px) {
+    nav ul {
+        flex-direction: row; /* Horizontal layout for wider screens */
+    }
+
+    nav ul li {
+        margin: 0 15px;
+    }
+
+    .dropdown {
+        display: none; /* Hide dropdown for wider screens */
+    }
+
+    .dropdown-toggle {
+        display: none; /* Hide toggle for wider screens */
+    }
 }
 
 /* Main Content */
@@ -262,20 +451,22 @@ section {
     animation: fadeIn 2s ease-in-out;
 }
 
+/* Card styles */
 .card {
     position: relative;
     border-radius: 10px;
-    padding: 20px;
-    margin: 15px; /* Add margin to ensure spacing between cards */
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    padding: 15px !important; /* Reduce padding */
+    margin: 10px !important; /* Reduce margin */
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, color 0.3s ease;
     text-align: center; /* Center the text inside the card */
     display: flex;
     flex-direction: column;
     justify-content: center; /* Center vertically */
     align-items: center; /* Center horizontally */
-    min-width: 250px; /* Ensure cards do not shrink below this width */
-    flex: 1 1 250px; /* Allow cards to grow and shrink, but not below 250px */
-    height: 100px; /* Further reduce the height of the cards */
+    min-width: 200px !important; /* Reduce minimum width */
+    flex: 1 1 200px !important; /* Allow cards to grow and shrink, but not below 200px */
+    height: 80px !important; /* Reduce height */
+    font-size: 0.8em !important; /* Make text size smaller */
 }
 
 .card a {
@@ -306,7 +497,7 @@ section {
 }
 
 .card i {
-    font-size: 3em;
+    font-size: 2.5em; /* Reduce icon size */
     color: var(--primary-color);
     transition: color 0.3s ease;
 }
@@ -354,24 +545,32 @@ section {
     padding: 0;
 }
 
+/* Interests list styles */
 .interests li {
     display: flex;
-    align-items: center;
-    padding: 20px;
+    flex-direction: column; /* Stack items vertically */
+    align-items: flex-start; /* Align items to the start */
+    padding: 15px; /* Adjust padding */
     border-radius: 10px;
     background-color: rgba(0, 0, 0, 0.05);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    gap: 20px; /* Add gap to prevent overlap */
-    justify-content: space-between; /* Distribute space between items */
-    flex-wrap: wrap; /* Allow items to wrap to the next line if necessary */
+    gap: 15px; /* Adjust gap */
+    text-align: left; /* Align text to the left */
+    font-size: 1em; /* Increase text size */
+}
+
+.interests li:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .interests h3 {
     color: var(--heading3-color);
     margin: 0;
-    flex: 1;
+    width: 100%; /* Ensure title takes full width */
     text-align: left; /* Align title to the left */
+    font-size: 1.2em; /* Increase text size */
 }
 
 .interests p {
@@ -379,6 +578,19 @@ section {
     margin: 0; /* Remove margin to prevent overlap */
     text-align: justify;
     letter-spacing: 0.5px; /* Reduce spacing between words */
+    font-size: 1em; /* Increase text size */
+    width: 100%; /* Ensure description takes full width */
+}
+
+.interests li a {
+    text-decoration: none;
+    color: var(--primary-color);
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.interests li a:hover {
+    color: var(--secondary-color);
 }
 
 .interests button {
@@ -388,8 +600,9 @@ section {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    flex-shrink: 0; /* Prevent button from shrinking */
-    text-align: right; /* Align button to the right */
+    align-self: flex-end; /* Align button to the end */
+    color: var(--text-color-dark);
+    margin-top: 10px; /* Add margin to separate from description */
 }
 
 button {
@@ -400,10 +613,12 @@ button {
     cursor: pointer;
     transition: background-color 0.3s ease;
     margin-top: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 button:hover {
     background-color: var(--secondary-color);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 /* Projects Section */
@@ -411,6 +626,7 @@ button:hover {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
+    padding: 20px; /* Add padding for better spacing */
 }
 
 .project {
@@ -426,13 +642,42 @@ button:hover {
     box-shadow: 0 10px 20px rgba(0, 255, 255, 0.2);
 }
 
-.tags span {
-    background-color: var(--secondary-color);
-    color: var(--text-color-dark);
+.project h3 {
+    margin-bottom: 10px;
+}
+
+.project p {
+    margin-bottom: 20px;
+}
+
+.project .tags {
+    margin-bottom: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.project .tags span {
     padding: 5px 10px;
     border-radius: 15px;
     font-size: 0.8em;
-    margin-right: 5px;
+    white-space: nowrap;
+}
+
+.project button {
+    background-color: var(--primary-color);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.project button:hover {
+    background-color: var(--secondary-color);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 /* Contact Section */
@@ -473,7 +718,7 @@ input:valid, textarea:valid {
 /* Footer */
 footer {
     text-align: center;
-    padding: 20px 0; /* Combine padding properties */
+    padding: 20px 10px; /* Adjust padding for better spacing */
     width: 100vw; /* Expand to fill the whole width of the viewport */
     left: 0; /* Start at the very left-hand side of the screen */
     position: relative;
@@ -512,12 +757,14 @@ footer {
     text-decoration: none;
     color: #fff;
     background-color: transparent; /* Remove background color */
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
     font-size: 1.2em; /* Adjust icon size */
 }
 
 .footer-buttons a:hover {
     background-color: rgba(0, 0, 0, 0.1); /* Subtle hover effect */
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 .footer-buttons a.linkedin,
@@ -553,6 +800,15 @@ footer {
 
     .project-grid {
         grid-template-columns: 1fr;
+    }
+
+    nav ul {
+        flex-direction: column; /* Stack navigation items vertically */
+        align-items: center; /* Center align items */
+    }
+
+    nav ul li {
+        margin: 10px 0; /* Add margin between items */
     }
 }
 
@@ -676,4 +932,118 @@ footer {
     .card {
         max-width: 100%; /* Full width for smaller screens */
     }
+}
+
+/* Project Details Page */
+.content-main {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    line-height: 1.8;
+}
+
+.content-main h1 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+.content-main h2 {
+    font-size: 2em;
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
+
+.content-main p {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
+
+.content-main ul {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+.content-main ul li {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+.content-main img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.content-main a {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: var(--text-color-dark);
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.content-main a:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-5px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .content-main {
+        padding: 10px;
+    }
+
+    .content-main h1 {
+        font-size: 2em;
+    }
+
+    .content-main h2 {
+        font-size: 1.5em;
+    }
+
+    .content-main p, .content-main ul li {
+        font-size: 1em;
+    }
+}
+
+/* Hyperlink style */
+a.hyperlink {
+    color: var(--primary-color);
+    text-decoration: underline;
+    transition: none; /* Remove transition effect */
+    outline: none; /* Remove blue box around hyperlinks */
+    background: none; /* Remove blue background from hyperlinks */
+    padding: 0; /* Remove padding to make it look like a normal word */
+}
+
+a.hyperlink:hover {
+    color: var(--primary-color); /* Remove hover effect */
+    background: none; /* Ensure no background on hover */
+    text-decoration: underline; /* Ensure underline remains */
+    transform: none; /* Ensure no shift upwards */
+}
+
+/* Button style */
+a.button-link, button {
+    background-color: var(--primary-color);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease; /* Add transform and box-shadow transitions */
+    color: #fff !important; /* Ensure text color is white */
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+a.button-link:hover, button:hover {
+    background-color: var(--secondary-color);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    transform: translateY(-3px); /* Add a slight upward movement */
 }

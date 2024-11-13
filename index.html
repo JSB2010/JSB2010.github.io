@@ -8,8 +8,8 @@
     <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <div id="header"></div>
-    <main class="content-main">
+    <header id="header" role="banner"></header>
+    <main class="content-main" role="main">
         <div class="main-header">
             <h1>Jacob Barkin</h1>
             <p class="tagline" id="dynamic-greeting"></p>
@@ -52,7 +52,7 @@
             </div>
         </div>
     </main>
-    <div id="footer"></div>
+    <footer id="footer" role="contentinfo"></footer>
     <script>
         async function loadContent() {
             const headerResponse = await fetch('header.html');
@@ -64,24 +64,24 @@
             document.getElementById('footer').innerHTML = footerData;
         }
 
-        loadContent();
+        loadContent().then(() => {
+            // Dynamic greeting message based on time of day
+            const greetingElement = document.getElementById('dynamic-greeting');
+            const currentHour = new Date().getHours();
+            let greeting;
 
-        // Dynamic greeting message based on time of day
-        const greetingElement = document.getElementById('dynamic-greeting');
-        const currentHour = new Date().getHours();
-        let greeting;
+            if (currentHour < 12) {
+                greeting = "Good morning! Welcome to my portfolio!";
+            } else if (currentHour < 18) {
+                greeting = "Good afternoon! Explore my work.";
+            } else if (currentHour < 21) {
+                greeting = "Good evening! Check out my projects.";
+            } else {
+                greeting = "Good night! Have a look at my achievements.";
+            }
 
-        if (currentHour < 12) {
-            greeting = "Good morning! Welcome to my portfolio!";
-        } else if (currentHour < 18) {
-            greeting = "Good afternoon! Explore my work.";
-        } else if (currentHour < 21) {
-            greeting = "Good evening! Check out my projects.";
-        } else {
-            greeting = "Good night! Have a look at my achievements.";
-        }
-
-        greetingElement.textContent = greeting;
+            greetingElement.textContent = greeting;
+        });
     </script>
 </body>
 </html>

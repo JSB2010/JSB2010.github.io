@@ -1,6 +1,20 @@
 <header>
     <nav class="main-nav">
-        <ul style="justify-content: center;">
+        <div class="dropdown-toggle">
+            <div class="hamburger-icon"></div>
+            <div class="hamburger-icon"></div>
+            <div class="hamburger-icon"></div>
+        </div>
+        <div class="dropdown">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About Me</a></li>
+                <li><a href="projects.html">My Projects</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="https://www.askthekidz.com">Ask The Kidz</a></li>
+            </ul>
+        </div>
+        <ul>
             <li><a href="index.html">Home</a></li>
             <li><a href="about.html">About Me</a></li>
             <li><a href="projects.html">My Projects</a></li>
@@ -9,3 +23,13 @@
         </ul>
     </nav>
 </header>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropdownToggle = document.querySelector('.dropdown-toggle');
+        const dropdown = document.querySelector('.dropdown');
+
+        dropdownToggle.addEventListener('click', function() {
+            dropdown.classList.toggle('show');
+        });
+    });
+</script>
