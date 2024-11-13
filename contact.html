@@ -8,6 +8,12 @@
     <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
     <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+    <style>
+        .fade-out {
+            opacity: 0;
+            transition: opacity 0.5s ease-out;
+        }
+    </style>
 </head>
 <body>
     <div id="header"></div>
@@ -39,7 +45,13 @@
         })();
 
         const firebaseConfig = {
-            // Your Firebase configuration here
+            apiKey: "AIzaSyCq0bLMaYXauUSZ5uH5yonPGJ2hhjlXphQ",
+            authDomain: "jacobbarkin-28a4e.firebaseapp.com",
+            projectId: "jacobbarkin-28a4e",
+            storageBucket: "jacobbarkin-28a4e.firebasestorage.app",
+            messagingSenderId: "819884367497",
+            appId: "1:819884367497:web:498b2e5ad8f1fc03897058",
+            measurementId: "G-MTPDVWEBY2"
         };
 
         // Initialize Firebase
@@ -59,13 +71,18 @@
                     from_email: email,
                     message: message
                 }).then(function(response) {
-                    document.getElementById('contact-form').style.display = 'none';
-                    document.getElementById('thank-you-message').style.display = 'block';
+                    const form = document.getElementById('contact-form');
+                    form.classList.add('fade-out');
+                    setTimeout(() => {
+                        form.style.display = 'none';
+                        document.getElementById('thank-you-message').style.display = 'block';
+                    }, 500);
 
                     db.collection('messages').add({
                         name: name,
                         email: email,
-                        message: message
+                        message: message,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
                     }).then(() => {
                         console.log('Message stored in Firestore');
                     }).catch((error) => {

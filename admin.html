@@ -35,7 +35,7 @@
                 window.location.href = 'login.html';
             } else {
                 const messagesContainer = document.getElementById('messages');
-                db.collection('messages').get().then((querySnapshot) => {
+                db.collection('messages').orderBy('timestamp', 'desc').get().then((querySnapshot) => {
                     querySnapshot.forEach((doc) => {
                         const message = doc.data();
                         const messageDiv = document.createElement('div');
@@ -44,6 +44,7 @@
                             <p><strong>Name:</strong> ${message.name}</p>
                             <p><strong>Email:</strong> ${message.email}</p>
                             <p><strong>Message:</strong> ${message.message}</p>
+                            <p><strong>Timestamp:</strong> ${message.timestamp.toDate().toLocaleString()}</p>
                         `;
                         messagesContainer.appendChild(messageDiv);
                     });
