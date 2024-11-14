@@ -14,7 +14,7 @@
                 <li><a href="https://www.askthekidz.com">Ask The Kidz</a></li>
             </ul>
         </div>
-        <ul>
+        <ul class="main-menu">
             <li><a href="index.html">Home</a></li>
             <li><a href="about.html">About Me</a></li>
             <li><a href="projects.html">My Projects</a></li>
@@ -22,14 +22,30 @@
             <li><a href="https://www.askthekidz.com">Ask The Kidz</a></li>
         </ul>
     </nav>
-</header>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const dropdownToggle = document.querySelector('.dropdown-toggle');
-        const dropdown = document.querySelector('.dropdown');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdownToggle = document.querySelector('.dropdown-toggle');
+            const dropdown = document.querySelector('.dropdown');
 
-        dropdownToggle.addEventListener('click', function() {
-            dropdown.classList.toggle('show');
+            dropdownToggle.addEventListener('click', function(event) {
+                event.stopPropagation();
+                dropdown.classList.toggle('show');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!dropdown.contains(event.target) && !dropdownToggle.contains(event.target)) {
+                    dropdown.classList.remove('show');
+                }
+            });
+
+            // Prevent dropdown from closing when clicking inside
+            dropdown.addEventListener('click', function(event) {
+                event.stopPropagation();
+            });
+
+            // Ensure dropdown is not opened at page load
+            dropdown.classList.remove('show');
         });
-    });
-</script>
+    </script>
+</header>
