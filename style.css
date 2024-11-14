@@ -27,7 +27,7 @@ body {
     font-family: 'Arial', sans-serif;
     line-height: 1.4 !important; /* Make text more dense */
     font-size: 0.9em !important; /* Make text size smaller */
-    margin: 0 10px;
+    margin: 0 5px; /* Reduced padding */
     box-sizing: border-box;
     padding-top: 60px; /* Adjust this value based on the height of your header */
     transition: background-color 0.3s ease, color 0.3s ease, padding-top 0.3s ease;
@@ -36,14 +36,14 @@ body {
 /* Adjust padding based on screen width */
 @media (min-width: 768px) {
     body {
-        margin: 0 20px;
+        margin: 0 10px; /* Reduced padding */
         padding-top: 60px; /* Adjust this value based on the height of your header */
     }
 }
 
 @media (min-width: 1024px) {
     body {
-        margin: 0 30px;
+        margin: 0 15px; /* Reduced padding */
         padding-top: 60px; /* Adjust this value based on the height of your header */
     }
 }
@@ -466,7 +466,7 @@ section {
     padding: 60px 20px;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0;
+    padding: 0 10px; /* Reduced padding */
 }
 
 /* Home Section */
@@ -717,7 +717,7 @@ input:valid, textarea:valid {
 /* Footer */
 footer {
     text-align: center;
-    padding: 20px 10px; /* Adjust padding for better spacing */
+    padding: 20px 5px; /* Reduced padding */
     width: 100vw; /* Expand to fill the whole width of the viewport */
     left: 0; /* Start at the very left-hand side of the screen */
     position: relative;
@@ -726,14 +726,14 @@ footer {
 
 @media (min-width: 768px) {
     footer {
-        padding: 20px 0; /* Ensure consistent padding */
+        padding: 20px 10px; /* Reduced padding */
         margin: 0 calc(-1 * var(--body-margin-left));
     }
 }
 
 @media (min-width: 1024px) {
     footer {
-        padding: 20px 0; /* Ensure consistent padding */
+        padding: 20px 15px; /* Reduced padding */
         margin: 0 calc(-1 * var(--body-margin-left));
     }
 }
