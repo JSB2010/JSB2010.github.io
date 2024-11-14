@@ -73,19 +73,6 @@ body {
         color: var(--secondary-color);
     }
 
-    .card {
-        background-color: rgba(0, 0, 0, 0.1);
-    }
-
-    .card:hover {
-        background-color: var(--primary-color);
-        color: var(--text-color-dark);
-    }
-
-    .card a:hover {
-        color: var(--text-color-dark);
-    }
-
     .project {
         background-color: var(--background-color-light);
     }
@@ -114,6 +101,23 @@ body {
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
     }
 
+    .new-button-style {
+        color: black !important; /* Ensure text color is black */
+    }
+
+    .new-button-style:hover {
+        background-color: var(--primary-color) !important;
+        color: var(--text-color-dark) !important; /* Ensure text color is dark on hover */
+    }
+
+    .new-button-style h2 {
+        color: var(--primary-color) !important; /* Ensure title text color is blue */
+    }
+
+    .new-button-style:hover h2 {
+        color: var(--text-color-dark) !important; /* Ensure title text color is dark on hover */
+    }
+
     .tagline, .progress-bar {
         color: var(--light-gray-light);
     }
@@ -127,8 +131,12 @@ body {
     }
 
     .footer-buttons a {
-        filter: invert(1);
+        filter: none; /* Ensure icons are visible in light mode */
+        color: var(--text-color-light); /* Ensure text is visible in light mode */
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 20px; /* Smaller size */
+        height: 20px; /* Smaller size */
+        font-size: 1em; /* Adjust icon size */
     }
 
     .footer-buttons a:hover {
@@ -174,16 +182,35 @@ body {
     }
 
     .card {
-        background-color: rgba(255, 255, 255, 0.1);
+        /* Removed all styles */
+    }
+
+    .card a {
+        /* Removed all styles */
     }
 
     .card:hover {
-        background-color: var(--primary-color);
-        color: var(--text-color-dark);
+        /* Removed all styles */
     }
 
     .card a:hover {
-        color: var(--text-color-dark);
+        /* Removed all styles */
+    }
+
+    .card i {
+        /* Removed all styles */
+    }
+
+    .card i:hover {
+        /* Removed all styles */
+    }
+
+    .card p, .new-button-style p {
+        /* Removed all styles */
+    }
+
+    .card:hover p, .new-button-style:hover p {
+        /* Removed all styles */
     }
 
     .project {
@@ -214,6 +241,23 @@ body {
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
     }
 
+    .new-button-style {
+        color: var(--text-color-dark); /* Ensure text color is dark */
+    }
+
+    .new-button-style:hover {
+        background-color: var(--primary-color) !important;
+        color: var(--text-color-light) !important; /* Ensure text color is light on hover */
+    }
+
+    .new-button-style h2 {
+        color: var(--primary-color) !important; /* Ensure title text color is blue */
+    }
+
+    .new-button-style:hover h2 {
+        color: var(--text-color-light) !important; /* Ensure title text color is light on hover */
+    }
+
     .tagline, .progress-bar {
         color: var(--light-gray-dark);
     }
@@ -229,6 +273,9 @@ body {
     .footer-buttons a {
         filter: invert(1);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 20px; /* Smaller size */
+        height: 20px; /* Smaller size */
+        font-size: 1em; /* Adjust icon size */
     }
 
     .footer-buttons a:hover {
@@ -318,7 +365,7 @@ nav ul li a:hover {
 }
 
 .dropdown {
-    display: none; /* Hide dropdown by default */
+    display: none; /* Ensure dropdown is hidden initially */
     position: absolute;
     top: 60px; /* Adjust based on header height */
     right: 10px;
@@ -451,61 +498,6 @@ section {
     animation: fadeIn 2s ease-in-out;
 }
 
-/* Card styles */
-.card {
-    position: relative;
-    border-radius: 10px;
-    padding: 15px !important; /* Reduce padding */
-    margin: 10px !important; /* Reduce margin */
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, color 0.3s ease;
-    text-align: center; /* Center the text inside the card */
-    display: flex;
-    flex-direction: column;
-    justify-content: center; /* Center vertically */
-    align-items: center; /* Center horizontally */
-    min-width: 200px !important; /* Reduce minimum width */
-    flex: 1 1 200px !important; /* Allow cards to grow and shrink, but not below 200px */
-    height: 80px !important; /* Reduce height */
-    font-size: 0.8em !important; /* Make text size smaller */
-}
-
-.card a {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    text-decoration: none; /* Remove underline */
-    color: inherit; /* Revert to original color */
-    display: flex; /* Center the text inside the card */
-    flex-direction: column;
-    justify-content: center; /* Center vertically */
-    align-items: center; /* Center horizontally */
-    transition: color 0.3s ease;
-}
-
-.card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 10px 20px rgba(0, 255, 255, 0.2);
-    background-color: var(--primary-color);
-    color: var(--text-color-dark);
-}
-
-.card a:hover {
-    color: var(--text-color-dark);
-}
-
-.card i {
-    font-size: 2.5em; /* Reduce icon size */
-    color: var(--primary-color);
-    transition: color 0.3s ease;
-}
-
-.card i:hover {
-    color: var(--secondary-color);
-}
-
 /* About Section */
 .headshot {
     width: 200px;
@@ -606,19 +598,26 @@ section {
 }
 
 button {
-    background-color: var(--primary-color);
+    background-color: transparent;
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
     margin-top: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    outline: none; /* Remove the blue focus outline */
 }
 
 button:hover {
-    background-color: var(--secondary-color);
+    background-color: rgba(0, 0, 0, 0.1); /* Subtle hover effect */
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    transform: translateY(-3px); /* Add a slight upward movement */
+}
+
+button:focus, a.button-link:focus {
+    outline: none; /* Ensure the blue focus outline is removed */
+    box-shadow: none; /* Remove any box-shadow that might be applied on focus */
 }
 
 /* Projects Section */
@@ -750,15 +749,15 @@ footer {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 40px; /* Smaller size */
-    height: 40px; /* Smaller size */
+    width: 20px; /* Smaller size */
+    height: 20px; /* Smaller size */
     padding: 5px; /* Adjust padding */
     border-radius: 5px;
     text-decoration: none;
     color: #fff;
     background-color: transparent; /* Remove background color */
     transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-    font-size: 1.2em; /* Adjust icon size */
+    font-size: 1em; /* Adjust icon size */
 }
 
 .footer-buttons a:hover {
@@ -781,7 +780,7 @@ footer {
 }
 
 .footer-buttons a.email {
-    background-image: url('https://img.icons8.com/ios-filled/50/000000/email.png');
+    background-image: url('https://img.icons8.com/ios-filled/50/000000/email.png'); /* Corrected icon URL */
 }
 
 .footer-buttons a.github {
@@ -1029,21 +1028,83 @@ a.hyperlink:hover {
 
 /* Button style */
 a.button-link, button {
-    background-color: var(--primary-color);
+    background-color: transparent;
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease; /* Add transform and box-shadow transitions */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
     color: #fff !important; /* Ensure text color is white */
     text-decoration: none;
     display: inline-block;
     text-align: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    outline: none; /* Remove the blue focus outline */
 }
 
 a.button-link:hover, button:hover {
-    background-color: var(--secondary-color);
+    background-color: rgba(0, 0, 0, 0.1); /* Subtle hover effect */
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    transform: translateY(-3px); /* Add a slight upward movement */
+}
+
+button, a.button-link {
+    outline: none; /* Remove the blue focus outline */
+}
+
+button:focus, a.button-link:focus {
+    outline: none; /* Ensure the blue focus outline is removed */
+    box-shadow: none; /* Remove any box-shadow that might be applied on focus */
+}
+
+/* New button styles */
+.new-button-style {
+    border: 2px solid var(--primary-color);
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease; /* Add transition for smooth hover effect */
+    color: var(--primary-color);
+    background-color: transparent !important; /* Ensure background is transparent */
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    outline: none; /* Remove the blue focus outline */
+}
+
+.new-button-style:hover {
+    background-color: var(--primary-color) !important; /* Change background color on hover */
+    color: var(--text-color-light) !important; /* Change text color on hover */
+    transform: translateY(-5px); /* Add slight upward movement on hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Add shadow effect on hover */
+}
+
+.dropdown {
+    display: none; /* Ensure dropdown is hidden initially */
+}
+
+.dropdown.show {
+    display: block; /* Show dropdown when 'show' class is added */
+}
+
+.dropdown-toggle {
+    cursor: pointer;
+}
+
+.hamburger-icon {
+    width: 25px;
+    height: 3px;
+    background-color: var(--text-color-dark);
+    margin: 5px 0;
+}
+
+@media (min-width: 768px) {
+    .dropdown-toggle {
+        display: none; /* Hide toggle for wider screens */
+    }
+    .dropdown {
+        display: none; /* Hide dropdown for wider screens */
+    }
+    .main-menu {
+        display: flex;
+    }
 }
