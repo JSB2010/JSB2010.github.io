@@ -16,34 +16,17 @@
 html, body {
     margin: 0;
     padding: 0;
-    /* ...existing code... */
-}
-
-html {
     scroll-behavior: smooth;
-}
-
-body {
     font-family: 'Arial', sans-serif;
     line-height: 1.4 !important; /* Make text more dense */
     font-size: 0.9em !important; /* Make text size smaller */
-    margin: 0 2px; /* Reduced padding */
     box-sizing: border-box;
     padding-top: 60px; /* Adjust this value based on the height of your header */
     transition: background-color 0.3s ease, color 0.3s ease, padding-top 0.3s ease;
 }
 
-/* Adjust padding based on screen width */
-@media (min-width: 768px) {
+@media (min-width: 768px), (min-width: 1024px) {
     body {
-        margin: 0 5px; /* Reduced padding */
-        padding-top: 60px; /* Adjust this value based on the height of your header */
-    }
-}
-
-@media (min-width: 1024px) {
-    body {
-        margin: 0 10px; /* Reduced padding */
         padding-top: 60px; /* Adjust this value based on the height of your header */
     }
 }
@@ -55,7 +38,7 @@ body {
         color: var(--text-color-light);
     }
 
-    nav ul li a, button:hover {
+    nav ul li a, button:hover, .footer-buttons a {
         color: var(--text-color-light);
     }
 
@@ -73,7 +56,7 @@ body {
         color: var(--secondary-color);
     }
 
-    .project {
+    .project, .login-container, .login-form {
         background-color: var(--background-color-light);
     }
 
@@ -88,7 +71,6 @@ body {
     }
 
     button {
-        color: var(--background-color-light);
         background-color: var(--primary-color);
         color: var(--text-color-light);
         transition: background-color 0.3s ease, color 0.3s ease;
@@ -132,7 +114,6 @@ body {
 
     .footer-buttons a {
         filter: none; /* Ensure icons are visible in light mode */
-        color: var(--text-color-light); /* Ensure text is visible in light mode */
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         width: 20px; /* Smaller size */
         height: 20px; /* Smaller size */
@@ -143,11 +124,6 @@ body {
         background-color: rgba(0, 0, 0, 0.1); /* Subtle hover effect */
         transform: scale(1.1);
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    }
-
-    .login-container, .login-form {
-        background-color: var(--background-color-light);
-        color: var(--text-color-light);
     }
 
     input, textarea {
@@ -163,7 +139,7 @@ body {
         color: var(--text-color-dark);
     }
 
-    nav ul li a, button:hover {
+    nav ul li a, button:hover, .footer-buttons a {
         color: var(--text-color-dark);
     }
 
@@ -213,7 +189,7 @@ body {
         /* Removed all styles */
     }
 
-    .project {
+    .project, .login-container, .login-form {
         background-color: var(--background-color-dark);
     }
 
@@ -228,7 +204,6 @@ body {
     }
 
     button {
-        color: var(--background-color-dark);
         background-color: var(--primary-color);
         color: var(--text-color-dark);
         transition: background-color 0.3s ease, color 0.3s ease;
@@ -284,11 +259,6 @@ body {
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
     }
 
-    .login-container, .login-form {
-        background-color: var(--background-color-dark);
-        color: var(--text-color-dark);
-    }
-
     input, textarea {
         background-color: rgba(0, 0, 0, 0.1);
         color: var(--text-color-dark);
@@ -324,14 +294,7 @@ header {
     margin: 0 calc(-1 * var(--body-margin-left));
 }
 
-@media (min-width: 768px) {
-    header {
-        padding: 0;
-        margin: 0 calc(-1 * var(--body-margin-left));
-    }
-}
-
-@media (min-width: 1024px) {
+@media (min-width: 768px), (min-width: 1024px) {
     header {
         padding: 0;
         margin: 0 calc(-1 * var(--body-margin-left));
@@ -445,20 +408,20 @@ nav ul li a:hover {
 
 /* Main Content */
 main {
-    padding-top: 60px;
-    padding: 0;
-    text-align: center; /* Center align the main content */
+    padding-top: 60px !important;
+    padding: 0 5px !important; /* Further reduced padding on the sides */
+    text-align: center !important; /* Center align the main content */
 }
 
 @media (min-width: 768px) {
     main {
-        padding: 0;
+        padding: 0 10px !important; /* Further reduced padding on the sides */
     }
 }
 
 @media (min-width: 1024px) {
     main {
-        padding: 0;
+        padding: 0 15px !important; /* Further reduced padding on the sides */
     }
 }
 
@@ -466,7 +429,7 @@ section {
     padding: 60px 20px;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 5px; /* Reduced padding */
+    padding: 0 10px; /* Reduced padding */
 }
 
 /* Home Section */
@@ -634,18 +597,37 @@ button:focus, a.button-link:focus {
 
 /* Projects Section */
 .project-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    padding: 20px; /* Add padding for better spacing */
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important; /* Dynamic columns based on screen size */
+    gap: 10px !important; /* Further reduced gap between cards */
+    padding: 0 !important; /* Remove padding */
+    margin: 0 !important; /* Remove margin */
+}
+
+.project-row {
+    display: contents !important; /* Use contents to allow grid items to be direct children of the grid container */
 }
 
 .project {
+    flex: 1 1 350px; /* Allow cards to grow and shrink, with a minimum width of 350px */
+    max-width: 400px; /* Set a maximum width */
+    height: auto; /* Allow height to adjust based on content */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Ensure content is spaced evenly */
+    align-items: center; /* Center align items */
+    padding: 20px; /* Reduce padding for better spacing */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
     border: 2px solid var(--primary-color); /* Add border to distinguish cards */
-    padding: 20px;
     border-radius: 10px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     animation: fadeIn 2s ease-in-out;
+}
+
+@media (min-width: 768px) {
+    .project-grid {
+        flex-direction: row;
+    }
 }
 
 .project:hover {
@@ -946,6 +928,7 @@ footer {
     }
     .card {
         max-width: 100%; /* Full width for smaller screens */
+        height: auto;
     }
 }
 
