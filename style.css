@@ -19,7 +19,7 @@ html, body {
     scroll-behavior: smooth;
     font-family: 'Arial', sans-serif;
     line-height: 1.4 !important; /* Make text more dense */
-    font-size: 0.9em !important; /* Make text size smaller */
+    font-size: 1em !important; /* Increase text size for better readability */
     box-sizing: border-box;
     padding-top: 60px; /* Adjust this value based on the height of your header */
     transition: background-color 0.3s ease, color 0.3s ease, padding-top 0.3s ease;
@@ -63,6 +63,7 @@ html, body {
     .project:hover {
         background-color: var(--primary-color);
         color: var(--text-color-dark);
+        transform: scale(1.05); /* Slightly enlarge on hover */
     }
 
     .project .tags span {
@@ -81,6 +82,7 @@ html, body {
         background-color: var(--secondary-color);
         color: var(--text-color-dark);
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        transform: translateY(-3px); /* Add a slight upward movement */
     }
 
     .new-button-style {
@@ -195,7 +197,8 @@ html, body {
 
     .project:hover {
         background-color: var(--primary-color);
-        color: var(--text-color-dark);
+        color: var (--text-color-dark);
+        transform: scale(1.05); /* Slightly enlarge on hover */
     }
 
     .project .tags span {
@@ -214,6 +217,7 @@ html, body {
         background-color: var(--secondary-color);
         color: var(--text-color-light);
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        transform: translateY(-3px); /* Add a slight upward movement */
     }
 
     .new-button-style {
@@ -262,6 +266,10 @@ html, body {
     input, textarea {
         background-color: rgba(0, 0, 0, 0.1);
         color: var(--text-color-dark);
+    }
+
+    img {
+        filter: invert(1) hue-rotate(180deg);
     }
 }
 
@@ -335,7 +343,7 @@ nav ul li a:hover {
     background-color: var(--background-color-light);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 5px;
-    z-index: 1001;
+    z-index: 2000; /* Ensure it appears above other elements */
     opacity: 0; /* Start hidden */
     transform: translateY(-10px); /* Start slightly above */
     transition: opacity 0.3s ease, transform 0.3s ease; /* Smooth transition */
@@ -578,7 +586,7 @@ button {
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
     margin-top: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     outline: none; /* Remove the blue focus outline */
@@ -597,11 +605,9 @@ button:focus, a.button-link:focus {
 
 /* Projects Section */
 .project-grid {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important; /* Dynamic columns based on screen size */
-    gap: 10px !important; /* Further reduced gap between cards */
-    padding: 0 !important; /* Remove padding */
-    margin: 0 !important; /* Remove margin */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
 }
 
 .project-row {
@@ -620,7 +626,7 @@ button:focus, a.button-link:focus {
     box-sizing: border-box; /* Include padding and border in the element's total width and height */
     border: 2px solid var(--primary-color); /* Add border to distinguish cards */
     border-radius: 10px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease; /* Add transition for smooth hover effect */
     animation: fadeIn 2s ease-in-out;
 }
 
@@ -1032,7 +1038,7 @@ a.button-link, button {
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease; /* Add transition for smooth hover effect */
     color: #fff !important; /* Ensure text color is white */
     text-decoration: none;
     display: inline-block;
@@ -1081,12 +1087,13 @@ button:focus, a.button-link:focus {
 .new-button-style:hover {
     background-color: var(--primary-color) !important; /* Change background color on hover */
     color: var(--text-color-light) !important; /* Change text color on hover */
-    transform: translateY(-5px); /* Add slight upward movement on hover */
+    transform: translateY(-5px) scale(1.05); /* Add slight upward movement and enlarge on hover */
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Add shadow effect on hover */
 }
 
 .dropdown {
     display: none; /* Ensure dropdown is hidden initially */
+    z-index: 2000; /* Ensure it appears above other elements */
 }
 
 .dropdown.show {
@@ -1114,4 +1121,46 @@ button:focus, a.button-link:focus {
     .main-menu {
         display: flex;
     }
+}
+
+/* Contact Form */
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    max-width: 500px;
+    margin: 0 auto;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.contact-form input, .contact-form textarea {
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid var(--primary-color);
+}
+
+.contact-form button {
+    background-color: var(--primary-color);
+    color: var(--text-color-light);
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.contact-form button:hover {
+    background-color: var(--secondary-color);
+}
+
+.thank-you-message {
+    display: none;
+    text-align: center;
+    font-size: 1.5em;
+    color: var(--primary-color);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+img {
+    transition: filter 0.3s ease;
 }
