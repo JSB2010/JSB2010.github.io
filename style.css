@@ -11,6 +11,11 @@
     --heading1-color: #4a9cd3; /* Slightly different shade of blue for h1 */
     --heading2-color: #4390c0; /* Slightly different shade of blue for h2 */
     --heading3-color: #3c84ad; /* Slightly different shade of blue for h3 */
+    --nav-height: 70px;
+    --transition-speed: 0.3s;
+    --border-radius: 8px;
+    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --hover-transform: translateY(-3px);
 }
 
 html, body {
@@ -523,16 +528,16 @@ section {
 /* Interests list styles */
 .interests li {
     display: flex;
-    flex-direction: column; /* Stack items vertically */
-    align-items: flex-start; /* Align items to the start */
-    padding: 15px; /* Adjust padding */
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 12px;
     border-radius: 10px;
     background-color: rgba(0, 0, 0, 0.05);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    gap: 15px; /* Adjust gap */
-    text-align: left; /* Align text to the left */
-    font-size: 1em; /* Increase text size */
+    gap: 10px;
+    text-align: left;
+    font-size: 0.9em;
 }
 
 .interests li:hover {
@@ -543,18 +548,43 @@ section {
 .interests h3 {
     color: var(--heading3-color);
     margin: 0;
-    width: 100%; /* Ensure title takes full width */
-    text-align: left; /* Align title to the left */
-    font-size: 1.2em; /* Increase text size */
+    width: 100%;
+    text-align: left;
+    font-size: 1.1em;
+    margin-bottom: 5px;
 }
 
 .interests p {
-    flex: 1; /* Allow the description to take up available space */
-    margin: 0; /* Remove margin to prevent overlap */
+    flex: 1;
+    margin: 0;
     text-align: justify;
-    letter-spacing: 0.5px; /* Reduce spacing between words */
-    font-size: 1em; /* Increase text size */
-    width: 100%; /* Ensure description takes full width */
+    letter-spacing: 0.2px;
+    font-size: 0.95em;
+    width: 100%;
+    line-height: 1.4;
+    word-spacing: normal; /* Control word spacing */
+}
+
+/* Add specific styling for paragraphs containing links */
+.interests p a.hyperlink {
+    display: inline; /* Ensure the link flows with the text */
+    line-height: inherit; /* Inherit the line height from the paragraph */
+    word-spacing: normal; /* Reset any word spacing */
+    vertical-align: baseline; /* Align with the text baseline */
+}
+
+/* Ensure consistent spacing around links */
+.interests p a.hyperlink::before,
+.interests p a.hyperlink::after {
+    content: " "; /* Add a single space before and after the link */
+    white-space: normal; /* Allow normal word wrapping */
+}
+
+.interests li a.button-link {
+    padding: 8px 16px;
+    font-size: 0.9em;
+    margin-top: 5px;
+    align-self: flex-start;
 }
 
 .interests li a {
@@ -1063,32 +1093,28 @@ button:focus, a.button-link:focus {
 
 /* New button styles */
 .new-button-style {
-    border: 2px solid var(--primary-color);
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease; /* Add transition for smooth hover effect */
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 2rem;
+    height: 100%;
+    width: 100%;
     color: var(--primary-color);
-    background-color: transparent !important; /* Ensure background is transparent */
     text-decoration: none;
-    display: inline-block;
-    text-align: center;
-    outline: none; /* Remove the blue focus outline */
-    width: 100%; /* Ensure button takes full width of the card */
-    height: 100%; /* Ensure button takes full height of the card */
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Ensure content is spaced evenly */
-    align-items: center; /* Center align items */
-    padding: 10px; /* Reduce padding for better spacing */
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    transition: all var(--transition-speed) ease;
 }
 
 .new-button-style:hover {
-    background-color: var(--primary-color) !important; /* Change background color on hover */
-    color: var(--text-color-light) !important; /* Change text color on hover */
-    transform: translateY(-5px) scale(1.05); /* Add slight upward movement and enlarge on hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Add shadow effect on hover */
+    background-color: var(--primary-color) !important;
+    color: var(--text-color-light) !important;
+    transform: var(--hover-transform) scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 .dropdown {
@@ -1163,4 +1189,180 @@ button:focus, a.button-link:focus {
 
 img {
     transition: filter 0.3s ease;
+}
+
+/* Header & Navigation improvements */
+.main-nav {
+    height: var(--nav-height);
+    display: flex;
+    align-items: center;
+    padding: 0 2rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    box-shadow: var(--box-shadow);
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    text-decoration: none;
+    margin-right: auto;
+}
+
+.main-nav i {
+    margin-right: 0.5rem;
+    font-size: 1.1em;
+}
+
+/* Card improvements */
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    padding: 2rem;
+}
+
+.new-button-style {
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 2rem;
+    height: 100%;
+    transition: all var(--transition-speed) ease;
+}
+
+.new-button-style:hover {
+    transform: var(--hover-transform);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Project card improvements */
+.project {
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 2rem;
+    transition: all var(--transition-speed) ease;
+}
+
+.project:hover {
+    transform: var(--hover-transform);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Contact form improvements */
+.contact-form {
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
+
+.contact-form input,
+.contact-form textarea {
+    border: 2px solid transparent;
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    transition: all var(--transition-speed) ease;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+/* Dark mode improvements */
+@media (prefers-color-scheme: dark) {
+    .new-button-style,
+    .project,
+    .contact-form {
+        background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+    }
+    
+    .main-nav {
+        background: rgba(26, 26, 26, 0.8);
+    }
+}
+
+/* Loading animation */
+.loading-animation {
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    position: fixed;
+    top: var(--nav-height);
+    left: 0;
+    animation: loading 2s infinite;
+}
+
+@keyframes loading {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: var(--nav-height);
+}
+
+/* Add these styles for the new navigation structure */
+.nav-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 2rem;
+}
+
+@media (max-width: 768px) {
+    .nav-menu {
+        display: none;
+        position: absolute;
+        top: var(--nav-height);
+        left: 0;
+        right: 0;
+        background: var(--background-color-light);
+        padding: 1rem;
+        flex-direction: column;
+        box-shadow: var(--box-shadow);
+    }
+
+    .nav-menu.show {
+        display: flex;
+    }
+
+    .dropdown-toggle {
+        display: block;
+    }
+}
+
+@media (min-width: 769px) {
+    .dropdown-toggle {
+        display: none;
+    }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+    .nav-menu {
+        background: var(--background-color-dark);
+    }
+}
+
+.content-main {
+    text-align: left;
+}
+
+#back-to-top {
+    /* Ensure contrast meets accessibility standards */
+    background-color: #333;
+    color: white;
 }

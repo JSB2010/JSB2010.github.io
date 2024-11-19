@@ -9,6 +9,7 @@
     <meta name="description" content="Explore Jacob Barkin's portfolio, projects, and contact details. A dedicated app developer and financial education advocate.">
 </head>
 <body>
+    <div class="loading-animation"></div>
     <header id="header" role="banner"></header>
     <main class="content-main" role="main">
         <div class="main-header">
@@ -32,14 +33,14 @@
             </div>
             <div>
                 <a href="contact.html" class="new-button-style">
-                    <i class="fas fa-envelope"></i>
+                    <i class="fas fa-briefcase"></i>
                     <h2>My Work</h2>
                     <p>Find out what I am up to</p>
                 </a>
             </div>
             <div>
-                <a href="https://www.askthekidz.com" class="new-button-style">
-                    <i class="fas fa-envelope"></i>
+                <a href="https://www.askthekidz.com" target="_blank" rel="noopener" class="new-button-style">
+                    <i class="fas fa-external-link-alt"></i>
                     <h2>Ask The Kidz</h2>
                     <p>Discover my business</p>
                 </a>
@@ -102,6 +103,10 @@
         backToTopButton.addEventListener('click', function() {
             document.body.scrollTop = 0;
             document.documentElement.scrollTop = 0;
+        });
+
+        window.addEventListener('load', function() {
+            document.querySelector('.loading-animation').style.display = 'none';
         });
     </script>
 </body>
