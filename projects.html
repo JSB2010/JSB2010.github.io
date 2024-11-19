@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jacob Barkin - My Projects</title>
     <link rel="stylesheet" href="style.css">
+    <meta name="description" content="Explore Jacob Barkin's portfolio, projects, and contact details. A dedicated app developer and financial education advocate.">
 </head>
 <body>
     <div id="header"></div>
@@ -16,7 +17,7 @@
             <div class="project-row">
                 <div class="project">
                     <h3>MacBook Revitalization</h3>
-                    <p>Multi-booted a 2010 MacBook Pro all MacOS versions between 10.7 and 12.0, even offically unsupported versions</p>
+                    <p>Multi-booted a 2010 MacBook Pro all MacOS versions between 10.7 and 12.0, even officially unsupported versions</p>
                     <div class="tags">
                         <span>MacOS</span>
                         <span>CLI Interface</span>
@@ -37,19 +38,19 @@
                     <p>Created a retrofit kit for dial lockers that bypasses the traditional lock and uses a Fingerprint sensor to detect the correct user and open the locker</p>
                     <div class="tags">
                         <span>Arduino</span>
-                        <span>Hardware/Sfotware Integration</span>
-                        <span>Soddering and Wire Minipulation</span>
+                        <span>Hardware/Software Integration</span>
+                        <span>Soldering and Wire Manipulation</span>
                         <span>Secure/Protected Systems</span>
                     </div>
                     <a href="project-details.html" class="button-link">Learn More</a>
                 </div>
                 <div class="project">
                     <h3>Self Hosted Raspberry Pi</h3>
-                    <p>Using a Raspberry Pi 5, I am hosting my own VPN, music streaming service, AdBlock, and more</p>
+                    <p>Using a Raspberry Pi 5, I am hosting my own VPN, music streaming service, AdBlock, and more.</p>
                     <div class="tags">
                         <span>Arduino</span>
-                        <span>Hardware/Sfotware Integration</span>
-                        <span>Soddering and Wire Minipulation</span>
+                        <span>Hardware/Software Integration</span>
+                        <span>Soldering and Wire Manipulation</span>
                         <span>Secure/Protected Systems</span>
                     </div>
                     <a href="project-details.html" class="button-link">Learn More</a>
@@ -70,21 +71,21 @@
                         <span>Web Hosting</span>
                         <span>GitHub Pages</span>
                     </div>
-                    <a href="https://github.com/JSB2010/JSB2010.github.io" target="_blank" class="button-link">Learn More</a>
+                    <a href="https://github.com/JSB2010/JSB2010.github.io" target="_blank" rel="noopener" class="button-link">Learn More</a>
                 </div>
                 <div class="project">
                     <h3>Horrorscope</h3>
-                    <p>An app that makes fun of hororscpes, gives you a random message</p>
+                    <p>An app that makes fun of horoscopes, gives you a random message.</p>
                     <div class="tags">
                         <span>Python</span>
                         <span>GUI Creation</span>
                         <span>App Development</span>
                     </div>
-                    <a href="https://github.com/JSB2010/horrorscope" target="_blank" class="button-link">Learn More</a>
+                    <a href="https://github.com/JSB2010/horrorscope" target="_blank" rel="noopener" class="button-link">Learn More</a>
                 </div>
                 <div class="project">
                     <h3>Kent Denver Schedule</h3>
-                    <p>An app that students can input their classes and view their schedule for the day</p>
+                    <p>An app that students can input their classes and view their schedule for the day.</p>
                     <div class="tags">
                         <span>Python</span>
                         <span>GUI Creation</span>
@@ -97,18 +98,38 @@
         </div>
     </main>
     <div id="footer"></div>
+    <button id="back-to-top" title="Back to top">↑</button>
     <script>
         async function loadContent() {
-            const headerResponse = await fetch('header.html');
-            const headerData = await headerResponse.text();
-            document.getElementById('header').innerHTML = headerData;
+            try {
+                const headerResponse = await fetch('header.html');
+                if (!headerResponse.ok) throw new Error('Header not found');
+                document.getElementById('header').innerHTML = await headerResponse.text();
 
-            const footerResponse = await fetch('footer.html');
-            const footerData = await footerResponse.text();
-            document.getElementById('footer').innerHTML = footerData;
+                const footerResponse = await fetch('footer.html');
+                if (!footerResponse.ok) throw new Error('Footer not found');
+                document.getElementById('footer').innerHTML = await footerResponse.text();
+            } catch (error) {
+                console.error('Error loading content:', error);
+            }
         }
 
         loadContent();
+
+        // Back to top button functionality
+        const backToTopButton = document.getElementById('back-to-top');
+        window.onscroll = function() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                backToTopButton.style.display = "block";
+            } else {
+                backToTopButton.style.display = "none";
+            }
+        };
+
+        backToTopButton.addEventListener('click', function() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        });
     </script>
 </body>
 </html>
