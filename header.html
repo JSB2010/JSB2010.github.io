@@ -18,15 +18,46 @@
         document.addEventListener('DOMContentLoaded', function() {
             const dropdownToggle = document.querySelector('.dropdown-toggle');
             const navMenu = document.querySelector('.nav-menu');
+            let isMenuOpen = false;
 
-            dropdownToggle.addEventListener('click', function() {
+            function toggleMenu() {
+                isMenuOpen = !isMenuOpen;
                 navMenu.classList.toggle('show');
+                dropdownToggle.classList.toggle('active');
+            }
+
+            function closeMenu() {
+                if (isMenuOpen) {
+                    isMenuOpen = false;
+                    navMenu.classList.remove('show');
+                    dropdownToggle.classList.remove('active');
+                }
+            }
+
+            // Toggle menu when hamburger is clicked
+            dropdownToggle.addEventListener('click', function(event) {
+                event.stopPropagation();
+                toggleMenu();
             });
 
             // Close menu when clicking outside
             document.addEventListener('click', function(event) {
                 if (!navMenu.contains(event.target) && !dropdownToggle.contains(event.target)) {
-                    navMenu.classList.remove('show');
+                    closeMenu();
+                }
+            });
+
+            // Close menu when window is resized above mobile breakpoint
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    closeMenu();
+                }
+            });
+
+            // Close menu when a link is clicked
+            navMenu.addEventListener('click', function(event) {
+                if (event.target.tagName === 'A') {
+                    closeMenu();
                 }
             });
         });
