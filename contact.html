@@ -3,103 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Me</title>
+    <title>Contact Me | Jacob Barkin</title>
     <link rel="stylesheet" href="style.css">
-    <meta name="description" content="Explore Jacob Barkin's portfolio, projects, and contact details. A dedicated app developer and financial education advocate.">
+    <meta name="description" content="Get in touch with Jacob Barkin. Send a message about app development, financial education, or collaboration opportunities.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Preload critical resources -->
+    <link rel="preload" href="header.html" as="fetch" crossorigin="anonymous">
+    <link rel="preload" href="footer.html" as="fetch" crossorigin="anonymous">
 </head>
 <body>
-    <header>
-        <nav class="main-nav">
-            <div class="dropdown-toggle">
-                <div class="hamburger-icon"></div>
-                <div class="hamburger-icon"></div>
-                <div class="hamburger-icon"></div>
-            </div>
-            <div class="dropdown">
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="about.html">About Me</a></li>
-                    <li><a href="projects.html">My Projects</a></li>
-                    <li><a href="contact.html">Contact</a></li>
-                    <li><a href="https://www.askthekidz.com">Ask The Kidz</a></li>
-                </ul>
-            </div>
-            <ul class="main-menu">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="about.html">About Me</a></li>
-                <li><a href="projects.html">My Projects</a></li>
-                <li><a href="contact.html">Contact</a></li>
-                <li><a href="https://www.askthekidz.com">Ask The Kidz</a></li>
-            </ul>
-        </nav>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const dropdownToggle = document.querySelector('.dropdown-toggle');
-                const dropdown = document.querySelector('.dropdown');
-
-                dropdownToggle.addEventListener('click', function(event) {
-                    event.stopPropagation();
-                    dropdown.classList.toggle('show');
-                });
-
-                // Close dropdown when clicking outside
-                document.addEventListener('click', function(event) {
-                    if (!dropdown.contains(event.target) && !dropdownToggle.contains(event.target)) {
-                        dropdown.classList.remove('show');
-                    }
-                });
-
-                // Prevent dropdown from closing when clicking inside
-                dropdown.addEventListener('click', function(event) {
-                    event.stopPropagation();
-                });
-
-                // Ensure dropdown is not opened at page load
-                dropdown.classList.remove('show');
-            });
-        </script>
-    </header>
+    <div id="header"></div>
     <main class="content-main" role="main">
         <section id="contact">
-            <h1>Contact Me</h1>
-            <form class="contact-form" id="contactForm">
-                <input type="text" id="name" name="name" placeholder="Your Name" required>
-                <input type="email" id="email" name="email" placeholder="Your Email" required>
-                <textarea id="message" name="message" placeholder="Your Message" rows="5" required></textarea>
-                <button type="submit">Send Message</button>
-            </form>
+            <h1>Get in Touch</h1>
+            <p class="contact-intro">I'd love to hear from you! Whether you have a question about my projects, want to collaborate, or just want to say hello.</p>
+            
+            <div class="contact-container">
+                <div class="contact-info">
+                    <div class="contact-method">
+                        <i class="fas fa-envelope"></i>
+                        <h3>Email</h3>
+                        <p>jacobbarkin@gmail.com</p>
+                    </div>
+                    <div class="contact-method">
+                        <i class="fab fa-linkedin"></i>
+                        <h3>LinkedIn</h3>
+                        <p>Connect with me professionally</p>
+                    </div>
+                    <div class="contact-method">
+                        <i class="fab fa-github"></i>
+                        <h3>GitHub</h3>
+                        <p>Check out my code</p>
+                    </div>
+                </div>
+
+                <form class="contact-form" id="contactForm">
+                    <div class="form-group">
+                        <label for="name" class="visually-hidden">Your Name</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="name" name="name" placeholder="Your Name" required 
+                                   aria-label="Your Name">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" class="visually-hidden">Your Email</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="email" name="email" placeholder="Your Email" required 
+                                   aria-label="Your Email">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message" class="visually-hidden">Your Message</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-comment"></i>
+                            <textarea id="message" name="message" placeholder="Your Message" rows="5" required 
+                                      aria-label="Your Message"></textarea>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-button">
+                        <span class="button-text">Send Message</span>
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+
+            <div class="thank-you-overlay" id="thankYouOverlay"></div>
             <div class="thank-you-message" id="thankYouMessage">
-                Thank you for your message!
+                <button class="close-button" id="closeThankYou" aria-label="Close message">×</button>
+                <i class="fas fa-check-circle"></i>
+                <h2>Thank You!</h2>
+                <p>Your message has been sent successfully. I'll get back to you soon.</p>
             </div>
         </section>
     </main>
-    <footer class="main-footer">
-        <p>Created by Jacob Barkin</p>
-        <div class="footer-buttons">
-            <a href="mailto:jacobbarkin@gmail.com" class="email" aria-label="Email Jacob Barkin"></a>
-            <a href="https://www.linkedin.com/in/jacobbarkin" target="_blank" rel="noopener" class="linkedin" aria-label="LinkedIn Profile"></a>
-            <a href="https://github.com/JSB2010" target="_blank" rel="noopener" class="github" aria-label="GitHub Profile"></a>
-        </div>
-    </footer>
-    <button id="back-to-top" title="Back to top">↑</button>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+    <div id="footer"></div>
+    <button id="back-to-top" title="Back to top" aria-label="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
     <script>
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyCq0bLMaYXauUSZ5uH5yonPGJ2hhjlXphQ",
-            authDomain: "jacobbarkin-28a4e.firebaseapp.com",
-            projectId: "jacobbarkin-28a4e",
-            storageBucket: "jacobbarkin-28a4e.firebasestorage.app",
-            messagingSenderId: "819884367497",
-            appId: "1:819884367497:web:498b2e5ad8f1fc03897058",
-            measurementId: "G-MTPDVWEBY2"
-        };
-
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
         async function loadContent() {
             try {
                 const headerResponse = await fetch('header.html');
@@ -131,44 +118,88 @@
             document.documentElement.scrollTop = 0;
         });
     </script>
-    <script>
-        document.getElementById('contactForm').addEventListener('submit', function(event) {
+
+    <script type="module">
+        // Import Firebase functions
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js';
+        import { getFirestore, collection, addDoc } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCq0bLMaYXauUSZ5uH5yonPGJ2hhjlXphQ",
+            authDomain: "jacobbarkin-28a4e.firebaseapp.com",
+            projectId: "jacobbarkin-28a4e",
+            storageBucket: "jacobbarkin-28a4e.firebasestorage.app",
+            messagingSenderId: "819884367497",
+            appId: "1:819884367497:web:498b2e5ad8f1fc03897058",
+            measurementId: "G-MTPDVWEBY2"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Form submission handler
+        document.getElementById('contactForm').addEventListener('submit', async function(event) {
             event.preventDefault();
 
             const name = document.getElementById('name').value.trim();
             const email = document.getElementById('email').value.trim();
             const message = document.getElementById('message').value.trim();
 
-            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
+            // Basic validation
             if (!name || !email || !message) {
                 alert('Please fill out all fields.');
                 return;
             }
 
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             if (!emailPattern.test(email)) {
                 alert('Please enter a valid email address.');
                 return;
             }
 
-            // Proceed with Firebase logic
-            db.collection('messages').add({
-                name: name,
-                email: email,
-                message: message,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-            }).then(() => {
-                document.getElementById('contactForm').style.opacity = '0';
-                document.getElementById('contactForm').style.transform = 'scale(0.9)';
-                setTimeout(() => {
-                    document.getElementById('contactForm').style.display = 'none';
-                    document.getElementById('thankYouMessage').style.display = 'block';
-                    document.getElementById('thankYouMessage').style.opacity = '1';
-                    document.getElementById('thankYouMessage').style.transform = 'scale(1)';
-                }, 500);
-            }).catch((error) => {
-                console.error('Error adding message: ', error);
-            });
+            try {
+                // Add document to Firestore
+                await addDoc(collection(db, 'messages'), {
+                    name: name,
+                    email: email,
+                    message: message,
+                    timestamp: new Date()
+                });
+
+                // Show thank you message
+                const thankYouMessage = document.getElementById('thankYouMessage');
+                const thankYouOverlay = document.getElementById('thankYouOverlay');
+                
+                thankYouOverlay.classList.add('show');
+                thankYouMessage.classList.add('show');
+                
+                // Clear form
+                event.target.reset();
+
+            } catch (error) {
+                console.error('Error submitting form:', error);
+                alert('There was an error submitting your message. Please try again.');
+            }
+        });
+
+        // Close button functionality
+        document.getElementById('closeThankYou').addEventListener('click', function() {
+            const thankYouMessage = document.getElementById('thankYouMessage');
+            const thankYouOverlay = document.getElementById('thankYouOverlay');
+            
+            thankYouMessage.classList.remove('show');
+            thankYouOverlay.classList.remove('show');
+        });
+
+        // Close on overlay click
+        document.getElementById('thankYouOverlay').addEventListener('click', function() {
+            const thankYouMessage = document.getElementById('thankYouMessage');
+            const thankYouOverlay = document.getElementById('thankYouOverlay');
+            
+            thankYouMessage.classList.remove('show');
+            thankYouOverlay.classList.remove('show');
         });
     </script>
 </body>
