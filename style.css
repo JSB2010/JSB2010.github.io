@@ -269,7 +269,7 @@ html, body {
     }
 
     img {
-        filter: invert(1) hue-rotate(180deg);
+        filter: none; /* Remove inversion filter */
     }
 }
 
