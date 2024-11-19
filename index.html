@@ -6,6 +6,7 @@
     <title>Jacob Barkin - Home</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+    <meta name="description" content="Explore Jacob Barkin's portfolio, projects, and contact details. A dedicated app developer and financial education advocate.">
 </head>
 <body>
     <header id="header" role="banner"></header>
@@ -53,15 +54,20 @@
         </div>
     </main>
     <footer id="footer" role="contentinfo"></footer>
+    <button id="back-to-top" title="Back to top">↑</button>
     <script>
         async function loadContent() {
-            const headerResponse = await fetch('header.html');
-            const headerData = await headerResponse.text();
-            document.getElementById('header').innerHTML = headerData;
+            try {
+                const headerResponse = await fetch('header.html');
+                if (!headerResponse.ok) throw new Error('Header not found');
+                document.getElementById('header').innerHTML = await headerResponse.text();
 
-            const footerResponse = await fetch('footer.html');
-            const footerData = await footerResponse.text();
-            document.getElementById('footer').innerHTML = footerData;
+                const footerResponse = await fetch('footer.html');
+                if (!footerResponse.ok) throw new Error('Footer not found');
+                document.getElementById('footer').innerHTML = await footerResponse.text();
+            } catch (error) {
+                console.error('Error loading content:', error);
+            }
         }
 
         loadContent().then(() => {
@@ -81,6 +87,21 @@
             }
 
             greetingElement.textContent = greeting;
+        });
+
+        // Back to top button functionality
+        const backToTopButton = document.getElementById('back-to-top');
+        window.onscroll = function() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                backToTopButton.style.display = "block";
+            } else {
+                backToTopButton.style.display = "none";
+            }
+        };
+
+        backToTopButton.addEventListener('click', function() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
         });
     </script>
 </body>

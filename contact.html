@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Me</title>
+    <link rel="stylesheet" href="style.css">
+    <meta name="description" content="Explore Jacob Barkin's portfolio, projects, and contact details. A dedicated app developer and financial education advocate.">
+</head>
+<body>
+    <header>
+        <nav class="main-nav">
+            <div class="dropdown-toggle">
+                <div class="hamburger-icon"></div>
+                <div class="hamburger-icon"></div>
+                <div class="hamburger-icon"></div>
+            </div>
+            <div class="dropdown">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About Me</a></li>
+                    <li><a href="projects.html">My Projects</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="https://www.askthekidz.com">Ask The Kidz</a></li>
+                </ul>
+            </div>
+            <ul class="main-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About Me</a></li>
+                <li><a href="projects.html">My Projects</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="https://www.askthekidz.com">Ask The Kidz</a></li>
+            </ul>
+        </nav>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const dropdownToggle = document.querySelector('.dropdown-toggle');
+                const dropdown = document.querySelector('.dropdown');
+
+                dropdownToggle.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                    dropdown.classList.toggle('show');
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (!dropdown.contains(event.target) && !dropdownToggle.contains(event.target)) {
+                        dropdown.classList.remove('show');
+                    }
+                });
+
+                // Prevent dropdown from closing when clicking inside
+                dropdown.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                });
+
+                // Ensure dropdown is not opened at page load
+                dropdown.classList.remove('show');
+            });
+        </script>
+    </header>
+    <main class="content-main" role="main">
+        <section id="contact">
+            <h1>Contact Me</h1>
+            <form class="contact-form" id="contactForm">
+                <input type="text" id="name" name="name" placeholder="Your Name" required>
+                <input type="email" id="email" name="email" placeholder="Your Email" required>
+                <textarea id="message" name="message" placeholder="Your Message" rows="5" required></textarea>
+                <button type="submit">Send Message</button>
+            </form>
+            <div class="thank-you-message" id="thankYouMessage">
+                Thank you for your message!
+            </div>
+        </section>
+    </main>
+    <footer class="main-footer">
+        <p>Created by Jacob Barkin</p>
+        <div class="footer-buttons">
+            <a href="mailto:jacobbarkin@gmail.com" class="email" aria-label="Email Jacob Barkin"></a>
+            <a href="https://www.linkedin.com/in/jacobbarkin" target="_blank" class="linkedin" aria-label="LinkedIn Profile"></a>
+            <a href="https://github.com/JSB2010" target="_blank" class="github" aria-label="GitHub Profile"></a>
+        </div>
+    </footer>
+    <button id="back-to-top" title="Back to top">↑</button>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCq0bLMaYXauUSZ5uH5yonPGJ2hhjlXphQ",
+            authDomain: "jacobbarkin-28a4e.firebaseapp.com",
+            projectId: "jacobbarkin-28a4e",
+            storageBucket: "jacobbarkin-28a4e.firebasestorage.app",
+            messagingSenderId: "819884367497",
+            appId: "1:819884367497:web:498b2e5ad8f1fc03897058",
+            measurementId: "G-MTPDVWEBY2"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        async function loadContent() {
+            try {
+                const headerResponse = await fetch('header.html');
+                if (!headerResponse.ok) throw new Error('Header not found');
+                document.getElementById('header').innerHTML = await headerResponse.text();
+
+                const footerResponse = await fetch('footer.html');
+                if (!footerResponse.ok) throw new Error('Footer not found');
+                document.getElementById('footer').innerHTML = await footerResponse.text();
+            } catch (error) {
+                console.error('Error loading content:', error);
+            }
+        }
+
+        loadContent();
+
+        // Back to top button functionality
+        const backToTopButton = document.getElementById('back-to-top');
+        window.onscroll = function() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                backToTopButton.style.display = "block";
+            } else {
+                backToTopButton.style.display = "none";
+            }
+        };
+
+        backToTopButton.addEventListener('click', function() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        });
+    </script>
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const message = document.getElementById('message').value.trim();
+
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+            if (!name || !email || !message) {
+                alert('Please fill out all fields.');
+                return;
+            }
+
+            if (!emailPattern.test(email)) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+
+            // Proceed with Firebase logic
+            db.collection('messages').add({
+                name: name,
+                email: email,
+                message: message,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            }).then(() => {
+                document.getElementById('contactForm').style.opacity = '0';
+                document.getElementById('contactForm').style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    document.getElementById('contactForm').style.display = 'none';
+                    document.getElementById('thankYouMessage').style.display = 'block';
+                    document.getElementById('thankYouMessage').style.opacity = '1';
+                    document.getElementById('thankYouMessage').style.transform = 'scale(1)';
+                }, 500);
+            }).catch((error) => {
+                console.error('Error adding message: ', error);
+            });
+        });
+    </script>
+</body>
+</html>
