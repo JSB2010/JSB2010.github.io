@@ -165,7 +165,7 @@
                 const docId = `${timestamp.getTime()}_${name.replace(/\s+/g, '_')}`;
 
                 // Add document to Firestore with custom ID
-                await addDoc(collection(db, 'messages'), {
+                await addDoc(collection(db, 'mail'), {
                     id: docId,
                     name: name,
                     email: email,

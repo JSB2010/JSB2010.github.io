@@ -467,24 +467,57 @@ section {
 
 .card-container {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 2rem;
     padding: 2rem;
-    max-width: 1400px;
+    max-width: 1800px;
     margin: 0 auto;
+    justify-items: center;
 }
 
-@media (max-width: 1200px) {
+/* Add this to ensure cards are a consistent width */
+.card-container > div {
+    width: 250px; /* Fixed width for each card */
+    margin: 0 auto; /* Center cards within their grid cells */
+}
+
+/* Use auto-fit instead of fixed column counts to allow natural flow */
+@media (min-width: 1600px) {
     .card-container {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(auto-fit, 250px); /* Fixed width columns */
+        justify-content: center; /* Center the entire grid */
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1599px) {
+    .card-container {
+        grid-template-columns: repeat(auto-fit, 250px);
+        justify-content: center;
+    }
+}
+
+@media (max-width: 900px) {
+    .card-container {
+        grid-template-columns: repeat(auto-fit, 250px);
+        justify-content: center;
+    }
+}
+
+@media (max-width: 600px) {
     .card-container {
         grid-template-columns: 1fr;
-        padding: 1rem;
+        max-width: 400px;
     }
+    
+    .card-container > div {
+        width: 100%; /* Full width on mobile */
+    }
+}
+
+.card-container::after {
+    content: '';
+    grid-column: 1 / -1;
+    height: 0;
 }
 
 .card-container div {
