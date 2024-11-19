@@ -1799,3 +1799,112 @@ html {
         width: 1.5em; /* Slightly wider on mobile for better touch targets */
     }
 }
+
+/* Contact Form Dark Mode Improvements */
+@media (prefers-color-scheme: dark) {
+    .contact-method {
+        background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .contact-form {
+        background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-color-dark);
+    }
+
+    .contact-form input:focus,
+    .contact-form textarea:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 5px rgba(81, 170, 230, 0.3);
+    }
+
+    .contact-form input::placeholder,
+    .contact-form textarea::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .thank-you-message {
+        background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-color-dark);
+    }
+
+    .contact-method i {
+        color: var(--primary-color);
+    }
+
+    .contact-method h3 {
+        color: var(--text-color-dark);
+    }
+
+    .contact-method p {
+        color: var(--text-color-dark);
+    }
+
+    .contact-intro {
+        color: var(--text-color-dark);
+    }
+
+    #contact h1 {
+        color: var(--text-color-dark);
+    }
+
+    .input-with-icon i {
+        color: var(--primary-color);
+    }
+
+    .submit-button {
+        background-color: var(--primary-color);
+        color: var(--text-color-dark);
+    }
+
+    .submit-button:hover {
+        background-color: var(--secondary-color);
+    }
+
+    .close-button {
+        color: var(--text-color-dark);
+    }
+
+    .thank-you-message i.fa-check-circle {
+        color: var(--primary-color);
+    }
+
+    .thank-you-message h2 {
+        color: var(--text-color-dark);
+    }
+
+    .thank-you-message p {
+        color: var(--text-color-dark);
+    }
+}
+
+/* Add these styles outside the media query for better input icon positioning */
+.input-with-icon {
+    position: relative;
+}
+
+.input-with-icon i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.input-with-icon input,
+.input-with-icon textarea {
+    padding-left: 40px;
+}
+
+.input-with-icon textarea + i {
+    top: 25px;
+    transform: none;
+}
