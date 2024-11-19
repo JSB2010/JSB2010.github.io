@@ -6,11 +6,11 @@
     <title>Public Transportation - Learn More</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <meta name="description" content="Explore Jacob Barkin's portfolio, projects, and contact details. A dedicated app developer and financial education advocate.">
+    <meta name="description" content="Learn about public transportation research and improvements in Colorado, including comprehensive analysis and community engagement initiatives.">
 </head>
 <body>
-    <div id="header"></div>
-    <main class="content-main" style="text-align: left;">
+    <header></header>
+    <main class="content-main">
         <h1>Public Transportation</h1>
         <p>Because of my vision, I am unable to drive, so I take public transit as much as possible. I like to do research on our current systems, and how to improve them.</p>
         <h2>An Overview</h2>
@@ -41,8 +41,8 @@
             </ul>
         </div>
     </main>
-    <div id="footer"></div>
-    <button id="back-to-top" title="Back to top">↑</button>
+    <footer></footer>
+    <button id="back-to-top" aria-label="Back to top">↑</button>
     <script>
         async function loadContent() {
             try {
@@ -61,13 +61,14 @@
         loadContent();
 
         document.querySelectorAll('.file-tree .caret').forEach(caret => {
-            caret.addEventListener('click', () => {
-                caret.classList.toggle('active');
-                caret.textContent = caret.classList.contains('active') ? '▼ ' + caret.textContent.slice(2) : '▶ ' + caret.textContent.slice(2);
-                const iframe = caret.nextElementSibling;
+            caret.addEventListener('click', function() {
+                this.classList.toggle('active');
+                this.textContent = this.classList.contains('active') ? '▼ ' + this.textContent.slice(2) : '▶ ' + this.textContent.slice(2);
+                const iframe = this.nextElementSibling;
                 if (iframe && iframe.tagName === 'IFRAME' && !iframe.src) {
-                    iframe.src = iframe.getAttribute('data-src');
+                    iframe.src = iframe.dataset.src;
                 }
+                iframe.style.display = this.classList.contains('active') ? 'block' : 'none';
             });
         });
 

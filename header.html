@@ -1,51 +1,34 @@
 <header>
     <nav class="main-nav">
+        <a href="index.html" class="logo">JB</a>
         <div class="dropdown-toggle">
             <div class="hamburger-icon"></div>
             <div class="hamburger-icon"></div>
             <div class="hamburger-icon"></div>
         </div>
-        <div class="dropdown">
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="about.html">About Me</a></li>
-                <li><a href="projects.html">My Projects</a></li>
-                <li><a href="contact.html">Contact</a></li>
-                <li><a href="https://www.askthekidz.com">Ask The Kidz</a></li>
-            </ul>
-        </div>
-        <ul class="main-menu">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="about.html">About Me</a></li>
-            <li><a href="projects.html">My Projects</a></li>
-            <li><a href="contact.html">Contact</a></li>
-            <li><a href="https://www.askthekidz.com">Ask The Kidz</a></li>
+        <ul class="nav-menu">
+            <li><a href="index.html"><i class="fas fa-home"></i>Home</a></li>
+            <li><a href="about.html"><i class="fas fa-user"></i>About Me</a></li>
+            <li><a href="projects.html"><i class="fas fa-code"></i>My Projects</a></li>
+            <li><a href="contact.html"><i class="fas fa-envelope"></i>Contact</a></li>
+            <li><a href="https://www.askthekidz.com" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i>Ask The Kidz</a></li>
         </ul>
     </nav>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const dropdownToggle = document.querySelector('.dropdown-toggle');
-            const dropdown = document.querySelector('.dropdown');
+            const navMenu = document.querySelector('.nav-menu');
 
-            dropdownToggle.addEventListener('click', function(event) {
-                event.stopPropagation();
-                dropdown.classList.toggle('show');
+            dropdownToggle.addEventListener('click', function() {
+                navMenu.classList.toggle('show');
             });
 
-            // Close dropdown when clicking outside
+            // Close menu when clicking outside
             document.addEventListener('click', function(event) {
-                if (!dropdown.contains(event.target) && !dropdownToggle.contains(event.target)) {
-                    dropdown.classList.remove('show');
+                if (!navMenu.contains(event.target) && !dropdownToggle.contains(event.target)) {
+                    navMenu.classList.remove('show');
                 }
             });
-
-            // Prevent dropdown from closing when clicking inside
-            dropdown.addEventListener('click', function(event) {
-                event.stopPropagation();
-            });
-
-            // Ensure dropdown is not opened at page load
-            dropdown.classList.remove('show');
         });
     </script>
 </header>
