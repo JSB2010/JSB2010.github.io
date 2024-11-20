@@ -392,20 +392,17 @@ main {
     padding-top: 60px !important;
     padding: 0 5px !important; /* Further reduced padding on the sides */
     text-align: center !important; /* Center align the main content */
-    padding-bottom: 60px !important; /* Add padding at bottom of main content */
 }
 
 @media (min-width: 768px) {
     main {
         padding: 0 10px !important;
-        padding-bottom: 80px !important; /* Slightly more padding on larger screens */
     }
 }
 
 @media (min-width: 1024px) {
     main {
         padding: 0 15px !important;
-        padding-bottom: 100px !important; /* Even more padding on largest screens */
     }
 }
 
@@ -2069,5 +2066,32 @@ html {
 @media (prefers-color-scheme: dark) {
     .logo-image {
         filter: invert(1);
+    }
+}
+
+/* Add margin to create space between content and footer */
+.main-footer {
+    text-align: center;
+    padding: 20px 5px;
+    width: 100vw;
+    left: 0;
+    position: relative;
+    margin: 0 calc(-1 * var(--body-margin-left));
+    margin-top: 60px; /* Add space above footer */
+}
+
+@media (min-width: 768px) {
+    .main-footer {
+        padding: 20px 10px;
+        margin: 0 calc(-1 * var(--body-margin-left));
+        margin-top: 80px; /* More space on medium screens */
+    }
+}
+
+@media (min-width: 1024px) {
+    .main-footer {
+        padding: 20px 15px;
+        margin: 0 calc(-1 * var(--body-margin-left));
+        margin-top: 100px; /* Even more space on large screens */
     }
 }
