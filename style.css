@@ -1051,6 +1051,7 @@ footer {
     padding: 0 0.75rem;
     max-width: 1200px;
     margin: 0 auto;
+    margin-bottom: 60px; /* Add space between content and footer */
 }
 
 .content-main h1 {
@@ -2072,26 +2073,25 @@ html {
 /* Add margin to create space between content and footer */
 .main-footer {
     text-align: center;
-    padding: 20px 5px;
+    padding: 20px 5px; /* Restore full padding */
     width: 100vw;
     left: 0;
     position: relative;
     margin: 0 calc(-1 * var(--body-margin-left));
-    margin-top: 60px; /* Add space above footer */
 }
 
 @media (min-width: 768px) {
     .main-footer {
-        padding: 20px 10px;
+        padding: 20px 10px; /* Restore full padding */
         margin: 0 calc(-1 * var(--body-margin-left));
-        margin-top: 80px; /* More space on medium screens */
+        margin-top: 80px;
     }
 }
 
 @media (min-width: 1024px) {
     .main-footer {
-        padding: 20px 15px;
+        padding: 20px 15px; /* Restore full padding */
         margin: 0 calc(-1 * var(--body-margin-left));
-        margin-top: 100px; /* Even more space on large screens */
+        margin-top: 100px;
     }
 }
