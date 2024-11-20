@@ -2034,3 +2034,37 @@ html {
         color: var(--primary-color);
     }
 }
+
+/* Logo styles */
+.logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    margin-right: auto;
+    padding: 5px;
+    transition: transform 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.05);
+}
+
+.logo-image {
+    height: 65px;
+    width: auto;
+    margin-right: 15px;
+    transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .logo-image {
+        height: 50px;
+    }
+}
+
+/* Dark mode - invert the logo */
+@media (prefers-color-scheme: dark) {
+    .logo-image {
+        filter: invert(1);
+    }
+}
