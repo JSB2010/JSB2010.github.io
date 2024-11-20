@@ -20,46 +20,26 @@
         document.addEventListener('DOMContentLoaded', function() {
             const dropdownToggle = document.querySelector('.dropdown-toggle');
             const navMenu = document.querySelector('.nav-menu');
-            let isMenuOpen = false;
-
-            function toggleMenu() {
-                isMenuOpen = !isMenuOpen;
-                navMenu.classList.toggle('show');
-                dropdownToggle.classList.toggle('active');
-            }
-
-            function closeMenu() {
-                if (isMenuOpen) {
-                    isMenuOpen = false;
-                    navMenu.classList.remove('show');
-                    dropdownToggle.classList.remove('active');
-                }
-            }
 
             // Toggle menu when hamburger is clicked
-            dropdownToggle.addEventListener('click', function(event) {
-                event.stopPropagation();
-                toggleMenu();
+            dropdownToggle.addEventListener('click', function() {
+                navMenu.classList.toggle('show');
+                dropdownToggle.classList.toggle('active');
             });
 
             // Close menu when clicking outside
             document.addEventListener('click', function(event) {
                 if (!navMenu.contains(event.target) && !dropdownToggle.contains(event.target)) {
-                    closeMenu();
+                    navMenu.classList.remove('show');
+                    dropdownToggle.classList.remove('active');
                 }
             });
 
-            // Close menu when window is resized above mobile breakpoint
+            // Close menu when window is resized
             window.addEventListener('resize', function() {
                 if (window.innerWidth > 768) {
-                    closeMenu();
-                }
-            });
-
-            // Close menu when a link is clicked
-            navMenu.addEventListener('click', function(event) {
-                if (event.target.tagName === 'A') {
-                    closeMenu();
+                    navMenu.classList.remove('show');
+                    dropdownToggle.classList.remove('active');
                 }
             });
         });
