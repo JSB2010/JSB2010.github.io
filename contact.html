@@ -164,13 +164,27 @@
                 const timestamp = new Date();
                 const docId = `${timestamp.getTime()}_${name.replace(/\s+/g, '_')}`;
 
-                // Add document to Firestore with custom ID
+                // Add document to Firestore 'mail' collection (this triggers the email extension)
                 await addDoc(collection(db, 'mail'), {
-                    id: docId,
-                    name: name,
-                    email: email,
-                    message: message,
-                    timestamp: timestamp
+                    to: ['jacobbarkin@gmail.com'], // Array of recipient email addresses
+                    message: {
+                        subject: `New Contact Form Message from ${name}`,
+                        text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
+                        html: `
+                            <h2>New Contact Form Submission</h2>
+                            <p><strong>From:</strong> ${name}</p>
+                            <p><strong>Email:</strong> ${email}</p>
+                            <p><strong>Message:</strong></p>
+                            <p>${message.replace(/\n/g, '<br>')}</p>
+                        `
+                    },
+                    // Additional metadata for your records
+                    metadata: {
+                        id: docId,
+                        name: name,
+                        email: email,
+                        timestamp: timestamp
+                    }
                 });
 
                 // Show thank you message
