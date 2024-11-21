@@ -3,11 +3,6 @@
         <a href="index.html" class="logo">
             <img src="/images/Logo.png" alt="JB Logo" class="logo-image">
         </a>
-        <div class="dropdown-toggle">
-            <div class="hamburger-icon"></div>
-            <div class="hamburger-icon"></div>
-            <div class="hamburger-icon"></div>
-        </div>
         <ul class="nav-menu">
             <li><a href="index.html"><i class="fas fa-home"></i>Home</a></li>
             <li><a href="about.html"><i class="fas fa-user"></i>About Me</a></li>
@@ -15,16 +10,38 @@
             <li><a href="contact.html"><i class="fas fa-envelope"></i>Contact</a></li>
             <li><a href="https://www.askthekidz.com" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i>Ask The Kidz</a></li>
         </ul>
+        <button class="dropdown-toggle" aria-label="Toggle navigation menu">
+            <div class="hamburger-icon"></div>
+            <div class="hamburger-icon"></div>
+            <div class="hamburger-icon"></div>
+        </button>
     </nav>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const dropdownToggle = document.querySelector('.dropdown-toggle');
             const navMenu = document.querySelector('.nav-menu');
+            const menuLinks = navMenu.querySelectorAll('a');
 
             // Toggle menu when hamburger is clicked
-            dropdownToggle.addEventListener('click', function() {
+            dropdownToggle.addEventListener('click', function(event) {
+                event.stopPropagation();
                 navMenu.classList.toggle('show');
-                dropdownToggle.classList.toggle('active');
+                this.classList.toggle('active');
+                
+                // Toggle aria-expanded for accessibility
+                const isExpanded = navMenu.classList.contains('show');
+                this.setAttribute('aria-expanded', isExpanded);
+            });
+
+            // Close menu when clicking a link
+            menuLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth <= 1000) {
+                        navMenu.classList.remove('show');
+                        dropdownToggle.classList.remove('active');
+                        dropdownToggle.setAttribute('aria-expanded', 'false');
+                    }
+                });
             });
 
             // Close menu when clicking outside
@@ -32,14 +49,16 @@
                 if (!navMenu.contains(event.target) && !dropdownToggle.contains(event.target)) {
                     navMenu.classList.remove('show');
                     dropdownToggle.classList.remove('active');
+                    dropdownToggle.setAttribute('aria-expanded', 'false');
                 }
             });
 
             // Close menu when window is resized
             window.addEventListener('resize', function() {
-                if (window.innerWidth > 768) {
+                if (window.innerWidth > 1000) {
                     navMenu.classList.remove('show');
                     dropdownToggle.classList.remove('active');
+                    dropdownToggle.setAttribute('aria-expanded', 'false');
                 }
             });
         });
