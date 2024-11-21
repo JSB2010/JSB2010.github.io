@@ -26,8 +26,12 @@ html, body {
     line-height: 1.4;
     font-size: 1em;
     box-sizing: border-box;
-    padding-top: 60px;
+    padding-top: calc(var(--nav-height) + 20px);
     transition: background-color 0.3s ease, color 0.3s ease, padding-top 0.3s ease;
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
+    position: relative;
 }
 
 @media (prefers-color-scheme: light) {
@@ -264,21 +268,27 @@ h3, .markdown-content h3 {
 /* Header and Navigation */
 header {
     position: fixed;
-    width: 100vw;
+    width: 100%;
     left: 0;
     top: 0;
     z-index: 1000;
-    padding: 0;
-    margin: 0 calc(-1 * var(--body-margin-left));
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 0 20px; /* Consistent padding */
+    box-sizing: border-box;
+    background: transparent;
+    border: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
 }
 
 @media (min-width: 768px), (min-width: 1024px) {
     header {
-        padding: 0;
-        margin: 0 calc(-1 * var(--body-margin-left));
+        padding: 0 20px;
+    }
+}
+
+@media (min-width: 1024px) {
+    header {
+        padding: 0 20px;
     }
 }
 
@@ -392,6 +402,9 @@ main {
     padding-top: 60px !important;
     padding: 0 5px !important;
     text-align: center !important;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 @media (min-width: 768px) {
@@ -907,23 +920,23 @@ input:valid, textarea:valid {
 footer {
     text-align: center;
     padding: 20px 5px;
-    width: 100vw;
+    width: 100%;
     left: 0;
     position: relative;
-    margin: 0 calc(-1 * var(--body-margin-left));
+    margin: 0;
 }
 
 @media (min-width: 768px) {
     footer {
         padding: 20px 10px;
-        margin: 0 calc(-1 * var(--body-margin-left));
+        margin: 0;
     }
 }
 
 @media (min-width: 1024px) {
     footer {
         padding: 20px 15px;
-        margin: 0 calc(-1 * var(--body-margin-left));
+        margin: 0;
     }
 }
 
@@ -1428,61 +1441,99 @@ button:focus, a.button-link:focus {
 
 /* Header & Navigation improvements */
 .main-nav {
-    position: relative;
+    width: 100%;
+    height: var(--nav-height);
     display: flex;
     align-items: center;
-    padding: 0 1rem;
-    height: var(--nav-height);
-    width: calc(100% - 2rem);
+    padding: 0; /* Remove padding from nav */
+    box-sizing: border-box;
     background: rgba(255, 255, 255, 0.9);
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    margin: 10px 0;
 }
 
-@media (max-width: 768px) {
+.logo {
+    padding-left: 20px; /* Add padding to logo */
+}
+
+.nav-menu {
+    padding-right: 20px; /* Add padding to nav menu */
+}
+
+.nav-menu {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    margin-left: auto;
+    flex-wrap: nowrap; /* Prevent wrapping of nav items */
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    padding: 5px 0;
+}
+
+@media (max-width: 1000px) { /* Increased from 768px to 1000px to prevent overflow */
     .nav-menu {
         position: absolute;
-        top: 100%;
+        top: calc(var(--nav-height) - 1px);
         left: 0;
         width: 100%;
-        background: var(--background-color-light);
-        padding: 1rem;
+        background: rgba(255, 255, 255, 0.9);
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
         flex-direction: column;
-        box-shadow: var(--box-shadow);
+        align-items: center;
+        padding: 0;
         display: none;
-        box-sizing: border-box;
+        border-radius: 0 0 15px 15px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-top: none;
+        margin-top: -1px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
 
     .nav-menu.show {
         display: flex;
     }
 
-    .dropdown-toggle {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        width: 30px;
-        height: 21px;
-        margin-right: 1rem;
-        cursor: pointer;
+    .nav-menu li {
+        width: 100%;
+        text-align: center;
     }
 
-    .hamburger-icon {
+    .nav-menu li a {
         width: 100%;
-        height: 3px;
-        background-color: var(--text-color-light);
-        margin: 2px 0;
+        padding: 15px 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .dropdown-toggle {
+        display: block;
+    }
+
+    .main-nav {
+        justify-content: space-between;
     }
 }
 
-.logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: var(--primary-color);
-    text-decoration: none;
-    margin-right: auto;
+@media (prefers-color-scheme: dark) {
+    @media (max-width: 1000px) {
+        .nav-menu {
+            background: rgba(26, 26, 26, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: none;
+        }
+    }
 }
 
 .main-nav i {
@@ -2182,10 +2233,10 @@ html {
 .main-footer {
     text-align: center;
     padding: 30px 5px;
-    width: 100vw;
+    width: 100%;
     left: 0;
     position: relative;
-    margin: 0 calc(-1 * var(--body-margin-left));
+    margin: 0;
     background: rgba(255, 255, 255, 0.9);
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
@@ -2267,7 +2318,7 @@ html {
 @media (min-width: 768px) {
     .main-footer {
         padding: 30px 10px;
-        margin: 0 calc(-1 * var(--body-margin-left));
+        margin: 0;
         margin-top: 80px;
     }
 }
@@ -2275,7 +2326,7 @@ html {
 @media (min-width: 1024px) {
     .main-footer {
         padding: 30px 15px;
-        margin: 0 calc(-1 * var(--body-margin-left));
+        margin: 0;
         margin-top: 100px;
     }
 }
@@ -2852,11 +2903,6 @@ html {
     }
 }
 
-@media (max-width: 768px) {
-    .project-details article {
-        padding: 1rem;
-    }
-
     .quick-info {
         flex-direction: column;
         gap: 1rem;
@@ -2877,7 +2923,7 @@ html {
     .results-container {
         grid-template-columns: 1fr;
     }
-}
+
 
 @media (max-width: 480px) {
     .project-details h1 {
