@@ -3,6 +3,11 @@
         <a href="index.html" class="logo">
             <img src="/images/Logo.png" alt="JB Logo" class="logo-image">
         </a>
+        <button class="dropdown-toggle" aria-label="Toggle navigation menu">
+            <span class="hamburger-icon"></span>
+            <span class="hamburger-icon"></span>
+            <span class="hamburger-icon"></span>
+        </button>
         <ul class="nav-menu">
             <li><a href="index.html"><i class="fas fa-home"></i>Home</a></li>
             <li><a href="about.html"><i class="fas fa-user"></i>About Me</a></li>
@@ -10,35 +15,27 @@
             <li><a href="contact.html"><i class="fas fa-envelope"></i>Contact</a></li>
             <li><a href="https://www.askthekidz.com" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i>Ask The Kidz</a></li>
         </ul>
-        <button class="dropdown-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
-            <div class="hamburger-icon"></div>
-            <div class="hamburger-icon"></div>
-            <div class="hamburger-icon"></div>
-        </button>
     </nav>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const dropdownToggle = document.querySelector('.dropdown-toggle');
             const navMenu = document.querySelector('.nav-menu');
 
-            // Function to close menu
-            function closeMenu() {
-                navMenu.classList.remove('show');
-                dropdownToggle.classList.remove('active');
-                dropdownToggle.setAttribute('aria-expanded', 'false');
+            // Simple toggle function
+            function toggleMenu() {
+                navMenu.classList.toggle('show');
             }
 
-            // Toggle menu when hamburger is clicked
+            // Toggle menu on button click
             dropdownToggle.addEventListener('click', function(e) {
                 e.stopPropagation();
-                const isExpanded = this.getAttribute('aria-expanded') === 'true';
-                
-                if (isExpanded) {
-                    closeMenu();
-                } else {
-                    navMenu.classList.add('show');
-                    this.classList.add('active');
-                    this.setAttribute('aria-expanded', 'true');
+                toggleMenu();
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!navMenu.contains(e.target) && !dropdownToggle.contains(e.target)) {
+                    navMenu.classList.remove('show');
                 }
             });
 
@@ -46,22 +43,15 @@
             navMenu.querySelectorAll('a').forEach(link => {
                 link.addEventListener('click', () => {
                     if (window.innerWidth <= 1000) {
-                        closeMenu();
+                        navMenu.classList.remove('show');
                     }
                 });
             });
 
-            // Close menu when clicking outside
-            document.addEventListener('click', (e) => {
-                if (!navMenu.contains(e.target) && !dropdownToggle.contains(e.target)) {
-                    closeMenu();
-                }
-            });
-
-            // Close menu when window is resized above mobile breakpoint
+            // Close menu on window resize
             window.addEventListener('resize', () => {
                 if (window.innerWidth > 1000) {
-                    closeMenu();
+                    navMenu.classList.remove('show');
                 }
             });
         });
