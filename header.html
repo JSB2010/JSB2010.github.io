@@ -10,7 +10,7 @@
             <li><a href="contact.html"><i class="fas fa-envelope"></i>Contact</a></li>
             <li><a href="https://www.askthekidz.com" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i>Ask The Kidz</a></li>
         </ul>
-        <button class="dropdown-toggle" aria-label="Toggle navigation menu">
+        <button class="dropdown-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
             <div class="hamburger-icon"></div>
             <div class="hamburger-icon"></div>
             <div class="hamburger-icon"></div>
@@ -20,45 +20,48 @@
         document.addEventListener('DOMContentLoaded', function() {
             const dropdownToggle = document.querySelector('.dropdown-toggle');
             const navMenu = document.querySelector('.nav-menu');
-            const menuLinks = navMenu.querySelectorAll('a');
+
+            // Function to close menu
+            function closeMenu() {
+                navMenu.classList.remove('show');
+                dropdownToggle.classList.remove('active');
+                dropdownToggle.setAttribute('aria-expanded', 'false');
+            }
 
             // Toggle menu when hamburger is clicked
-            dropdownToggle.addEventListener('click', function(event) {
-                event.stopPropagation();
-                navMenu.classList.toggle('show');
-                this.classList.toggle('active');
+            dropdownToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const isExpanded = this.getAttribute('aria-expanded') === 'true';
                 
-                // Toggle aria-expanded for accessibility
-                const isExpanded = navMenu.classList.contains('show');
-                this.setAttribute('aria-expanded', isExpanded);
+                if (isExpanded) {
+                    closeMenu();
+                } else {
+                    navMenu.classList.add('show');
+                    this.classList.add('active');
+                    this.setAttribute('aria-expanded', 'true');
+                }
             });
 
             // Close menu when clicking a link
-            menuLinks.forEach(link => {
-                link.addEventListener('click', function() {
+            navMenu.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
                     if (window.innerWidth <= 1000) {
-                        navMenu.classList.remove('show');
-                        dropdownToggle.classList.remove('active');
-                        dropdownToggle.setAttribute('aria-expanded', 'false');
+                        closeMenu();
                     }
                 });
             });
 
             // Close menu when clicking outside
-            document.addEventListener('click', function(event) {
-                if (!navMenu.contains(event.target) && !dropdownToggle.contains(event.target)) {
-                    navMenu.classList.remove('show');
-                    dropdownToggle.classList.remove('active');
-                    dropdownToggle.setAttribute('aria-expanded', 'false');
+            document.addEventListener('click', (e) => {
+                if (!navMenu.contains(e.target) && !dropdownToggle.contains(e.target)) {
+                    closeMenu();
                 }
             });
 
-            // Close menu when window is resized
-            window.addEventListener('resize', function() {
+            // Close menu when window is resized above mobile breakpoint
+            window.addEventListener('resize', () => {
                 if (window.innerWidth > 1000) {
-                    navMenu.classList.remove('show');
-                    dropdownToggle.classList.remove('active');
-                    dropdownToggle.setAttribute('aria-expanded', 'false');
+                    closeMenu();
                 }
             });
         });
