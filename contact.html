@@ -21,30 +21,30 @@
             
             <div class="contact-container">
                 <div class="contact-info">
-                    <a href="mailto:jacobbarkin@gmail.com" class="contact-method">
+                    <a href="mailto:jacobbarkin@gmail.com" class="contact-method" aria-label="Email me">
                         <i class="fas fa-envelope"></i>
                         <h3>Email</h3>
                         <p>jacobbarkin@gmail.com</p>
                     </a>
-                    <a href="https://www.linkedin.com/in/jacobbarkin/" target="_blank" rel="noopener noreferrer" class="contact-method">
+                    <a href="https://www.linkedin.com/in/jacobbarkin/" target="_blank" rel="noopener noreferrer" class="contact-method" aria-label="Connect on LinkedIn">
                         <i class="fab fa-linkedin"></i>
                         <h3>LinkedIn</h3>
                         <p>Connect with me professionally</p>
                     </a>
-                    <a href="https://github.com/JSB2010" target="_blank" rel="noopener noreferrer" class="contact-method">
+                    <a href="https://github.com/JSB2010" target="_blank" rel="noopener noreferrer" class="contact-method" aria-label="View my GitHub">
                         <i class="fab fa-github"></i>
                         <h3>GitHub</h3>
                         <p>Check out my code</p>
                     </a>
                 </div>
 
-                <form class="contact-form" id="contactForm">
+                <form class="contact-form" id="contactForm" aria-label="Contact form">
                     <div class="form-group">
                         <label for="name" class="visually-hidden">Your Name</label>
                         <div class="input-with-icon">
                             <i class="fas fa-user"></i>
                             <input type="text" id="name" name="name" placeholder="Your Name" required 
-                                   aria-label="Your Name">
+                                   aria-label="Your Name" autocomplete="name">
                         </div>
                     </div>
 
@@ -53,7 +53,7 @@
                         <div class="input-with-icon">
                             <i class="fas fa-envelope"></i>
                             <input type="email" id="email" name="email" placeholder="Your Email" required 
-                                   aria-label="Your Email">
+                                   aria-label="Your Email" autocomplete="email">
                         </div>
                     </div>
 
@@ -62,7 +62,7 @@
                         <div class="input-with-icon">
                             <i class="fas fa-comment"></i>
                             <textarea id="message" name="message" placeholder="Your Message" rows="5" required 
-                                      aria-label="Your Message"></textarea>
+                                  aria-label="Your Message"></textarea>
                         </div>
                     </div>
 
