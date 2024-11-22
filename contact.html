@@ -11,6 +11,7 @@
     <link rel="preload" href="header.html" as="fetch" crossorigin="anonymous">
     <link rel="preload" href="footer.html" as="fetch" crossorigin="anonymous">
     <link rel="icon" type="image/png" href="images/Jacob Barkin Website Logo.png">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
     <div id="header"></div>
@@ -64,6 +65,10 @@
                             <textarea id="message" name="message" placeholder="Your Message" rows="5" required 
                                   aria-label="Your Message"></textarea>
                         </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="g-recaptcha" data-sitekey="6LcJC4cqAAAAAHOw2T8hSSsy8n7A4sFi03qSElJH"></div>
                     </div>
 
                     <button type="submit" class="submit-button">
@@ -160,12 +165,19 @@
                 return;
             }
 
+            // Verify reCAPTCHA
+            const recaptchaResponse = grecaptcha.getResponse();
+            if (!recaptchaResponse) {
+                alert('Please complete the reCAPTCHA verification.');
+                return;
+            }
+
             try {
                 // Create a timestamp-name combination for the document ID
                 const timestamp = new Date();
                 const docId = `${timestamp.getTime()}_${name.replace(/\s+/g, '_')}`;
 
-                // Add document to Firestore 'mail' collection (this triggers the email extension)
+                // Add document to Firestore 'mail' collection
                 await addDoc(collection(db, 'mail'), {
                     to: ['jacobbarkin@gmail.com'],
                     message: {
@@ -185,7 +197,8 @@
                         id: docId,
                         name: name,
                         email: email,
-                        timestamp: timestamp
+                        timestamp: timestamp,
+                        recaptcha: recaptchaResponse // Store recaptcha response
                     }
                 });
 
@@ -196,8 +209,9 @@
                 thankYouOverlay.classList.add('show');
                 thankYouMessage.classList.add('show');
                 
-                // Clear form
+                // Clear form and reset reCAPTCHA
                 event.target.reset();
+                grecaptcha.reset();
 
             } catch (error) {
                 console.error('Error submitting form:', error);

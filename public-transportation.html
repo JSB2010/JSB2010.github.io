@@ -48,13 +48,21 @@
     <script>
         async function loadContent() {
             try {
-                const headerResponse = await fetch('header.html');
-                if (!headerResponse.ok) throw new Error('Header not found');
-                document.getElementById('header').innerHTML = await headerResponse.text();
+                const [headerResponse, footerResponse] = await Promise.all([
+                    fetch('header.html'),
+                    fetch('footer.html')
+                ]);
 
-                const footerResponse = await fetch('footer.html');
+                if (!headerResponse.ok) throw new Error('Header not found');
                 if (!footerResponse.ok) throw new Error('Footer not found');
-                document.getElementById('footer').innerHTML = await footerResponse.text();
+
+                const [headerText, footerText] = await Promise.all([
+                    headerResponse.text(),
+                    footerResponse.text()
+                ]);
+
+                document.getElementById('header').innerHTML = headerText;
+                document.getElementById('footer').innerHTML = footerText;
             } catch (error) {
                 console.error('Error loading content:', error);
             }
@@ -62,31 +70,51 @@
 
         loadContent();
 
+        // Improved file tree interaction
         document.querySelectorAll('.file-tree .caret').forEach(caret => {
             caret.addEventListener('click', function() {
                 this.classList.toggle('active');
-                this.textContent = this.classList.contains('active') ? '▼ ' + this.textContent.slice(2) : '▶ ' + this.textContent.slice(2);
+                
+                // Update caret icon
+                this.textContent = this.classList.contains('active') 
+                    ? '▼ ' + this.textContent.slice(2) 
+                    : '▶ ' + this.textContent.slice(2);
+                
                 const iframe = this.nextElementSibling;
-                if (iframe && iframe.tagName === 'IFRAME' && !iframe.src) {
-                    iframe.src = iframe.dataset.src;
+                if (iframe && iframe.tagName === 'IFRAME') {
+                    if (!iframe.src && this.classList.contains('active')) {
+                        iframe.src = iframe.dataset.src;
+                        // Add loading animation
+                        iframe.classList.add('loading');
+                        iframe.onload = () => {
+                            iframe.classList.remove('loading');
+                            iframe.classList.add('active');
+                        };
+                    }
+                    iframe.style.display = this.classList.contains('active') ? 'block' : 'none';
                 }
-                iframe.style.display = this.classList.contains('active') ? 'block' : 'none';
             });
         });
 
-        // Back to top button functionality
+        // Enhanced back to top functionality
         const backToTopButton = document.getElementById('back-to-top');
-        window.onscroll = function() {
-            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-                backToTopButton.style.display = "block";
+        
+        function handleScroll() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > window.innerHeight / 2) {
+                backToTopButton.classList.add('visible');
             } else {
-                backToTopButton.style.display = "none";
+                backToTopButton.classList.remove('visible');
             }
-        };
+        }
 
-        backToTopButton.addEventListener('click', function() {
-            document.body.scrollTop = 0;
-            document.documentElement.scrollTop = 0;
+        window.addEventListener('scroll', handleScroll, { passive: true });
+
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
         });
     </script>
     <script src="../theme.js"></script>
