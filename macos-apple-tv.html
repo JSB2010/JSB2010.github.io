@@ -43,9 +43,9 @@
 
                 <section class="project-gallery">
                     <div class="gallery-container">
-                        <img src="../images/projects/appletv-before.jpg" alt="Apple TV before modification" class="gallery-img">
-                        <img src="../images/projects/appletv-macos.jpg" alt="MacOS running on Apple TV" class="gallery-img">
-                        <img src="../images/projects/appletv-interface.jpg" alt="Boot interface" class="gallery-img">
+                        <img src="../images/projects/appletv-before.jpg" alt="Apple TV before modification" class="gallery-img" loading="lazy">
+                        <img src="../images/projects/appletv-macos.jpg" alt="MacOS running on Apple TV" class="gallery-img" loading="lazy">
+                        <img src="../images/projects/appletv-interface.jpg" alt="Boot interface" class="gallery-img" loading="lazy">
                     </div>
                 </section>
 
@@ -213,59 +213,89 @@
     <button id="back-to-top" title="Back to top" aria-label="Back to top">↑</button>
 
     <script>
-        async function loadContent() {
+        // Use modern async/await pattern for content loading
+        const loadContent = async () => {
             try {
-                const headerResponse = await fetch('../header.html');
-                if (!headerResponse.ok) throw new Error('Header not found');
-                document.getElementById('header').innerHTML = await headerResponse.text();
+                const [headerResponse, footerResponse] = await Promise.all([
+                    fetch('../header.html'),
+                    fetch('../footer.html')
+                ]);
 
-                const footerResponse = await fetch('../footer.html');
-                if (!footerResponse.ok) throw new Error('Footer not found');
-                document.getElementById('footer').innerHTML = await footerResponse.text();
+                if (!headerResponse.ok || !footerResponse.ok) {
+                    throw new Error('Failed to load page components');
+                }
+
+                const [headerText, footerText] = await Promise.all([
+                    headerResponse.text(),
+                    footerResponse.text()
+                ]);
+
+                document.getElementById('header').innerHTML = headerText;
+                document.getElementById('footer').innerHTML = footerText;
             } catch (error) {
                 console.error('Error loading content:', error);
             }
-        }
-
-        loadContent();
-
-        // Back to top button functionality
-        const backToTopButton = document.getElementById('back-to-top');
-        window.onscroll = function() {
-            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-                backToTopButton.style.display = "block";
-            } else {
-                backToTopButton.style.display = "none";
-            }
         };
 
-        backToTopButton.addEventListener('click', function() {
-            document.body.scrollTop = 0;
-            document.documentElement.scrollTop = 0;
-        });
+        // Optimize scroll handling with throttling
+        const throttle = (func, limit) => {
+            let inThrottle;
+            return function() {
+                const args = arguments;
+                const context = this;
+                if (!inThrottle) {
+                    func.apply(context, args);
+                    inThrottle = true;
+                    setTimeout(() => inThrottle = false, limit);
+                }
+            };
+        };
 
-        // Add smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
+        // Optimize scroll handler
+        const handleScroll = throttle(() => {
+            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            backToTopButton.style.display = scrollTop > 20 ? "block" : "none";
+        }, 100);
+
+        window.addEventListener('scroll', handleScroll);
+
+        // Use event delegation for smooth scrolling
+        document.addEventListener('click', (e) => {
+            const anchor = e.target.closest('a[href^="#"]');
+            if (anchor) {
                 e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
+                const targetId = anchor.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            }
         });
 
-        // Add intersection observer for section animations
-        const observer = new IntersectionObserver((entries) => {
+        // Optimize intersection observer
+        const observerCallback = (entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
+                    observer.unobserve(entry.target); // Stop observing once visible
                 }
             });
-        }, { threshold: 0.1 });
+        };
 
-        document.querySelectorAll('.content-section').forEach((section) => {
+        const observer = new IntersectionObserver(observerCallback, {
+            threshold: 0.1,
+            rootMargin: '50px'
+        });
+
+        document.querySelectorAll('.content-section').forEach(section => {
             observer.observe(section);
         });
+
+        // Initialize
+        loadContent();
     </script>
     <script src="../theme.js"></script>
 </body>
