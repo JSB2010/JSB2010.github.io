@@ -3,14 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MacOS on Apple TV - Jacob Barkin</title>
-    <link rel="stylesheet" href="../style.css">
-    <meta name="description" content="Detailed overview of installing MacOS 10.7 on a 1st Generation Apple TV">
+    <title>macOS on Apple TV - Jacob Barkin</title>
+    <link rel="stylesheet" href="style.css">
+    <meta name="description" content="How I installed macOS on an Apple TV - a hardware modification project by Jacob Barkin">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="icon" type="image/png" href="../images/Jacob Barkin Website Logo.png">
+    <link rel="icon" type="image/png" href="images/Jacob Barkin Website Logo.png">
+    <!-- Preload critical resources -->
+    <link rel="preload" href="header.html" as="fetch" crossorigin="anonymous">
+    <link rel="preload" href="footer.html" as="fetch" crossorigin="anonymous">
 </head>
 <body>
-    <header id="header"></header>
+    <div id="header"></div>
     <main>
         <div class="project-details">
             <article>
@@ -209,64 +212,8 @@
             </article>
         </div>
     </main>
-    <footer id="footer"></footer>
-    <button id="back-to-top" title="Back to top" aria-label="Back to top">↑</button>
-
-    <script>
-        async function loadContent() {
-            try {
-                const headerResponse = await fetch('../header.html');
-                if (!headerResponse.ok) throw new Error('Header not found');
-                document.getElementById('header').innerHTML = await headerResponse.text();
-
-                const footerResponse = await fetch('../footer.html');
-                if (!footerResponse.ok) throw new Error('Footer not found');
-                document.getElementById('footer').innerHTML = await footerResponse.text();
-            } catch (error) {
-                console.error('Error loading content:', error);
-            }
-        }
-
-        loadContent();
-
-        // Back to top button functionality
-        const backToTopButton = document.getElementById('back-to-top');
-        window.onscroll = function() {
-            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-                backToTopButton.style.display = "block";
-            } else {
-                backToTopButton.style.display = "none";
-            }
-        };
-
-        backToTopButton.addEventListener('click', function() {
-            document.body.scrollTop = 0;
-            document.documentElement.scrollTop = 0;
-        });
-
-        // Add smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
-
-        // Add intersection observer for section animations
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, { threshold: 0.1 });
-
-        document.querySelectorAll('.content-section').forEach((section) => {
-            observer.observe(section);
-        });
-    </script>
-    <script src="../theme.js"></script>
+    <div id="footer"></div>
+    
+    <script src="common.js"></script>
 </body>
-</html> 
+</html>

@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jacob Barkin | Portfolio</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
     <meta name="description" content="Explore Jacob Barkin's portfolio, projects, and contact details. A dedicated app developer and financial education advocate.">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/png" href="images/Logo.png">
+    <!-- Preload critical resources -->
+    <link rel="preload" href="header.html" as="fetch" crossorigin="anonymous">
+    <link rel="preload" href="footer.html" as="fetch" crossorigin="anonymous">
 </head>
 <body class="themed-background">
     <div class="loading-animation"></div>
@@ -29,29 +31,11 @@
         <div class="space-layer"></div>
     </div>
     
-    <header class="main-nav">
-        <a class="logo" href="index.html">
-            <img class="logo-image" src="images/logo.png" alt="Logo">
-        </a>
-        <nav>
-            <ul class="nav-menu">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#projects">Projects</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-            <button class="dropdown-toggle">
-                <span class="hamburger-icon"></span>
-                <span class="hamburger-icon"></span>
-                <span class="hamburger-icon"></span>
-            </button>
-        </nav>
-    </header>
+    <div id="header"></div>
     <main id="home" class="content-main" role="main">
         <section class="main-header">
             <h1>Jacob Barkin</h1>
             <p class="tagline" id="dynamic-greeting">Developer & Financial Education Advocate</p>
-            <!-- Theme indicators and Explore Projects button removed -->
         </section>
         <div class="card-container">
             <div>
@@ -107,16 +91,9 @@
         </div>
     </main>
     
-    <footer class="main-footer">
-        <p>Created by Jacob Barkin</p>
-        <div class="footer-buttons">
-            <a href="mailto:jacobbarkin@gmail.com" class="email" aria-label="Email Jacob Barkin"></a>
-            <a href="https://www.linkedin.com/in/jacobbarkin" target="_blank" rel="noopener" class="linkedin" aria-label="LinkedIn Profile"></a>
-            <a href="https://github.com/JSB2010" target="_blank" rel="noopener" class="github" aria-label="GitHub Profile"></a>
-        </div>
-    </footer>
+    <div id="footer"></div>
     
-    <button id="back-to-top" title="Back to top">↑</button>
+    <script src="common.js"></script>
     <script>
         // Dynamic greeting message based on time of day
         const greetingElement = document.getElementById('dynamic-greeting');
@@ -134,30 +111,6 @@
         }
 
         greetingElement.textContent = greeting;
-
-        // Mobile menu toggle
-        const dropdownToggle = document.querySelector('.dropdown-toggle');
-        const navMenu = document.querySelector('.nav-menu');
-
-        dropdownToggle.addEventListener('click', function() {
-            navMenu.classList.toggle('show');
-            this.classList.toggle('active');
-        });
-
-        // Back to top button functionality
-        const backToTopButton = document.getElementById('back-to-top');
-        window.onscroll = function() {
-            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-                backToTopButton.style.display = "block";
-            } else {
-                backToTopButton.style.display = "none";
-            }
-        };
-
-        backToTopButton.addEventListener('click', function() {
-            document.body.scrollTop = 0;
-            document.documentElement.scrollTop = 0;
-        });
 
         // Loading animation
         window.addEventListener('load', function() {
@@ -185,6 +138,5 @@
             });
         }
     </script>
-    <script src="/theme.js"></script>
 </body>
 </html>
