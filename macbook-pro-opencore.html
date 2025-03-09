@@ -12,12 +12,14 @@
     <link rel="preload" href="header.html" as="fetch" crossorigin="anonymous">
     <link rel="preload" href="footer.html" as="fetch" crossorigin="anonymous">
 </head>
-<body>
+<body class="themed-background">
+    <div class="loading-animation"></div>
+    
     <div id="header"></div>
     <main>
         <div class="project-details">
             <article>
-                <header class="project-header" aria-label="Project Header">
+                <header class="project-header mountain-themed" aria-label="Project Header">
                     <span class="project-status completed" aria-label="Project Status: Completed">
                         <i class="fas fa-check-circle" aria-hidden="true"></i> Completed
                     </span>
@@ -46,9 +48,9 @@
 
                 <section class="project-gallery">
                     <div class="gallery-container">
-                        <img src="../images/projects/macbook-before.jpg" alt="MacBook Pro before restoration" class="gallery-img">
-                        <img src="../images/projects/macbook-after.jpg" alt="MacBook Pro after restoration" class="gallery-img">
-                        <img src="../images/projects/macbook-interface.jpg" alt="OpenCore boot interface" class="gallery-img">
+                        <img src="/images/projects/macbook-before.jpg" alt="MacBook Pro before restoration" class="gallery-img">
+                        <img src="/images/projects/macbook-after.jpg" alt="MacBook Pro after restoration" class="gallery-img">
+                        <img src="/images/projects/macbook-interface.jpg" alt="OpenCore boot interface" class="gallery-img">
                     </div>
                 </section>
 
@@ -215,5 +217,6 @@
     <div id="footer"></div>
     
     <script src="common.js"></script>
+    <script src="theme.js"></script>
 </body>
 </html>
