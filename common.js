@@ -1,5 +1,17 @@
 // Common JavaScript functions for header, footer and shared functionality
 
+// Handle loading animation when header and footer are loaded
+function handleLoadingAnimation() {
+    const loader = document.querySelector('.loading-animation');
+    if (!loader) return;
+    
+    // Hide the loader
+    loader.style.opacity = '0';
+    setTimeout(() => {
+        loader.style.display = 'none';
+    }, 500);
+}
+
 // Load header and footer content
 async function loadHeaderFooter() {
     try {
@@ -28,8 +40,22 @@ async function loadHeaderFooter() {
         
         // Initialize back-to-top functionality
         initBackToTop();
+        
+        // Apply mountain theme styling to navigation
+        applyMountainThemeToNavigation();
+        
+        // Remove any duplicate back-to-top buttons
+        removeDuplicateBackToTop();
+        
+        // Hide loading animation after content is loaded
+        handleLoadingAnimation();
+        
+        // Event emitted for theme.js to know header/footer are ready
+        document.dispatchEvent(new CustomEvent('header-footer-loaded'));
     } catch (error) {
         console.error('Error loading content:', error);
+        // Hide loader even if there's an error
+        handleLoadingAnimation();
     }
 }
 
@@ -102,6 +128,41 @@ function initBackToTop() {
             behavior: 'smooth'
         });
     });
+}
+
+// Apply mountain theme to navigation elements
+function applyMountainThemeToNavigation() {
+    const navMenu = document.querySelector('.nav-menu');
+    if (!navMenu) return;
+    
+    // Add mountain theme styling to active page link
+    const currentPath = window.location.pathname;
+    const links = navMenu.querySelectorAll('a');
+    
+    links.forEach(link => {
+        const linkPath = new URL(link.href, window.location.origin).pathname;
+        
+        // Check if this link corresponds to current page
+        if (currentPath === linkPath || 
+            (currentPath === '/' && linkPath === '/index.html') ||
+            (currentPath === '/index.html' && linkPath === '/')) {
+            link.classList.add('active-page');
+            link.setAttribute('aria-current', 'page');
+        }
+    });
+}
+
+/**
+ * Remove duplicate back-to-top buttons that might exist from individual page scripts
+ */
+function removeDuplicateBackToTop() {
+    const backToTopButtons = document.querySelectorAll('#back-to-top');
+    if (backToTopButtons.length > 1) {
+        // Keep only the first one
+        for (let i = 1; i < backToTopButtons.length; i++) {
+            backToTopButtons[i].remove();
+        }
+    }
 }
 
 // Run on page load

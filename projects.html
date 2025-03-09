@@ -12,7 +12,9 @@
     <link rel="preload" href="header.html" as="fetch" crossorigin="anonymous">
     <link rel="preload" href="footer.html" as="fetch" crossorigin="anonymous">
 </head>
-<body>
+<body class="themed-background">
+    <div class="loading-animation"></div>
+    
     <div id="header"></div>
     <main class="content-main">
         <h1>My Projects</h1>
@@ -124,40 +126,7 @@
         </div>
     </main>
     <div id="footer"></div>
-    <button id="back-to-top" title="Back to top">↑</button>
-    <script>
-        async function loadContent() {
-            try {
-                const headerResponse = await fetch('header.html');
-                if (!headerResponse.ok) throw new Error('Header not found');
-                document.getElementById('header').innerHTML = await headerResponse.text();
-
-                const footerResponse = await fetch('footer.html');
-                if (!footerResponse.ok) throw new Error('Footer not found');
-                document.getElementById('footer').innerHTML = await footerResponse.text();
-            } catch (error) {
-                console.error('Error loading content:', error);
-            }
-        }
-
-        loadContent();
-
-        // Back to top button functionality
-        const backToTopButton = document.getElementById('back-to-top');
-        window.onscroll = function() {
-            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-                backToTopButton.style.display = "block";
-            } else {
-                backToTopButton.style.display = "none";
-            }
-        };
-
-        backToTopButton.addEventListener('click', function() {
-            document.body.scrollTop = 0;
-            document.documentElement.scrollTop = 0;
-        });
-    </script>
     <script src="common.js"></script>
-    <script src="/theme.js"></script>
+    <script src="theme.js"></script>
 </body>
 </html>

@@ -13,7 +13,9 @@
     <link rel="icon" type="image/png" href="images/Jacob Barkin Website Logo.png">
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
-<body>
+<body class="themed-background">
+    <div class="loading-animation"></div>
+    
     <div id="header"></div>
     <main class="content-main" role="main">
         <section id="contact">
@@ -238,6 +240,6 @@
             thankYouOverlay.classList.remove('show');
         });
     </script>
-    <script src="/theme.js"></script>
+    <script src="theme.js"></script> <!-- Fixed path by removing slash prefix -->
 </body>
 </html>
