@@ -11,6 +11,8 @@
     <!-- Preload critical resources -->
     <link rel="preload" href="header.html" as="fetch" crossorigin="anonymous">
     <link rel="preload" href="footer.html" as="fetch" crossorigin="anonymous">
+    <!-- Add dark mode fixes stylesheet AFTER main stylesheet to ensure it overrides -->
+    <link rel="stylesheet" href="dark-mode-fixes.css">
 </head>
 <body class="themed-background">
     <div class="loading-animation"></div>
@@ -109,5 +111,7 @@
         // Parallax effect now handled by theme.js
     </script>
     <script src="theme.js"></script>
+    <!-- Add the nav-fix script at the end of the body for maximum compatibility -->
+    <script src="nav-fix.js"></script>
 </body>
 </html>

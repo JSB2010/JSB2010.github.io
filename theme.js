@@ -28,6 +28,12 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Apply mountain theme to project headers and elements
         applyMountainTheme();
+        
+        // Initialize space elements - now enhanced for dark mode
+        initializeSpaceElements();
+        
+        // Set up dark mode detection and handling
+        setupDarkModeDetection();
     }, 100);
 });
 
@@ -245,3 +251,329 @@ document.addEventListener('DOMContentLoaded', function() {
     addWaterEffectsCSS();
     setTimeout(initializeWaterEffects, 2000); // Delay to ensure other elements are loaded
 });
+
+/**
+ * Creates and adds space elements to the mountain background
+ */
+function initializeSpaceElements() {
+    const mountainBackground = document.querySelector('.mountain-background');
+    if (!mountainBackground || document.querySelector('.space-elements')) return;
+    
+    // Create container for space elements
+    const spaceElements = document.createElement('div');
+    spaceElements.className = 'space-elements';
+    
+    // Add moon
+    const moon = document.createElement('div');
+    moon.className = 'moon';
+    spaceElements.appendChild(moon);
+    
+    // Add stars - increased count for better night sky effect
+    const starCount = 150; // Increased from 100
+    for (let i = 0; i < starCount; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        
+        // Random position - covering more of the sky
+        const x = Math.random() * 100;
+        const y = Math.random() * 70; // Increased from 60% to 70% of screen
+        
+        // Random size with more variation (0.5px to 3px)
+        const size = 0.5 + Math.random() * 2.5;
+        
+        // Random twinkle animation delay
+        const delay = Math.random() * 5;
+        
+        // Random brightness for more variation
+        const brightness = 0.5 + Math.random() * 0.5;
+        
+        star.style.left = `${x}%`;
+        star.style.top = `${y}%`;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.opacity = brightness.toString();
+        star.style.animationDelay = `${delay}s`;
+        
+        spaceElements.appendChild(star);
+    }
+    
+    // Add more shooting stars for dark mode
+    for (let i = 0; i < 5; i++) {
+        const shootingStar = document.createElement('div');
+        shootingStar.className = 'shooting-star';
+        
+        // Random position and angle
+        const x = Math.random() * 100;
+        const y = Math.random() * 40;
+        const angle = -15 - Math.random() * 30; // -15 to -45 degrees
+        
+        // Random animation delay and duration
+        const delay = i * 5 + Math.random() * 10; // Stagger shooting stars
+        const duration = 1 + Math.random() * 2;
+        
+        shootingStar.style.left = `${x}%`;
+        shootingStar.style.top = `${y}%`;
+        shootingStar.style.transform = `rotate(${angle}deg)`;
+        shootingStar.style.animationDelay = `${delay}s`;
+        shootingStar.style.animationDuration = `${duration}s`;
+        
+        spaceElements.appendChild(shootingStar);
+    }
+    
+    // Add constellation effect (grouped stars)
+    const constellationCount = 3;
+    for (let c = 0; c < constellationCount; c++) {
+        const constellation = document.createElement('div');
+        constellation.className = 'constellation';
+        
+        // Position constellation in upper part of sky
+        const cx = 10 + Math.random() * 80; // 10-90% width
+        const cy = 5 + Math.random() * 30; // 5-35% height
+        
+        constellation.style.left = `${cx}%`;
+        constellation.style.top = `${cy}%`;
+        
+        spaceElements.appendChild(constellation);
+    }
+    
+    // Add space elements before other mountain elements
+    mountainBackground.insertBefore(spaceElements, mountainBackground.firstChild);
+    
+    // Add CSS for space elements
+    addSpaceElementsCSS();
+}
+
+/**
+ * Adds CSS for space elements
+ */
+function addSpaceElementsCSS() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .space-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -14; /* Between theme background and mountain ranges */
+            opacity: 0.4; /* Default opacity - will be adjusted in dark mode */
+            transition: opacity 1s ease;
+        }
+        
+        .moon {
+            position: absolute;
+            top: 10%;
+            right: 10%;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(220,240,255,0.7) 70%);
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(255,255,255,0.8);
+            opacity: 0.9;
+            transform: translateZ(-200px);
+        }
+        
+        .star {
+            position: absolute;
+            background-color: #ffffff;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: twinkle 4s infinite ease-in-out alternate;
+            box-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
+        }
+        
+        .shooting-star {
+            position: absolute;
+            width: 100px;
+            height: 1px;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%);
+            opacity: 0;
+            transform-origin: right center;
+            animation: shooting-star 10s infinite linear;
+        }
+        
+        .constellation {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            opacity: 0.9;
+        }
+        
+        .constellation::before, 
+        .constellation::after {
+            content: '';
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 
+                30px 20px 0 0 rgba(255, 255, 255, 0.8),
+                50px 50px 0 0 rgba(255, 255, 255, 0.8),
+                20px 70px 0 0 rgba(255, 255, 255, 0.8),
+                70px 40px 0 0 rgba(255, 255, 255, 0.8),
+                90px 10px 0 0 rgba(255, 255, 255, 0.8);
+            animation: constellation-twinkle 5s infinite alternate;
+        }
+        
+        .constellation::after {
+            animation-delay: 2.5s;
+        }
+        
+        @keyframes constellation-twinkle {
+            0% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+            100% { opacity: 0.3; }
+        }
+        
+        @keyframes twinkle {
+            0% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 0.9; transform: scale(1.0); }
+            100% { opacity: 0.3; transform: scale(0.8); }
+        }
+        
+        @keyframes shooting-star {
+            0% { transform: translateX(0) rotate(0deg); opacity: 0; }
+            5% { opacity: 1; }
+            15% { transform: translateX(-200px) rotate(0deg); opacity: 0; }
+            100% { transform: translateX(-200px) rotate(0deg); opacity: 0; }
+        }
+        
+        /* Light mode - reduced visibility of space elements */
+        @media (prefers-color-scheme: light) {
+            .space-elements {
+                opacity: 0.2;
+            }
+            
+            .star {
+                opacity: 0.3;
+            }
+            
+            .moon {
+                opacity: 0.7;
+            }
+            
+            .constellation {
+                opacity: 0.4;
+            }
+        }
+        
+        /* Dark mode - enhanced visibility of space elements */
+        @media (prefers-color-scheme: dark) {
+            .space-elements {
+                opacity: 0.9;
+            }
+            
+            .star {
+                opacity: 0.8;
+                box-shadow: 0 0 3px rgba(255, 255, 255, 0.9);
+            }
+            
+            .moon {
+                opacity: 1;
+                box-shadow: 0 0 25px rgba(255, 255, 255, 0.9);
+                background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(220,240,255,0.9) 70%);
+            }
+            
+            .shooting-star {
+                height: 2px;
+                box-shadow: 0 0 3px rgba(255, 255, 255, 0.8);
+            }
+            
+            .constellation {
+                opacity: 1;
+            }
+        }
+        
+        /* Mobile optimization */
+        @media (max-width: 768px) {
+            .moon {
+                width: 40px;
+                height: 40px;
+                top: 5%;
+                right: 5%;
+            }
+            
+            /* Reduce animations on mobile for performance */
+            .star {
+                animation-duration: 6s;
+            }
+            
+            .shooting-star {
+                animation-duration: 15s;
+            }
+            
+            .constellation {
+                transform: scale(0.7);
+            }
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+/**
+ * Setup dark mode detection and handling
+ */
+function setupDarkModeDetection() {
+    // Apply initial state based on user's preference
+    updateDarkModeStyles(window.matchMedia('(prefers-color-scheme: dark)').matches);
+    
+    // Listen for changes in the user's preference
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+        updateDarkModeStyles(event.matches);
+    });
+}
+
+/**
+ * Update styles based on dark mode setting
+ */
+function updateDarkModeStyles(isDarkMode) {
+    const mountainBackground = document.querySelector('.mountain-background');
+    if (!mountainBackground) return;
+    
+    if (isDarkMode) {
+        // Night mode - darker mountain colors and more visible stars
+        mountainBackground.classList.add('dark-mode');
+        
+        // Make mountains darker, more blue-toned for night
+        const mountainStyles = document.createElement('style');
+        mountainStyles.id = 'mountain-dark-mode-styles';
+        mountainStyles.textContent = `
+            .mountain-back {
+                background: linear-gradient(to top, transparent 0%, #0c4a6e 30%, transparent 100%) !important;
+                opacity: 0.7 !important;
+            }
+            
+            .mountain-middle {
+                background: linear-gradient(to top, transparent 0%, #0e7490 35%, transparent 100%) !important;
+                opacity: 0.8 !important;
+            }
+            
+            .mountain-front {
+                background: linear-gradient(to top, transparent 0%, #065f46 40%, transparent 100%) !important;
+                opacity: 0.9 !important;
+            }
+            
+            .forest-layer {
+                background: linear-gradient(to top, rgba(6, 95, 70, 0.5) 0%, transparent 100%) !important;
+                opacity: 0.9 !important;
+            }
+            
+            .theme-background {
+                opacity: 0.05 !important;
+            }
+        `;
+        
+        // Remove existing dark mode styles if any
+        const existingStyles = document.getElementById('mountain-dark-mode-styles');
+        if (existingStyles) existingStyles.remove();
+        
+        document.head.appendChild(mountainStyles);
+    } else {
+        // Light mode - remove dark mode classes and styles
+        mountainBackground.classList.remove('dark-mode');
+        
+        const existingStyles = document.getElementById('mountain-dark-mode-styles');
+        if (existingStyles) existingStyles.remove();
+    }
+}

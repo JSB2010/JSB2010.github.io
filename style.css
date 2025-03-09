@@ -4063,7 +4063,7 @@ textarea {
     position: absolute;
     width: 24px;
     height: 2px;
-    background-color: var(--text-color-light);
+    background-color: var (--text-color-light);
     transition: all var(--transition-speed);
 }
 
@@ -4509,7 +4509,7 @@ body {
     align-items: center;
     justify-content: center;
     font-size: 3rem;
-    color: var(--primary-color);
+    color: var (--primary-color);
     animation: float 6s ease-in-out infinite;
 }
 
@@ -4666,25 +4666,22 @@ body {
 }
 
 .tech-layer {
+    /* Changed from repeating-linear-gradient to radial gradient to remove bars */
     background: radial-gradient(circle at top left, rgba(3, 105, 161, 0.2), transparent 70%),
-                repeating-linear-gradient(45deg, rgba(3, 105, 161, 0.1) 0px, rgba(3, 105, 161, 0.1) 2px, transparent 2px, transparent 10px);
+                radial-gradient(circle at bottom right, rgba(3, 105, 161, 0.1), transparent 60%);
     opacity: 0.6;
 }
 
-/* Update transit layer for more vibrant green */
+/* Updated transit layer to remove vertical bars */
 .transit-layer {
-    background: 
-        linear-gradient(0deg, transparent 95%, rgba(74, 222, 128, 0.25) 100%),
-        linear-gradient(90deg, transparent 95%, rgba(74, 222, 128, 0.25) 100%);
-    background-size: 20px 20px;
+    background: radial-gradient(circle at right center, rgba(74, 222, 128, 0.25), transparent 70%),
+                radial-gradient(circle at left bottom, rgba(74, 222, 128, 0.15), transparent 60%);
     opacity: 0.4;
 }
 
+/* Updated mountains layer to remove vertical lines */
 .mountains-layer {
-    background: 
-        linear-gradient(135deg, transparent 50%, rgba(13, 148, 136, 0.2) 50%),
-        linear-gradient(225deg, transparent 50%, rgba(13, 148, 136, 0.2) 50%);
-    background-size: 50px 50px;
+    background: radial-gradient(ellipse at bottom, rgba(13, 148, 136, 0.2), transparent 70%);
     opacity: 0.25;
 }
 
@@ -5273,7 +5270,7 @@ body {
 
 .tech-layer {
     background: radial-gradient(circle at top left, rgba(3, 105, 161, 0.2), transparent 70%),
-                repeating-linear-gradient(45deg, rgba(3, 105, 161, 0.1) 0px, rgba(3, 105, 161, 0.1) 2px, transparent 2px, transparent 10px);
+                radial-gradient(circle at bottom right, rgba(3, 105, 161, 0.1), transparent 60%);
     opacity: 0.6;
 }
 
@@ -5851,7 +5848,7 @@ body {
 }
 
 .mountain-middle {
-    background: linear-gradient(to top, transparent 0%, var(--mountain-teal) 35%, transparent 100%);
+    background: linear-gradient(to top, transparent 0%, var (--mountain-teal) 35%, transparent 100%);
     clip-path: polygon(
         0% 100%, 5% 90%, 10% 85%, 15% 90%, 20% 90%, 25% 85%, 30% 80%, 35% 88%,
         40% 95%, 45% 90%, 50% 75%, 55% 80%, 60% 85%, 65% 85%, 70% 75%, 75% 70%, 
@@ -6085,5 +6082,293 @@ body {
     background-color: rgba(240, 253, 250, 0.3);
 }
 
-/* ... existing code ... */
+/* Dark Mode Mountain Theme Enhancements */
+@media (prefers-color-scheme: dark) {
+    /* Update background gradient for dark mode */
+    body {
+        background: var(--gradient-dark);
+    }
+    
+    /* Fix header styling in dark mode */
+    .main-nav {
+        background: rgba(15, 23, 42, 0.9);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* Ensure nav-menu matches main-nav exactly */
+    .nav-menu {
+        background: transparent; /* This is crucial - no background of its own */
+        padding-right: 20px;
+    }
+    
+    /* Fix nav menu links in dark mode */
+    .nav-menu li a {
+        color: rgba(255, 255, 255, 0.85);
+    }
+    
+    .nav-menu li a:hover {
+        background-color: var(--primary-color);
+        color: #ffffff;
+    }
+    
+    /* Fix active page in nav menu */
+    .nav-menu li a.active-page {
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        color: #ffffff !important;
+    }
+    
+    /* Mobile navigation menu fixes */
+    @media (max-width: 1000px) {
+        .main-nav {
+            width: calc(100% - 40px);
+            margin: 10px 20px;
+        }
+        
+        .nav-menu {
+            background: rgba(15, 23, 42, 0.9); /* Match main-nav exactly */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+            padding-right: 0;
+            width: calc(100% - 40px);
+            margin: 10px 20px;
+            border-radius: 15px;
+            top: calc(var(--nav-height) + 20px);
+        }
+        
+        .hamburger-icon, 
+        .hamburger-icon::before,
+        .hamburger-icon::after {
+            background-color: rgba(255, 255, 255, 0.85);
+        }
+        
+        .dropdown-toggle.active .hamburger-icon {
+            background-color: transparent;
+        }
+    }
+    
+    /* Logo styling for dark mode */
+    .logo-image {
+        filter: brightness(1.2);
+        background: rgba(255, 255, 255, 0.05);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+}
+
+/* Dark Mode Header and Navigation - Optimized for Perfect Consistency */
+@media (prefers-color-scheme: dark) {
+    /* Core variables for dark mode header - centralized for consistency */
+    :root {
+        --header-bg-dark: rgba(15, 23, 42, 0.9);
+        --header-border-dark: rgba(255, 255, 255, 0.1);
+        --header-shadow-dark: 0 4px 15px rgba(0, 0, 0, 0.3);
+        --header-text-dark: rgba(255, 255, 255, 0.85);
+    }
+
+    /* Main navigation container styling */
+    .main-nav {
+        background: var(--header-bg-dark);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid var(--header-border-dark);
+        box-shadow: var(--header-shadow-dark);
+    }
+
+    /* Navigation menu styling - completely transparent to inherit from parent */
+    .nav-menu {
+        background: transparent;
+        padding-right: 20px;
+    }
+
+    /* Navigation link styling */
+    .nav-menu li a {
+        color: var(--header-text-dark);
+        transition: all 0.3s ease;
+    }
+
+    .nav-menu li a:hover {
+        background-color: var(--primary-color);
+        color: #ffffff;
+    }
+
+    .nav-menu li a.active-page {
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        color: #ffffff !important;
+    }
+
+    /* Logo styling */
+    .logo-image {
+        filter: brightness(1.2);
+        background: rgba(255, 255, 255, 0.05);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Mobile navigation refinements */
+    @media (max-width: 1000px) {
+        /* Ensure consistent header dimensions */
+        .main-nav {
+            width: calc(100% - 40px);
+            margin: 10px 20px;
+            padding: 0 20px;
+        }
+        
+        /* Dropdown menu when active - match main nav exactly */
+        .nav-menu {
+            position: absolute;
+            top: calc(var(--nav-height) + 10px);
+            left: 20px;
+            right: 20px;
+            width: calc(100% - 40px);
+            background: var(--header-bg-dark);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--header-border-dark);
+            box-shadow: var(--header-shadow-dark);
+            border-radius: 15px;
+            padding: 10px 0;
+            margin: 0;
+            z-index: 999;
+        }
+        
+        /* Individual nav items in mobile dropdown */
+        .nav-menu li {
+            width: 100%;
+        }
+        
+        .nav-menu li a {
+            color: var(--header-text-dark);
+            padding: 12px 20px;
+            width: 100%;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .nav-menu li:last-child a {
+            border-bottom: none;
+        }
+        
+        /* Hamburger menu styling */
+        .dropdown-toggle .hamburger-icon,
+        .dropdown-toggle .hamburger-icon::before,
+        .dropdown-toggle .hamburger-icon::after {
+            background-color: var(--header-text-dark);
+            transition: all 0.3s ease;
+        }
+        
+        .dropdown-toggle.active .hamburger-icon {
+            background-color: transparent;
+        }
+        
+        .dropdown-toggle.active .hamburger-icon::before {
+            transform: translateY(8px) rotate(45deg);
+        }
+        
+        .dropdown-toggle.active .hamburger-icon::after {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+    }
+}
+
+/* Dark Mode Header and Navigation - Final Fix for Menu Transparency */
+@media (prefers-color-scheme: dark) {
+    /* Main navigation container styling */
+    .main-nav {
+        background: rgba(15, 23, 42, 0.9);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Navigation menu styling - completely transparent */
+    .nav-menu {
+        background: transparent !important; /* Forced transparency */
+        padding-right: 20px;
+    }
+
+    /* Navigation link styling */
+    .nav-menu li a {
+        color: rgba(255, 255, 255, 0.85);
+    }
+
+    /* Mobile navigation refinements */
+    @media (max-width: 1000px) {
+        /* Dropdown menu when active - match main nav exactly */
+        .nav-menu {
+            position: absolute;
+            top: calc(var(--nav-height) + 10px);
+            left: 20px;
+            right: 20px;
+            width: calc(100% - 40px);
+            background: rgba(15, 23, 42, 0.9) !important; /* Same as main-nav */
+            backdrop-filter: blur(10px) !important;
+            -webkit-backdrop-filter: blur(10px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+            border-radius: 15px;
+            padding: 10px 0;
+            margin: 0;
+            z-index: 999;
+        }
+    }
+}
+
+/* Dark Mode Header and Navigation - Complete Fix */
+@media (prefers-color-scheme: dark) {
+    /* Main navigation container styling */
+    .main-nav {
+        background: rgba(15, 23, 42, 0.9);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Remove ALL background styling from nav-menu in desktop mode */
+    .nav-menu {
+        background: none !important;
+        background-color: transparent !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    /* Navigation link styling */
+    .nav-menu li a {
+        color: rgba(255, 255, 255, 0.85);
+    }
+
+    /* Mobile navigation special case - must have its own background */
+    @media (max-width: 1000px) {
+        .dropdown-toggle .hamburger-icon,
+        .dropdown-toggle .hamburger-icon::before,
+        .dropdown-toggle .hamburger-icon::after {
+            background-color: rgba(255, 255, 255, 0.85);
+        }
+        
+        /* Dropdown menu when active needs its own background */
+        .nav-menu.show {
+            position: absolute;
+            top: calc(var(--nav-height) + 10px);
+            left: 20px;
+            right: 20px;
+            width: calc(100% - 40px);
+            background: rgba(15, 23, 42, 0.9) !important; /* Same as main-nav */
+            backdrop-filter: blur(10px) !important;
+            -webkit-backdrop-filter: blur(10px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+            border-radius: 15px;
+            padding: 10px 0;
+            z-index: 999;
+        }
+    }
+}
 
