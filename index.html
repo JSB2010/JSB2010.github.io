@@ -3,52 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jacob Barkin - Home</title>
+    <title>Jacob Barkin | Portfolio</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
     <meta name="description" content="Explore Jacob Barkin's portfolio, projects, and contact details. A dedicated app developer and financial education advocate.">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/png" href="images/Logo.png">
 </head>
-<body>
+<body class="themed-background">
     <div class="loading-animation"></div>
-    <div id="header"></div>
-    <main class="content-main" role="main">
-        <div class="main-header">
+    
+    <!-- Mountain Background Layers -->
+    <div class="mountain-background">
+        <div class="mountain-range mountain-back"></div>
+        <div class="mountain-range mountain-middle"></div>
+        <div class="mountain-range mountain-front"></div>
+        <div class="forest-layer"></div>
+    </div>
+    
+    <!-- Theme background elements -->
+    <div class="theme-background">
+        <div class="tech-layer"></div>
+        <div class="transit-layer"></div>
+        <div class="mountains-layer"></div>
+        <div class="space-layer"></div>
+    </div>
+    
+    <header class="main-nav">
+        <a class="logo" href="index.html">
+            <img class="logo-image" src="images/logo.png" alt="Logo">
+        </a>
+        <nav>
+            <ul class="nav-menu">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <button class="dropdown-toggle">
+                <span class="hamburger-icon"></span>
+                <span class="hamburger-icon"></span>
+                <span class="hamburger-icon"></span>
+            </button>
+        </nav>
+    </header>
+    <main id="home" class="content-main" role="main">
+        <section class="main-header">
             <h1>Jacob Barkin</h1>
-            <p class="tagline" id="dynamic-greeting"></p>
-        </div>
+            <p class="tagline" id="dynamic-greeting">Developer & Financial Education Advocate</p>
+            <!-- Theme indicators and Explore Projects button removed -->
+        </section>
         <div class="card-container">
             <div>
-                <a href="about.html" class="new-button-style">
+                <a href="about.html" class="new-button-style tech-card">
+                    <div class="card-theme-element tech-element">
+                        <i class="fas fa-microchip"></i>
+                    </div>
                     <i class="fas fa-user"></i>
                     <h2>About Me</h2>
                     <p>Learn more about my background and skills</p>
                 </a>
             </div>
             <div>
-                <a href="projects.html" class="new-button-style">
+                <a href="projects.html" class="new-button-style transit-card">
+                    <div class="card-theme-element transit-element">
+                        <i class="fas fa-bus-alt"></i>
+                    </div>
                     <i class="fas fa-code"></i>
                     <h2>My Projects</h2>
                     <p>Explore my IT projects and achievements</p>
                 </a>
             </div>
             <div>
-                <a href="contact.html" class="new-button-style">
+                <a href="contact.html" class="new-button-style mountain-card">
+                    <div class="card-theme-element mountain-element">
+                        <i class="fas fa-mountain"></i>
+                    </div>
                     <i class="fas fa-briefcase"></i>
                     <h2>My Work</h2>
                     <p>Find out what I am up to</p>
                 </a>
             </div>
             <div>
-                <a href="https://www.askthekidz.com" target="_blank" rel="noopener" class="new-button-style">
+                <a href="https://www.askthekidz.com" target="_blank" rel="noopener" class="new-button-style space-card">
+                    <div class="card-theme-element space-element">
+                        <i class="fas fa-rocket"></i>
+                    </div>
                     <i class="fas fa-external-link-alt"></i>
                     <h2>Ask The Kidz</h2>
                     <p>Discover my business</p>
                 </a>
             </div>
             <div>
-                <a href="contact.html" class="new-button-style">
+                <a href="contact.html" class="new-button-style tech-card">
+                    <div class="card-theme-element tech-element">
+                        <i class="fas fa-microchip"></i>
+                    </div>
                     <i class="fas fa-envelope"></i>
                     <h2>Contact</h2>
                     <p>Get in touch with me</p>
@@ -56,40 +106,42 @@
             </div>
         </div>
     </main>
-    <div id="footer"></div>
+    
+    <footer class="main-footer">
+        <p>Created by Jacob Barkin</p>
+        <div class="footer-buttons">
+            <a href="mailto:jacobbarkin@gmail.com" class="email" aria-label="Email Jacob Barkin"></a>
+            <a href="https://www.linkedin.com/in/jacobbarkin" target="_blank" rel="noopener" class="linkedin" aria-label="LinkedIn Profile"></a>
+            <a href="https://github.com/JSB2010" target="_blank" rel="noopener" class="github" aria-label="GitHub Profile"></a>
+        </div>
+    </footer>
+    
     <button id="back-to-top" title="Back to top">↑</button>
     <script>
-        async function loadContent() {
-            try {
-                const headerResponse = await fetch('header.html');
-                if (!headerResponse.ok) throw new Error('Header not found');
-                document.getElementById('header').innerHTML = await headerResponse.text();
+        // Dynamic greeting message based on time of day
+        const greetingElement = document.getElementById('dynamic-greeting');
+        const currentHour = new Date().getHours();
+        let greeting;
 
-                const footerResponse = await fetch('footer.html');
-                if (!footerResponse.ok) throw new Error('Footer not found');
-                document.getElementById('footer').innerHTML = await footerResponse.text();
-            } catch (error) {
-                console.error('Error loading content:', error);
-            }
+        if (currentHour < 12) {
+            greeting = "Developer & Financial Education Advocate | Good Morning";
+        } else if (currentHour < 18) {
+            greeting = "Developer & Financial Education Advocate | Good Afternoon";
+        } else if (currentHour < 21) {
+            greeting = "Developer & Financial Education Advocate | Good Evening";
+        } else {
+            greeting = "Developer & Financial Education Advocate | Good Night";
         }
 
-        loadContent().then(() => {
-            // Dynamic greeting message based on time of day
-            const greetingElement = document.getElementById('dynamic-greeting');
-            const currentHour = new Date().getHours();
-            let greeting;
+        greetingElement.textContent = greeting;
 
-            if (currentHour < 12) {
-                greeting = "Good morning! Welcome to my portfolio!";
-            } else if (currentHour < 18) {
-                greeting = "Good afternoon! Explore my work.";
-            } else if (currentHour < 21) {
-                greeting = "Good evening! Check out my projects.";
-            } else {
-                greeting = "Good night! Have a look at my achievements.";
-            }
+        // Mobile menu toggle
+        const dropdownToggle = document.querySelector('.dropdown-toggle');
+        const navMenu = document.querySelector('.nav-menu');
 
-            greetingElement.textContent = greeting;
+        dropdownToggle.addEventListener('click', function() {
+            navMenu.classList.toggle('show');
+            this.classList.toggle('active');
         });
 
         // Back to top button functionality
@@ -107,9 +159,31 @@
             document.documentElement.scrollTop = 0;
         });
 
+        // Loading animation
         window.addEventListener('load', function() {
-            document.querySelector('.loading-animation').style.display = 'none';
+            const loader = document.querySelector('.loading-animation');
+            if (loader) {
+                loader.style.display = 'none';
+            }
         });
+        
+        // Add parallax effect to mountains on scroll
+        if (window.innerWidth > 768) {
+            window.addEventListener('scroll', function() {
+                const scrollY = window.scrollY;
+                
+                // Apply parallax to mountain layers
+                const mountainBack = document.querySelector('.mountain-back');
+                const mountainMiddle = document.querySelector('.mountain-middle');
+                const mountainFront = document.querySelector('.mountain-front');
+                
+                if (mountainBack && mountainMiddle && mountainFront) {
+                    mountainBack.style.transform = `translateY(${scrollY * 0.1}px) translateZ(-300px) scale(1.5)`;
+                    mountainMiddle.style.transform = `translateY(${scrollY * 0.05}px) translateZ(-150px) scale(1.3)`;
+                    mountainFront.style.transform = `translateY(${scrollY * 0.02}px) translateZ(0) scale(1.1)`;
+                }
+            });
+        }
     </script>
     <script src="/theme.js"></script>
 </body>
