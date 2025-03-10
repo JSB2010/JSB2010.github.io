@@ -52,6 +52,48 @@ function initializeMountainBackground() {
     
     // Insert as first child of body
     document.body.insertBefore(mountainBackground, document.body.firstChild);
+    
+    // Add snow caps to mountains
+    addSnowCapsToMountains();
+}
+
+/**
+ * Adds snow cap effect to the mountains
+ */
+function addSnowCapsToMountains() {
+    const style = document.createElement('style');
+    style.id = 'snow-caps-style';
+    style.textContent = `
+        /* Snow caps for light mode */
+        .mountain-back {
+            background: linear-gradient(to bottom, 
+                rgba(255, 255, 255, 0.9) 0%,
+                rgba(240, 248, 255, 0.8) 5%,
+                rgba(240, 248, 255, 0.3) 8%,
+                transparent 15%),
+                radial-gradient(ellipse at bottom, #0c4a6e 30%, transparent 80%) !important;
+        }
+        
+        .mountain-middle {
+            background: linear-gradient(to bottom, 
+                rgba(255, 255, 255, 0.85) 0%,
+                rgba(240, 248, 255, 0.75) 3%,
+                rgba(240, 248, 255, 0.25) 6%,
+                transparent 12%),
+                radial-gradient(ellipse at bottom, #0e7490 30%, transparent 80%) !important;
+        }
+        
+        .mountain-front {
+            background: linear-gradient(to bottom, 
+                rgba(255, 255, 255, 0.8) 0%,
+                rgba(240, 248, 255, 0.7) 2%,
+                rgba(240, 248, 255, 0.2) 4%,
+                transparent 10%),
+                radial-gradient(ellipse at bottom, #065f46 30%, transparent 80%) !important;
+        }
+    `;
+    
+    document.head.appendChild(style);
 }
 
 /**
@@ -297,6 +339,9 @@ function initializeSpaceElements() {
         spaceElements.appendChild(star);
     }
     
+    // Add satellites (visible in both light and dark mode)
+    addSatellites(spaceElements, 3); // Add 3 satellites
+    
     // Add more shooting stars for dark mode
     for (let i = 0; i < 5; i++) {
         const shootingStar = document.createElement('div');
@@ -344,6 +389,47 @@ function initializeSpaceElements() {
 }
 
 /**
+ * Adds satellite elements that are visible in both light and dark modes
+ * @param {HTMLElement} container - The container element for satellites
+ * @param {number} count - Number of satellites to add
+ */
+function addSatellites(container, count) {
+    for (let i = 0; i < count; i++) {
+        const satellite = document.createElement('div');
+        satellite.className = 'satellite';
+        
+        // Create satellite body
+        const body = document.createElement('div');
+        body.className = 'satellite-body';
+        
+        // Create solar panels
+        const leftPanel = document.createElement('div');
+        leftPanel.className = 'satellite-panel left-panel';
+        
+        const rightPanel = document.createElement('div');
+        rightPanel.className = 'satellite-panel right-panel';
+        
+        // Append parts to satellite
+        satellite.appendChild(leftPanel);
+        satellite.appendChild(body);
+        satellite.appendChild(rightPanel);
+        
+        // Random position
+        const startY = Math.random() * 40; // Upper 40% of screen
+        
+        // Random animation duration and delay
+        const duration = 180 + Math.random() * 120; // 180-300s to cross screen
+        const delay = i * 40; // Stagger satellites
+        
+        satellite.style.top = `${startY}%`;
+        satellite.style.animationDuration = `${duration}s`;
+        satellite.style.animationDelay = `${delay}s`;
+        
+        container.appendChild(satellite);
+    }
+}
+
+/**
  * Adds CSS for space elements
  */
 function addSpaceElementsCSS() {
@@ -381,6 +467,46 @@ function addSpaceElementsCSS() {
             opacity: 0.5;
             animation: twinkle 4s infinite ease-in-out alternate;
             box-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
+        }
+        
+        /* Satellite styling */
+        .satellite {
+            position: absolute;
+            left: -50px; /* Start offscreen */
+            display: flex;
+            align-items: center;
+            transform: scale(0.5);
+            animation: orbit linear infinite;
+            z-index: -13;
+        }
+        
+        .satellite-body {
+            width: 12px;
+            height: 24px;
+            background-color: #d4d4d8;
+            border: 1px solid #a1a1aa;
+            border-radius: 2px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .satellite-panel {
+            width: 24px;
+            height: 8px;
+            background: linear-gradient(to bottom, #3b82f6, #1d4ed8);
+            border: 1px solid #2563eb;
+        }
+        
+        .left-panel {
+            margin-right: 2px;
+        }
+        
+        .right-panel {
+            margin-left: 2px;
+        }
+        
+        @keyframes orbit {
+            from { transform: translateX(-50px) scale(0.5); }
+            to { transform: translateX(calc(100vw + 50px)) scale(0.5); }
         }
         
         .shooting-star {
@@ -442,19 +568,32 @@ function addSpaceElementsCSS() {
         /* Light mode - reduced visibility of space elements */
         @media (prefers-color-scheme: light) {
             .space-elements {
-                opacity: 0.2;
+                opacity: 0.4; /* Increased from 0.2 */
             }
             
             .star {
-                opacity: 0.3;
+                opacity: 0.5; /* Increased from 0.3 */
+                box-shadow: 0 0 3px rgba(100, 100, 255, 0.6); /* Bluish glow */
             }
             
             .moon {
-                opacity: 0.7;
+                opacity: 0.8; /* Increased from 0.7 */
             }
             
             .constellation {
+                opacity: 0.6; /* Increased from 0.4 */
+            }
+            
+            /* Make satellites more visible in light mode */
+            .satellite {
+                filter: drop-shadow(0 0 3px rgba(0, 0, 50, 0.5));
+            }
+            
+            /* Add subtle shooting stars to light mode */
+            .shooting-star {
                 opacity: 0.4;
+                height: 1px;
+                box-shadow: 0 0 2px rgba(100, 100, 255, 0.6);
             }
         }
         
@@ -506,6 +645,15 @@ function addSpaceElementsCSS() {
             .constellation {
                 transform: scale(0.7);
             }
+            
+            .satellite {
+                transform: scale(0.3); /* Smaller satellites on mobile */
+            }
+            
+            @keyframes orbit {
+                from { transform: translateX(-30px) scale(0.3); }
+                to { transform: translateX(calc(100vw + 30px)) scale(0.3); }
+            }
         }
     `;
     document.head.appendChild(style);
@@ -539,28 +687,119 @@ function updateDarkModeStyles(isDarkMode) {
         const mountainStyles = document.createElement('style');
         mountainStyles.id = 'mountain-dark-mode-styles';
         mountainStyles.textContent = `
+            /* Enhanced space background for dark mode */
+            .mountain-background {
+                background: linear-gradient(to bottom, 
+                    #0f0221 0%, 
+                    #0c1339 30%, 
+                    #081c51 70%, 
+                    #102346 100%);
+            }
+            
+            /* Add nebula effects */
+            .mountain-background::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: 
+                    radial-gradient(circle at 20% 20%, rgba(103, 65, 217, 0.15), transparent 25%),
+                    radial-gradient(circle at 80% 40%, rgba(158, 58, 185, 0.1), transparent 35%),
+                    radial-gradient(circle at 40% 80%, rgba(83, 49, 156, 0.15), transparent 30%);
+                z-index: -14;
+                pointer-events: none;
+            }
+            
+            /* Dark mode mountains with snow caps */
             .mountain-back {
-                background: linear-gradient(to top, transparent 0%, #0c4a6e 30%, transparent 100%) !important;
+                background: linear-gradient(to bottom, 
+                    rgba(255, 255, 255, 0.95) 0%,
+                    rgba(230, 240, 255, 0.9) 3%,
+                    rgba(200, 230, 255, 0.6) 6%,
+                    rgba(150, 200, 255, 0.3) 10%,
+                    transparent 15%),
+                    radial-gradient(ellipse at bottom, #0c4a6e 30%, transparent 80%) !important;
                 opacity: 0.7 !important;
             }
             
             .mountain-middle {
-                background: linear-gradient(to top, transparent 0%, #0e7490 35%, transparent 100%) !important;
+                background: linear-gradient(to bottom, 
+                    rgba(255, 255, 255, 0.9) 0%,
+                    rgba(230, 240, 255, 0.85) 2%,
+                    rgba(200, 230, 255, 0.55) 4%,
+                    rgba(150, 200, 255, 0.25) 7%,
+                    transparent 12%),
+                    radial-gradient(ellipse at bottom, #0e7490 30%, transparent 80%) !important;
                 opacity: 0.8 !important;
             }
             
             .mountain-front {
-                background: linear-gradient(to top, transparent 0%, #065f46 40%, transparent 100%) !important;
+                background: linear-gradient(to bottom, 
+                    rgba(255, 255, 255, 0.85) 0%,
+                    rgba(230, 240, 255, 0.8) 1.5%,
+                    rgba(200, 230, 255, 0.5) 3%,
+                    rgba(150, 200, 255, 0.2) 5%,
+                    transparent 10%),
+                    radial-gradient(ellipse at bottom, #065f46 30%, transparent 80%) !important;
                 opacity: 0.9 !important;
             }
             
+            /* Rest of dark mode styles */
             .forest-layer {
-                background: linear-gradient(to top, rgba(6, 95, 70, 0.5) 0%, transparent 100%) !important;
-                opacity: 0.9 !important;
+                background: radial-gradient(ellipse at top center, rgba(6, 95, 70, 0.5) 10%, transparent 70%) !important;
+                opacity: 0.8 !important;
+            }
+            
+            /* Only remove specific background patterns that cause lines */
+            .forest-layer::before,
+            .forest-layer::after {
+                display: none !important;
             }
             
             .theme-background {
                 opacity: 0.05 !important;
+            }
+            
+            /* Fix transit map overlay in dark mode */
+            .transit-map-overlay {
+                opacity: 0.1 !important;
+            }
+            
+            .transit-line {
+                height: 2px !important;
+                background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%) !important;
+                box-shadow: none !important;
+            }
+            
+            /* Remove only vertical linear gradients */
+            .transit-layer,
+            .mountains-layer,
+            .transit-curve {
+                background-image: none !important;
+            }
+            
+            /* Enhanced star visibility */
+            .space-elements {
+                opacity: 1 !important;
+            }
+            
+            .star {
+                opacity: 0.9 !important;
+                box-shadow: 0 0 5px rgba(255, 255, 255, 0.9) !important;
+            }
+            
+            .moon {
+                opacity: 1 !important;
+                box-shadow: 0 0 30px rgba(255, 255, 255, 0.9) !important;
+                background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(220,240,255,0.9) 70%) !important;
+            }
+            
+            .shooting-star {
+                height: 3px !important;
+                box-shadow: 0 0 5px rgba(255, 255, 255, 0.9) !important;
+                background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 100%) !important;
             }
         `;
         
@@ -569,11 +808,241 @@ function updateDarkModeStyles(isDarkMode) {
         if (existingStyles) existingStyles.remove();
         
         document.head.appendChild(mountainStyles);
+        
+        // Add more stars for dark mode
+        enhanceSpaceForDarkMode();
+        
     } else {
         // Light mode - remove dark mode classes and styles
         mountainBackground.classList.remove('dark-mode');
         
         const existingStyles = document.getElementById('mountain-dark-mode-styles');
         if (existingStyles) existingStyles.remove();
+        
+        // Remove extra stars
+        const extraStars = document.querySelector('.extra-stars');
+        if (extraStars) extraStars.remove();
+        
+        // Add light mode specific enhancements
+        enhanceSpaceForLightMode();
+    }
+}
+
+/**
+ * Add additional space elements specifically for dark mode
+ */
+function enhanceSpaceForDarkMode() {
+    // Remove previous extra stars if they exist
+    const oldExtraStars = document.querySelector('.extra-stars');
+    if (oldExtraStars) oldExtraStars.remove();
+    
+    const mountainBackground = document.querySelector('.mountain-background');
+    if (!mountainBackground) return;
+    
+    // Create container for extra space elements
+    const extraStars = document.createElement('div');
+    extraStars.className = 'extra-stars';
+    
+    // Add purple nebula effects
+    const nebulaCount = 3;
+    for (let i = 0; i < nebulaCount; i++) {
+        const nebula = document.createElement('div');
+        nebula.className = 'nebula';
+        
+        // Random position
+        const x = Math.random() * 100;
+        const y = Math.random() * 60; // Keep in upper 60% of screen
+        
+        // Random size
+        const size = 150 + Math.random() * 200;
+        
+        // Random opacity
+        const opacity = 0.05 + Math.random() * 0.15;
+        
+        // Random hue variation (purples and blues)
+        const hue = 250 + (Math.random() * 60 - 30); // 220-280 range (purple-blue)
+        
+        nebula.style.left = `${x}%`;
+        nebula.style.top = `${y}%`;
+        nebula.style.width = `${size}px`;
+        nebula.style.height = `${size * 0.6}px`;
+        nebula.style.background = `radial-gradient(ellipse at center, hsla(${hue}, 80%, 60%, ${opacity}) 0%, transparent 70%)`;
+        nebula.style.borderRadius = '50%';
+        nebula.style.transform = `rotate(${Math.random() * 360}deg)`;
+        nebula.style.position = 'absolute';
+        nebula.style.zIndex = '-14';
+        nebula.style.pointerEvents = 'none';
+        
+        extraStars.appendChild(nebula);
+    }
+    
+    // Add many more stars
+    const extraStarCount = 150; // More stars for dark mode
+    for (let i = 0; i < extraStarCount; i++) {
+        const star = document.createElement('div');
+        star.className = 'extra-star';
+        
+        // Random position
+        const x = Math.random() * 100;
+        const y = Math.random() * 80; // 0-80% of screen height
+        
+        // Random size (slightly smaller than primary stars)
+        const size = 0.5 + Math.random() * 2;
+        
+        // Random brightness
+        const brightness = 0.5 + Math.random() * 0.5;
+        
+        // Random twinkle effect
+        const delay = Math.random() * 5;
+        
+        star.style.left = `${x}%`;
+        star.style.top = `${y}%`;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.backgroundColor = '#ffffff';
+        star.style.borderRadius = '50%';
+        star.style.position = 'absolute';
+        star.style.zIndex = '-13';
+        star.style.opacity = brightness.toString();
+        star.style.boxShadow = `0 0 ${size}px rgba(255, 255, 255, ${brightness * 0.5})`;
+        star.style.animation = `twinkle ${3 + Math.random() * 4}s infinite ease-in-out alternate`;
+        star.style.animationDelay = `${delay}s`;
+        star.style.pointerEvents = 'none';
+        
+        extraStars.appendChild(star);
+    }
+    
+    // Add space dust (tiny stars)
+    const dustCount = 200;
+    for (let i = 0; i < dustCount; i++) {
+        const dust = document.createElement('div');
+        dust.className = 'space-dust';
+        
+        // Random position
+        const x = Math.random() * 100;
+        const y = Math.random() * 80;
+        
+        // Very small size
+        const size = 0.3 + Math.random() * 0.5;
+        
+        // Low opacity
+        const opacity = 0.3 + Math.random() * 0.3;
+        
+        dust.style.left = `${x}%`;
+        dust.style.top = `${y}%`;
+        dust.style.width = `${size}px`;
+        dust.style.height = `${size}px`;
+        dust.style.backgroundColor = '#ffffff';
+        dust.style.borderRadius = '50%';
+        dust.style.position = 'absolute';
+        dust.style.zIndex = '-14';
+        dust.style.opacity = opacity.toString();
+        dust.style.pointerEvents = 'none';
+        
+        extraStars.appendChild(dust);
+    }
+    
+    // Insert before other elements in the mountain background
+    mountainBackground.insertBefore(extraStars, mountainBackground.firstChild);
+    
+    // Add CSS for extra stars
+    addExtraStarsCSS();
+}
+
+/**
+ * Add CSS for extra space elements in dark mode
+ */
+function addExtraStarsCSS() {
+    // Check if the style already exists
+    const existingStyle = document.getElementById('extra-stars-style');
+    if (existingStyle) return;
+    
+    const style = document.createElement('style');
+    style.id = 'extra-stars-style';
+    style.textContent = `
+        .extra-stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -13;
+        }
+        
+        .extra-star {
+            animation: twinkle-extra 4s infinite ease-in-out alternate;
+        }
+        
+        @keyframes twinkle-extra {
+            0% { opacity: 0.2; transform: scale(0.8); }
+            50% { opacity: 0.9; transform: scale(1.0); }
+            100% { opacity: 0.2; transform: scale(0.8); }
+        }
+        
+        .nebula {
+            animation: nebula-pulse 15s infinite ease-in-out alternate;
+            mix-blend-mode: screen;
+        }
+        
+        @keyframes nebula-pulse {
+            0% { opacity: 0.5; transform: scale(1) rotate(0deg); }
+            50% { opacity: 1; transform: scale(1.1) rotate(5deg); }
+            100% { opacity: 0.5; transform: scale(1) rotate(0deg); }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .nebula {
+                animation-duration: 20s;
+            }
+            
+            .extra-star {
+                animation-duration: 6s;
+            }
+        }
+    `;
+    
+    document.head.appendChild(style);
+}
+
+/**
+ * Add light mode specific space elements
+ */
+function enhanceSpaceForLightMode() {
+    const spaceElements = document.querySelector('.space-elements');
+    if (!spaceElements) return;
+    
+    // Make existing stars more visible in light mode
+    const stars = spaceElements.querySelectorAll('.star');
+    stars.forEach(star => {
+        // Increase brightness of some stars
+        if (Math.random() > 0.7) {
+            const sizePx = parseFloat(star.style.width);
+            star.style.boxShadow = `0 0 ${sizePx * 2}px rgba(100, 100, 255, 0.7)`;
+            star.style.opacity = '0.7';
+        }
+    });
+    
+    // Add a few daytime shooting stars - very subtle
+    for (let i = 0; i < 2; i++) {
+        const shootingStar = document.createElement('div');
+        shootingStar.className = 'shooting-star light-mode';
+        
+        // Random position and angle
+        const x = Math.random() * 100;
+        const y = Math.random() * 25; // Upper part of sky
+        const angle = -15 - Math.random() * 30;
+        
+        const delay = i * 30 + Math.random() * 30;
+        const duration = 15 + Math.random() * 10;
+        
+        shootingStar.style.left = `${x}%`;
+        shootingStar.style.top = `${y}%`;
+        shootingStar.style.transform = `rotate(${angle}deg)`;
+        shootingStar.style.animationDelay = `${delay}s`;
+        shootingStar.style.animationDuration = `${duration}s`;
+        
+        spaceElements.appendChild(shootingStar);
     }
 }

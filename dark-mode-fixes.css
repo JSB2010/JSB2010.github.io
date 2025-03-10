@@ -38,4 +38,199 @@
             z-index: 999 !important;
         }
     }
+    
+    /* Fix for vertical lines - ONLY target specific problematic layers */
+    .transit-layer,
+    .mountains-layer {
+        background-image: none !important;
+    }
+    
+    /* Enhanced space background for dark mode */
+    body {
+        background: linear-gradient(to bottom, 
+            #0f0221 0%, /* Deep purple at top */
+            #0c1339 30%, /* Deep blue-purple */
+            #081c51 70%, /* Midnight blue */
+            #102346 100%) !important; /* Slightly lighter blue at bottom */
+    }
+    
+    /* Cosmic background effects */
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+            radial-gradient(circle at 20% 20%, rgba(103, 65, 217, 0.2), transparent 25%),
+            radial-gradient(circle at 80% 40%, rgba(81, 46, 145, 0.2), transparent 35%),
+            radial-gradient(circle at 40% 70%, rgba(69, 39, 160, 0.15), transparent 30%);
+        pointer-events: none;
+        z-index: -16;
+    }
+    
+    /* Apply proper styling to mountain layers instead of removing them */
+    .mountain-back {
+        background: radial-gradient(ellipse at bottom, #0c4a6e 30%, transparent 80%) !important;
+        opacity: 0.7 !important;
+    }
+    
+    .mountain-middle {
+        background: radial-gradient(ellipse at bottom, #0e7490 30%, transparent 80%) !important;
+        opacity: 0.8 !important;
+    }
+    
+    .mountain-front {
+        background: radial-gradient(ellipse at bottom, #065f46 30%, transparent 80%) !important;
+        opacity: 0.9 !important;
+    }
+    
+    .forest-layer {
+        background: radial-gradient(ellipse at top, rgba(6, 95, 70, 0.5) 10%, transparent 80%) !important;
+        opacity: 0.8 !important;
+    }
+    
+    /* Fix for forest layer at the bottom */
+    .forest-layer::before,
+    .forest-layer::after {
+        background-image: none !important;
+        background: transparent !important;
+    }
+    
+    /* Replace any linear patterns with radial patterns */
+    .transit-map-overlay .transit-line {
+        background: radial-gradient(ellipse at center, 
+            rgba(var(--primary-color-rgb, 3, 105, 161), 0.7) 0%, 
+            transparent 70%) !important;
+        height: 2px !important; 
+        border-radius: 50% !important;
+    }
+    
+    /* Enhance the visibility of stars in dark mode */
+    .space-elements {
+        opacity: 1 !important;
+    }
+    
+    .star {
+        box-shadow: 0 0 5px rgba(255, 255, 255, 0.9) !important;
+    }
+    
+    /* Add nebula effects */
+    .constellation {
+        opacity: 1 !important;
+    }
+    
+    .constellation::before, .constellation::after {
+        box-shadow: 
+            30px 20px 0 0 rgba(255, 255, 255, 0.9),
+            50px 50px 0 0 rgba(255, 255, 255, 0.9),
+            20px 70px 0 0 rgba(255, 255, 255, 0.9),
+            70px 40px 0 0 rgba(255, 255, 255, 0.9),
+            90px 10px 0 0 rgba(255, 255, 255, 0.9) !important;
+    }
+    
+    /* Enhanced snow caps for dark mode mountains */
+    .mountain-back::before,
+    .mountain-middle::before,
+    .mountain-front::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 15%;
+        background: radial-gradient(
+            ellipse at center, 
+            rgba(255, 255, 255, 0.3) 0%, 
+            transparent 70%
+        );
+        animation: snow-glow 8s infinite alternate ease-in-out;
+        pointer-events: none;
+        mix-blend-mode: screen;
+    }
+    
+    .mountain-middle::before {
+        height: 12%;
+    }
+    
+    .mountain-front::before {
+        height: 10%;
+    }
+    
+    @keyframes snow-glow {
+        0% { opacity: 0.3; filter: blur(5px); }
+        50% { opacity: 0.5; filter: blur(3px); }
+        100% { opacity: 0.3; filter: blur(5px); }
+    }
+    
+    /* Ensure back-to-top button is visible in dark mode */
+    #back-to-top {
+        background: var(--primary-color) !important;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.2) !important;
+    }
+}
+
+/* Light mode space elements enhancements */
+@media (prefers-color-scheme: light) {
+    /* Make stars visible against blue sky */
+    .star {
+        box-shadow: 0 0 3px rgba(0, 0, 100, 0.5) !important;
+    }
+    
+    .star.bright {
+        box-shadow: 0 0 5px rgba(0, 0, 100, 0.7) !important;
+    }
+    
+    /* Satellites visible in light mode */
+    .satellite {
+        filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.4)) !important;
+    }
+    
+    .satellite-body {
+        background-color: #d4d4d8 !important;
+        border: 1px solid #a1a1aa !important;
+    }
+    
+    .satellite-panel {
+        background: linear-gradient(to bottom, #3b82f6, #1d4ed8) !important;
+        border: 1px solid #2563eb !important;
+    }
+    
+    /* Light mode shooting star */
+    .shooting-star.light-mode {
+        background: linear-gradient(to right, 
+            rgba(100,100,255,0) 0%, 
+            rgba(100,100,255,0.6) 50%, 
+            rgba(100,100,255,0) 100%) !important;
+        height: 1px !important;
+    }
+}
+
+/* Back to top button visibility fix for both modes */
+#back-to-top {
+    background: var(--primary-color) !important;
+    color: white !important;
+    font-weight: bold !important;
+    text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+#back-to-top i.fas,
+#back-to-top i.fa {
+    color: white !important;
+}
+
+/* If using text arrow instead of icon */
+#back-to-top:not(:has(i)) {
+    font-size: 1.8rem !important;
+    line-height: 1 !important;
+}
+
+/* Enhanced hover state */
+#back-to-top:hover {
+    background: var(--secondary-color) !important;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3) !important;
 }
