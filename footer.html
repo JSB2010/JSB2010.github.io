@@ -73,70 +73,73 @@
 </button>
 
 <script>
-    // Theme switcher functionality
-    const lightButton = document.getElementById('light-mode');
-    const darkButton = document.getElementById('dark-mode');
-    const autoButton = document.getElementById('auto-mode');
+    // Theme switcher functionality is now fully handled by theme-manager.js
     
-    // Set the active theme button based on stored preference
-    function setActiveThemeButton(theme) {
-        lightButton.classList.remove('active');
-        darkButton.classList.remove('active');
-        autoButton.classList.remove('active');
-        
-        if (theme === 'light') {
-            lightButton.classList.add('active');
-        } else if (theme === 'dark') {
-            darkButton.classList.add('active');
-        } else {
-            autoButton.classList.add('active');
-        }
-    }
-    
-    // Initialize from stored preference or default to auto
-    const savedTheme = localStorage.getItem('theme-preference') || 'auto';
-    setActiveThemeButton(savedTheme);
-    
-    // Theme button click handlers
-    lightButton.addEventListener('click', function() {
-        localStorage.setItem('theme-preference', 'light');
-        document.dispatchEvent(new CustomEvent('theme-change', { 
-            detail: { theme: 'light' }
-        }));
-        setActiveThemeButton('light');
-    });
-    
-    darkButton.addEventListener('click', function() {
-        localStorage.setItem('theme-preference', 'dark');
-        document.dispatchEvent(new CustomEvent('theme-change', { 
-            detail: { theme: 'dark' }
-        }));
-        setActiveThemeButton('dark');
-    });
-    
-    autoButton.addEventListener('click', function() {
-        localStorage.setItem('theme-preference', 'auto');
-        document.dispatchEvent(new CustomEvent('theme-change', { 
-            detail: { theme: 'auto' }
-        }));
-        setActiveThemeButton('auto');
-    });
-
     // Update copyright year automatically
     document.getElementById('copyright-year').textContent = new Date().getFullYear();
     
     // Basic newsletter form handling
-    document.getElementById('newsletter-form').addEventListener('submit', function(e) {
+    document.getElementById('newsletter-form')?.addEventListener('submit', function(e) {
         e.preventDefault();
         const messageEl = document.getElementById('newsletter-message');
-        messageEl.textContent = "Thanks for subscribing!";
-        messageEl.classList.add('success');
-        this.reset();
-        
-        // Hide the message after 3 seconds
-        setTimeout(() => {
-            messageEl.textContent = "";
-            messageEl.classList.remove('success');
-        }, 3000);
+        if (messageEl) {
+            messageEl.textContent = "Thanks for subscribing!";
+            messageEl.classList.add('success');
+            this.reset();
+            
+            // Hide the message after 3 seconds
+            setTimeout(() => {
+                messageEl.textContent = "";
+                messageEl.classList.remove('success');
+            }, 3000);
+        }
     });
+    
+    // Add direct event handlers for theme buttons as a failsafe
+    (function() {
+        const lightButton = document.getElementById('light-mode');
+        const darkButton = document.getElementById('dark-mode');
+        const autoButton = document.getElementById('auto-mode');
+        
+        if (lightButton && darkButton && autoButton) {
+            lightButton.onclick = function() {
+                console.log('Footer direct handler: Light theme clicked');
+                applyThemeFallback('light');
+            };
+            
+            darkButton.onclick = function() {
+                console.log('Footer direct handler: Dark theme clicked');
+                applyThemeFallback('dark');
+            };
+            
+            autoButton.onclick = function() {
+                console.log('Footer direct handler: Auto theme clicked');
+                applyThemeFallback('auto');
+            };
+        }
+        
+        function applyThemeFallback(theme) {
+            // Try the proper method first
+            if (window.setTheme) {
+                window.setTheme(theme);
+                return;
+            }
+            
+            // Direct DOM manipulation as fallback
+            document.documentElement.classList.remove('light-theme', 'dark-theme', 'auto-theme');
+            document.documentElement.classList.add(`${theme}-theme`);
+            localStorage.setItem('theme-preference', theme);
+            
+            // Update button states
+            lightButton.classList.remove('active');
+            darkButton.classList.remove('active');
+            autoButton.classList.remove('active');
+            
+            if (theme === 'light') lightButton.classList.add('active');
+            else if (theme === 'dark') darkButton.classList.add('active');
+            else autoButton.classList.add('active');
+            
+            console.log(`Theme applied via footer fallback: ${theme}`);
+        }
+    })();
 </script>

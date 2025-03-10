@@ -34,7 +34,23 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Set up dark mode detection and handling
         setupDarkModeDetection();
+        
+        // Apply the saved theme immediately
+        const savedTheme = localStorage.getItem('theme-preference') || 'auto';
+        applyTheme(savedTheme);
     }, 100);
+});
+
+// Listen for theme changes from theme-init.js
+document.addEventListener('theme-applied', function(e) {
+    const theme = e.detail.theme;
+    applyTheme(theme);
+});
+
+// Listen for direct theme change events (from footer buttons)
+document.addEventListener('theme-change', function(e) {
+    const theme = e.detail.theme;
+    applyTheme(theme);
 });
 
 /**
@@ -1052,24 +1068,31 @@ function enhanceSpaceForLightMode() {
  * @param {string} theme - 'light', 'dark', or 'auto'
  */
 function applyTheme(theme) {
-    // First remove all theme classes
+    // Apply theme classes (this is now redundant with theme-init.js but kept for compatibility)
     document.documentElement.classList.remove('light-theme', 'dark-theme', 'auto-theme');
+    document.documentElement.classList.add(`${theme}-theme`);
     
     if (theme === 'light') {
-        document.documentElement.classList.add('light-theme');
+        // Remove extra stars from dark mode
+        const extraStars = document.querySelector('.extra-stars');
+        if (extraStars) extraStars.remove();
+        
+        // Apply light mode specific enhancements
+        enhanceSpaceForLightMode();
     } else if (theme === 'dark') {
-        document.documentElement.classList.add('dark-theme');
-        // Ensure we add extra stars for dark mode
+        // Add dark mode specific enhancements
         enhanceSpaceForDarkMode();
     } else {
-        // Auto theme - use system preference
-        document.documentElement.classList.add('auto-theme');
-        
-        // Check system preference and apply appropriate enhancements
-        const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (isDarkMode) {
+        // Auto theme (system preference)
+        const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (prefersDarkMode) {
             enhanceSpaceForDarkMode();
         } else {
+            // Remove extra stars from dark mode
+            const extraStars = document.querySelector('.extra-stars');
+            if (extraStars) extraStars.remove();
+            
+            // Apply light mode enhancements
             enhanceSpaceForLightMode();
         }
     }
@@ -1079,53 +1102,3 @@ function applyTheme(theme) {
         (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches));
     updateDarkModeStyles(effectiveDarkMode);
 }
-
-// Theme toggle handler
-document.addEventListener('theme-change', function(e) {
-    const theme = e.detail.theme;
-    applyTheme(theme);
-});
-
-// Apply saved theme on page load
-document.addEventListener('DOMContentLoaded', function() {
-    const savedTheme = localStorage.getItem('theme-preference') || 'auto';
-    applyTheme(savedTheme);
-});
-
-// Apply theme immediately before DOM is fully loaded to prevent flash
-(function() {
-    const savedTheme = localStorage.getItem('theme-preference') || 'auto';
-    if (savedTheme) {
-        applyTheme(savedTheme);
-    }
-})();
-
-// Theme toggle handler
-document.addEventListener('theme-change', function(e) {
-    const theme = e.detail.theme;
-    
-    if (theme === 'light') {
-        document.documentElement.classList.remove('dark-theme');
-        document.documentElement.classList.add('light-theme');
-        document.documentElement.classList.remove('auto-theme');
-    } else if (theme === 'dark') {
-        document.documentElement.classList.add('dark-theme');
-        document.documentElement.classList.remove('light-theme');
-        document.documentElement.classList.remove('auto-theme');
-    } else {
-        // Auto mode - use system preference
-        document.documentElement.classList.remove('light-theme');
-        document.documentElement.classList.remove('dark-theme');
-        document.documentElement.classList.add('auto-theme');
-    }
-});
-
-// Apply saved theme on page load
-document.addEventListener('DOMContentLoaded', function() {
-    const savedTheme = localStorage.getItem('theme-preference') || 'auto';
-    
-    // Dispatch theme change event to apply the saved theme
-    document.dispatchEvent(new CustomEvent('theme-change', { 
-        detail: { theme: savedTheme }
-    }));
-});
