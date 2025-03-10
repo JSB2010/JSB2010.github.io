@@ -1046,3 +1046,86 @@ function enhanceSpaceForLightMode() {
         spaceElements.appendChild(shootingStar);
     }
 }
+
+/**
+ * Apply theme based on user preference or system setting
+ * @param {string} theme - 'light', 'dark', or 'auto'
+ */
+function applyTheme(theme) {
+    // First remove all theme classes
+    document.documentElement.classList.remove('light-theme', 'dark-theme', 'auto-theme');
+    
+    if (theme === 'light') {
+        document.documentElement.classList.add('light-theme');
+    } else if (theme === 'dark') {
+        document.documentElement.classList.add('dark-theme');
+        // Ensure we add extra stars for dark mode
+        enhanceSpaceForDarkMode();
+    } else {
+        // Auto theme - use system preference
+        document.documentElement.classList.add('auto-theme');
+        
+        // Check system preference and apply appropriate enhancements
+        const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (isDarkMode) {
+            enhanceSpaceForDarkMode();
+        } else {
+            enhanceSpaceForLightMode();
+        }
+    }
+    
+    // Update dark mode styles based on effective theme
+    const effectiveDarkMode = (theme === 'dark' || 
+        (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches));
+    updateDarkModeStyles(effectiveDarkMode);
+}
+
+// Theme toggle handler
+document.addEventListener('theme-change', function(e) {
+    const theme = e.detail.theme;
+    applyTheme(theme);
+});
+
+// Apply saved theme on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const savedTheme = localStorage.getItem('theme-preference') || 'auto';
+    applyTheme(savedTheme);
+});
+
+// Apply theme immediately before DOM is fully loaded to prevent flash
+(function() {
+    const savedTheme = localStorage.getItem('theme-preference') || 'auto';
+    if (savedTheme) {
+        applyTheme(savedTheme);
+    }
+})();
+
+// Theme toggle handler
+document.addEventListener('theme-change', function(e) {
+    const theme = e.detail.theme;
+    
+    if (theme === 'light') {
+        document.documentElement.classList.remove('dark-theme');
+        document.documentElement.classList.add('light-theme');
+        document.documentElement.classList.remove('auto-theme');
+    } else if (theme === 'dark') {
+        document.documentElement.classList.add('dark-theme');
+        document.documentElement.classList.remove('light-theme');
+        document.documentElement.classList.remove('auto-theme');
+    } else {
+        // Auto mode - use system preference
+        document.documentElement.classList.remove('light-theme');
+        document.documentElement.classList.remove('dark-theme');
+        document.documentElement.classList.add('auto-theme');
+    }
+});
+
+// Apply saved theme on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const savedTheme = localStorage.getItem('theme-preference') || 'auto';
+    
+    // Dispatch theme change event to apply the saved theme
+    document.dispatchEvent(new CustomEvent('theme-change', { 
+        detail: { theme: savedTheme }
+    }));
+});

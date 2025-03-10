@@ -1,11 +1,142 @@
 <footer class="main-footer">
-    <p>Created by Jacob Barkin</p>
-    <div class="footer-buttons">
-        <a href="mailto:jacobbarkin@gmail.com" class="email" aria-label="Email Jacob Barkin"></a>
-        <a href="https://www.linkedin.com/in/jacobbarkin" target="_blank" rel="noopener" class="linkedin" aria-label="LinkedIn Profile"></a>
-        <a href="https://github.com/JSB2010" target="_blank" rel="noopener" class="github" aria-label="GitHub Profile"></a>
+    <div class="footer-container">
+        <!-- Footer Logo & About -->
+        <div class="footer-brand">
+            <div class="footer-logo">
+                <img src="images/logo.png" alt="Logo" class="footer-logo-image">
+                <h3>Jacob Barkin</h3>
+            </div>
+            <p class="footer-tagline">Bridging technology and creativity through innovative solutions.</p>
+            <div class="footer-social">
+                <a href="https://linkedin.com/in/your-profile" class="social-link linkedin" aria-label="LinkedIn">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+                <a href="https://github.com/JSB2010" class="social-link github" aria-label="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="mailto:your-email@example.com" class="social-link email" aria-label="Email">
+                    <i class="fas fa-envelope"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Theme Switcher -->
+        <div class="footer-theme-switcher">
+            <h4>Theme</h4>
+            <div class="theme-switcher">
+                <button id="light-mode" class="theme-button" aria-label="Light Mode">
+                    <i class="fas fa-sun"></i>
+                    <span>Light</span>
+                </button>
+                <button id="dark-mode" class="theme-button" aria-label="Dark Mode">
+                    <i class="fas fa-moon"></i>
+                    <span>Dark</span>
+                </button>
+                <button id="auto-mode" class="theme-button active" aria-label="Auto Mode">
+                    <i class="fas fa-adjust"></i>
+                    <span>Auto</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Newsletter Signup -->
+        <div class="footer-newsletter">
+            <h4>Stay Updated</h4>
+            <p>Subscribe to receive updates on new projects and articles.</p>
+            <form class="newsletter-form" id="newsletter-form">
+                <div class="newsletter-input-group">
+                    <input type="email" placeholder="Your email" required>
+                    <button type="submit" aria-label="Subscribe">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="form-message" id="newsletter-message"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+        <div class="footer-copyright">
+            <p>&copy; <span id="copyright-year">2023</span> Jacob Barkin. All rights reserved.</p>
+        </div>
+        <div class="footer-links-bottom">
+            <a href="privacy.html">Privacy Policy</a>
+            <span class="divider">|</span>
+            <a href="terms.html">Terms of Use</a>
+        </div>
+        <div class="footer-mountain-graphic"></div>
     </div>
 </footer>
 <button id="back-to-top" title="Back to top" aria-label="Back to top">
     <i class="fas fa-arrow-up"></i>
 </button>
+
+<script>
+    // Theme switcher functionality
+    const lightButton = document.getElementById('light-mode');
+    const darkButton = document.getElementById('dark-mode');
+    const autoButton = document.getElementById('auto-mode');
+    
+    // Set the active theme button based on stored preference
+    function setActiveThemeButton(theme) {
+        lightButton.classList.remove('active');
+        darkButton.classList.remove('active');
+        autoButton.classList.remove('active');
+        
+        if (theme === 'light') {
+            lightButton.classList.add('active');
+        } else if (theme === 'dark') {
+            darkButton.classList.add('active');
+        } else {
+            autoButton.classList.add('active');
+        }
+    }
+    
+    // Initialize from stored preference or default to auto
+    const savedTheme = localStorage.getItem('theme-preference') || 'auto';
+    setActiveThemeButton(savedTheme);
+    
+    // Theme button click handlers
+    lightButton.addEventListener('click', function() {
+        localStorage.setItem('theme-preference', 'light');
+        document.dispatchEvent(new CustomEvent('theme-change', { 
+            detail: { theme: 'light' }
+        }));
+        setActiveThemeButton('light');
+    });
+    
+    darkButton.addEventListener('click', function() {
+        localStorage.setItem('theme-preference', 'dark');
+        document.dispatchEvent(new CustomEvent('theme-change', { 
+            detail: { theme: 'dark' }
+        }));
+        setActiveThemeButton('dark');
+    });
+    
+    autoButton.addEventListener('click', function() {
+        localStorage.setItem('theme-preference', 'auto');
+        document.dispatchEvent(new CustomEvent('theme-change', { 
+            detail: { theme: 'auto' }
+        }));
+        setActiveThemeButton('auto');
+    });
+
+    // Update copyright year automatically
+    document.getElementById('copyright-year').textContent = new Date().getFullYear();
+    
+    // Basic newsletter form handling
+    document.getElementById('newsletter-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const messageEl = document.getElementById('newsletter-message');
+        messageEl.textContent = "Thanks for subscribing!";
+        messageEl.classList.add('success');
+        this.reset();
+        
+        // Hide the message after 3 seconds
+        setTimeout(() => {
+            messageEl.textContent = "";
+            messageEl.classList.remove('success');
+        }, 3000);
+    });
+</script>

@@ -1,0 +1,76 @@
+/* Theme Switcher CSS - Controls light/dark/auto theming */
+
+/* When light theme is explicitly selected */
+:root.light-theme {
+  color-scheme: light;
+}
+
+:root.light-theme body {
+  background-color: var(--background-color-light);
+  color: var(--text-color-light);
+}
+
+:root.light-theme .main-nav {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+:root.light-theme * {
+  /* Override any other prefers-color-scheme media query */
+  forced-color-adjust: none;
+}
+
+/* When dark theme is explicitly selected */
+:root.dark-theme {
+  color-scheme: dark;
+}
+
+:root.dark-theme body {
+  background-color: var(--background-color-dark);
+  color: var(--text-color-dark);
+}
+
+:root.dark-theme .main-nav {
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* When auto theme is selected (default) - system preference applies */
+:root.auto-theme {
+  color-scheme: light dark;
+}
+
+/* Force override navigation menu in dark theme mode */
+:root.dark-theme .nav-menu {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+:root.dark-theme .nav-menu li a {
+  color: var(--text-color-dark) !important;
+}
+
+/* Enhanced space elements for dark theme */
+:root.dark-theme .extra-stars {
+  display: block;
+}
+
+:root.dark-theme .star {
+  opacity: 0.9 !important;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.9) !important;
+}
+
+:root.light-theme .extra-stars {
+  display: none;
+}
+
+/* Force override navigation menu in light theme mode */
+:root.light-theme .nav-menu {
+  background: transparent !important;
+}
+
+:root.light-theme .nav-menu li a {
+  color: var(--primary-color) !important;
+}
