@@ -10,50 +10,10 @@
             <li><a href="contact.html"><i class="fas fa-envelope"></i>Contact</a></li>
             <li><a href="https://www.askthekidz.com" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i>Ask The Kidz</a></li>
         </ul>
-        <button class="dropdown-toggle">
+        <button class="dropdown-toggle" aria-label="Toggle navigation menu">
             <span class="hamburger-icon"></span>
             <span class="hamburger-icon"></span>
             <span class="hamburger-icon"></span>
         </button>
     </nav>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const dropdownToggle = document.querySelector('.dropdown-toggle');
-            const navMenu = document.querySelector('.nav-menu');
-
-            // Simple toggle function
-            function toggleMenu() {
-                navMenu.classList.toggle('show');
-            }
-
-            // Toggle menu on button click
-            dropdownToggle.addEventListener('click', function(e) {
-                e.stopPropagation();
-                toggleMenu();
-            });
-
-            // Close menu when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!navMenu.contains(e.target) && !dropdownToggle.contains(e.target)) {
-                    navMenu.classList.remove('show');
-                }
-            });
-
-            // Close menu when clicking a link
-            navMenu.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', () => {
-                    if (window.innerWidth <= 1000) {
-                        navMenu.classList.remove('show');
-                    }
-                });
-            });
-
-            // Close menu on window resize
-            window.addEventListener('resize', () => {
-                if (window.innerWidth > 1000) {
-                    navMenu.classList.remove('show');
-                }
-            });
-        });
-    </script>
 </header>

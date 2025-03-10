@@ -3,11 +3,41 @@
 
 /* Desktop nav menu in dark mode - should be fully transparent */
 @media (prefers-color-scheme: dark) {
+    /* Target header and nav with maximum specificity */
+    html[lang] body header.main-nav,
+    html body header.main-nav,
+    body header.main-nav,
+    header.main-nav,
+    main-nav {
+        background: rgba(15, 23, 42, 0.5) !important;
+        backdrop-filter: blur(10px) !important;
+        -webkit-backdrop-filter: blur(10px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+    }
+    
+    /* Ensure the nav element itself is also transparent */
+    html[lang] body header.main-nav nav,
+    html body header.main-nav nav,
+    body header.main-nav nav,
+    header.main-nav nav,
+    .main-nav nav,
+    nav {
+        background: transparent !important;
+        background-color: transparent !important;
+    }
+    
     /* Target desktop menu with maximum specificity */
+    html[lang] body header.main-nav nav ul.nav-menu,
+    html body header.main-nav nav ul.nav-menu,
     html body header .main-nav .nav-menu,
-    body .main-nav .nav-menu,
+    body header .main-nav .nav-menu,
     header .main-nav .nav-menu,
-    .main-nav .nav-menu {
+    .main-nav .nav-menu,
+    header.main-nav nav ul.nav-menu,
+    nav ul.nav-menu,
+    ul.nav-menu,
+    .nav-menu {
         background: transparent !important;
         background-color: transparent !important;
         backdrop-filter: none !important;
@@ -15,9 +45,46 @@
         border: none !important;
         box-shadow: none !important;
     }
+    
+    /* Ensure each list item in the nav is transparent */
+    html[lang] body .main-nav .nav-menu li,
+    html body .main-nav .nav-menu li,
+    body .main-nav .nav-menu li,
+    .main-nav .nav-menu li,
+    nav .nav-menu li,
+    .nav-menu li {
+        background: transparent !important;
+        background-color: transparent !important;
+    }
+
+    /* Ensure link text is visible but buttons are transparent */
+    html[lang] body .main-nav .nav-menu li a,
+    html body .main-nav .nav-menu li a,
+    body .main-nav .nav-menu li a,
+    .main-nav .nav-menu li a,
+    nav .nav-menu li a,
+    .nav-menu li a {
+        background: transparent !important;
+        color: rgba(255, 255, 255, 0.9) !important;
+        text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5) !important;
+    }
+    
+    /* Create a subtle hover effect that doesn't add a solid background */
+    .main-nav .nav-menu li a:hover,
+    nav .nav-menu li a:hover,
+    .nav-menu li a:hover {
+        background: rgba(255, 255, 255, 0.1) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    /* Fix hamburger icon appearance in dark mode */
+    .dropdown-toggle .hamburger-icon {
+        background-color: rgba(255, 255, 255, 0.9) !important;
+    }
 
     /* Mobile menu (when shown) should have styling that matches main-nav */
-    @media (max-width: 1000px) {
+    @media (max-width: 1100px) {
         html body header .main-nav .nav-menu.show,
         body .main-nav .nav-menu.show,
         header .main-nav .nav-menu.show,
@@ -169,6 +236,42 @@
         background: var(--primary-color) !important;
         box-shadow: 0 0 10px rgba(255, 255, 255, 0.2) !important;
     }
+
+    /* Make content areas transparent in dark mode */
+    /* Content area transparency */
+    main,
+    .content-main,
+    .project-details,
+    .project-details article,
+    section,
+    .content-section {
+        background: transparent !important;
+    }
+    
+    /* Section-specific transparency */
+    section#overview,
+    section#technical,
+    section#implementation,
+    section#challenges,
+    section#results,
+    section#documentation {
+        background: transparent !important;
+    }
+    
+    /* Table of contents styling for better readability while maintaining transparency */
+    .table-of-contents {
+        background: rgba(15, 23, 42, 0.6) !important;
+        backdrop-filter: blur(10px) !important;
+        -webkit-backdrop-filter: blur(10px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    /* Ensure quick-info is readable */
+    .quick-info {
+        background: rgba(15, 23, 42, 0.6) !important;
+        backdrop-filter: blur(5px) !important;
+        -webkit-backdrop-filter: blur(5px) !important;
+    }
 }
 
 /* Light mode space elements enhancements */
@@ -205,6 +308,54 @@
             rgba(100,100,255,0) 100%) !important;
         height: 1px !important;
     }
+
+    /* Navigation bar text contrast improvements for light mode */
+    .main-nav .nav-menu li a {
+        color: var(--primary-color) !important; /* Default text is blue */
+        font-weight: 500 !important;
+        text-shadow: none !important; /* Remove text shadow for better readability */
+    }
+    
+    /* Selected/active page styling for light mode */
+    .main-nav .nav-menu li a.active-page {
+        color: var(--secondary-color) !important; /* Green color for active page */
+        font-weight: 600 !important;
+        border-bottom: 2px solid var(--secondary-color) !important;
+    }
+    
+    /* Hover state for light mode with better contrast - using secondary color instead of primary */
+    .main-nav .nav-menu li a:hover {
+        color: white !important; /* White text on hover */
+        background-color: var(--secondary-color) !important; /* Green background instead of blue */
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+        text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    /* Content area transparency */
+    main,
+    .content-main,
+    .project-details,
+    .project-details article,
+    section,
+    .content-section {
+        background: transparent !important;
+    }
+    
+    /* Table of contents styling for better readability while maintaining transparency */
+    .table-of-contents {
+        background: rgba(255, 255, 255, 0.7) !important;
+        backdrop-filter: blur(10px) !important;
+        -webkit-backdrop-filter: blur(10px) !important;
+        border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    /* Ensure quick-info is readable */
+    .quick-info {
+        background: rgba(255, 255, 255, 0.7) !important;
+        backdrop-filter: blur(5px) !important;
+        -webkit-backdrop-filter: blur(5px) !important;
+    }
 }
 
 /* Back to top button visibility fix for both modes */
@@ -221,6 +372,7 @@
 #back-to-top i.fas,
 #back-to-top i.fa {
     color: white !important;
+    font-size: 1.2rem !important;
 }
 
 /* If using text arrow instead of icon */
@@ -233,4 +385,47 @@
 #back-to-top:hover {
     background: var(--secondary-color) !important;
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Add extreme specificity overrides to ensure consistency across all pages */
+html[lang] #header .main-nav .nav-menu,
+html #header .main-nav .nav-menu,
+#header .main-nav .nav-menu,
+.main-nav .nav-menu {
+    background: transparent !important;
+    background-color: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* Force all nav menu items to be transparent */
+html[lang] .nav-menu li,
+html .nav-menu li,
+.nav-menu li,
+li.nav-item {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* Force all navigation links to be transparent with visible text */
+html[lang] .nav-menu li a,
+html .nav-menu li a,
+.nav-menu li a {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* Update other media queries to match the new breakpoint */
+@media (min-width: 1101px) {
+    html[lang] body header .main-nav .nav-menu,
+    body .main-nav .nav-menu,
+    header .main-nav .nav-menu,
+    .main-nav .nav-menu {
+        background: transparent !important;
+        background-color: transparent !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
 }

@@ -52,6 +52,9 @@ async function loadHeaderFooter() {
         
         // Event emitted for theme.js to know header/footer are ready
         document.dispatchEvent(new CustomEvent('header-footer-loaded'));
+        
+        // Ensure nav-fix.js runs after header is loaded
+        ensureNavFixApplied();
     } catch (error) {
         console.error('Error loading content:', error);
         // Hide loader even if there's an error
@@ -59,7 +62,24 @@ async function loadHeaderFooter() {
     }
 }
 
-// Mobile menu functionality
+/**
+ * Ensures the nav-fix script is loaded and applied on all pages
+ */
+function ensureNavFixApplied() {
+    // Check if nav-fix script is already loaded
+    if (!document.querySelector('script[src*="nav-fix.js"]')) {
+        const navFixScript = document.createElement('script');
+        navFixScript.src = '/nav-fix.js';
+        document.body.appendChild(navFixScript);
+    }
+    
+    // Attempt to run the fix directly if it might be available
+    if (typeof window.fixDarkModeNavMenu === 'function') {
+        window.fixDarkModeNavMenu();
+    }
+}
+
+// Mobile menu functionality - improved for better dark mode compatibility
 function initMobileMenu() {
     const dropdownToggle = document.querySelector('.dropdown-toggle');
     const navMenu = document.querySelector('.nav-menu');
@@ -71,6 +91,19 @@ function initMobileMenu() {
         e.stopPropagation();
         navMenu.classList.toggle('show');
         this.classList.toggle('active');
+        
+        // Apply dark mode styles immediately if in dark mode
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            if (navMenu.classList.contains('show')) {
+                navMenu.style.background = 'rgba(15, 23, 42, 0.9)';
+                navMenu.style.backdropFilter = 'blur(10px)';
+                navMenu.style.webkitBackdropFilter = 'blur(10px)';
+            } else {
+                navMenu.style.background = 'transparent';
+                navMenu.style.backdropFilter = 'none';
+                navMenu.style.webkitBackdropFilter = 'none';
+            }
+        }
     });
 
     // Close menu when clicking outside
@@ -80,6 +113,13 @@ function initMobileMenu() {
             !dropdownToggle.contains(e.target)) {
             navMenu.classList.remove('show');
             dropdownToggle.classList.remove('active');
+            
+            // Reset styles in dark mode
+            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                navMenu.style.background = 'transparent';
+                navMenu.style.backdropFilter = 'none';
+                navMenu.style.webkitBackdropFilter = 'none';
+            }
         }
     });
 
@@ -89,15 +129,29 @@ function initMobileMenu() {
             if (window.innerWidth <= 1000) {
                 navMenu.classList.remove('show');
                 dropdownToggle.classList.remove('active');
+                
+                // Reset styles in dark mode
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    navMenu.style.background = 'transparent';
+                    navMenu.style.backdropFilter = 'none';
+                    navMenu.style.webkitBackdropFilter = 'none';
+                }
             }
         });
     });
 
-    // Close menu on window resize
+    // Reset menu state on window resize
     window.addEventListener('resize', () => {
         if (window.innerWidth > 1000 && navMenu.classList.contains('show')) {
             navMenu.classList.remove('show');
             dropdownToggle.classList.remove('active');
+            
+            // Reset styling for desktop view in dark mode
+            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                navMenu.style.background = 'transparent';
+                navMenu.style.backdropFilter = 'none';
+                navMenu.style.webkitBackdropFilter = 'none';
+            }
         }
     });
 }
