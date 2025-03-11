@@ -1,54 +1,155 @@
 /* Theme Switcher CSS - Controls light/dark/auto theming */
 
-/* When light theme is explicitly selected */
+/* CRITICAL: Add !important to all theme-specific rules to force override */
+
+/* When light theme is explicitly selected - FORCE LIGHT REGARDLESS OF SYSTEM */
 :root.light-theme {
-  color-scheme: light;
+  color-scheme: light !important;
 }
 
 :root.light-theme body {
-  background-color: var(--background-color-light);
-  color: var(--text-color-light);
+  background-color: var(--background-color-light) !important;
+  color: var(--text-color-light) !important;
 }
 
+/* Enhanced frosted glass header for light theme */
 :root.light-theme .main-nav {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
 }
 
-:root.light-theme * {
-  /* Override any other prefers-color-scheme media query */
-  forced-color-adjust: none;
+/* CRITICAL: Override system dark mode when light theme is selected */
+@media (prefers-color-scheme: dark) {
+  :root.light-theme body,
+  :root.light-theme .content-main,
+  :root.light-theme main {
+    background-color: var(--background-color-light) !important;
+    color: var(--text-color-light) !important;
+  }
+  
+  :root.light-theme * {
+    /* Force override any system-preference styles */
+    forced-color-adjust: none !important;
+  }
+  
+  :root.light-theme .main-nav {
+    background: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+  }
 }
 
-/* When dark theme is explicitly selected */
-:root.dark-theme {
-  color-scheme: dark;
+/* When dark theme is explicitly selected - FORCE DARK REGARDLESS OF SYSTEM */
+:root.dark-theme, :root.auto-theme.visual-dark-mode {
+  color-scheme: dark !important;
 }
 
-:root.dark-theme body {
-  background-color: var(--background-color-dark);
-  color: var(--text-color-dark);
+:root.dark-theme body, :root.auto-theme.visual-dark-mode body {
+  background-color: var(--background-color-dark) !important;
+  color: var(--text-color-dark) !important;
 }
 
-:root.dark-theme .main-nav {
-  background: rgba(15, 23, 42, 0.9);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+/* Enhanced frosted glass header for dark theme - use same styling for both dark modes */
+:root.dark-theme .main-nav, :root.auto-theme.visual-dark-mode .main-nav {
+  background: rgba(15, 23, 42, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
 }
 
-/* When auto theme is selected (default) - system preference applies */
+/* CRITICAL: Override system light mode when dark theme is selected */
+@media (prefers-color-scheme: light) {
+  :root.dark-theme body,
+  :root.dark-theme .content-main,
+  :root.dark-theme main {
+    background-color: var(--background-color-dark) !important;
+    color: var(--text-color-dark) !important;
+  }
+  
+  :root.dark-theme * {
+    /* Force override any system-preference styles */
+    forced-color-adjust: none !important;
+  }
+  
+  :root.dark-theme .main-nav {
+    background: rgba(15, 23, 42, 0.8) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+  }
+}
+
+/* SHARED DARK MODE VISUAL STYLING - applies to both dark theme and auto+dark */
+:root.visual-dark-mode .extra-stars,
+:root.dark-theme .extra-stars {
+  display: block !important;
+}
+
+:root.visual-dark-mode .star,
+:root.dark-theme .star {
+  opacity: 0.9 !important;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.9) !important;
+}
+
+:root.visual-dark-mode .dark-theme-mountain,
+:root.dark-theme .dark-theme-mountain {
+  display: block !important;
+}
+
+:root.visual-dark-mode .light-theme-mountain,
+:root.dark-theme .light-theme-mountain,
+:root.light-theme .dark-theme-mountain {
+  display: none !important;
+}
+
+:root.light-theme .light-theme-mountain,
+:root.auto-theme:not(.visual-dark-mode) .light-theme-mountain {
+  display: block !important;
+}
+
+:root.light-theme .extra-stars,
+:root.auto-theme:not(.visual-dark-mode) .extra-stars {
+  display: none !important;
+}
+
+/* When auto theme is selected - allow system preference to control but maintain frosted glass effect */
 :root.auto-theme {
   color-scheme: light dark;
 }
 
+:root.auto-theme .main-nav {
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+
+@media (prefers-color-scheme: light) {
+  :root.auto-theme .main-nav {
+    background: rgba(255, 255, 255, 0.8) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root.auto-theme .main-nav {
+    background: rgba(15, 23, 42, 0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+  }
+}
+
 /* Force override navigation menu in dark theme mode */
-:root.dark-theme .nav-menu {
+:root.dark-theme .nav-menu, 
+:root.visual-dark-mode .nav-menu {
   background: transparent !important;
   background-color: transparent !important;
 }
 
-:root.dark-theme .nav-menu li a {
+:root.dark-theme .nav-menu li a,
+:root.visual-dark-mode .nav-menu li a {
   color: var(--text-color-dark) !important;
 }
 
@@ -67,10 +168,92 @@
 }
 
 /* Force override navigation menu in light theme mode */
-:root.light-theme .nav-menu {
+:root.light-theme .nav-menu,
+:root.auto-theme:not(.visual-dark-mode) .nav-menu {
   background: transparent !important;
 }
 
-:root.light-theme .nav-menu li a {
+:root.light-theme .nav-menu li a,
+:root.auto-theme:not(.visual-dark-mode) .nav-menu li a {
   color: var(--primary-color) !important;
+}
+
+/* Enhanced styling for theme buttons */
+.theme-button {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  padding: 0.75rem !important;
+  min-width: 80px;
+}
+
+.theme-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: width 0.5s, height 0.5s, opacity 0.5s;
+}
+
+.theme-button:active::before {
+  width: 200px;
+  height: 200px;
+  opacity: 1;
+  transition: width 0s, height 0s, opacity 0.2s;
+}
+
+.theme-button.active {
+  background: var(--primary-color) !important;
+  color: white !important;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.theme-button:hover:not(.active) {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.theme-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--primary-color);
+}
+
+/* Enhanced focus styles for accessibility */
+.theme-button:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Make theme buttons more prominent */
+.footer-theme-switcher {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.theme-switcher {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  justify-content: center;
+}
+
+/* Icons in theme buttons */
+.theme-button i {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+/* Text in theme buttons */
+.theme-button span {
+  font-size: 0.8rem;
+  display: block;
 }

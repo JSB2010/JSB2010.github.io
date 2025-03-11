@@ -24,122 +24,27 @@
         <div class="footer-theme-switcher">
             <h4>Theme</h4>
             <div class="theme-switcher">
-                <button id="light-mode" class="theme-button" aria-label="Light Mode">
+                <button id="light-mode" class="theme-button" aria-label="Light Mode" type="button">
                     <i class="fas fa-sun"></i>
                     <span>Light</span>
                 </button>
-                <button id="dark-mode" class="theme-button" aria-label="Dark Mode">
+                <button id="dark-mode" class="theme-button" aria-label="Dark Mode" type="button">
                     <i class="fas fa-moon"></i>
                     <span>Dark</span>
                 </button>
-                <button id="auto-mode" class="theme-button active" aria-label="Auto Mode">
+                <button id="auto-mode" class="theme-button" aria-label="Auto Mode" type="button">
                     <i class="fas fa-adjust"></i>
                     <span>Auto</span>
                 </button>
             </div>
         </div>
-
-        <!-- Newsletter Signup -->
-        <div class="footer-newsletter">
-            <h4>Stay Updated</h4>
-            <p>Subscribe to receive updates on new projects and articles.</p>
-            <form class="newsletter-form" id="newsletter-form">
-                <div class="newsletter-input-group">
-                    <input type="email" placeholder="Your email" required>
-                    <button type="submit" aria-label="Subscribe">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </div>
-                <div class="form-message" id="newsletter-message"></div>
-            </form>
-        </div>
     </div>
 
-    <!-- Footer Bottom -->
+    <!-- Footer Bottom - Keeping only the design element -->
     <div class="footer-bottom">
-        <div class="footer-copyright">
-            <p>&copy; <span id="copyright-year">2023</span> Jacob Barkin. All rights reserved.</p>
-        </div>
-        <div class="footer-links-bottom">
-            <a href="privacy.html">Privacy Policy</a>
-            <span class="divider">|</span>
-            <a href="terms.html">Terms of Use</a>
-        </div>
         <div class="footer-mountain-graphic"></div>
     </div>
 </footer>
 <button id="back-to-top" title="Back to top" aria-label="Back to top">
     <i class="fas fa-arrow-up"></i>
 </button>
-
-<script>
-    // Theme switcher functionality is now fully handled by theme-manager.js
-    
-    // Update copyright year automatically
-    document.getElementById('copyright-year').textContent = new Date().getFullYear();
-    
-    // Basic newsletter form handling
-    document.getElementById('newsletter-form')?.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const messageEl = document.getElementById('newsletter-message');
-        if (messageEl) {
-            messageEl.textContent = "Thanks for subscribing!";
-            messageEl.classList.add('success');
-            this.reset();
-            
-            // Hide the message after 3 seconds
-            setTimeout(() => {
-                messageEl.textContent = "";
-                messageEl.classList.remove('success');
-            }, 3000);
-        }
-    });
-    
-    // Add direct event handlers for theme buttons as a failsafe
-    (function() {
-        const lightButton = document.getElementById('light-mode');
-        const darkButton = document.getElementById('dark-mode');
-        const autoButton = document.getElementById('auto-mode');
-        
-        if (lightButton && darkButton && autoButton) {
-            lightButton.onclick = function() {
-                console.log('Footer direct handler: Light theme clicked');
-                applyThemeFallback('light');
-            };
-            
-            darkButton.onclick = function() {
-                console.log('Footer direct handler: Dark theme clicked');
-                applyThemeFallback('dark');
-            };
-            
-            autoButton.onclick = function() {
-                console.log('Footer direct handler: Auto theme clicked');
-                applyThemeFallback('auto');
-            };
-        }
-        
-        function applyThemeFallback(theme) {
-            // Try the proper method first
-            if (window.setTheme) {
-                window.setTheme(theme);
-                return;
-            }
-            
-            // Direct DOM manipulation as fallback
-            document.documentElement.classList.remove('light-theme', 'dark-theme', 'auto-theme');
-            document.documentElement.classList.add(`${theme}-theme`);
-            localStorage.setItem('theme-preference', theme);
-            
-            // Update button states
-            lightButton.classList.remove('active');
-            darkButton.classList.remove('active');
-            autoButton.classList.remove('active');
-            
-            if (theme === 'light') lightButton.classList.add('active');
-            else if (theme === 'dark') darkButton.classList.add('active');
-            else autoButton.classList.add('active');
-            
-            console.log(`Theme applied via footer fallback: ${theme}`);
-        }
-    })();
-</script>

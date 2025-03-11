@@ -1102,3 +1102,127 @@ function applyTheme(theme) {
         (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches));
     updateDarkModeStyles(effectiveDarkMode);
 }
+
+/**
+ * Theme JavaScript - Handles dynamic theme elements like stars and mountain backgrounds
+ */
+(function() {
+    // Wait for DOM to be ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initThemeVisuals);
+    } else {
+        initThemeVisuals();
+    }
+    
+    // Also run on window load to catch all elements
+    window.addEventListener('load', initThemeVisuals);
+    
+    function initThemeVisuals() {
+        // First check if we're in dark mode (either explicit or via auto)
+        const currentTheme = localStorage.getItem('theme-preference') || 'auto';
+        const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const isVisualDarkMode = currentTheme === 'dark' || (currentTheme === 'auto' && prefersDarkMode);
+        
+        console.log(`Theme visuals - current: ${currentTheme}, dark mode: ${isVisualDarkMode}`);
+        
+        // Create mountain backgrounds if they don't exist yet
+        ensureMountainBackground();
+        
+        // Create stars if they don't exist yet
+        if (isVisualDarkMode) {
+            ensureStars();
+        }
+        
+        // Update visibility based on current visual mode
+        updateThemeVisibility(isVisualDarkMode);
+        
+        // Listen for system preference changes if in auto mode
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+            if (currentTheme === 'auto') {
+                updateThemeVisibility(e.matches);
+            }
+        });
+    }
+    
+    function ensureMountainBackground() {
+        // Create both light and dark theme mountains
+        if (!document.querySelector('.light-theme-mountain')) {
+            createMountain('light-theme-mountain');
+        }
+        
+        if (!document.querySelector('.dark-theme-mountain')) {
+            createMountain('dark-theme-mountain');
+        }
+    }
+    
+    function createMountain(className) {
+        const mountainElem = document.createElement('div');
+        mountainElem.className = className;
+        document.body.appendChild(mountainElem);
+    }
+    
+    function ensureStars() {
+        if (!document.querySelector('.stars-container')) {
+            createStars();
+        }
+    }
+    
+    function createStars() {
+        // Create stars container
+        const starsContainer = document.createElement('div');
+        starsContainer.className = 'stars-container extra-stars';
+        document.body.appendChild(starsContainer);
+        
+        // Create regular stars
+        for (let i = 0; i < 50; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.top = `${Math.random() * 100}%`;
+            star.style.animationDelay = `${Math.random() * 5}s`;
+            starsContainer.appendChild(star);
+        }
+        
+        // Create shooting stars
+        for (let i = 0; i < 3; i++) {
+            const shootingStar = document.createElement('div');
+            shootingStar.className = 'shooting-star';
+            shootingStar.style.left = `${Math.random() * 100}%`;
+            shootingStar.style.top = `${Math.random() * 50}%`;
+            shootingStar.style.animationDelay = `${Math.random() * 10 + 5}s`;
+            starsContainer.appendChild(shootingStar);
+        }
+    }
+    
+    function updateThemeVisibility(isDarkMode) {
+        // Update classes on root element to ensure proper CSS applies
+        if (isDarkMode) {
+            document.documentElement.classList.add('visual-dark-mode');
+            document.documentElement.classList.remove('visual-light-mode');
+        } else {
+            document.documentElement.classList.add('visual-light-mode');
+            document.documentElement.classList.remove('visual-dark-mode');
+        }
+        
+        // Update stars visibility
+        const stars = document.querySelector('.stars-container');
+        if (stars) {
+            stars.style.display = isDarkMode ? 'block' : 'none';
+        }
+        
+        // Update mountain backgrounds
+        const lightMountain = document.querySelector('.light-theme-mountain');
+        const darkMountain = document.querySelector('.dark-theme-mountain');
+        
+        if (lightMountain) {
+            lightMountain.style.display = isDarkMode ? 'none' : 'block';
+        }
+        
+        if (darkMountain) {
+            darkMountain.style.display = isDarkMode ? 'block' : 'none';
+        }
+        
+        // Update data attribute on body for easier CSS targeting
+        document.body.dataset.visualMode = isDarkMode ? 'dark' : 'light';
+    }
+})();
