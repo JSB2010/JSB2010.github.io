@@ -1,0 +1,75 @@
+/* Dark Overlay Killer - Emergency fix to remove the dark overlay in dark mode */
+
+/* Force the dark theme mountain to appear above any overlay */
+.dark-theme-mountain {
+  z-index: -1 !important; /* Ensure it's specifically behind content but above any other background */
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
+/* Remove overlays and backgrounds that might cover the mountain */
+html.dark-theme:before,
+html.visual-dark-mode:before,
+body.dark-theme:before,
+body.visual-dark-mode:before,
+html.dark-theme:after,
+html.visual-dark-mode:after,
+body.dark-theme:after,
+body.visual-dark-mode:after,
+.themed-background:before,
+.themed-background:after,
+main:before,
+main:after,
+body:before,
+body:after,
+html:before,
+html:after {
+  display: none !important;
+  opacity: 0 !important;
+  background: none !important;
+  content: none !important;
+}
+
+/* Force transparent backgrounds on key elements */
+html.dark-theme,
+html.visual-dark-mode,
+body.dark-theme,
+body.visual-dark-mode,
+html[data-visual-mode="dark"],
+body[data-visual-mode="dark"],
+main[data-visual-mode="dark"],
+.themed-background {
+  background: none !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+/* Force all content to appear above the mountain background */
+header, main, .content-main, .card-container, section, article, .main-nav, #header, #footer {
+  position: relative !important;
+  z-index: 1 !important; /* Use 1 instead of extremely high value to maintain proper stacking */
+  background: transparent !important;
+}
+
+/* Ensure specific elements have proper z-index */
+.dark-theme-mountain {
+  z-index: -1 !important; /* Behind content */
+}
+
+.light-theme-mountain {
+  z-index: -1 !important; /* Behind content */
+}
+
+/* Fix any z-index issues with generated mountain elements */
+[data-creator="theme-simple-emergency"] {
+  z-index: -1 !important;
+}
+
+/* Target absolutely every element that could be creating an overlay */
+*[style*="position: fixed"],
+*[style*="position:fixed"],
+*[style*="background-color"],
+*[style*="opacity"] {
+  background-color: transparent !important;
+}

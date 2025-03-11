@@ -4,6 +4,14 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Expose background initialization functions to global scope
+    window.initializeMountainBackground = initializeMountainBackground;
+    window.initializeThemeBackground = initializeThemeBackground;
+    window.initializeSpaceElements = initializeSpaceElements;
+    
+    // CRITICAL: First force create the mountain background
+    createMountainBackgrounds();
+    
     // Wait a short moment to ensure common.js has loaded header/footer
     setTimeout(() => {
         // Only add theme elements if they don't already exist
@@ -29,17 +37,114 @@ document.addEventListener('DOMContentLoaded', function() {
         // Apply mountain theme to project headers and elements
         applyMountainTheme();
         
-        // Initialize space elements - now enhanced for dark mode
-        initializeSpaceElements();
-        
-        // Set up dark mode detection and handling
-        setupDarkModeDetection();
+        // Initialize space elements based on theme
+        const isDarkMode = isVisualDarkModeActive();
+        if (isDarkMode) {
+            initializeSpaceElements();
+        }
         
         // Apply the saved theme immediately
         const savedTheme = localStorage.getItem('theme-preference') || 'auto';
         applyTheme(savedTheme);
     }, 100);
 });
+
+// Helper function to check if dark mode is active
+function isVisualDarkModeActive() {
+    const currentTheme = localStorage.getItem('theme-preference') || 'auto';
+    const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return currentTheme === 'dark' || (currentTheme === 'auto' && prefersDarkMode);
+}
+
+// Main function to create mountain backgrounds
+function createMountainBackgrounds() {
+    console.log('Creating mountain backgrounds...');
+    
+    // Create main mountain background if it doesn't exist
+    if (!document.querySelector('.mountain-background')) {
+        const mountainBackground = document.createElement('div');
+        mountainBackground.className = 'mountain-background';
+        mountainBackground.innerHTML = `
+            <div class="mountain-range mountain-back"></div>
+            <div class="mountain-range mountain-middle"></div>
+            <div class="mountain-range mountain-front"></div>
+            <div class="forest-layer"></div>
+        `;
+        mountainBackground.style.zIndex = '-10'; // Keep this behind mountain themes but above any black background
+        document.body.insertBefore(mountainBackground, document.body.firstChild);
+        console.log('Created mountain background');
+    }
+    
+    // IMPORTANT: Create light and dark themed mountains
+    if (!document.querySelector('.light-theme-mountain')) {
+        const lightMountain = document.createElement('div');
+        lightMountain.className = 'light-theme-mountain';
+        lightMountain.style.position = 'fixed';
+        lightMountain.style.top = '0';
+        lightMountain.style.left = '0';
+        lightMountain.style.width = '100%';
+        lightMountain.style.height = '100%';
+        lightMountain.style.background = 'linear-gradient(to bottom, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%)';
+        lightMountain.style.zIndex = '-2'; // Higher z-index to ensure visibility
+        lightMountain.style.pointerEvents = 'none';
+        document.body.insertBefore(lightMountain, document.body.firstChild);
+        console.log('Created light theme mountain');
+    }
+    
+    if (!document.querySelector('.dark-theme-mountain')) {
+        const darkMountain = document.createElement('div');
+        darkMountain.className = 'dark-theme-mountain';
+        darkMountain.style.position = 'fixed';
+        darkMountain.style.top = '0';
+        darkMountain.style.left = '0';
+        darkMountain.style.width = '100%';
+        darkMountain.style.height = '100%';
+        darkMountain.style.background = 'linear-gradient(to bottom, #0f0221 0%, #0c1339 30%, #081c51 70%, #102346 100%)';
+        darkMountain.style.zIndex = '-2'; // Higher z-index to ensure visibility
+        darkMountain.style.pointerEvents = 'none';
+        document.body.insertBefore(darkMountain, document.body.firstChild);
+        console.log('Created dark theme mountain');
+        
+        // Add nebula effects to dark theme mountain
+        const nebulaEffect = document.createElement('div');
+        nebulaEffect.style.position = 'absolute';
+        nebulaEffect.style.top = '0';
+        nebulaEffect.style.left = '0';
+        nebulaEffect.style.width = '100%';
+        nebulaEffect.style.height = '100%';
+        nebulaEffect.style.background = `
+            radial-gradient(circle at 20% 20%, rgba(103, 65, 217, 0.15), transparent 25%),
+            radial-gradient(circle at 80% 40%, rgba(158, 58, 185, 0.1), transparent 35%),
+            radial-gradient(circle at 40% 80%, rgba(83, 49, 156, 0.15), transparent 30%)
+        `;
+        nebulaEffect.style.zIndex = '-19';
+        nebulaEffect.style.pointerEvents = 'none';
+        darkMountain.appendChild(nebulaEffect);
+    }
+    
+    // Set visibility based on current theme immediately
+    updateThemeMountainVisibility();
+}
+
+// Helper function to update mountain visibility
+function updateThemeMountainVisibility() {
+    const isDarkMode = isVisualDarkModeActive();
+    const lightMountain = document.querySelector('.light-theme-mountain');
+    const darkMountain = document.querySelector('.dark-theme-mountain');
+    
+    console.log(`Updating mountain visibility. Dark mode: ${isDarkMode}`);
+    
+    if (lightMountain && darkMountain) {
+        if (isDarkMode) {
+            lightMountain.style.display = 'none';
+            darkMountain.style.display = 'block';
+        } else {
+            lightMountain.style.display = 'block';
+            darkMountain.style.display = 'none';
+        }
+        console.log(`Set ${isDarkMode ? 'dark' : 'light'} mountain visible`);
+    }
+}
 
 // Listen for theme changes from theme-init.js
 document.addEventListener('theme-applied', function(e) {
@@ -50,6 +155,13 @@ document.addEventListener('theme-applied', function(e) {
 // Listen for direct theme change events (from footer buttons)
 document.addEventListener('theme-change', function(e) {
     const theme = e.detail.theme;
+    applyTheme(theme);
+});
+
+// Listen for direct theme changes from the buttons
+document.addEventListener('theme-changed', function(e) {
+    const theme = e.detail.theme;
+    console.log('Theme event received:', theme);
     applyTheme(theme);
 });
 
@@ -1068,39 +1180,112 @@ function enhanceSpaceForLightMode() {
  * @param {string} theme - 'light', 'dark', or 'auto'
  */
 function applyTheme(theme) {
-    // Apply theme classes (this is now redundant with theme-init.js but kept for compatibility)
+    console.log(`Applying theme: ${theme}`);
+    
+    // Force create backgrounds if they don't exist
+    createMountainBackgrounds();
+    
+    // Apply theme classes
     document.documentElement.classList.remove('light-theme', 'dark-theme', 'auto-theme');
     document.documentElement.classList.add(`${theme}-theme`);
     
-    if (theme === 'light') {
-        // Remove extra stars from dark mode
-        const extraStars = document.querySelector('.extra-stars');
-        if (extraStars) extraStars.remove();
+    const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isVisualDarkMode = theme === 'dark' || (theme === 'auto' && prefersDarkMode);
+    
+    // Update visual dark mode class
+    if (isVisualDarkMode) {
+        document.documentElement.classList.add('visual-dark-mode');
+        document.documentElement.classList.remove('visual-light-mode');
+    } else {
+        document.documentElement.classList.add('visual-light-mode');
+        document.documentElement.classList.remove('visual-dark-mode');
+    }
+    
+    // CRITICAL: Explicitly set mountain visibility
+    updateThemeMountainVisibility();
+    
+    if (isVisualDarkMode) {
+        // Initialize space elements if they don't exist yet
+        if (!document.querySelector('.space-elements')) {
+            initializeSpaceElements();
+        }
         
-        // Apply light mode specific enhancements
-        enhanceSpaceForLightMode();
-    } else if (theme === 'dark') {
-        // Add dark mode specific enhancements
+        // Add extra stars for dark mode
         enhanceSpaceForDarkMode();
     } else {
-        // Auto theme (system preference)
-        const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (prefersDarkMode) {
-            enhanceSpaceForDarkMode();
-        } else {
-            // Remove extra stars from dark mode
-            const extraStars = document.querySelector('.extra-stars');
-            if (extraStars) extraStars.remove();
-            
-            // Apply light mode enhancements
-            enhanceSpaceForLightMode();
-        }
+        // Apply light mode specific enhancements
+        const extraStars = document.querySelector('.extra-stars');
+        if (extraStars) extraStars.remove();
+        enhanceSpaceForLightMode();
     }
     
     // Update dark mode styles based on effective theme
-    const effectiveDarkMode = (theme === 'dark' || 
-        (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches));
-    updateDarkModeStyles(effectiveDarkMode);
+    updateDarkModeStyles(isVisualDarkMode);
+}
+
+/**
+ * Ensures both light and dark mountain backgrounds exist
+ */
+function ensureMountainBackgrounds() {
+    // Create both light and dark theme mountains if they don't exist
+    if (!document.querySelector('.light-theme-mountain')) {
+        const lightMountain = document.createElement('div');
+        lightMountain.className = 'light-theme-mountain';
+        document.body.appendChild(lightMountain);
+    }
+    
+    if (!document.querySelector('.dark-theme-mountain')) {
+        const darkMountain = document.createElement('div');
+        darkMountain.className = 'dark-theme-mountain';
+        document.body.appendChild(darkMountain);
+    }
+    
+    // Add CSS for mountain backgrounds if it doesn't exist
+    if (!document.getElementById('mountain-backgrounds-css')) {
+        const style = document.createElement('style');
+        style.id = 'mountain-backgrounds-css';
+        style.textContent = `
+            .light-theme-mountain,
+            .dark-theme-mountain {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: -10;
+                pointer-events: none;
+            }
+            
+            .light-theme-mountain {
+                background: linear-gradient(to bottom, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%);
+            }
+            
+            .dark-theme-mountain {
+                background: linear-gradient(to bottom, 
+                    #0f0221 0%, 
+                    #0c1339 30%, 
+                    #081c51 70%, 
+                    #102346 100%);
+            }
+            
+            /* Add nebula effects to dark theme mountain */
+            .dark-theme-mountain::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: 
+                    radial-gradient(circle at 20% 20%, rgba(103, 65, 217, 0.15), transparent 25%),
+                    radial-gradient(circle at 80% 40%, rgba(158, 58, 185, 0.1), transparent 35%),
+                    radial-gradient(circle at 40% 80%, rgba(83, 49, 156, 0.15), transparent 30%);
+                z-index: -1;
+                pointer-events: none;
+            }
+        `;
+        document.head.appendChild(style);
+    }
 }
 
 /**
@@ -1125,12 +1310,14 @@ function applyTheme(theme) {
         
         console.log(`Theme visuals - current: ${currentTheme}, dark mode: ${isVisualDarkMode}`);
         
-        // Create mountain backgrounds if they don't exist yet
-        ensureMountainBackground();
+        // Ensure mountain backgrounds exist
+        ensureMountainBackgrounds();
         
-        // Create stars if they don't exist yet
+        // Create stars if they don't exist yet and we're in dark mode
         if (isVisualDarkMode) {
-            ensureStars();
+            if (!document.querySelector('.stars-container')) {
+                createStars();
+            }
         }
         
         // Update visibility based on current visual mode

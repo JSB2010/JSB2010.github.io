@@ -12,6 +12,9 @@
     // Apply initial inline styles to prevent flash
     applyInlineStyles(currentTheme);
     
+    // IMMEDIATELY create mountain backgrounds if not present
+    ensureBackgroundsExist();
+    
     // Set up handlers once DOM is ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
@@ -25,6 +28,9 @@
     function init() {
         console.log('Theme system initializing...');
         
+        // Force create background elements immediately
+        ensureBackgroundsExist();
+        
         // Try to set up buttons
         setupThemeButtons();
         
@@ -36,6 +42,9 @@
         
         // Ensure any theme-specific visual elements are correctly shown
         ensureThemeVisuals();
+
+        // Ensure background initialization is triggered if needed
+        ensureBackgroundElements();
     }
     
     function applyThemeClasses(theme) {
@@ -92,37 +101,60 @@
                     * { forced-color-adjust: none !important; }
                 }
                 
-                /* Hide dark-mode specific elements */
-                .dark-mode-only, .extra-stars, .dark-theme-mountain {
+                /* IMPORTANT: Always show background elements, just control which ones */
+                .light-theme-mountain {
+                    display: block !important;
+                    opacity: 1 !important;
+                    z-index: -1 !important; /* Fixed: Keep at -1, not -10 */
+                }
+                
+                .dark-theme-mountain {
                     display: none !important;
                 }
                 
                 /* Show light-mode specific elements */
-                .light-mode-only, .light-theme-mountain {
+                .light-mode-only {
                     display: block !important;
+                }
+                
+                /* Hide dark-mode specific elements */
+                .dark-mode-only, .extra-stars, .stars-container {
+                    display: none !important;
                 }
             `;
         } else if (isVisualDarkMode) {
             // Use the same styling for both dark theme and auto+dark
             styleEl.textContent = `
-                html, body { 
-                    background-color: #121212 !important; 
+                /* REMOVE all background colors to allow mountain backgrounds to show */
+                html, body, main, .content-main { 
                     color: #f1f1f1 !important; 
+                    background-color: transparent !important;
                 }
                 
-                /* Force all visual dark mode styles whether it's dark theme or auto+dark */
-                html, body, main, .content-main { 
-                    background-color: #121212 !important; 
-                    color: #f1f1f1 !important;
+                /* Fix container backgrounds */
+                .content-main, main, section, div {
+                    background-color: transparent !important;
+                }
+                
+                /* IMPORTANT: Always show background elements, just control which ones */
+                .dark-theme-mountain {
+                    display: block !important;
+                    opacity: 1 !important;
+                    z-index: 0 !important; /* Very high to ensure visibility */
+                }
+                
+                .light-theme-mountain {
+                    display: none !important;
                 }
                 
                 /* Show dark-mode specific elements */
-                .dark-mode-only, .extra-stars, .dark-theme-mountain {
+                .dark-mode-only, .extra-stars, .stars-container {
                     display: block !important;
+                    opacity: 1 !important;
                 }
                 
                 /* Hide light-mode specific elements */
-                .light-mode-only, .light-theme-mountain {
+                .light-mode-only {
                     display: none !important;
                 }
                 
@@ -144,13 +176,24 @@
         } else {
             // Auto theme with light mode - clean up styles and let CSS handle it
             styleEl.textContent = `
+                /* IMPORTANT: Always show background elements, just control which ones */
+                .light-theme-mountain {
+                    display: block !important;
+                    opacity: 1 !important;
+                    z-index: -1 !important; /* Fixed: Keep at -1, not -10 */
+                }
+                
+                .dark-theme-mountain {
+                    display: none !important;
+                }
+                
                 /* Hide dark-mode specific elements */
-                .dark-mode-only, .extra-stars, .dark-theme-mountain {
+                .dark-mode-only, .extra-stars, .stars-container {
                     display: none !important;
                 }
                 
                 /* Show light-mode specific elements */
-                .light-mode-only, .light-theme-mountain {
+                .light-mode-only {
                     display: block !important;
                 }
                 
@@ -282,11 +325,20 @@
         updateButtonStates(theme);
         ensureThemeVisuals();
         
-        // Force reload to ensure all CSS is applied properly
-        const url = new URL(window.location.href);
-        url.searchParams.set('theme', theme);
-        url.searchParams.set('t', Date.now());
-        window.location.href = url.toString();
+        // Fire custom event that theme.js can listen for
+        const themeEvent = new CustomEvent('theme-changed', {
+            detail: { theme }
+        });
+        document.dispatchEvent(themeEvent);
+        
+        // Call global theme functions if available
+        if (window.ThemeManager && window.ThemeManager.ensureBackgrounds) {
+            window.ThemeManager.ensureBackgrounds();
+        }
+        
+        // REMOVED: No longer force reload the page
+        // Just make sure backgrounds are visible
+        ensureBackgroundsExist();
     }
     
     function ensureThemeVisuals() {
@@ -298,10 +350,182 @@
         // Mark the body with a data attribute for easier CSS targeting
         document.body.dataset.visualMode = isVisualDarkMode ? 'dark' : 'light';
         
+        // CRITICAL: Force transparent backgrounds in dark mode
+        if (isVisualDarkMode) {
+            document.documentElement.style.backgroundColor = 'transparent';
+            document.body.style.backgroundColor = 'transparent';
+            
+            // Remove any overlay that might be created with pseudo-elements
+            const styleKiller = document.createElement('style');
+            styleKiller.textContent = `
+                body::before, body::after,
+                html::before, html::after,
+                main::before, main::after,
+                .themed-background::before, .themed-background::after {
+                    content: none !important;
+                    display: none !important;
+                    opacity: 0 !important;
+                    background: none !important;
+                }
+            `;
+            document.head.appendChild(styleKiller);
+            
+            // Force all major containers to be transparent
+            document.querySelectorAll('main, .content-main, .themed-background').forEach(el => {
+                el.style.backgroundColor = 'transparent';
+            });
+        }
+        
+        // Ensure backgrounds exist
+        ensureBackgroundsExist();
+        
+        // CRITICAL: Force set mountain backgrounds visibility directly
+        const lightMountain = document.querySelector('.light-theme-mountain');
+        const darkMountain = document.querySelector('.dark-theme-mountain');
+        
+        if (lightMountain && darkMountain) {
+            if (isVisualDarkMode) {
+                lightMountain.style.display = 'none';
+                darkMountain.style.display = 'block';
+            } else {
+                lightMountain.style.display = 'block';
+                darkMountain.style.display = 'none';
+            }
+            console.log(`Visuals updated: ${isVisualDarkMode ? 'dark' : 'light'} mountain visible`);
+        }
+        
+        // Update stars visibility
+        const stars = document.querySelector('.stars-container');
+        if (stars) {
+            stars.style.display = isVisualDarkMode ? 'block' : 'none';
+        }
+        
         // Update any theme-specific elements with JavaScript
         if (window.updateThemeElements) {
             window.updateThemeElements(isVisualDarkMode);
         }
+    }
+    
+    function ensureBackgroundElements() {
+        // Ensure background elements are created if needed
+        if (window.initializeMountainBackground && !document.querySelector('.mountain-background')) {
+            window.initializeMountainBackground();
+        }
+        
+        if (window.initializeThemeBackground && !document.querySelector('.theme-background')) {
+            window.initializeThemeBackground();
+        }
+        
+        // Initialize space elements based on theme
+        const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const currentTheme = localStorage.getItem('theme-preference') || 'auto';
+        const isVisualDarkMode = currentTheme === 'dark' || (currentTheme === 'auto' && prefersDarkMode);
+        
+        if (isVisualDarkMode && window.initializeSpaceElements) {
+            window.initializeSpaceElements();
+        }
+    }
+    
+    /**
+     * Immediately ensure background elements exist
+     */
+    function ensureBackgroundsExist() {
+        // Directly create mountain backgrounds
+        if (!document.querySelector('.light-theme-mountain')) {
+            const lightMountain = document.createElement('div');
+            lightMountain.className = 'light-theme-mountain';
+            lightMountain.style.position = 'fixed';
+            lightMountain.style.top = '0';
+            lightMountain.style.left = '0';
+            lightMountain.style.width = '100%';
+            lightMountain.style.height = '100%';
+            lightMountain.style.background = 'linear-gradient(to bottom, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%)';
+            lightMountain.style.zIndex = '-1'; // Fixed: Keep at -1, not -10
+            lightMountain.style.pointerEvents = 'none';
+            document.body.prepend(lightMountain); // Use prepend to ensure it's the first element
+            console.log('Created light-theme-mountain');
+        }
+        
+        if (!document.querySelector('.dark-theme-mountain')) {
+            const darkMountain = document.createElement('div');
+            darkMountain.className = 'dark-theme-mountain';
+            darkMountain.style.position = 'fixed';
+            darkMountain.style.top = '0';
+            darkMountain.style.left = '0';
+            darkMountain.style.width = '100%';
+            darkMountain.style.height = '100%';
+            darkMountain.style.background = 'linear-gradient(to bottom, #0f0221 0%, #0c1339 30%, #081c51 70%, #102346 100%)';
+            darkMountain.style.zIndex = '-1'; // Fixed: Keep at -1, not -10
+            darkMountain.style.pointerEvents = 'none';
+            document.body.prepend(darkMountain); // Use prepend to ensure it's the first element
+            console.log('Created dark-theme-mountain');
+            
+            // Add a special attribute to mark this is direct DOM creation
+            darkMountain.setAttribute('data-creator', 'theme-simple-emergency');
+        }
+        
+        // Set initial visibility based on theme
+        const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const currentTheme = localStorage.getItem('theme-preference') || 'auto';
+        const isVisualDarkMode = currentTheme === 'dark' || (currentTheme === 'auto' && prefersDarkMode);
+        const lightMountain = document.querySelector('.light-theme-mountain');
+        const darkMountain = document.querySelector('.dark-theme-mountain');
+        if (lightMountain && darkMountain) {
+            if (isVisualDarkMode) {
+                lightMountain.style.display = 'none';
+                darkMountain.style.display = 'block';
+            } else {
+                lightMountain.style.display = 'block';
+                darkMountain.style.display = 'none';
+            }
+            console.log(`Set ${isVisualDarkMode ? 'dark' : 'light'} mountain visible`);
+        }
+        
+        // CRITICAL FIX: Add style tag to ensure mountains stay visible
+        const emergencyMountainFix = document.createElement('style');
+        emergencyMountainFix.id = 'emergency-mountain-fix';
+        emergencyMountainFix.textContent = `
+            .dark-theme-mountain {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                z-index: -1 !important; /* Fixed: Keep at -1 */
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                background: linear-gradient(to bottom, #0f0221 0%, #0c1339 30%, #081c51 70%, #102346 100%) !important;
+            }
+            
+            .light-theme-mountain {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                z-index: -1 !important; /* Fixed: Keep at -1 */
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                background: linear-gradient(to bottom, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%) !important;
+            }
+            
+            /* Make content appear above the background */
+            main, .content-main, section, article, header, footer, .card-container {
+                position: relative !important;
+                z-index: 1 !important;
+                background-color: transparent !important;
+            }
+            
+            /* Force remove any overlay */
+            body::before, html::before, main::before {
+                display: none !important;
+                opacity: 0 !important;
+                content: none !important;
+            }
+        `;
+        document.head.appendChild(emergencyMountainFix);
     }
     
     // Make these functions available globally for other scripts
@@ -315,7 +539,8 @@
             const theme = localStorage.getItem('theme-preference') || 'auto';
             const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
             return theme === 'dark' || (theme === 'auto' && prefersDarkMode);
-        }
+        },
+        ensureBackgrounds: ensureBackgroundElements
     };
     
     // Add a utility function for theme elements
@@ -323,7 +548,6 @@
         // Show/hide theme-specific elements
         const darkElems = document.querySelectorAll('.dark-mode-only, .extra-stars, .dark-theme-mountain');
         const lightElems = document.querySelectorAll('.light-mode-only, .light-theme-mountain');
-        
         darkElems.forEach(el => el.style.display = isDark ? 'block' : 'none');
         lightElems.forEach(el => el.style.display = isDark ? 'none' : 'block');
         
