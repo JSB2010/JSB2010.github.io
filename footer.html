@@ -24,15 +24,15 @@
         <div class="footer-theme-switcher">
             <h4>Theme</h4>
             <div class="theme-switcher">
-                <button id="light-mode" class="theme-button" aria-label="Light Mode" type="button">
+                <button id="light-mode" class="theme-button" aria-label="Light Mode" type="button" onclick="window.ThemeManager.setTheme('light'); return false;">
                     <i class="fas fa-sun"></i>
                     <span>Light</span>
                 </button>
-                <button id="dark-mode" class="theme-button" aria-label="Dark Mode" type="button">
+                <button id="dark-mode" class="theme-button" aria-label="Dark Mode" type="button" onclick="window.ThemeManager.setTheme('dark'); return false;">
                     <i class="fas fa-moon"></i>
                     <span>Dark</span>
                 </button>
-                <button id="auto-mode" class="theme-button" aria-label="Auto Mode" type="button">
+                <button id="auto-mode" class="theme-button" aria-label="Auto Mode" type="button" onclick="window.ThemeManager.setTheme('auto'); return false;">
                     <i class="fas fa-adjust"></i>
                     <span>Auto</span>
                 </button>

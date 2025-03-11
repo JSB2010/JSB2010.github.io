@@ -5,8 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jacob Barkin | Portfolio</title>
     
-    <!-- EMERGENCY FIX: Single theme script -->
+    <!-- Simplified theme system - must be first -->
     <script src="theme-simple.js"></script>
+    
+    <!-- MINIMAL FIX - Less aggressive approach -->
+    <script src="minimal-fix.js"></script>
+    
+    <!-- Inline style for minimal fix -->
+    <style>
+      /* Critical styles to ensure content visibility */
+      .dark-theme-mountain {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        background: linear-gradient(to bottom, #0f0221 0%, #0c1339 30%, #081c51 70%, #102346 100%) !important;
+        z-index: -1 !important;
+      }
+      
+      /* Ensure content appears above background */
+      main, .content-main, section, article, .card-container {
+        position: relative !important;
+        z-index: 1 !important;
+        background-color: transparent !important;
+      }
+      
+      /* Remove overlay */
+      body::before {
+        display: none !important;
+      }
+    </style>
     
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -16,6 +45,15 @@
     <link rel="preload" href="footer.html" as="fetch" crossorigin="anonymous">
     <link rel="stylesheet" href="dark-mode-fixes.css">
     <link rel="stylesheet" href="theme-switch.css">
+    <!-- Add background fix CSS -->
+    <link rel="stylesheet" href="background-fix.css">
+    <!-- Add layer fix CSS -->
+    <link rel="stylesheet" href="layer-fix.css">
+    <!-- Include targeted fix CSS -->
+    <link rel="stylesheet" href="targeted-fix.css">
+    <!-- Remove overly aggressive CSS files -->
+    <!-- <link rel="stylesheet" href="dark-overlay-killer.css"> -->
+    <!-- <link rel="stylesheet" href="absolute-final-fix.css"> -->
 </head>
 <body class="themed-background">
     <div class="loading-animation"></div>
@@ -114,5 +152,35 @@
     <script src="theme.js"></script>
     <script src="nav-fix.js"></script>
     <script src="global-fix.js"></script>
+    <script src="debug-theme.js"></script>
+    <script src="theme-sync.js"></script>
+    <!-- Add theme button handler script -->
+    <script>
+        // Special event handler for theme buttons
+        document.addEventListener('click', function(e) {
+            // Direct click handling for theme buttons
+            if (e.target && (e.target.id === 'light-mode' || 
+                            e.target.id === 'dark-mode' || 
+                            e.target.id === 'auto-mode' ||
+                            e.target.closest('#light-mode') ||
+                            e.target.closest('#dark-mode') ||
+                            e.target.closest('#auto-mode'))) {
+                
+                // Get the button ID
+                let buttonId = e.target.id || e.target.closest('button').id;
+                let theme = buttonId.replace('-mode', '');
+                
+                console.log('Theme button clicked:', theme);
+                
+                // Apply theme directly
+                if (window.ThemeManager && window.ThemeManager.setTheme) {
+                    window.ThemeManager.setTheme(theme);
+                }
+                
+                // Prevent default behavior
+                e.preventDefault();
+            }
+        });
+    </script>
 </body>
 </html>

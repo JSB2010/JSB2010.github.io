@@ -272,6 +272,33 @@
         backdrop-filter: blur(5px) !important;
         -webkit-backdrop-filter: blur(5px) !important;
     }
+
+    /* EMERGENCY FIX: Remove all possible overlays in dark mode */
+    html.dark-theme,
+    html.visual-dark-mode,
+    html[data-visual-mode="dark"],
+    body.dark-theme, 
+    body.themed-background,
+    .themed-background {
+        background: transparent !important;
+        background-color: transparent !important;
+        background-image: none !important;
+    }
+
+    /* Remove the ::before pseudo element that creates the overlay */
+    body::before {
+        display: none !important;
+        content: none !important;
+        background: none !important;
+    }
+
+    /* Force dark mountain to be visible */
+    .dark-theme-mountain {
+        z-index: 9999 !important;
+        position: fixed !important;
+        display: block !important;
+        visibility: visible !important;
+    }
 }
 
 /* Light mode space elements enhancements */

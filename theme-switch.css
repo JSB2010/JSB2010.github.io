@@ -86,12 +86,76 @@
 :root.visual-dark-mode .extra-stars,
 :root.dark-theme .extra-stars {
   display: block !important;
+  z-index: -11 !important;
 }
 
 :root.visual-dark-mode .star,
 :root.dark-theme .star {
   opacity: 0.9 !important;
   box-shadow: 0 0 5px rgba(255, 255, 255, 0.9) !important;
+}
+
+/* CRITICAL: Always ensure mountains are visible */
+:root.visual-dark-mode .dark-theme-mountain,
+:root.dark-theme .dark-theme-mountain {
+  display: block !important;
+  z-index: -1 !important; /* Fixed: Keep at -1, not -2 */
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+:root.visual-light-mode .light-theme-mountain,
+:root.light-theme .light-theme-mountain,
+:root.auto-theme:not(.visual-dark-mode) .light-theme-mountain {
+  display: block !important;
+  z-index: -1 !important; /* Fixed: Keep at -1, not -2 */
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+:root.visual-light-mode .light-theme-mountain,
+:root.light-theme .light-theme-mountain,
+:root.auto-theme:not(.visual-dark-mode) .light-theme-mountain {
+  display: block !important;
+  z-index: -2 !important; /* Higher z-index to ensure visibility */
+}
+
+:root.visual-dark-mode .light-theme-mountain,
+:root.dark-theme .light-theme-mountain,
+:root.light-theme .dark-theme-mountain,
+:root.auto-theme:not(.visual-dark-mode) .dark-theme-mountain {
+  display: none !important;
+}
+
+:root.light-theme .extra-stars,
+:root.auto-theme:not(.visual-dark-mode) .extra-stars {
+  display: none !important;
+}
+
+/* Mountain background positioning */
+.light-theme-mountain,
+.dark-theme-mountain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+/* Add specific mountain styling for light theme */
+.light-theme-mountain {
+  background: linear-gradient(to bottom, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%);
+}
+
+/* Add specific mountain styling for dark theme */
+.dark-theme-mountain {
+  background: linear-gradient(to bottom, 
+      #0f0221 0%, 
+      #0c1339 30%, 
+      #081c51 70%, 
+      #102346 100%);
 }
 
 :root.visual-dark-mode .dark-theme-mountain,
@@ -256,4 +320,15 @@
 .theme-button span {
   font-size: 0.8rem;
   display: block;
+}
+
+/* Override backgrounds for dark mode */
+:root.dark-theme body, 
+:root.auto-theme.visual-dark-mode body {
+  background-color: transparent !important; /* Remove background to let mountain show through */
+}
+
+html.dark-theme,
+html.visual-dark-mode {
+  background-color: transparent !important;
 }
