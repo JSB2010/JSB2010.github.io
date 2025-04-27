@@ -4,105 +4,141 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jacob Barkin | Portfolio</title>
+    <meta name="description" content="Jacob Barkin - Developer & Financial Education Advocate. Explore my portfolio, projects, and professional work.">
 
-    <!-- New theme system - must be first -->
+    <!-- Theme system - must be first -->
     <script src="new-theme.js"></script>
 
+    <!-- Core styles -->
     <link rel="stylesheet" href="consolidated.css">
-    <link rel="stylesheet" href="floating-nav.css">
-    <link rel="stylesheet" href="ultra-modern-cards.css">
+    <link rel="stylesheet" href="next-gen-nav.css">
+    <link rel="stylesheet" href="ultra-modern-index.css">
     <link rel="stylesheet" href="new-theme.css">
     <link rel="stylesheet" href="theme-selector-fix.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/png" href="images/Logo.png">
+
     <!-- Preload critical resources -->
     <link rel="preload" href="header.html" as="fetch" crossorigin="anonymous">
     <link rel="preload" href="footer.html" as="fetch" crossorigin="anonymous">
+
+    <!-- Preload critical fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="loading-animation"></div>
 
-    <!-- Mountain backgrounds are now added by new-theme.js -->
-
     <div id="header"></div>
-    <main id="home" class="content-main" role="main">
-        <section class="main-header">
-            <h1>Jacob Barkin</h1>
-            <p class="tagline" id="dynamic-greeting">Developer & Financial Education Advocate</p>
+
+    <main id="home" role="main">
+        <section class="hero-container">
+            <!-- Floating elements for visual interest -->
+            <div class="floating-element floating-element-1"></div>
+            <div class="floating-element floating-element-2"></div>
+            <div class="floating-element floating-element-3"></div>
+
+            <!-- Hero content -->
+            <div class="hero-content">
+                <h1 class="hero-title">Jacob Barkin</h1>
+                <p class="hero-subtitle" id="dynamic-greeting">Developer & <span class="highlight">Financial Education</span> Advocate</p>
+            </div>
+
+            <!-- Card grid -->
+            <div class="card-grid">
+                <a href="about.html" class="feature-card tech-card">
+                    <div class="card-content">
+                        <i class="fas fa-user card-icon"></i>
+                        <h2 class="card-title">About Me</h2>
+                        <p class="card-description">Learn more about my background, skills, and professional journey</p>
+                    </div>
+                </a>
+
+                <a href="projects.html" class="feature-card transit-card">
+                    <div class="card-content">
+                        <i class="fas fa-code card-icon"></i>
+                        <h2 class="card-title">My Projects</h2>
+                        <p class="card-description">Explore my IT projects, development work, and technical achievements</p>
+                    </div>
+                </a>
+
+                <a href="contact.html" class="feature-card mountain-card">
+                    <div class="card-content">
+                        <i class="fas fa-briefcase card-icon"></i>
+                        <h2 class="card-title">My Work</h2>
+                        <p class="card-description">Discover my professional experience and current endeavors</p>
+                    </div>
+                </a>
+
+                <a href="https://www.askthekidz.com" target="_blank" rel="noopener" class="feature-card space-card">
+                    <div class="card-content">
+                        <i class="fas fa-external-link-alt card-icon"></i>
+                        <h2 class="card-title">Ask The Kidz</h2>
+                        <p class="card-description">Visit my business focused on empowering youth through financial education</p>
+                    </div>
+                </a>
+
+                <a href="contact.html" class="feature-card contact-card">
+                    <div class="card-content">
+                        <i class="fas fa-envelope card-icon"></i>
+                        <h2 class="card-title">Contact</h2>
+                        <p class="card-description">Get in touch with me for collaborations, questions, or opportunities</p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Scroll indicator -->
+            <div class="scroll-indicator">
+                <p>Scroll to explore</p>
+                <div class="scroll-arrow">
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
         </section>
-        <div class="card-container">
-            <a href="about.html" class="card tech-card">
-                <span class="card-accent"></span>
-                <i class="fas fa-user"></i>
-                <h2>About Me</h2>
-                <p>Learn more about my background and skills</p>
-            </a>
-
-            <a href="projects.html" class="card transit-card">
-                <span class="card-accent"></span>
-                <i class="fas fa-code"></i>
-                <h2>My Projects</h2>
-                <p>Explore my IT projects and achievements</p>
-            </a>
-
-            <a href="contact.html" class="card mountain-card">
-                <span class="card-accent"></span>
-                <i class="fas fa-briefcase"></i>
-                <h2>My Work</h2>
-                <p>Find out what I am up to</p>
-            </a>
-
-            <a href="https://www.askthekidz.com" target="_blank" rel="noopener" class="card space-card">
-                <span class="card-accent"></span>
-                <i class="fas fa-external-link-alt"></i>
-                <h2>Ask The Kidz</h2>
-                <p>Discover my business</p>
-            </a>
-
-            <a href="contact.html" class="card tech-card">
-                <span class="card-accent"></span>
-                <i class="fas fa-envelope"></i>
-                <h2>Contact</h2>
-                <p>Get in touch with me</p>
-            </a>
-        </div>
     </main>
-
-    <!-- Back to top button is now loaded from footer.html -->
 
     <div id="footer"></div>
 
+    <!-- Core scripts -->
     <script src="common.js"></script>
     <script src="header.js"></script>
-    <script src="nav-fix.js"></script>
+    <script src="next-gen-nav.js"></script>
+    <script src="immersive-mountains.js"></script>
     <script src="global-fix.js"></script>
-    <script src="animations.js"></script>
     <script>
         // Dynamic greeting message based on time of day
-        const greetingElement = document.getElementById('dynamic-greeting');
-        const currentHour = new Date().getHours();
-        let greeting;
+        document.addEventListener('DOMContentLoaded', function() {
+            const greetingElement = document.getElementById('dynamic-greeting');
+            if (!greetingElement) return;
 
-        if (currentHour < 12) {
-            greeting = "Developer & Financial Education Advocate | Good Morning";
-        } else if (currentHour < 18) {
-            greeting = "Developer & Financial Education Advocate | Good Afternoon";
-        } else if (currentHour < 21) {
-            greeting = "Developer & Financial Education Advocate | Good Evening";
-        } else {
-            greeting = "Developer & Financial Education Advocate | Good Night";
-        }
+            const currentHour = new Date().getHours();
+            let timeGreeting;
 
-        greetingElement.textContent = greeting;
+            if (currentHour < 12) {
+                timeGreeting = "Good Morning";
+            } else if (currentHour < 18) {
+                timeGreeting = "Good Afternoon";
+            } else if (currentHour < 21) {
+                timeGreeting = "Good Evening";
+            } else {
+                timeGreeting = "Good Night";
+            }
+
+            // Create the greeting with highlight span
+            greetingElement.innerHTML = `Developer & <span class="highlight">Financial Education</span> Advocate | ${timeGreeting}`;
+        });
 
         // Loading animation
         window.addEventListener('load', function() {
             const loader = document.querySelector('.loading-animation');
             if (loader) {
-                loader.style.display = 'none';
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 500);
             }
         });
     </script>
-    <!-- Theme handling is now done by new-theme.js -->
 </body>
 </html>
