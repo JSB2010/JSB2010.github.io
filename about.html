@@ -4,62 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Me | Jacob Barkin</title>
-    
-    <!-- Simplified theme system - must be first -->
-    <script src="theme-simple.js"></script>
-    
-    <!-- MINIMAL FIX - Less aggressive approach -->
-    <script src="minimal-fix.js"></script>
-    
-    <!-- Inline style for minimal fix -->
-    <style>
-      /* Critical styles to ensure content visibility */
-      .dark-theme-mountain {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100% !important;
-        height: 100% !important;
-        background: linear-gradient(to bottom, #0f0221 0%, #0c1339 30%, #081c51 70%, #102346 100%) !important;
-        z-index: -1 !important;
-      }
-      
-      /* Ensure content appears above background */
-      main, .content-main, section, article, .card-container, .profile-container, .interests-section {
-        position: relative !important;
-        z-index: 1 !important;
-        background-color: transparent !important;
-      }
-      
-      /* Remove overlay */
-      body::before {
-        display: none !important;
-      }
-    </style>
-    
-    <link rel="stylesheet" href="style.css">
+
+    <!-- New theme system - must be first -->
+    <script src="new-theme.js"></script>
+
+    <link rel="stylesheet" href="consolidated.css">
+    <link rel="stylesheet" href="floating-nav.css">
+    <link rel="stylesheet" href="about-styles.css">
+    <link rel="stylesheet" href="new-theme.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <meta name="description" content="Explore Jacob Barkin's portfolio, projects, and contact details. A dedicated app developer and financial education advocate.">
     <link rel="icon" type="image/png" href="images/Jacob Barkin Website Logo.png">
     <!-- Preload critical resources -->
     <link rel="preload" href="header.html" as="fetch" crossorigin="anonymous">
     <link rel="preload" href="footer.html" as="fetch" crossorigin="anonymous">
-    <!-- Add dark mode fixes stylesheet -->
-    <link rel="stylesheet" href="dark-mode-fixes.css">
-    <link rel="stylesheet" href="theme-switch.css">
-    <!-- Add background fix CSS -->
-    <link rel="stylesheet" href="background-fix.css">
-    <!-- Add layer fix CSS -->
-    <link rel="stylesheet" href="layer-fix.css">
-    <!-- Include targeted fix CSS -->
-    <link rel="stylesheet" href="targeted-fix.css">
-    <!-- Remove overly aggressive CSS files -->
-    <!-- <link rel="stylesheet" href="dark-overlay-killer.css"> -->
-    <!-- <link rel="stylesheet" href="absolute-final-fix.css"> -->
 </head>
-<body class="themed-background">
+<body>
     <div class="loading-animation"></div>
-    
+
     <div id="header"></div>
     <main class="content-main">
         <section class="about-section">
@@ -117,10 +79,12 @@
         </section>
     </main>
     <div id="footer"></div>
-    
+
     <script src="common.js"></script>
-    <script src="theme.js"></script>
+    <script src="header.js"></script>
     <script src="nav-fix.js"></script>
     <script src="global-fix.js"></script>
+    <script src="animations.js"></script>
+    <!-- Theme handling is now done by new-theme.js -->
 </body>
 </html>

@@ -4,7 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Me | Jacob Barkin</title>
-    <link rel="stylesheet" href="style.css">
+    <!-- New theme system - must be first -->
+    <script src="new-theme.js"></script>
+
+    <link rel="stylesheet" href="consolidated.css">
+    <link rel="stylesheet" href="floating-nav.css">
+    <link rel="stylesheet" href="contact-styles.css">
+    <link rel="stylesheet" href="new-theme.css">
     <meta name="description" content="Get in touch with Jacob Barkin. Send a message about app development, financial education, or collaboration opportunities.">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Preload critical resources -->
@@ -13,15 +19,15 @@
     <link rel="icon" type="image/png" href="images/Jacob Barkin Website Logo.png">
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
-<body class="themed-background">
+<body>
     <div class="loading-animation"></div>
-    
+
     <div id="header"></div>
     <main class="content-main" role="main">
         <section id="contact">
             <h1>Get in Touch</h1>
             <p class="contact-intro">I'd love to hear from you! Whether you have a question about my projects, want to collaborate, or just want to say hello.</p>
-            
+
             <div class="contact-container">
                 <div class="contact-info">
                     <a href="mailto:jacobbarkin@gmail.com" class="contact-method" aria-label="Email me">
@@ -46,7 +52,7 @@
                         <label for="name" class="visually-hidden">Your Name</label>
                         <div class="input-with-icon">
                             <i class="fas fa-user"></i>
-                            <input type="text" id="name" name="name" placeholder="Your Name" required 
+                            <input type="text" id="name" name="name" placeholder="Your Name" required
                                    aria-label="Your Name" autocomplete="name">
                         </div>
                     </div>
@@ -55,7 +61,7 @@
                         <label for="email" class="visually-hidden">Your Email</label>
                         <div class="input-with-icon">
                             <i class="fas fa-envelope"></i>
-                            <input type="email" id="email" name="email" placeholder="Your Email" required 
+                            <input type="email" id="email" name="email" placeholder="Your Email" required
                                    aria-label="Your Email" autocomplete="email">
                         </div>
                     </div>
@@ -64,7 +70,7 @@
                         <label for="message" class="visually-hidden">Your Message</label>
                         <div class="input-with-icon">
                             <i class="fas fa-comment"></i>
-                            <textarea id="message" name="message" placeholder="Your Message" rows="5" required 
+                            <textarea id="message" name="message" placeholder="Your Message" rows="5" required
                                   aria-label="Your Message"></textarea>
                         </div>
                     </div>
@@ -82,7 +88,7 @@
 
             <div class="thank-you-overlay" id="thankYouOverlay"></div>
             <div class="thank-you-message" id="thankYouMessage">
-                <button class="close-button" id="closeThankYou" aria-label="Close message">×</button>
+                <button type="button" class="close-button" id="closeThankYou" aria-label="Close message">×</button>
                 <i class="fas fa-check-circle"></i>
                 <h2>Thank You!</h2>
                 <p>Your message has been sent successfully. I'll get back to you soon.</p>
@@ -90,42 +96,6 @@
         </section>
     </main>
     <div id="footer"></div>
-    <button id="back-to-top" title="Back to top" aria-label="Back to top">
-        <i class="fas fa-arrow-up"></i>
-    </button>
-
-    <script>
-        async function loadContent() {
-            try {
-                const headerResponse = await fetch('header.html');
-                if (!headerResponse.ok) throw new Error('Header not found');
-                document.getElementById('header').innerHTML = await headerResponse.text();
-
-                const footerResponse = await fetch('footer.html');
-                if (!footerResponse.ok) throw new Error('Footer not found');
-                document.getElementById('footer').innerHTML = await footerResponse.text();
-            } catch (error) {
-                console.error('Error loading content:', error);
-            }
-        }
-
-        loadContent();
-
-        // Back to top button functionality
-        const backToTopButton = document.getElementById('back-to-top');
-        window.onscroll = function() {
-            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-                backToTopButton.style.display = "block";
-            } else {
-                backToTopButton.style.display = "none";
-            }
-        };
-
-        backToTopButton.addEventListener('click', function() {
-            document.body.scrollTop = 0;
-            document.documentElement.scrollTop = 0;
-        });
-    </script>
 
     <script src="common.js"></script>
     <script type="module">
@@ -208,10 +178,10 @@
                 // Show thank you message
                 const thankYouMessage = document.getElementById('thankYouMessage');
                 const thankYouOverlay = document.getElementById('thankYouOverlay');
-                
+
                 thankYouOverlay.classList.add('show');
                 thankYouMessage.classList.add('show');
-                
+
                 // Clear form and reset reCAPTCHA
                 event.target.reset();
                 grecaptcha.reset();
@@ -226,7 +196,7 @@
         document.getElementById('closeThankYou').addEventListener('click', function() {
             const thankYouMessage = document.getElementById('thankYouMessage');
             const thankYouOverlay = document.getElementById('thankYouOverlay');
-            
+
             thankYouMessage.classList.remove('show');
             thankYouOverlay.classList.remove('show');
         });
@@ -235,13 +205,15 @@
         document.getElementById('thankYouOverlay').addEventListener('click', function() {
             const thankYouMessage = document.getElementById('thankYouMessage');
             const thankYouOverlay = document.getElementById('thankYouOverlay');
-            
+
             thankYouMessage.classList.remove('show');
             thankYouOverlay.classList.remove('show');
         });
     </script>
-    <script src="theme.js"></script> <!-- Fixed path by removing slash prefix -->
+    <script src="header.js"></script>
     <script src="nav-fix.js"></script>
     <script src="global-fix.js"></script>
+    <script src="animations.js"></script>
+    <!-- Theme handling is now done by new-theme.js -->
 </body>
 </html>

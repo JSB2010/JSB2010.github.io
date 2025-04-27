@@ -4,51 +4,113 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Public Transportation | Jacob Barkin</title>
-    <link rel="stylesheet" href="style.css">
-    <meta name="description" content="Jacob Barkin's research and insights on public transportation systems and improvements.">
+    <!-- New theme system - must be first -->
+    <script src="new-theme.js"></script>
+
+    <link rel="stylesheet" href="consolidated.css">
+    <link rel="stylesheet" href="floating-nav.css">
+    <link rel="stylesheet" href="new-theme.css">
+    <link rel="stylesheet" href="public-transportation-modern.css">
+    <link rel="stylesheet" href="theme-selector-fix.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="description" content="Jacob Barkin's research and insights on public transportation systems and improvements.">
     <link rel="icon" type="image/png" href="images/Jacob Barkin Website Logo.png">
     <!-- Preload critical resources -->
     <link rel="preload" href="header.html" as="fetch" crossorigin="anonymous">
     <link rel="preload" href="footer.html" as="fetch" crossorigin="anonymous">
 </head>
-<body class="themed-background">
+<body>
     <div class="loading-animation"></div>
-    
+
     <div id="header"></div>
-    <main class="content-main">
-        <h1>Public Transportation</h1>
-        <p>Because of my vision, I am unable to drive, so I take public transit as much as possible. I like to do research on our current systems, and how to improve them.</p>
-        <h2>An Overview</h2>
-        <p>I conducted a comprehensive project centered on public transportation in Colorado, with a particular emphasis on identifying and exploring potential improvements within the system. This project was structured into two distinct components: a rigorous research and writing phase and an action phase.</p>
-        <h2>Research Paper</h2>
-        <p>During the research and writing phase, I extensively reviewed existing literature and data related to public transit, analyzing current challenges and best practices in various regions. This analysis provided a solid foundation for understanding the complexities of the public transportation landscape.</p>
-        <h2>Action Piece</h2>
-        <p>In the action phase, I actively engaged with the community by interviewing individuals directly involved in initiatives to enhance public transit services. These interactions offered valuable insights into the ongoing efforts and challenges transit professionals and advocates face. By combining theoretical knowledge with real-world perspectives, this project heightened my understanding of public transportation issues and contributed to the broader conversation about improving transit systems in Colorado.</p>
-        <h2>Final Presentation</h2>
-        <p>Below is the final presentation I created to summarize my research and action steps.</p>
-        
-        <!-- Materials Section -->
-        <h2>Materials</h2>
-        <div class="file-tree">
-            <ul>
-                <li>
-                    <span class="caret">▶ Research Paper</span>
-                    <iframe class="research-paper-frame" data-src="https://docs.google.com/document/d/e/2PACX-1vQlbGwHq8AUTKXV0h2dKypdXnucepaBRKKXizWur2H7pe-hf_Zejf5w2hrJfIoN4fP4db9ENy6qHqYM/pub?embedded=true" frameborder="0" loading="lazy"></iframe>
-                </li>
-                <li>
-                    <span class="caret">▶ Action Piece Presentation</span>
-                    <iframe data-src="https://1drv.ms/p/s!Av-6eo6o9gE9gYlXpXRUGVHd2TjNEA?embed=1&amp;em=2&amp;wdAr=1.7777777777777777" style="width: 100%; height: 56.25vw;" frameborder="0" loading="lazy">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
-                </li>
-                <li>
-                    <span class="caret">▶ Final Presentation</span>
-                    <iframe data-src="https://1drv.ms/p/s!Av-6eo6o9gE9gYpXE1OVwenzG1vWJw?embed=1&amp;em=2&amp;wdAr=1.7777777777777777" style="width: 100%; height: 56.25vw;" frameborder="0" loading="lazy">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
-                </li>
-            </ul>
+
+    <main>
+        <div class="transit-container">
+            <!-- Page Header -->
+            <div class="transit-header">
+                <h1>Public Transportation</h1>
+                <p>Because of my vision, I am unable to drive, so I take public transit as much as possible. I like to do research on our current systems, and how to improve them.</p>
+            </div>
+
+            <!-- Introduction Section -->
+            <div class="transit-intro">
+                <div class="transit-intro-content">
+                    <h2>An Overview</h2>
+                    <p>I conducted a comprehensive project centered on public transportation in Colorado, with a particular emphasis on identifying and exploring potential improvements within the system. This project was structured into two distinct components: a rigorous research and writing phase and an action phase.</p>
+                    <p>By combining theoretical knowledge with real-world perspectives, this project heightened my understanding of public transportation issues and contributed to the broader conversation about improving transit systems in Colorado.</p>
+                </div>
+                <div class="transit-intro-image">
+                    <i class="fas fa-bus-alt"></i>
+                </div>
+            </div>
+
+            <!-- Research Cards -->
+            <div class="transit-section">
+                <h2>Research Components</h2>
+                <p>My project explored multiple aspects of public transportation systems, focusing on accessibility, efficiency, and sustainability.</p>
+
+                <div class="transit-cards">
+                    <div class="transit-card">
+                        <i class="fas fa-book"></i>
+                        <h3>Research Paper</h3>
+                        <p>During the research and writing phase, I extensively reviewed existing literature and data related to public transit, analyzing current challenges and best practices in various regions.</p>
+                        <p>This analysis provided a solid foundation for understanding the complexities of the public transportation landscape.</p>
+                    </div>
+
+                    <div class="transit-card">
+                        <i class="fas fa-users"></i>
+                        <h3>Action Piece</h3>
+                        <p>In the action phase, I actively engaged with the community by interviewing individuals directly involved in initiatives to enhance public transit services.</p>
+                        <p>These interactions offered valuable insights into the ongoing efforts and challenges transit professionals and advocates face.</p>
+                    </div>
+
+                    <div class="transit-card">
+                        <i class="fas fa-chart-line"></i>
+                        <h3>Final Presentation</h3>
+                        <p>The culmination of my research resulted in a comprehensive presentation that summarized key findings and proposed actionable recommendations for improving public transportation systems.</p>
+                        <p>This presentation synthesized both research findings and community insights.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Materials Section -->
+            <div class="transit-materials">
+                <h2>Project Materials</h2>
+                <p>Below you can explore the documents and presentations created during this project. Click on each item to view the full content.</p>
+
+                <div class="modern-file-tree">
+                    <ul>
+                        <li>
+                            <div class="caret">Research Paper</div>
+                            <iframe class="research-paper-frame" data-src="https://docs.google.com/document/d/e/2PACX-1vQlbGwHq8AUTKXV0h2dKypdXnucepaBRKKXizWur2H7pe-hf_Zejf5w2hrJfIoN4fP4db9ENy6qHqYM/pub?embedded=true" title="Research Paper on Public Transportation"></iframe>
+                        </li>
+                        <li>
+                            <div class="caret">Action Piece Presentation</div>
+                            <iframe data-src="https://1drv.ms/p/s!Av-6eo6o9gE9gYlXpXRUGVHd2TjNEA?embed=1&amp;em=2&amp;wdAr=1.7777777777777777" title="Action Piece Presentation">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
+                        </li>
+                        <li>
+                            <div class="caret">Final Presentation</div>
+                            <iframe data-src="https://1drv.ms/p/s!Av-6eo6o9gE9gYpXE1OVwenzG1vWJw?embed=1&amp;em=2&amp;wdAr=1.7777777777777777" title="Final Presentation on Public Transportation">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Call to Action -->
+            <div class="transit-cta">
+                <h2>Interested in Public Transportation?</h2>
+                <p>If you're passionate about improving public transit systems or want to learn more about my research, feel free to reach out. I'm always looking to connect with others who share an interest in creating more accessible and sustainable transportation options.</p>
+                <a href="contact.html" class="transit-cta-button">
+                    <i class="fas fa-envelope"></i>
+                    Contact Me
+                </a>
+            </div>
         </div>
     </main>
+
     <div id="footer"></div>
-    <button id="back-to-top" aria-label="Back to top">↑</button>
+    <button type="button" id="back-to-top" aria-label="Back to top">↑</button>
+
     <script>
         async function loadContent() {
             try {
@@ -74,16 +136,11 @@
 
         loadContent();
 
-        // Improved file tree interaction
-        document.querySelectorAll('.file-tree .caret').forEach(caret => {
+        // Modern file tree interaction
+        document.querySelectorAll('.modern-file-tree .caret').forEach(caret => {
             caret.addEventListener('click', function() {
                 this.classList.toggle('active');
-                
-                // Update caret icon
-                this.textContent = this.classList.contains('active') 
-                    ? '▼ ' + this.textContent.slice(2) 
-                    : '▶ ' + this.textContent.slice(2);
-                
+
                 const iframe = this.nextElementSibling;
                 if (iframe && iframe.tagName === 'IFRAME') {
                     if (!iframe.src && this.classList.contains('active')) {
@@ -102,7 +159,7 @@
 
         // Enhanced back to top functionality
         const backToTopButton = document.getElementById('back-to-top');
-        
+
         function handleScroll() {
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             if (scrollTop > window.innerHeight / 2) {
@@ -122,7 +179,7 @@
         });
     </script>
     <script src="common.js"></script>
-    <script src="theme.js"></script>
+    <script src="header.js"></script>
     <script src="nav-fix.js"></script>
     <script src="global-fix.js"></script>
 </body>

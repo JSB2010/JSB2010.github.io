@@ -6,7 +6,7 @@
                 <img src="images/logo.png" alt="Logo" class="footer-logo-image">
                 <h3>Jacob Barkin</h3>
             </div>
-            <p class="footer-tagline">Bridging technology and creativity through innovative solutions.</p>
+            <p class="footer-tagline">Developer & Financial Education Advocate passionate about technology, public transit, and innovation.</p>
             <div class="footer-social">
                 <a href="https://linkedin.com/in/jacobbarkin" class="social-link linkedin" aria-label="LinkedIn">
                     <i class="fab fa-linkedin-in"></i>
@@ -24,15 +24,15 @@
         <div class="footer-theme-switcher">
             <h4>Theme</h4>
             <div class="theme-switcher">
-                <button id="light-mode" class="theme-button" aria-label="Light Mode" type="button" onclick="window.ThemeManager.setTheme('light'); return false;">
+                <button id="light-mode" class="theme-button" aria-label="Light Mode" type="button">
                     <i class="fas fa-sun"></i>
                     <span>Light</span>
                 </button>
-                <button id="dark-mode" class="theme-button" aria-label="Dark Mode" type="button" onclick="window.ThemeManager.setTheme('dark'); return false;">
+                <button id="dark-mode" class="theme-button" aria-label="Dark Mode" type="button">
                     <i class="fas fa-moon"></i>
                     <span>Dark</span>
                 </button>
-                <button id="auto-mode" class="theme-button" aria-label="Auto Mode" type="button" onclick="window.ThemeManager.setTheme('auto'); return false;">
+                <button id="auto-mode" class="theme-button" aria-label="Auto Mode" type="button">
                     <i class="fas fa-adjust"></i>
                     <span>Auto</span>
                 </button>
@@ -40,11 +40,16 @@
         </div>
     </div>
 
-    <!-- Footer Bottom - Keeping only the design element -->
+    <!-- Footer Bottom with copyright -->
     <div class="footer-bottom">
+        <p>&copy; <span id="current-year">2024</span> Jacob Barkin. All rights reserved.</p>
+        <script>
+            // Update copyright year automatically
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+        </script>
         <div class="footer-mountain-graphic"></div>
     </div>
 </footer>
-<button id="back-to-top" title="Back to top" aria-label="Back to top">
+<button type="button" id="back-to-top" title="Back to top" aria-label="Back to top">
     <i class="fas fa-arrow-up"></i>
 </button>
