@@ -42,6 +42,45 @@
     padding: 8rem 0 4rem;
 }
 
+/* Particle animation */
+.particle-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));
+    border-radius: 50%;
+    opacity: 0.3;
+    animation: float 15s infinite ease-in-out;
+    will-change: transform;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+    }
+    25% {
+        transform: translateY(-30px) translateX(20px) rotate(90deg) scale(1.1);
+    }
+    50% {
+        transform: translateY(-15px) translateX(-20px) rotate(180deg) scale(0.9);
+    }
+    75% {
+        transform: translateY(30px) translateX(25px) rotate(270deg) scale(1.2);
+    }
+    100% {
+        transform: translateY(0) translateX(0) rotate(360deg) scale(1);
+    }
+}
+
 /* Profile container */
 .profile-container {
     display: flex;
@@ -477,10 +516,63 @@
     transition: var(--transition-bounce);
     position: relative;
     z-index: 1;
+    padding: 1.5rem 1rem;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.skill-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.03);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
 }
 
 .skill-item:hover {
     transform: translateY(-8px);
+}
+
+.skill-item:hover::before {
+    opacity: 1;
+}
+
+/* Skill-specific colors */
+.skill-item[data-skill="html"] .skill-icon {
+    color: #E44D26;
+}
+
+.skill-item[data-skill="css"] .skill-icon {
+    color: #264DE4;
+}
+
+.skill-item[data-skill="js"] .skill-icon {
+    color: #F7DF1E;
+}
+
+.skill-item[data-skill="python"] .skill-icon {
+    color: #3776AB;
+}
+
+.skill-item[data-skill="firebase"] .skill-icon {
+    color: #FFCA28;
+}
+
+.skill-item[data-skill="accessibility"] .skill-icon {
+    color: #0EA5E9;
+}
+
+.skill-item[data-skill="responsive"] .skill-icon {
+    color: #10B981;
+}
+
+.skill-item[data-skill="education"] .skill-icon {
+    color: #8B5CF6;
 }
 
 .skill-icon {
@@ -528,6 +620,86 @@
     animation: skill-bounce 1s infinite alternate;
 }
 
+.skill-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.75rem;
+}
+
+/* Skill level bar */
+.skill-level {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+}
+
+.skill-level-bar {
+    height: 100%;
+    border-radius: 3px;
+    position: relative;
+    transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+    width: 0; /* Start at 0 and animate to final width */
+}
+
+/* Skill-specific bar colors */
+.skill-item[data-skill="html"] .skill-level-bar {
+    background: linear-gradient(90deg, #E44D26, #F16529);
+}
+
+.skill-item[data-skill="css"] .skill-level-bar {
+    background: linear-gradient(90deg, #264DE4, #2965F1);
+}
+
+.skill-item[data-skill="js"] .skill-level-bar {
+    background: linear-gradient(90deg, #F7DF1E, #F0DB4F);
+}
+
+.skill-item[data-skill="python"] .skill-level-bar {
+    background: linear-gradient(90deg, #3776AB, #FFD43B);
+}
+
+.skill-item[data-skill="firebase"] .skill-level-bar {
+    background: linear-gradient(90deg, #FFCA28, #FFA000);
+}
+
+.skill-item[data-skill="accessibility"] .skill-level-bar {
+    background: linear-gradient(90deg, #0EA5E9, #38BDF8);
+}
+
+.skill-item[data-skill="responsive"] .skill-level-bar {
+    background: linear-gradient(90deg, #10B981, #34D399);
+}
+
+.skill-item[data-skill="education"] .skill-level-bar {
+    background: linear-gradient(90deg, #8B5CF6, #A78BFA);
+}
+
+/* Skill bar animation */
+.skill-level-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 30px;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.3);
+    animation: skill-shine 2s infinite;
+    transform: skewX(-20deg);
+}
+
+@keyframes skill-shine {
+    0% {
+        left: -30px;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
 @keyframes skill-pulse {
     0% {
         transform: scale(0.8);
@@ -546,12 +718,6 @@
     100% {
         transform: translateY(-5px);
     }
-}
-
-.skill-name {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--text-color);
 }
 
 /* Projects section */
@@ -878,128 +1044,89 @@
 .timeline-institution {
     font-size: 0.95rem;
     font-weight: 500;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     color: var(--text-color-light);
     position: relative;
     z-index: 1;
 }
 
-.timeline-content p:last-child {
-    margin-bottom: 0;
-    position: relative;
-    z-index: 1;
-}
-
-/* Testimonials section */
-.testimonials-section {
-    padding: var(--section-spacing) 0;
-    position: relative;
-}
-
-.testimonials-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 2rem;
-    margin-top: 2rem;
-}
-
-.testimonial-card {
-    background: rgba(255, 255, 255, 0.05);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
-    padding: 2rem;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-.testimonial-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
-    opacity: 0;
-    transition: all 0.3s ease;
-    z-index: 0;
-}
-
-.testimonial-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-}
-
-.testimonial-card:hover::before {
-    opacity: 1;
-}
-
-.testimonial-quote {
-    font-size: 2rem;
-    color: var(--accent-blue);
+.timeline-content p:last-of-type {
     margin-bottom: 1rem;
-    opacity: 0.5;
-    transition: all 0.3s ease;
-}
-
-.testimonial-card:hover .testimonial-quote {
-    opacity: 0.8;
-    transform: scale(1.1) rotate(-10deg);
-}
-
-.testimonial-text {
-    font-size: 1rem;
-    line-height: 1.7;
-    margin-bottom: 1.5rem;
-    color: var(--text-color);
     position: relative;
     z-index: 1;
-    font-style: italic;
 }
 
-.testimonial-author {
+.school-info {
     display: flex;
     align-items: center;
     gap: 1rem;
-    position: relative;
-    z-index: 1;
+    margin-bottom: 1rem;
 }
 
-.testimonial-avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
+.school-logo {
+    width: 60px;
+    height: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--text-color);
-    font-size: 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 0.5rem;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all 0.3s ease;
 }
 
-.testimonial-card:hover .testimonial-avatar {
-    background: var(--accent-blue);
-    color: white;
-    transform: scale(1.1);
+.school-logo img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    transition: all 0.3s ease;
 }
 
-.testimonial-info h4 {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 0.25rem;
-    color: var(--heading-color);
+.timeline-item:hover .school-logo {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.1);
 }
 
-.testimonial-info p {
-    font-size: 0.85rem;
-    color: var(--text-color-light);
-    margin: 0;
+.timeline-item:hover .school-logo img {
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
 }
+
+.school-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    color: var(--accent-blue);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.school-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    color: var(--accent-green);
+}
+
+.school-link i {
+    font-size: 0.8rem;
+    transition: transform 0.3s ease;
+}
+
+.school-link:hover i {
+    transform: translateX(3px);
+}
+
+
 
 /* Contact section */
 .contact-section {

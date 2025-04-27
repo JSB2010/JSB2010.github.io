@@ -89,42 +89,6 @@ function initImmersiveMountains() {
                 <path d="M0,290 C240,285 480,295 720,290 C960,285 1200,295 1440,290 L1440,320 L0,320 Z"></path>
             </svg>
 
-            <!-- Trees layer -->
-            <div class="trees-layer">
-                <!-- Pine trees -->
-                <svg class="tree-group tree-group-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" preserveAspectRatio="xMidYMax">
-                    <path class="tree-trunk" d="M48,80 L52,80 L52,100 L48,100 Z"></path>
-                    <path class="tree-top" d="M50,20 L30,50 L40,50 L25,70 L40,70 L30,85 L70,85 L60,70 L75,70 L60,50 L70,50 Z"></path>
-                </svg>
-
-                <svg class="tree-group tree-group-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="80" height="80" preserveAspectRatio="xMidYMax">
-                    <path class="tree-trunk" d="M48,80 L52,80 L52,100 L48,100 Z"></path>
-                    <path class="tree-top" d="M50,20 L30,50 L40,50 L25,70 L40,70 L30,85 L70,85 L60,70 L75,70 L60,50 L70,50 Z"></path>
-                </svg>
-
-                <svg class="tree-group tree-group-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="120" height="120" preserveAspectRatio="xMidYMax">
-                    <path class="tree-trunk" d="M48,80 L52,80 L52,100 L48,100 Z"></path>
-                    <path class="tree-top" d="M50,20 L30,50 L40,50 L25,70 L40,70 L30,85 L70,85 L60,70 L75,70 L60,50 L70,50 Z"></path>
-                </svg>
-
-                <!-- Rounded trees -->
-                <svg class="tree-group tree-group-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="90" height="90" preserveAspectRatio="xMidYMax">
-                    <path class="tree-trunk" d="M48,80 L52,80 L52,100 L48,100 Z"></path>
-                    <circle class="tree-top rounded" cx="50" cy="50" r="30"></circle>
-                </svg>
-
-                <svg class="tree-group tree-group-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="70" height="70" preserveAspectRatio="xMidYMax">
-                    <path class="tree-trunk" d="M48,80 L52,80 L52,100 L48,100 Z"></path>
-                    <circle class="tree-top rounded" cx="50" cy="50" r="30"></circle>
-                </svg>
-
-                <!-- Tall pine -->
-                <svg class="tree-group tree-group-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120" width="100" height="120" preserveAspectRatio="xMidYMax">
-                    <path class="tree-trunk" d="M48,100 L52,100 L52,120 L48,120 Z"></path>
-                    <path class="tree-top" d="M50,10 L35,40 L45,40 L30,65 L45,65 L30,90 L70,90 L55,65 L70,65 L55,40 L65,40 Z"></path>
-                </svg>
-            </div>
-
             <!-- Clouds layer -->
             <div class="clouds-layer">
                 <div class="cloud cloud-1"></div>
@@ -625,88 +589,7 @@ function addImmersiveMountainStyles() {
             }
         }
 
-        /* Trees layer */
-        .trees-layer {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 20%;
-            pointer-events: none;
-            z-index: 2;
-        }
 
-        /* Tree groups */
-        .tree-group {
-            position: absolute;
-            bottom: 0;
-            transform-origin: bottom center;
-            animation: tree-sway 8s ease-in-out infinite alternate;
-            will-change: transform;
-        }
-
-        .tree-group-1 {
-            left: 5%;
-            animation-delay: 0s;
-        }
-
-        .tree-group-2 {
-            left: 15%;
-            animation-delay: 1s;
-        }
-
-        .tree-group-3 {
-            left: 25%;
-            animation-delay: 2s;
-        }
-
-        .tree-group-4 {
-            left: 60%;
-            animation-delay: 1.5s;
-        }
-
-        .tree-group-5 {
-            left: 75%;
-            animation-delay: 0.5s;
-        }
-
-        .tree-group-6 {
-            left: 85%;
-            animation-delay: 2.5s;
-        }
-
-        /* Tree parts */
-        .tree-trunk {
-            fill: #5D4037;
-        }
-
-        .tree-top {
-            fill: #2E7D32;
-            transition: fill 0.5s ease;
-        }
-
-        .tree-top.rounded {
-            fill: #388E3C;
-        }
-
-        /* Dark mode trees */
-        :root.visual-dark-mode .tree-top {
-            fill: #1B5E20;
-        }
-
-        :root.visual-dark-mode .tree-top.rounded {
-            fill: #2E7D32;
-        }
-
-        /* Tree animation */
-        @keyframes tree-sway {
-            0% {
-                transform: rotate(-1deg);
-            }
-            100% {
-                transform: rotate(1deg);
-            }
-        }
 
         /* Reduced motion */
         @media (prefers-reduced-motion: reduce) {
