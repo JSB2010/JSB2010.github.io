@@ -3,8 +3,8 @@
 
 :root {
     /* Section spacing */
-    --section-spacing: clamp(4rem, 10vw, 8rem);
-    --content-width: min(90%, 1200px);
+    --section-spacing: clamp(3rem, 8vw, 6rem);
+    --content-width: min(92%, 1200px);
 
     /* Colors */
     --accent-blue: #0ea5e9;
@@ -29,17 +29,37 @@
     width: 100%;
     max-width: var(--content-width);
     margin: 0 auto;
-    padding: 0 1rem;
+    padding: 0 1.25rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Subtle background pattern */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        radial-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 40px 40px, 20px 20px;
+    background-position: 0 0, 20px 20px;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.5;
 }
 
 /* Hero section */
 .hero-section {
-    min-height: 100vh;
+    min-height: 95vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     position: relative;
-    padding: 8rem 0 4rem;
+    padding: 6rem 0 3rem;
 }
 
 /* Particle animation */
@@ -228,8 +248,8 @@
     height: 45px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
     color: var(--text-color);
     font-size: 1.2rem;
     transition: var(--transition-bounce);
@@ -288,8 +308,8 @@
 
 .cta-button.secondary {
     background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
     color: var(--text-color);
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -354,7 +374,7 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
 }
 
 .section-title {
@@ -375,18 +395,18 @@
 .interests-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 2rem;
-    margin-bottom: 4rem;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
 }
 
 .interest-card {
-    background: rgba(255, 255, 255, 0.05);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.08);
+    -webkit-backdrop-filter: blur(15px);
+    backdrop-filter: blur(15px);
     border-radius: 20px;
     padding: 2rem;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     transition: var(--transition-smooth);
     position: relative;
     overflow: hidden;
@@ -492,20 +512,20 @@
 
 /* Skills section */
 .skills-container {
-    margin-top: 4rem;
+    margin-top: 2.5rem;
 }
 
 .skills-title {
     font-size: 1.5rem;
     font-weight: 600;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     color: var(--heading-color);
 }
 
 .skills-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 1.5rem;
+    gap: 1.25rem;
 }
 
 .skill-item {
@@ -584,10 +604,11 @@
     border-radius: 16px;
     margin-bottom: 0.75rem;
     font-size: 1.75rem;
-    background: rgba(255, 255, 255, 0.05);
-    -webkit-backdrop-filter: blur(5px);
-    backdrop-filter: blur(5px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.08);
+    -webkit-backdrop-filter: blur(15px);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
     transition: var(--transition-smooth);
     position: relative;
     overflow: hidden;
@@ -728,19 +749,19 @@
 
 .projects-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 2.5rem;
-    margin-bottom: 3rem;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.75rem;
+    margin-bottom: 2.5rem;
 }
 
 .project-card {
-    background: rgba(255, 255, 255, 0.05);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.08);
+    -webkit-backdrop-filter: blur(15px);
+    backdrop-filter: blur(15px);
     border-radius: 24px;
     overflow: hidden;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     transition: var(--transition-smooth);
     position: relative;
     display: flex;
@@ -998,13 +1019,13 @@
 }
 
 .timeline-content {
-    background: rgba(255, 255, 255, 0.05);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.08);
+    -webkit-backdrop-filter: blur(15px);
+    backdrop-filter: blur(15px);
     border-radius: 16px;
     padding: 1.5rem;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
