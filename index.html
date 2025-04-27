@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jacob Barkin | Portfolio</title>
-    <meta name="description" content="Jacob Barkin - Developer & Financial Education Advocate. Explore my portfolio, projects, and professional work.">
+    <title>Jacob Barkin | Developer & Financial Education Advocate</title>
+    <meta name="description" content="Jacob Barkin - Developer, financial education advocate, and technology enthusiast. Explore my projects, interests, and professional journey.">
 
     <!-- Theme system - must be first -->
     <script src="new-theme.js"></script>
@@ -12,7 +12,7 @@
     <!-- Core styles -->
     <link rel="stylesheet" href="consolidated.css">
     <link rel="stylesheet" href="next-gen-nav.css">
-    <link rel="stylesheet" href="ultra-modern-index.css">
+    <link rel="stylesheet" href="personal-landing.css">
     <link rel="stylesheet" href="new-theme.css">
     <link rel="stylesheet" href="theme-selector-fix.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -33,66 +33,248 @@
     <div id="header"></div>
 
     <main id="home" role="main">
-        <section class="hero-container">
-            <!-- Floating elements for visual interest -->
-            <div class="floating-element floating-element-1"></div>
-            <div class="floating-element floating-element-2"></div>
-            <div class="floating-element floating-element-3"></div>
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="landing-container">
+                <div class="profile-container">
+                    <div class="profile-image-container">
+                        <img src="images/Jacob City.png" alt="Jacob Barkin" class="profile-image">
+                        <div class="profile-image-glow"></div>
+                    </div>
 
-            <!-- Hero content -->
-            <div class="hero-content">
-                <h1 class="hero-title">Jacob Barkin</h1>
-                <p class="hero-subtitle" id="dynamic-greeting">Developer & <span class="highlight">Financial Education</span> Advocate</p>
+                    <div class="profile-content">
+                        <p class="profile-greeting" id="time-greeting">Hello, welcome to my portfolio!</p>
+                        <h1 class="profile-name">Jacob Barkin</h1>
+                        <p class="profile-title">Developer & Financial Education Advocate</p>
+                        <p class="profile-bio">I'm passionate about technology, financial education, and making a positive impact. With a focus on accessibility and innovation, I develop solutions that help people learn and grow.</p>
+
+                        <div class="social-links">
+                            <a href="https://github.com/JSB2010" target="_blank" rel="noopener" class="social-link github" aria-label="GitHub Profile">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="https://www.linkedin.com/in/jacob-barkin/" target="_blank" rel="noopener" class="social-link linkedin" aria-label="LinkedIn Profile">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                            <a href="contact.html" class="social-link email" aria-label="Contact Me">
+                                <i class="fas fa-envelope"></i>
+                            </a>
+                        </div>
+
+                        <div class="cta-buttons">
+                            <a href="projects.html" class="cta-button primary">
+                                <i class="fas fa-code"></i>
+                                View My Projects
+                            </a>
+                            <a href="about.html" class="cta-button secondary">
+                                <i class="fas fa-user"></i>
+                                About Me
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scroll-indicator">
+                    <p>Scroll to explore</p>
+                    <div class="scroll-arrow">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
             </div>
+        </section>
 
-            <!-- Card grid -->
-            <div class="card-grid">
-                <a href="about.html" class="feature-card tech-card">
-                    <div class="card-content">
-                        <i class="fas fa-user card-icon"></i>
-                        <h2 class="card-title">About Me</h2>
-                        <p class="card-description">Learn more about my background, skills, and professional journey</p>
-                    </div>
-                </a>
+        <!-- About & Interests Section -->
+        <section class="about-section">
+            <div class="landing-container">
+                <div class="section-title-container">
+                    <h2 class="section-title">My Interests</h2>
+                    <div class="section-line"></div>
+                </div>
 
-                <a href="projects.html" class="feature-card transit-card">
-                    <div class="card-content">
-                        <i class="fas fa-code card-icon"></i>
-                        <h2 class="card-title">My Projects</h2>
-                        <p class="card-description">Explore my IT projects, development work, and technical achievements</p>
+                <div class="interests-grid">
+                    <div class="interest-card tech">
+                        <i class="fas fa-laptop-code interest-icon"></i>
+                        <h3 class="interest-title">Technology</h3>
+                        <p class="interest-description">I'm passionate about software development, accessibility, and creating technology that makes a difference in people's lives.</p>
                     </div>
-                </a>
 
-                <a href="contact.html" class="feature-card mountain-card">
-                    <div class="card-content">
-                        <i class="fas fa-briefcase card-icon"></i>
-                        <h2 class="card-title">My Work</h2>
-                        <p class="card-description">Discover my professional experience and current endeavors</p>
+                    <div class="interest-card finance">
+                        <i class="fas fa-chart-line interest-icon"></i>
+                        <h3 class="interest-title">Financial Education</h3>
+                        <p class="interest-description">I believe in empowering youth through financial literacy, helping them build the skills they need for a secure future.</p>
                     </div>
-                </a>
 
-                <a href="https://www.askthekidz.com" target="_blank" rel="noopener" class="feature-card space-card">
-                    <div class="card-content">
-                        <i class="fas fa-external-link-alt card-icon"></i>
-                        <h2 class="card-title">Ask The Kidz</h2>
-                        <p class="card-description">Visit my business focused on empowering youth through financial education</p>
+                    <div class="interest-card transit">
+                        <i class="fas fa-train interest-icon"></i>
+                        <h3 class="interest-title">Public Transportation</h3>
+                        <p class="interest-description">I research and advocate for improved public transit systems, focusing on accessibility and sustainability.</p>
                     </div>
-                </a>
 
-                <a href="contact.html" class="feature-card contact-card">
-                    <div class="card-content">
-                        <i class="fas fa-envelope card-icon"></i>
-                        <h2 class="card-title">Contact</h2>
-                        <p class="card-description">Get in touch with me for collaborations, questions, or opportunities</p>
+                    <div class="interest-card space">
+                        <i class="fas fa-rocket interest-icon"></i>
+                        <h3 class="interest-title">Space & Astronomy</h3>
+                        <p class="interest-description">I'm fascinated by space exploration and the possibilities it holds for expanding our understanding of the universe.</p>
                     </div>
-                </a>
+                </div>
+
+                <div class="skills-container">
+                    <h3 class="skills-title">My Skills</h3>
+
+                    <div class="skills-grid">
+                        <div class="skill-item">
+                            <div class="skill-icon">
+                                <i class="fab fa-html5"></i>
+                            </div>
+                            <p class="skill-name">HTML5</p>
+                        </div>
+
+                        <div class="skill-item">
+                            <div class="skill-icon">
+                                <i class="fab fa-css3-alt"></i>
+                            </div>
+                            <p class="skill-name">CSS3</p>
+                        </div>
+
+                        <div class="skill-item">
+                            <div class="skill-icon">
+                                <i class="fab fa-js"></i>
+                            </div>
+                            <p class="skill-name">JavaScript</p>
+                        </div>
+
+                        <div class="skill-item">
+                            <div class="skill-icon">
+                                <i class="fab fa-python"></i>
+                            </div>
+                            <p class="skill-name">Python</p>
+                        </div>
+
+                        <div class="skill-item">
+                            <div class="skill-icon">
+                                <i class="fas fa-database"></i>
+                            </div>
+                            <p class="skill-name">SQL</p>
+                        </div>
+
+                        <div class="skill-item">
+                            <div class="skill-icon">
+                                <i class="fas fa-universal-access"></i>
+                            </div>
+                            <p class="skill-name">Accessibility</p>
+                        </div>
+
+                        <div class="skill-item">
+                            <div class="skill-icon">
+                                <i class="fas fa-mobile-alt"></i>
+                            </div>
+                            <p class="skill-name">Responsive Design</p>
+                        </div>
+
+                        <div class="skill-item">
+                            <div class="skill-icon">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                            </div>
+                            <p class="skill-name">Education</p>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </section>
 
-            <!-- Scroll indicator -->
-            <div class="scroll-indicator">
-                <p>Scroll to explore</p>
-                <div class="scroll-arrow">
-                    <i class="fas fa-chevron-down"></i>
+        <!-- Projects Section -->
+        <section class="projects-section">
+            <div class="landing-container">
+                <div class="section-title-container">
+                    <h2 class="section-title">Featured Projects</h2>
+                    <div class="section-line"></div>
+                </div>
+
+                <div class="projects-grid">
+                    <a href="https://www.askthekidz.com" target="_blank" rel="noopener" class="project-card">
+                        <div class="project-image-placeholder finance-gradient">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="project-content">
+                            <h3 class="project-title">Ask The Kidz</h3>
+                            <p class="project-description">A platform dedicated to empowering youth through financial education, providing resources and guidance for building a secure financial future.</p>
+                            <div class="project-tags">
+                                <span class="project-tag">Financial Education</span>
+                                <span class="project-tag">Youth Empowerment</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <a href="public-transportation.html" class="project-card">
+                        <div class="project-image-placeholder transit-gradient">
+                            <i class="fas fa-train"></i>
+                        </div>
+                        <div class="project-content">
+                            <h3 class="project-title">Public Transportation Research</h3>
+                            <p class="project-description">Comprehensive research on public transportation systems in Colorado, focusing on accessibility improvements and sustainable solutions.</p>
+                            <div class="project-tags">
+                                <span class="project-tag">Research</span>
+                                <span class="project-tag">Accessibility</span>
+                                <span class="project-tag">Sustainability</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <a href="projects.html" class="project-card">
+                        <div class="project-image-placeholder tech-gradient">
+                            <i class="fas fa-laptop-code"></i>
+                        </div>
+                        <div class="project-content">
+                            <h3 class="project-title">Portfolio Website</h3>
+                            <p class="project-description">A modern, responsive portfolio website showcasing my projects, skills, and interests with a focus on accessibility and user experience.</p>
+                            <div class="project-tags">
+                                <span class="project-tag">HTML/CSS</span>
+                                <span class="project-tag">JavaScript</span>
+                                <span class="project-tag">Responsive Design</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="view-all-container">
+                    <a href="projects.html" class="view-all-button">
+                        View All Projects
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="contact-section">
+            <div class="landing-container">
+                <div class="section-title-container">
+                    <h2 class="section-title">Get In Touch</h2>
+                    <div class="section-line"></div>
+                </div>
+
+                <div class="contact-cards">
+                    <a href="contact.html" class="contact-card email">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <h3 class="contact-title">Email Me</h3>
+                        <p class="contact-description">Reach out directly through my contact form for inquiries or collaboration opportunities.</p>
+                    </a>
+
+                    <a href="https://www.linkedin.com/in/jacob-barkin/" target="_blank" rel="noopener" class="contact-card linkedin">
+                        <div class="contact-icon">
+                            <i class="fab fa-linkedin-in"></i>
+                        </div>
+                        <h3 class="contact-title">Connect on LinkedIn</h3>
+                        <p class="contact-description">Let's connect professionally and expand our networks.</p>
+                    </a>
+
+                    <a href="https://github.com/JSB2010" target="_blank" rel="noopener" class="contact-card github">
+                        <div class="contact-icon">
+                            <i class="fab fa-github"></i>
+                        </div>
+                        <h3 class="contact-title">Follow on GitHub</h3>
+                        <p class="contact-description">Check out my code repositories and development projects.</p>
+                    </a>
                 </div>
             </div>
         </section>
@@ -109,24 +291,26 @@
     <script>
         // Dynamic greeting message based on time of day
         document.addEventListener('DOMContentLoaded', function() {
-            const greetingElement = document.getElementById('dynamic-greeting');
+            const greetingElement = document.getElementById('time-greeting');
             if (!greetingElement) return;
 
             const currentHour = new Date().getHours();
             let timeGreeting;
 
             if (currentHour < 12) {
-                timeGreeting = "Good Morning";
+                timeGreeting = "Good Morning, welcome to my portfolio!";
             } else if (currentHour < 18) {
-                timeGreeting = "Good Afternoon";
+                timeGreeting = "Good Afternoon, welcome to my portfolio!";
             } else if (currentHour < 21) {
-                timeGreeting = "Good Evening";
+                timeGreeting = "Good Evening, welcome to my portfolio!";
             } else {
-                timeGreeting = "Good Night";
+                timeGreeting = "Good Night, welcome to my portfolio!";
             }
 
-            // Create the greeting with highlight span
-            greetingElement.innerHTML = `Developer & <span class="highlight">Financial Education</span> Advocate | ${timeGreeting}`;
+            greetingElement.textContent = timeGreeting;
+
+            // Initialize scroll animations
+            initScrollAnimations();
         });
 
         // Loading animation
@@ -139,6 +323,40 @@
                 }, 500);
             }
         });
+
+        // Scroll animations
+        function initScrollAnimations() {
+            const animatedElements = document.querySelectorAll('.interest-card, .skill-item, .project-card, .contact-card, .section-title-container');
+
+            // Check if Intersection Observer is supported
+            if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, {
+                    threshold: 0.1,
+                    rootMargin: '0px 0px -50px 0px'
+                });
+
+                animatedElements.forEach(element => {
+                    element.style.opacity = '0';
+                    element.style.transform = 'translateY(30px)';
+                    element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                    observer.observe(element);
+                });
+            } else {
+                // Fallback for browsers that don't support Intersection Observer
+                animatedElements.forEach(element => {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                });
+            }
+        }
     </script>
 </body>
 </html>
