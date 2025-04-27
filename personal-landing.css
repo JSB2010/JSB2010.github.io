@@ -135,9 +135,19 @@
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeInUp 0.8s ease forwards 0.4s;
+    opacity: 1; /* Changed from 0 to 1 to ensure visibility */
+    transform: translateY(0); /* Reset initial transform */
+    animation: nameGlow 3s ease-in-out infinite alternate;
+    text-shadow: 0 0 30px rgba(14, 165, 233, 0.2);
+}
+
+@keyframes nameGlow {
+    0% {
+        text-shadow: 0 0 30px rgba(14, 165, 233, 0.2);
+    }
+    100% {
+        text-shadow: 0 0 50px rgba(16, 185, 129, 0.3);
+    }
 }
 
 .profile-title {
@@ -332,8 +342,8 @@
 
 .interest-card {
     background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
     border-radius: 20px;
     padding: 2rem;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
@@ -344,6 +354,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    z-index: 1;
 }
 
 .interest-card::before {
@@ -359,13 +370,36 @@
     z-index: 0;
 }
 
+/* Card background glow effect */
+.interest-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 200%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+    );
+    transition: transform 0.8s ease;
+    z-index: 0;
+    transform: translateX(-100%);
+}
+
 .interest-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
 .interest-card:hover::before {
     opacity: 1;
+}
+
+.interest-card:hover::after {
+    transform: translateX(100%);
 }
 
 .interest-icon {
@@ -441,10 +475,12 @@
     align-items: center;
     text-align: center;
     transition: var(--transition-bounce);
+    position: relative;
+    z-index: 1;
 }
 
 .skill-item:hover {
-    transform: translateY(-5px);
+    transform: translateY(-8px);
 }
 
 .skill-icon {
@@ -457,15 +493,59 @@
     margin-bottom: 0.75rem;
     font-size: 1.75rem;
     background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     transition: var(--transition-smooth);
+    position: relative;
+    overflow: hidden;
+}
+
+.skill-icon::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 70%);
+    opacity: 0;
+    transition: opacity 0.5s ease;
 }
 
 .skill-item:hover .skill-icon {
     background: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    transform: rotate(5deg);
+}
+
+.skill-item:hover .skill-icon::before {
+    opacity: 1;
+    animation: skill-pulse 2s infinite;
+}
+
+.skill-item:hover i {
+    animation: skill-bounce 1s infinite alternate;
+}
+
+@keyframes skill-pulse {
+    0% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(1.2);
+        opacity: 0;
+    }
+}
+
+@keyframes skill-bounce {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(-5px);
+    }
 }
 
 .skill-name {
@@ -489,8 +569,8 @@
 
 .project-card {
     background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
     border-radius: 24px;
     overflow: hidden;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
@@ -503,9 +583,29 @@
     text-decoration: none;
 }
 
+.project-card::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));
+    z-index: -1;
+    border-radius: 30px;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
 .project-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+}
+
+.project-card:hover::before {
+    opacity: 0.15;
+    transform: scale(1);
 }
 
 .project-image {
@@ -659,6 +759,248 @@
     transform: translateX(5px);
 }
 
+/* Education section */
+.education-section {
+    padding: var(--section-spacing) 0;
+    position: relative;
+}
+
+/* Timeline */
+.timeline {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 0;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 120px;
+    width: 3px;
+    background: linear-gradient(to bottom, var(--accent-blue), var(--accent-green));
+    border-radius: 9999px;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 3rem;
+    padding-left: 160px;
+}
+
+.timeline-item:last-child {
+    margin-bottom: 0;
+}
+
+.timeline-dot {
+    position: absolute;
+    left: 116px;
+    top: 5px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 10px rgba(14, 165, 233, 0.5);
+    z-index: 1;
+    transition: all 0.3s ease;
+}
+
+.timeline-item:hover .timeline-dot {
+    transform: scale(1.2);
+    background: var(--accent-green);
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
+}
+
+.timeline-date {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100px;
+    text-align: right;
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--accent-blue);
+    transition: all 0.3s ease;
+}
+
+.timeline-item:hover .timeline-date {
+    color: var(--accent-green);
+    transform: translateX(-5px);
+}
+
+.timeline-content {
+    background: rgba(255, 255, 255, 0.05);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.timeline-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 0;
+}
+
+.timeline-item:hover .timeline-content {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+}
+
+.timeline-item:hover .timeline-content::before {
+    opacity: 1;
+}
+
+.timeline-content h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--heading-color);
+    position: relative;
+    z-index: 1;
+}
+
+.timeline-institution {
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    color: var(--text-color-light);
+    position: relative;
+    z-index: 1;
+}
+
+.timeline-content p:last-child {
+    margin-bottom: 0;
+    position: relative;
+    z-index: 1;
+}
+
+/* Testimonials section */
+.testimonials-section {
+    padding: var(--section-spacing) 0;
+    position: relative;
+}
+
+.testimonials-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.testimonial-card {
+    background: rgba(255, 255, 255, 0.05);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.testimonial-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 0;
+}
+
+.testimonial-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.testimonial-card:hover::before {
+    opacity: 1;
+}
+
+.testimonial-quote {
+    font-size: 2rem;
+    color: var(--accent-blue);
+    margin-bottom: 1rem;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+}
+
+.testimonial-card:hover .testimonial-quote {
+    opacity: 0.8;
+    transform: scale(1.1) rotate(-10deg);
+}
+
+.testimonial-text {
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+    color: var(--text-color);
+    position: relative;
+    z-index: 1;
+    font-style: italic;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+    z-index: 1;
+}
+
+.testimonial-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color);
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.testimonial-card:hover .testimonial-avatar {
+    background: var(--accent-blue);
+    color: white;
+    transform: scale(1.1);
+}
+
+.testimonial-info h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: var(--heading-color);
+}
+
+.testimonial-info p {
+    font-size: 0.85rem;
+    color: var(--text-color-light);
+    margin: 0;
+}
+
 /* Contact section */
 .contact-section {
     padding: var(--section-spacing) 0;
@@ -803,6 +1145,37 @@
     .projects-grid {
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     }
+
+    /* Timeline responsive */
+    .timeline::before {
+        left: 30px;
+    }
+
+    .timeline-item {
+        padding-left: 70px;
+    }
+
+    .timeline-dot {
+        left: 26px;
+    }
+
+    .timeline-date {
+        position: relative;
+        left: 0;
+        top: 0;
+        width: auto;
+        text-align: left;
+        margin-bottom: 0.5rem;
+    }
+
+    .timeline-item:hover .timeline-date {
+        transform: none;
+    }
+
+    /* Testimonials responsive */
+    .testimonials-container {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 480px) {
@@ -817,6 +1190,16 @@
     }
 
     .projects-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Timeline responsive */
+    .timeline-content {
+        padding: 1.25rem;
+    }
+
+    /* Contact responsive */
+    .contact-cards {
         grid-template-columns: 1fr;
     }
 }
