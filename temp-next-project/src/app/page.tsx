@@ -8,7 +8,9 @@ import {
   Train,
   Code,
   User,
-  ArrowRight
+  ArrowRight,
+  Plane,
+  Rocket
 } from "lucide-react";
 
 export default function Home() {
