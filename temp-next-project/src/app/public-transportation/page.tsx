@@ -1,11 +1,14 @@
-"use client";
-
 import { Metadata } from "next";
-import Image from "next/image";
+
+export const metadata: Metadata = {
+  title: "Public Transportation Research | Jacob Barkin",
+  description: "Explore my research on public transportation systems in Colorado, focusing on accessibility and sustainability.",
+};
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ProjectMaterials from "./project-materials";
 import {
   Train,
   Bus,
@@ -15,79 +18,84 @@ import {
   MapPin,
   Clock,
   Building,
-  ArrowRight,
-  BookOpen,
-  PresentationChart,
-  Mail
+  ArrowRight
 } from "lucide-react";
-
-export const metadata: Metadata = {
-  title: "Public Transportation Research | Jacob Barkin",
-  description: "Explore my research on public transportation systems in Colorado, focusing on accessibility and sustainability.",
-};
 
 export default function PublicTransportationPage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative py-20 overflow-hidden">
+      <section className="relative py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-background to-background/50 dark:from-background dark:to-background/80 z-10"></div>
         <div className="absolute inset-0 bg-[url('/images/mountains-bg.jpg')] bg-cover bg-center opacity-20 dark:opacity-10"></div>
 
         <div className="container relative z-20">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">Public Transportation Research</h1>
-            <div className="h-1 w-20 bg-primary rounded-full mx-auto mb-8"></div>
-            <p className="text-xl text-muted-foreground">
-              Exploring accessibility, sustainability, and efficiency in Colorado's public transit systems.
+            <p className="text-xl text-muted-foreground mb-8">
+              Because of my vision, I am unable to drive, so I take public transit as much as possible.
+              I like to do research on our current systems, and how to improve them.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Introduction Section */}
-      <section className="py-16">
+      {/* Overview Section */}
+      <section className="py-16 bg-muted/30">
         <div className="container">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl font-bold mb-6">Why Public Transportation Matters</h2>
-              <div className="space-y-4 text-muted-foreground">
-                <p>
-                  Public transportation is a vital component of urban infrastructure that provides mobility, reduces traffic congestion, and decreases carbon emissions. My research focuses on how public transit systems in Colorado can be improved to better serve communities.
-                </p>
-                <p>
-                  I'm particularly interested in accessibility improvements that make public transportation available to everyone, regardless of physical ability, income level, or geographic location.
-                </p>
-                <p>
-                  Through data analysis, case studies, and community engagement, I aim to identify gaps in current systems and propose sustainable solutions that enhance the public transportation experience for all residents.
-                </p>
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+            <div className="md:col-span-2">
+              <h2 className="text-3xl font-bold mb-6">Project Overview</h2>
+              <p className="text-muted-foreground mb-4">
+                I conducted a comprehensive project centered on public transportation in Colorado,
+                with a particular emphasis on identifying and exploring potential improvements within the system.
+                This project was structured into two distinct components: a rigorous research and writing phase and an action phase.
+              </p>
+              <p className="text-muted-foreground">
+                By combining theoretical knowledge with real-world perspectives, this project heightened my understanding
+                of public transportation issues and contributed to the broader conversation about improving transit systems in Colorado.
+              </p>
             </div>
-
-            <div className="relative aspect-video rounded-2xl overflow-hidden shadow-xl">
-              <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-teal-600 flex items-center justify-center">
-                <Train className="h-24 w-24 text-white" />
+            <div className="flex justify-center">
+              <div className="w-48 h-48 rounded-full bg-primary/10 flex items-center justify-center">
+                <Train className="w-24 h-24 text-primary" />
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Key Focus Areas */}
-      <section className="py-16 bg-muted/50">
+      {/* Research Components */}
+      <section className="py-16">
         <div className="container">
-          <h2 className="text-3xl font-bold text-center mb-12">Key Focus Areas</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">Research Components</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <Card className="bg-card hover:shadow-lg transition-shadow">
               <CardContent className="pt-6">
                 <div className="flex flex-col items-center text-center">
                   <div className="p-3 rounded-full bg-primary/10 mb-4">
+                    <Bus className="h-8 w-8 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">Research Paper</h3>
+                  <p className="text-muted-foreground">
+                    During the research and writing phase, I extensively reviewed existing literature and data related to public transit,
+                    analyzing current challenges and best practices in various regions.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-card hover:shadow-lg transition-shadow">
+              <CardContent className="pt-6">
+                <div className="flex flex-col items-center text-center">
+                  <div className="p-3 rounded-full bg-primary/10 mb-4">
                     <Users className="h-8 w-8 text-primary" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">Accessibility</h3>
+                  <h3 className="text-xl font-semibold mb-2">Action Piece</h3>
                   <p className="text-muted-foreground">
-                    Ensuring public transportation is accessible to people of all abilities, ages, and income levels through universal design principles and equitable fare structures.
+                    In the action phase, I actively engaged with the community by interviewing individuals directly involved
+                    in initiatives to enhance public transit services.
                   </p>
                 </div>
               </CardContent>
@@ -97,94 +105,13 @@ export default function PublicTransportationPage() {
               <CardContent className="pt-6">
                 <div className="flex flex-col items-center text-center">
                   <div className="p-3 rounded-full bg-primary/10 mb-4">
-                    <Leaf className="h-8 w-8 text-primary" />
+                    <Bike className="h-8 w-8 text-primary" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">Sustainability</h3>
+                  <h3 className="text-xl font-semibold mb-2">Final Presentation</h3>
                   <p className="text-muted-foreground">
-                    Researching eco-friendly transit options, renewable energy integration, and reducing the carbon footprint of public transportation systems.
+                    The culmination of my research resulted in a comprehensive presentation that summarized key findings
+                    and proposed actionable recommendations for improving public transportation systems.
                   </p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-card hover:shadow-lg transition-shadow">
-              <CardContent className="pt-6">
-                <div className="flex flex-col items-center text-center">
-                  <div className="p-3 rounded-full bg-primary/10 mb-4">
-                    <Clock className="h-8 w-8 text-primary" />
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2">Efficiency</h3>
-                  <p className="text-muted-foreground">
-                    Analyzing route optimization, scheduling improvements, and technology integration to enhance the reliability and convenience of public transit.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Case Studies */}
-      <section className="py-16">
-        <div className="container">
-          <h2 className="text-3xl font-bold mb-12">Colorado Transit Case Studies</h2>
-
-          <div className="space-y-12">
-            <CaseStudy
-              title="RTD Light Rail Expansion"
-              icon={<Train />}
-              description="Analysis of the Regional Transportation District's light rail expansion projects in the Denver metropolitan area, focusing on ridership trends, community impact, and accessibility improvements."
-            />
-
-            <CaseStudy
-              title="Mountain Community Bus Services"
-              icon={<Bus />}
-              description="Evaluation of bus services in Colorado mountain communities, examining challenges related to seasonal demand, weather conditions, and connecting rural residents to essential services."
-            />
-
-            <CaseStudy
-              title="Bike Share Programs"
-              icon={<Bike />}
-              description="Research on the integration of bike share programs with traditional public transit options, creating a more comprehensive and flexible transportation network."
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Future Research */}
-      <section className="py-16 bg-muted/50">
-        <div className="container">
-          <h2 className="text-3xl font-bold text-center mb-12">Future Research Directions</h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <Card className="bg-card hover:shadow-lg transition-shadow h-full">
-              <CardContent className="pt-6">
-                <div className="flex items-start gap-4">
-                  <div className="p-3 rounded-full bg-primary/10 shrink-0">
-                    <Building className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold mb-2">Transit-Oriented Development</h3>
-                    <p className="text-muted-foreground">
-                      Investigating how urban planning and development around transit hubs can create more livable, walkable communities while increasing public transportation usage.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-card hover:shadow-lg transition-shadow h-full">
-              <CardContent className="pt-6">
-                <div className="flex items-start gap-4">
-                  <div className="p-3 rounded-full bg-primary/10 shrink-0">
-                    <MapPin className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold mb-2">First Mile/Last Mile Solutions</h3>
-                    <p className="text-muted-foreground">
-                      Exploring innovative approaches to address the "first mile/last mile" challenge that often prevents people from using public transportation due to the distance between transit stops and their final destinations.
-                    </p>
-                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -201,40 +128,7 @@ export default function PublicTransportationPage() {
           </p>
 
           <div className="bg-card rounded-xl p-6 shadow-md">
-            <Tabs defaultValue="research" className="w-full">
-              <TabsList className="grid w-full grid-cols-3 mb-8">
-                <TabsTrigger value="research">Research Paper</TabsTrigger>
-                <TabsTrigger value="action">Action Piece</TabsTrigger>
-                <TabsTrigger value="final">Final Presentation</TabsTrigger>
-              </TabsList>
-              <TabsContent value="research" className="border rounded-lg p-4">
-                <div className="aspect-video w-full">
-                  <iframe
-                    src="https://docs.google.com/document/d/e/2PACX-1vQlbGwHq8AUTKXV0h2dKypdXnucepaBRKKXizWur2H7pe-hf_Zejf5w2hrJfIoN4fP4db9ENy6qHqYM/pub?embedded=true"
-                    title="Research Paper on Public Transportation"
-                    className="w-full h-[600px] border-0"
-                  ></iframe>
-                </div>
-              </TabsContent>
-              <TabsContent value="action" className="border rounded-lg p-4">
-                <div className="aspect-video w-full">
-                  <iframe
-                    src="https://1drv.ms/p/s!Av-6eo6o9gE9gYlXpXRUGVHd2TjNEA?embed=1&amp;em=2&amp;wdAr=1.7777777777777777"
-                    title="Action Piece Presentation"
-                    className="w-full h-[600px] border-0"
-                  ></iframe>
-                </div>
-              </TabsContent>
-              <TabsContent value="final" className="border rounded-lg p-4">
-                <div className="aspect-video w-full">
-                  <iframe
-                    src="https://1drv.ms/p/s!Av-6eo6o9gE9gYpXE1OVwenzG1vWJw?embed=1&amp;em=2&amp;wdAr=1.7777777777777777"
-                    title="Final Presentation on Public Transportation"
-                    className="w-full h-[600px] border-0"
-                  ></iframe>
-                </div>
-              </TabsContent>
-            </Tabs>
+            <ProjectMaterials />
           </div>
         </div>
       </section>
@@ -282,23 +176,63 @@ export default function PublicTransportationPage() {
           </div>
         </div>
       </section>
+
+      {/* Key Findings */}
+      <section className="py-16 bg-muted/30">
+        <div className="container">
+          <h2 className="text-3xl font-bold text-center mb-12">Key Findings</h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <CaseStudy
+              title="Accessibility Challenges"
+              icon={<Leaf className="h-8 w-8 text-primary" />}
+              description="Many transit systems in Colorado face significant accessibility challenges, particularly for individuals with disabilities and those in underserved communities."
+            />
+
+            <CaseStudy
+              title="Funding Limitations"
+              icon={<Building className="h-8 w-8 text-primary" />}
+              description="Inadequate funding remains a major obstacle to expanding and improving public transportation infrastructure across the state."
+            />
+
+            <CaseStudy
+              title="Service Frequency"
+              icon={<Clock className="h-8 w-8 text-primary" />}
+              description="Limited service frequency in many areas discourages ridership and reduces the practical utility of public transit for daily commuting."
+            />
+
+            <CaseStudy
+              title="Regional Connectivity"
+              icon={<MapPin className="h-8 w-8 text-primary" />}
+              description="Better integration between different transit systems could significantly improve regional mobility and reduce reliance on personal vehicles."
+            />
+          </div>
+
+          <div className="mt-12 text-center">
+            <Button asChild>
+              <Link href="/contact" className="flex items-center">
+                Contact Me About Transit Research
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
     </>
   );
 }
 
 function CaseStudy({ title, icon, description }: Readonly<{ title: string, icon: React.ReactNode, description: string }>) {
   return (
-    <div className="flex flex-col md:flex-row gap-6 items-start">
-      <div className="p-4 rounded-xl bg-primary/10 text-primary shrink-0">
-        {icon}
-      </div>
-
-      <div>
-        <h3 className="text-xl font-semibold mb-2">{title}</h3>
-        <p className="text-muted-foreground mb-4">{description}</p>
-        <Link href="#" className="inline-flex items-center text-primary hover:underline">
-          Read more <ArrowRight className="ml-2 h-4 w-4" />
-        </Link>
+    <div className="bg-card p-6 rounded-lg shadow-sm">
+      <div className="flex items-start gap-4">
+        <div className="p-3 rounded-full bg-primary/10 shrink-0">
+          {icon}
+        </div>
+        <div>
+          <h3 className="text-xl font-semibold mb-2">{title}</h3>
+          <p className="text-muted-foreground">{description}</p>
+        </div>
       </div>
     </div>
   );

@@ -8,9 +8,7 @@ import {
   Train,
   Code,
   User,
-  ArrowRight,
-  Plane,
-  Rocket
+  ArrowRight
 } from "lucide-react";
 
 export default function Home() {
@@ -234,7 +232,20 @@ export default function Home() {
               <CardContent className="pt-6">
                 <div className="flex flex-col items-center text-center">
                   <div className="p-3 rounded-full bg-gradient-blue-green mb-4 text-white">
-                    <Plane className="h-8 w-8" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="h-8 w-8"
+                    >
+                      <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" />
+                    </svg>
                   </div>
                   <h3 className="text-xl font-semibold mb-2">Aviation</h3>
                   <p className="text-muted-foreground text-sm">
@@ -248,7 +259,23 @@ export default function Home() {
               <CardContent className="pt-6">
                 <div className="flex flex-col items-center text-center">
                   <div className="p-3 rounded-full bg-gradient-blue-green mb-4 text-white">
-                    <Rocket className="h-8 w-8" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="h-8 w-8"
+                    >
+                      <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
+                      <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
+                      <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0" />
+                      <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+                    </svg>
                   </div>
                   <h3 className="text-xl font-semibold mb-2">Space</h3>
                   <p className="text-muted-foreground text-sm">
@@ -273,7 +300,7 @@ export default function Home() {
             <Link href="https://www.askthekidz.com" target="_blank" rel="noopener noreferrer">
               <Card className="card-modern h-full overflow-hidden group">
                 <div className="h-48 bg-gradient-blue-green flex items-center justify-center relative overflow-hidden">
-                  <div className="absolute inset-0 bg-[url('/images/finance-bg.jpg')] bg-cover bg-center opacity-20 mix-blend-overlay"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-secondary/30 opacity-50 mix-blend-overlay"></div>
                   <LineChart className="h-16 w-16 text-white relative z-10" />
                 </div>
                 <CardContent className="pt-6">
@@ -292,7 +319,7 @@ export default function Home() {
             <Link href="/public-transportation">
               <Card className="card-modern h-full overflow-hidden group">
                 <div className="h-48 bg-gradient-blue-green flex items-center justify-center relative overflow-hidden">
-                  <div className="absolute inset-0 bg-[url('/images/transit-bg.jpg')] bg-cover bg-center opacity-20 mix-blend-overlay"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-secondary/30 to-primary/30 opacity-50 mix-blend-overlay"></div>
                   <Train className="h-16 w-16 text-white relative z-10" />
                 </div>
                 <CardContent className="pt-6">
@@ -312,7 +339,7 @@ export default function Home() {
             <Link href="/projects">
               <Card className="card-modern h-full overflow-hidden group">
                 <div className="h-48 bg-gradient-blue-green flex items-center justify-center relative overflow-hidden">
-                  <div className="absolute inset-0 bg-[url('/images/code-bg.jpg')] bg-cover bg-center opacity-20 mix-blend-overlay"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-accent/30 to-primary/30 opacity-50 mix-blend-overlay"></div>
                   <Code className="h-16 w-16 text-white relative z-10" />
                 </div>
                 <CardContent className="pt-6">

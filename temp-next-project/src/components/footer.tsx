@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import { Mail, Train, Laptop, User } from "lucide-react";
+import { Mail, Train, Laptop, UserIcon } from "lucide-react";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -34,7 +34,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/about" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
-                  <User className="h-4 w-4 text-primary" />
+                  <UserIcon className="h-4 w-4 text-primary" />
                   <span>About Me</span>
                 </Link>
               </li>
