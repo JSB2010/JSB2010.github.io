@@ -2,14 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { Metadata } from "next";
 import { Card, CardContent } from "@/components/ui/card";
-import { 
-  GraduationCap, 
-  Code, 
-  Cpu, 
-  Globe, 
-  Palette, 
-  BookOpen,
-  ChalkboardTeacher,
+import {
+  GraduationCap,
+  Code,
+  Cpu,
+  Globe,
+  Palette,
   Accessibility,
   Smartphone,
   Flame
@@ -27,7 +25,7 @@ export default function AboutPage() {
       <section className="relative py-20 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-background to-background/50 dark:from-background dark:to-background/80 z-10"></div>
         <div className="absolute inset-0 bg-[url('/images/mountains-bg.jpg')] bg-cover bg-center opacity-20 dark:opacity-10"></div>
-        
+
         <div className="container relative z-20">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">About Me</h1>
@@ -38,21 +36,21 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-      
+
       {/* Bio Section */}
       <section className="py-16">
         <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div className="relative aspect-square max-w-md mx-auto md:mx-0 rounded-2xl overflow-hidden shadow-xl">
-              <Image 
-                src="/images/Jacob City.png" 
-                alt="Jacob Barkin" 
+              <Image
+                src="/images/Jacob City.png"
+                alt="Jacob Barkin"
                 fill
                 className="object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent mix-blend-overlay"></div>
             </div>
-            
+
             <div>
               <h2 className="text-3xl font-bold mb-6">My Journey</h2>
               <div className="space-y-4 text-muted-foreground">
@@ -73,46 +71,41 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-      
+
       {/* Education Section */}
       <section className="py-16 bg-muted/50">
         <div className="container">
           <h2 className="text-3xl font-bold text-center mb-12">Education</h2>
-          
+
           <div className="max-w-3xl mx-auto">
             <div className="relative pl-8 pb-12 border-l-2 border-primary/30 last:border-0">
               <div className="absolute top-0 left-0 w-8 h-8 -translate-x-1/2 rounded-full bg-primary flex items-center justify-center">
                 <GraduationCap className="h-4 w-4 text-primary-foreground" />
               </div>
-              
+
               <div className="bg-card rounded-xl p-6 shadow-md">
                 <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
                   <h3 className="text-xl font-semibold">Kent Denver School</h3>
                   <span className="text-muted-foreground">2024 - 2028</span>
                 </div>
-                
+
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 bg-white rounded-md p-1 flex items-center justify-center">
-                    <Image 
-                      src="https://www.kentdenver.org/uploaded/themes/default_17/images/KDS-logo-white.png" 
-                      alt="Kent Denver School Logo" 
-                      width={40} 
-                      height={40}
-                    />
+                  <div className="w-12 h-12 bg-primary/10 rounded-md p-1 flex items-center justify-center">
+                    <GraduationCap className="h-8 w-8 text-primary" />
                   </div>
                   <div>
                     <p className="font-medium">Freshman</p>
                     <p className="text-sm text-muted-foreground">Focus on Computer Science & Technology</p>
                   </div>
                 </div>
-                
+
                 <p className="text-muted-foreground mb-4">
                   Actively involved in technology clubs and programming initiatives. Pursuing coursework in computer science, mathematics, and financial literacy.
                 </p>
-                
-                <Link 
-                  href="https://www.kentdenver.org/" 
-                  target="_blank" 
+
+                <Link
+                  href="https://www.kentdenver.org/"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center text-primary hover:underline"
                 >
@@ -124,7 +117,7 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-      
+
       {/* Skills Section */}
       <section className="py-16">
         <div className="container">
@@ -132,47 +125,47 @@ export default function AboutPage() {
           <p className="text-center text-muted-foreground max-w-2xl mx-auto mb-12">
             I've developed a diverse set of skills across various technologies and disciplines.
           </p>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            <SkillCard 
-              icon={<Code />} 
-              title="HTML5" 
-              level={90} 
+            <SkillCard
+              icon={<Code />}
+              title="HTML5"
+              level={90}
             />
-            <SkillCard 
-              icon={<Palette />} 
-              title="CSS3" 
-              level={85} 
+            <SkillCard
+              icon={<Palette />}
+              title="CSS3"
+              level={85}
             />
-            <SkillCard 
-              icon={<Cpu />} 
-              title="JavaScript" 
-              level={80} 
+            <SkillCard
+              icon={<Cpu />}
+              title="JavaScript"
+              level={80}
             />
-            <SkillCard 
-              icon={<Code />} 
-              title="Python" 
-              level={75} 
+            <SkillCard
+              icon={<Code />}
+              title="Python"
+              level={75}
             />
-            <SkillCard 
-              icon={<Flame />} 
-              title="Firebase" 
-              level={70} 
+            <SkillCard
+              icon={<Flame />}
+              title="Firebase"
+              level={70}
             />
-            <SkillCard 
-              icon={<Accessibility />} 
-              title="Accessibility" 
-              level={85} 
+            <SkillCard
+              icon={<Accessibility />}
+              title="Accessibility"
+              level={85}
             />
-            <SkillCard 
-              icon={<Smartphone />} 
-              title="Responsive Design" 
-              level={90} 
+            <SkillCard
+              icon={<Smartphone />}
+              title="Responsive Design"
+              level={90}
             />
-            <SkillCard 
-              icon={<ChalkboardTeacher />} 
-              title="Education" 
-              level={95} 
+            <SkillCard
+              icon={<GraduationCap />}
+              title="Education"
+              level={95}
             />
           </div>
         </div>
@@ -191,9 +184,9 @@ function SkillCard({ icon, title, level }: { icon: React.ReactNode, title: strin
           </div>
           <h3 className="font-medium">{title}</h3>
         </div>
-        
+
         <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-          <div 
+          <div
             className="h-full bg-primary rounded-full transition-all duration-1000 ease-out"
             style={{ width: `${level}%` }}
           ></div>

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Laptop,
-  ChartLineUp,
+  LineChart,
   Train,
   Code,
   User,
@@ -173,7 +173,7 @@ export default function Home() {
               <CardContent className="pt-6">
                 <div className="flex flex-col items-center text-center">
                   <div className="p-3 rounded-full bg-primary/10 mb-4">
-                    <ChartLineUp className="h-8 w-8 text-primary" />
+                    <LineChart className="h-8 w-8 text-primary" />
                   </div>
                   <h3 className="text-xl font-semibold mb-2">Financial Education</h3>
                   <p className="text-muted-foreground">
@@ -212,7 +212,7 @@ export default function Home() {
             <Link href="https://www.askthekidz.com" target="_blank" rel="noopener noreferrer">
               <Card className="h-full hover:shadow-lg transition-shadow overflow-hidden group">
                 <div className="h-48 bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
-                  <ChartLineUp className="h-16 w-16 text-white" />
+                  <LineChart className="h-16 w-16 text-white" />
                 </div>
                 <CardContent className="pt-6">
                   <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">Ask The Kidz</h3>

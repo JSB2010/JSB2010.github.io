@@ -3,10 +3,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { 
-  ChartLineUp, 
-  Train, 
-  Code, 
+import {
+  LineChart,
+  Train,
+  Code,
   ExternalLink,
   Github,
   Laptop,
@@ -25,7 +25,7 @@ const projects = [
     title: "Ask The Kidz",
     description: "A platform dedicated to empowering youth through financial education, providing resources and guidance for building a secure financial future.",
     image: null,
-    icon: <ChartLineUp className="h-16 w-16 text-white" />,
+    icon: <LineChart className="h-16 w-16 text-white" />,
     gradient: "from-blue-500 to-purple-600",
     tags: ["Financial Education", "Youth Empowerment"],
     link: "https://www.askthekidz.com",
@@ -86,14 +86,14 @@ export default function ProjectsPage() {
   // Filter featured projects
   const featuredProjects = projects.filter(project => project.featured);
   const otherProjects = projects.filter(project => !project.featured);
-  
+
   return (
     <>
       {/* Hero Section */}
       <section className="relative py-20 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-background to-background/50 dark:from-background dark:to-background/80 z-10"></div>
         <div className="absolute inset-0 bg-[url('/images/mountains-bg.jpg')] bg-cover bg-center opacity-20 dark:opacity-10"></div>
-        
+
         <div className="container relative z-20">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">My Projects</h1>
@@ -104,12 +104,12 @@ export default function ProjectsPage() {
           </div>
         </div>
       </section>
-      
+
       {/* Featured Projects */}
       <section className="py-16">
         <div className="container">
           <h2 className="text-3xl font-bold mb-12">Featured Projects</h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {featuredProjects.map((project) => (
               <ProjectCard key={project.id} project={project} />
@@ -117,13 +117,13 @@ export default function ProjectsPage() {
           </div>
         </div>
       </section>
-      
+
       {/* Other Projects */}
       {otherProjects.length > 0 && (
         <section className="py-16 bg-muted/50">
           <div className="container">
             <h2 className="text-3xl font-bold mb-12">Other Projects</h2>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {otherProjects.map((project) => (
                 <ProjectCard key={project.id} project={project} />
@@ -132,7 +132,7 @@ export default function ProjectsPage() {
           </div>
         </section>
       )}
-      
+
       {/* GitHub Section */}
       <section className="py-16">
         <div className="container">
@@ -161,9 +161,9 @@ function ProjectCard({ project }: { project: any }) {
       <Card className="h-full hover:shadow-lg transition-shadow overflow-hidden group">
         <div className={`h-48 bg-gradient-to-r ${project.gradient} flex items-center justify-center`}>
           {project.image ? (
-            <Image 
-              src={project.image} 
-              alt={project.title} 
+            <Image
+              src={project.image}
+              alt={project.title}
               width={300}
               height={200}
               className="object-cover w-full h-full"
@@ -189,7 +189,7 @@ function ProjectCard({ project }: { project: any }) {
               </span>
             ))}
           </div>
-          
+
           {project.github && (
             <div className="flex items-center text-sm text-muted-foreground">
               <Github className="h-4 w-4 mr-2" />
