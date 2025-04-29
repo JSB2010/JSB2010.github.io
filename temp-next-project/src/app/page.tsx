@@ -59,11 +59,15 @@ export default function Home() {
               </p>
 
               <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-                <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-sm">Technology</span>
-                <span className="px-3 py-1 rounded-full bg-secondary/10 text-secondary text-sm">Mountains</span>
-                <span className="px-3 py-1 rounded-full bg-blue-500/10 text-blue-500 text-sm">Aviation</span>
-                <span className="px-3 py-1 rounded-full bg-green-500/10 text-green-500 text-sm">Public Transit</span>
-                <span className="px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-500 text-sm">Space</span>
+                <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-sm flex items-center gap-1">
+                  <Laptop className="h-3 w-3" /> Developer
+                </span>
+                <span className="px-3 py-1 rounded-full bg-secondary/10 text-secondary text-sm flex items-center gap-1">
+                  <LineChart className="h-3 w-3" /> Finance
+                </span>
+                <span className="px-3 py-1 rounded-full bg-accent/10 text-accent text-sm flex items-center gap-1">
+                  <Code className="h-3 w-3" /> Projects
+                </span>
               </div>
 
               <p className="text-muted-foreground max-w-md mx-auto md:mx-0">

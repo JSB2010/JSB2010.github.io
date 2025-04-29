@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import { Mail, Plane, Rocket, Train, Laptop } from "lucide-react";
+import { Mail, Train, Laptop, User } from "lucide-react";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -24,23 +24,31 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="font-semibold mb-4 text-foreground">Interests</h3>
+            <h3 className="font-semibold mb-4 text-foreground">Explore</h3>
             <ul className="space-y-2">
-              <li className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Laptop className="h-4 w-4 text-primary" />
-                <span>Technology</span>
+              <li>
+                <Link href="/projects" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
+                  <Laptop className="h-4 w-4 text-primary" />
+                  <span>Projects</span>
+                </Link>
               </li>
-              <li className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Plane className="h-4 w-4 text-primary" />
-                <span>Aviation</span>
+              <li>
+                <Link href="/about" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
+                  <User className="h-4 w-4 text-primary" />
+                  <span>About Me</span>
+                </Link>
               </li>
-              <li className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Train className="h-4 w-4 text-primary" />
-                <span>Public Transit</span>
+              <li>
+                <Link href="/public-transportation" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
+                  <Train className="h-4 w-4 text-primary" />
+                  <span>Research</span>
+                </Link>
               </li>
-              <li className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Rocket className="h-4 w-4 text-primary" />
-                <span>Space</span>
+              <li>
+                <Link href="/contact" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
+                  <Mail className="h-4 w-4 text-primary" />
+                  <span>Contact</span>
+                </Link>
               </li>
             </ul>
           </div>

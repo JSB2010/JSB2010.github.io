@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -12,7 +13,6 @@ const navItems = [
   { name: "Home", path: "/" },
   { name: "About", path: "/about" },
   { name: "Projects", path: "/projects" },
-  { name: "Public Transportation", path: "/public-transportation" },
   { name: "Contact", path: "/contact" },
 ];
 
@@ -25,8 +25,14 @@ export default function Header() {
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center space-x-2 group">
-            <div className="w-10 h-10 rounded-full bg-gradient-blue-green flex items-center justify-center text-white font-bold text-lg transition-transform group-hover:scale-110">
-              JB
+            <div className="w-10 h-10 overflow-hidden transition-transform group-hover:scale-110">
+              <Image
+                src="/images/Updated logo.png"
+                alt="Jacob Barkin Logo"
+                width={40}
+                height={40}
+                className="object-contain"
+              />
             </div>
             <span className="font-bold text-xl gradient-text">Jacob Barkin</span>
           </Link>
@@ -63,8 +69,14 @@ export default function Header() {
           </SheetTrigger>
           <SheetContent side="right" className="border-l-primary/20">
             <div className="flex items-center gap-2 mb-8">
-              <div className="w-10 h-10 rounded-full bg-gradient-blue-green flex items-center justify-center text-white font-bold text-lg">
-                JB
+              <div className="w-10 h-10 overflow-hidden">
+                <Image
+                  src="/images/Updated logo.png"
+                  alt="Jacob Barkin Logo"
+                  width={40}
+                  height={40}
+                  className="object-contain"
+                />
               </div>
               <span className="font-bold text-xl gradient-text">Jacob Barkin</span>
             </div>

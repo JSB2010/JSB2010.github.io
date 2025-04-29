@@ -1,17 +1,24 @@
+"use client";
+
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { 
-  Train, 
-  Bus, 
-  Bike, 
-  Users, 
-  Leaf, 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Train,
+  Bus,
+  Bike,
+  Users,
+  Leaf,
   MapPin,
   Clock,
   Building,
-  ArrowRight
+  ArrowRight,
+  BookOpen,
+  PresentationChart,
+  Mail
 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -26,7 +33,7 @@ export default function PublicTransportationPage() {
       <section className="relative py-20 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-background to-background/50 dark:from-background dark:to-background/80 z-10"></div>
         <div className="absolute inset-0 bg-[url('/images/mountains-bg.jpg')] bg-cover bg-center opacity-20 dark:opacity-10"></div>
-        
+
         <div className="container relative z-20">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">Public Transportation Research</h1>
@@ -37,7 +44,7 @@ export default function PublicTransportationPage() {
           </div>
         </div>
       </section>
-      
+
       {/* Introduction Section */}
       <section className="py-16">
         <div className="container">
@@ -56,7 +63,7 @@ export default function PublicTransportationPage() {
                 </p>
               </div>
             </div>
-            
+
             <div className="relative aspect-video rounded-2xl overflow-hidden shadow-xl">
               <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-teal-600 flex items-center justify-center">
                 <Train className="h-24 w-24 text-white" />
@@ -65,12 +72,12 @@ export default function PublicTransportationPage() {
           </div>
         </div>
       </section>
-      
+
       {/* Key Focus Areas */}
       <section className="py-16 bg-muted/50">
         <div className="container">
           <h2 className="text-3xl font-bold text-center mb-12">Key Focus Areas</h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <Card className="bg-card hover:shadow-lg transition-shadow">
               <CardContent className="pt-6">
@@ -85,7 +92,7 @@ export default function PublicTransportationPage() {
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card className="bg-card hover:shadow-lg transition-shadow">
               <CardContent className="pt-6">
                 <div className="flex flex-col items-center text-center">
@@ -99,7 +106,7 @@ export default function PublicTransportationPage() {
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card className="bg-card hover:shadow-lg transition-shadow">
               <CardContent className="pt-6">
                 <div className="flex flex-col items-center text-center">
@@ -116,26 +123,26 @@ export default function PublicTransportationPage() {
           </div>
         </div>
       </section>
-      
+
       {/* Case Studies */}
       <section className="py-16">
         <div className="container">
           <h2 className="text-3xl font-bold mb-12">Colorado Transit Case Studies</h2>
-          
+
           <div className="space-y-12">
-            <CaseStudy 
+            <CaseStudy
               title="RTD Light Rail Expansion"
               icon={<Train />}
               description="Analysis of the Regional Transportation District's light rail expansion projects in the Denver metropolitan area, focusing on ridership trends, community impact, and accessibility improvements."
             />
-            
-            <CaseStudy 
+
+            <CaseStudy
               title="Mountain Community Bus Services"
               icon={<Bus />}
               description="Evaluation of bus services in Colorado mountain communities, examining challenges related to seasonal demand, weather conditions, and connecting rural residents to essential services."
             />
-            
-            <CaseStudy 
+
+            <CaseStudy
               title="Bike Share Programs"
               icon={<Bike />}
               description="Research on the integration of bike share programs with traditional public transit options, creating a more comprehensive and flexible transportation network."
@@ -143,12 +150,12 @@ export default function PublicTransportationPage() {
           </div>
         </div>
       </section>
-      
+
       {/* Future Research */}
       <section className="py-16 bg-muted/50">
         <div className="container">
           <h2 className="text-3xl font-bold text-center mb-12">Future Research Directions</h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <Card className="bg-card hover:shadow-lg transition-shadow h-full">
               <CardContent className="pt-6">
@@ -165,7 +172,7 @@ export default function PublicTransportationPage() {
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card className="bg-card hover:shadow-lg transition-shadow h-full">
               <CardContent className="pt-6">
                 <div className="flex items-start gap-4">
@@ -184,7 +191,54 @@ export default function PublicTransportationPage() {
           </div>
         </div>
       </section>
-      
+
+      {/* Project Materials Section */}
+      <section className="py-16 bg-muted/50">
+        <div className="container">
+          <h2 className="text-3xl font-bold text-center mb-6">Project Materials</h2>
+          <p className="text-muted-foreground max-w-3xl mx-auto text-center mb-12">
+            Below you can explore the documents and presentations created during this project. Click on each tab to view the full content.
+          </p>
+
+          <div className="bg-card rounded-xl p-6 shadow-md">
+            <Tabs defaultValue="research" className="w-full">
+              <TabsList className="grid w-full grid-cols-3 mb-8">
+                <TabsTrigger value="research">Research Paper</TabsTrigger>
+                <TabsTrigger value="action">Action Piece</TabsTrigger>
+                <TabsTrigger value="final">Final Presentation</TabsTrigger>
+              </TabsList>
+              <TabsContent value="research" className="border rounded-lg p-4">
+                <div className="aspect-video w-full">
+                  <iframe
+                    src="https://docs.google.com/document/d/e/2PACX-1vQlbGwHq8AUTKXV0h2dKypdXnucepaBRKKXizWur2H7pe-hf_Zejf5w2hrJfIoN4fP4db9ENy6qHqYM/pub?embedded=true"
+                    title="Research Paper on Public Transportation"
+                    className="w-full h-[600px] border-0"
+                  ></iframe>
+                </div>
+              </TabsContent>
+              <TabsContent value="action" className="border rounded-lg p-4">
+                <div className="aspect-video w-full">
+                  <iframe
+                    src="https://1drv.ms/p/s!Av-6eo6o9gE9gYlXpXRUGVHd2TjNEA?embed=1&amp;em=2&amp;wdAr=1.7777777777777777"
+                    title="Action Piece Presentation"
+                    className="w-full h-[600px] border-0"
+                  ></iframe>
+                </div>
+              </TabsContent>
+              <TabsContent value="final" className="border rounded-lg p-4">
+                <div className="aspect-video w-full">
+                  <iframe
+                    src="https://1drv.ms/p/s!Av-6eo6o9gE9gYpXE1OVwenzG1vWJw?embed=1&amp;em=2&amp;wdAr=1.7777777777777777"
+                    title="Final Presentation on Public Transportation"
+                    className="w-full h-[600px] border-0"
+                  ></iframe>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
+        </div>
+      </section>
+
       {/* Get Involved */}
       <section className="py-16">
         <div className="container">
@@ -193,7 +247,7 @@ export default function PublicTransportationPage() {
             <p className="text-muted-foreground max-w-3xl mx-auto text-center mb-8">
               Interested in improving public transportation in your community? Here are some ways to get involved and make a difference.
             </p>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="flex flex-col items-center text-center p-4">
                 <div className="p-3 rounded-full bg-primary/10 mb-4">
@@ -204,7 +258,7 @@ export default function PublicTransportationPage() {
                   Connect with local advocacy organizations focused on public transportation improvements.
                 </p>
               </div>
-              
+
               <div className="flex flex-col items-center text-center p-4">
                 <div className="p-3 rounded-full bg-primary/10 mb-4">
                   <MapPin className="h-6 w-6 text-primary" />
@@ -214,7 +268,7 @@ export default function PublicTransportationPage() {
                   Participate in public hearings and meetings about transportation planning in your area.
                 </p>
               </div>
-              
+
               <div className="flex flex-col items-center text-center p-4">
                 <div className="p-3 rounded-full bg-primary/10 mb-4">
                   <Bus className="h-6 w-6 text-primary" />
@@ -232,13 +286,13 @@ export default function PublicTransportationPage() {
   );
 }
 
-function CaseStudy({ title, icon, description }: { title: string, icon: React.ReactNode, description: string }) {
+function CaseStudy({ title, icon, description }: Readonly<{ title: string, icon: React.ReactNode, description: string }>) {
   return (
     <div className="flex flex-col md:flex-row gap-6 items-start">
       <div className="p-4 rounded-xl bg-primary/10 text-primary shrink-0">
         {icon}
       </div>
-      
+
       <div>
         <h3 className="text-xl font-semibold mb-2">{title}</h3>
         <p className="text-muted-foreground mb-4">{description}</p>
