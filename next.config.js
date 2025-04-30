@@ -15,7 +15,7 @@ const nextConfig = {
         hostname: 'cdn.simpleicons.org',
       },
     ],
-    unoptimized: process.env.NODE_ENV === 'production', // This is important for Cloudflare Pages
+    unoptimized: true, // Always unoptimized to work with static export
   },
   // Enable static exports for Cloudflare Pages
   output: 'export',
