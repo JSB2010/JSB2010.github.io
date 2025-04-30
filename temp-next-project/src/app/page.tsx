@@ -74,7 +74,7 @@ export default function Home() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 mt-2 justify-center md:justify-start">
-                <Button asChild size="lg" className="bg-gradient-blue-green hover:opacity-90 transition-opacity border-none">
+                <Button asChild size="lg" className="bg-primary hover:opacity-90 transition-opacity border-none">
                   <Link href="/projects">
                     <Code className="mr-2 h-5 w-5" />
                     View My Projects
@@ -162,7 +162,6 @@ export default function Home() {
 
             <div className="flex justify-center md:justify-end">
               <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden border-4 border-background shadow-xl">
-                <div className="absolute inset-0 bg-gradient-blue-green opacity-10 z-10"></div>
                 <Image
                   src="/images/Jacob City.png"
                   alt="Jacob Barkin"
@@ -170,7 +169,6 @@ export default function Home() {
                   className="object-cover"
                   priority
                 />
-                <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent mix-blend-overlay z-20"></div>
               </div>
             </div>
           </div>
@@ -179,17 +177,22 @@ export default function Home() {
 
       {/* Interests Section */}
       <section className="py-20 theme-technology">
-        <div className="container">
+        {/* Animated blobs in background */}
+        <div className="blob blob-1 interests-blob-1"></div>
+        <div className="blob blob-2 interests-blob-2"></div>
+        <div className="blob blob-3 interests-blob-3"></div>
+
+        <div className="container relative z-10">
           <div className="flex flex-col items-center mb-12">
             <h2 className="text-3xl font-bold tracking-tight mb-4 gradient-text">My Interests</h2>
             <div className="h-1 w-20 bg-gradient-blue-green rounded-full"></div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <Card className="card-modern md:col-span-1">
               <CardContent className="pt-6">
                 <div className="flex flex-col items-center text-center">
-                  <div className="p-3 rounded-full bg-gradient-blue-green mb-4 text-white">
+                  <div className="p-3 rounded-full bg-primary mb-4 text-white">
                     <Laptop className="h-8 w-8" />
                   </div>
                   <h3 className="text-xl font-semibold mb-2">Technology</h3>
@@ -203,7 +206,7 @@ export default function Home() {
             <Card className="card-modern md:col-span-1">
               <CardContent className="pt-6">
                 <div className="flex flex-col items-center text-center">
-                  <div className="p-3 rounded-full bg-gradient-blue-green mb-4 text-white">
+                  <div className="p-3 rounded-full bg-primary mb-4 text-white">
                     <LineChart className="h-8 w-8" />
                   </div>
                   <h3 className="text-xl font-semibold mb-2">Finance</h3>
@@ -217,7 +220,7 @@ export default function Home() {
             <Card className="card-modern md:col-span-1">
               <CardContent className="pt-6">
                 <div className="flex flex-col items-center text-center">
-                  <div className="p-3 rounded-full bg-gradient-blue-green mb-4 text-white">
+                  <div className="p-3 rounded-full bg-primary mb-4 text-white">
                     <Train className="h-8 w-8" />
                   </div>
                   <h3 className="text-xl font-semibold mb-2">Transit</h3>
@@ -231,7 +234,7 @@ export default function Home() {
             <Card className="card-modern md:col-span-1">
               <CardContent className="pt-6">
                 <div className="flex flex-col items-center text-center">
-                  <div className="p-3 rounded-full bg-gradient-blue-green mb-4 text-white">
+                  <div className="p-3 rounded-full bg-primary mb-4 text-white">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="24"
@@ -254,111 +257,83 @@ export default function Home() {
                 </div>
               </CardContent>
             </Card>
-
-            <Card className="card-modern md:col-span-1">
-              <CardContent className="pt-6">
-                <div className="flex flex-col items-center text-center">
-                  <div className="p-3 rounded-full bg-gradient-blue-green mb-4 text-white">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="h-8 w-8"
-                    >
-                      <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
-                      <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
-                      <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0" />
-                      <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2">Space</h3>
-                  <p className="text-muted-foreground text-sm">
-                    Exploring the frontiers of space exploration and astronomy.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </section>
 
       {/* Featured Projects Section */}
       <section className="py-20 theme-space">
-        <div className="container">
+        {/* Animated blobs in background */}
+        <div className="blob blob-1"></div>
+        <div className="blob blob-2"></div>
+        <div className="blob blob-3"></div>
+
+        <div className="container relative z-10">
           <div className="flex flex-col items-center mb-12">
             <h2 className="text-3xl font-bold tracking-tight mb-4 gradient-text">Featured Projects</h2>
             <div className="h-1 w-20 bg-gradient-blue-green rounded-full"></div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Link href="https://www.askthekidz.com" target="_blank" rel="noopener noreferrer">
-              <Card className="card-modern h-full overflow-hidden group">
-                <div className="h-48 bg-gradient-blue-green flex items-center justify-center relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-secondary/30 opacity-50 mix-blend-overlay"></div>
-                  <LineChart className="h-16 w-16 text-white relative z-10" />
+            <Link href="https://www.askthekidz.com" target="_blank" rel="noopener noreferrer" className="block h-full">
+              <Card className="project-card">
+                <div className="project-card-image bg-gradient-to-r from-primary to-secondary">
+                  <LineChart className="project-card-icon h-20 w-20 text-white" />
                 </div>
-                <CardContent className="pt-6">
-                  <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">Ask The Kidz</h3>
-                  <p className="text-muted-foreground mb-4">
+                <div className="project-card-content">
+                  <h3 className="project-card-title">Ask The Kidz</h3>
+                  <p className="text-muted-foreground">
                     A platform dedicated to empowering youth through financial education, providing resources and guidance for building a secure financial future.
                   </p>
-                  <div className="flex flex-wrap gap-2">
-                    <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs">Financial Education</span>
-                    <span className="px-3 py-1 rounded-full bg-secondary/10 text-secondary text-xs">Youth Empowerment</span>
+                  <div className="project-card-tags">
+                    <span className="project-card-tag bg-primary/10 text-primary">Financial Education</span>
+                    <span className="project-card-tag bg-secondary/10 text-secondary">Youth Empowerment</span>
                   </div>
-                </CardContent>
+                </div>
               </Card>
             </Link>
 
-            <Link href="/public-transportation">
-              <Card className="card-modern h-full overflow-hidden group">
-                <div className="h-48 bg-gradient-blue-green flex items-center justify-center relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-secondary/30 to-primary/30 opacity-50 mix-blend-overlay"></div>
-                  <Train className="h-16 w-16 text-white relative z-10" />
+            <Link href="/public-transportation" className="block h-full">
+              <Card className="project-card">
+                <div className="project-card-image bg-gradient-to-r from-primary/90 to-primary">
+                  <Train className="project-card-icon h-20 w-20 text-white" />
                 </div>
-                <CardContent className="pt-6">
-                  <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">Public Transportation Research</h3>
-                  <p className="text-muted-foreground mb-4">
+                <div className="project-card-content">
+                  <h3 className="project-card-title">Public Transportation Research</h3>
+                  <p className="text-muted-foreground">
                     Comprehensive research on public transportation systems in Colorado, focusing on accessibility improvements and sustainable solutions.
                   </p>
-                  <div className="flex flex-wrap gap-2">
-                    <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs">Research</span>
-                    <span className="px-3 py-1 rounded-full bg-secondary/10 text-secondary text-xs">Accessibility</span>
-                    <span className="px-3 py-1 rounded-full bg-green-500/10 text-green-500 text-xs">Sustainability</span>
+                  <div className="project-card-tags">
+                    <span className="project-card-tag bg-primary/10 text-primary">Research</span>
+                    <span className="project-card-tag bg-secondary/10 text-secondary">Accessibility</span>
+                    <span className="project-card-tag bg-green-500/10 text-green-500">Sustainability</span>
                   </div>
-                </CardContent>
+                </div>
               </Card>
             </Link>
 
-            <Link href="/projects">
-              <Card className="card-modern h-full overflow-hidden group">
-                <div className="h-48 bg-gradient-blue-green flex items-center justify-center relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-accent/30 to-primary/30 opacity-50 mix-blend-overlay"></div>
-                  <Code className="h-16 w-16 text-white relative z-10" />
+            <Link href="/projects" className="block h-full">
+              <Card className="project-card">
+                <div className="project-card-image bg-gradient-to-r from-secondary/90 to-primary/90">
+                  <Code className="project-card-icon h-20 w-20 text-white" />
                 </div>
-                <CardContent className="pt-6">
-                  <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">Portfolio Website</h3>
-                  <p className="text-muted-foreground mb-4">
+                <div className="project-card-content">
+                  <h3 className="project-card-title">Portfolio Website</h3>
+                  <p className="text-muted-foreground">
                     A modern, responsive portfolio website showcasing my projects, skills, and interests with a focus on accessibility and user experience.
                   </p>
-                  <div className="flex flex-wrap gap-2">
-                    <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs">Next.js</span>
-                    <span className="px-3 py-1 rounded-full bg-secondary/10 text-secondary text-xs">Tailwind CSS</span>
-                    <span className="px-3 py-1 rounded-full bg-blue-500/10 text-blue-500 text-xs">shadcn UI</span>
+                  <div className="project-card-tags">
+                    <span className="project-card-tag bg-primary/10 text-primary">Next.js</span>
+                    <span className="project-card-tag bg-secondary/10 text-secondary">Tailwind CSS</span>
+                    <span className="project-card-tag bg-blue-500/10 text-blue-500">shadcn UI</span>
                   </div>
-                </CardContent>
+                </div>
               </Card>
             </Link>
           </div>
 
           <div className="flex justify-center mt-12">
-            <Button asChild className="bg-gradient-blue-green hover:opacity-90 transition-opacity border-none">
+            <Button asChild className="bg-primary hover:opacity-90 transition-opacity border-none">
               <Link href="/projects" className="group">
                 View All Projects
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />

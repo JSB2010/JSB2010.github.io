@@ -2,16 +2,18 @@ import Image from "next/image";
 import Link from "next/link";
 import { Metadata } from "next";
 import { Card, CardContent } from "@/components/ui/card";
+// Import actual programming language and technology icons
 import {
-  GraduationCap,
-  Code,
-  Cpu,
-  Globe,
-  Palette,
-  Accessibility,
-  Smartphone,
-  Flame
-} from "lucide-react";
+  SiHtml5,
+  SiCss3,
+  SiJavascript,
+  SiPython,
+  SiFirebase,
+  SiReact
+} from "react-icons/si";
+
+// Import additional icon sets for technologies that might not be in simple-icons
+import { FaUniversalAccess, FaMobileAlt, FaGraduationCap, FaGlobeAmericas } from "react-icons/fa";
 
 export const metadata: Metadata = {
   title: "About Me | Jacob Barkin",
@@ -80,7 +82,7 @@ export default function AboutPage() {
           <div className="max-w-3xl mx-auto">
             <div className="relative pl-8 pb-12 border-l-2 border-primary/30 last:border-0">
               <div className="absolute top-0 left-0 w-8 h-8 -translate-x-1/2 rounded-full bg-primary flex items-center justify-center">
-                <GraduationCap className="h-4 w-4 text-primary-foreground" />
+                <FaGraduationCap className="h-4 w-4 text-primary-foreground" />
               </div>
 
               <div className="bg-card rounded-xl p-6 shadow-md">
@@ -91,7 +93,7 @@ export default function AboutPage() {
 
                 <div className="flex items-center gap-4 mb-4">
                   <div className="w-12 h-12 bg-primary/10 rounded-md p-1 flex items-center justify-center">
-                    <GraduationCap className="h-8 w-8 text-primary" />
+                    <FaGraduationCap className="h-8 w-8 text-primary" />
                   </div>
                   <div>
                     <p className="font-medium">Freshman</p>
@@ -109,7 +111,7 @@ export default function AboutPage() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center text-primary hover:underline"
                 >
-                  <Globe className="h-4 w-4 mr-2" />
+                  <FaGlobeAmericas className="h-4 w-4 mr-2" />
                   Visit School Website
                 </Link>
               </div>
@@ -128,42 +130,47 @@ export default function AboutPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             <SkillCard
-              icon={<Code />}
+              icon={<SiHtml5 className="h-6 w-6" />}
               title="HTML5"
               level={90}
             />
             <SkillCard
-              icon={<Palette />}
+              icon={<SiCss3 className="h-6 w-6" />}
               title="CSS3"
               level={85}
             />
             <SkillCard
-              icon={<Cpu />}
+              icon={<SiJavascript className="h-6 w-6" />}
               title="JavaScript"
               level={80}
             />
             <SkillCard
-              icon={<Code />}
+              icon={<SiPython className="h-6 w-6" />}
               title="Python"
               level={75}
             />
             <SkillCard
-              icon={<Flame />}
+              icon={<SiFirebase className="h-6 w-6" />}
               title="Firebase"
               level={70}
             />
             <SkillCard
-              icon={<Accessibility />}
+              icon={<SiReact className="h-6 w-6" />}
+              title="React"
+              level={85}
+            />
+            <SkillCard
+              icon={<FaUniversalAccess className="h-6 w-6" />}
               title="Accessibility"
               level={85}
             />
             <SkillCard
-              icon={<Smartphone />}
+              icon={<FaMobileAlt className="h-6 w-6" />}
               title="Responsive Design"
               level={90}
             />
             <SkillCard
-              icon={<GraduationCap />}
+              icon={<FaGraduationCap className="h-6 w-6" />}
               title="Education"
               level={95}
             />
@@ -174,7 +181,7 @@ export default function AboutPage() {
   );
 }
 
-function SkillCard({ icon, title, level }: { icon: React.ReactNode, title: string, level: number }) {
+function SkillCard({ icon, title, level }: Readonly<{ icon: React.ReactNode, title: string, level: number }>) {
   return (
     <Card className="overflow-hidden">
       <CardContent className="p-6">
@@ -187,8 +194,7 @@ function SkillCard({ icon, title, level }: { icon: React.ReactNode, title: strin
 
         <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
           <div
-            className="h-full bg-primary rounded-full transition-all duration-1000 ease-out"
-            style={{ width: `${level}%` }}
+            className={`h-full bg-primary rounded-full transition-all duration-1000 ease-out skill-progress-${level}`}
           ></div>
         </div>
         <div className="mt-2 text-right text-sm text-muted-foreground">

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 
 import { Mail, Train, Laptop, UserIcon } from "lucide-react";
 
@@ -13,8 +14,14 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-full bg-gradient-blue-green flex items-center justify-center text-white font-bold text-sm">
-                JB
+              <div className="w-8 h-8 overflow-hidden">
+                <Image
+                  src="/images/Updated logo.png"
+                  alt="Jacob Barkin Logo"
+                  width={32}
+                  height={32}
+                  className="object-contain"
+                />
               </div>
               <span className="font-bold text-lg gradient-text">Jacob Barkin</span>
             </div>
