@@ -1,0 +1,175 @@
+"use client";
+
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { ProjectCard as ProjectCardType } from "@/lib/github";
+import Link from "next/link";
+import Image from "next/image";
+import { ExternalLink, Star, GitFork, Clock } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
+import { LanguageImage } from "./language-images";
+
+// We've moved language-specific styling to the language-images component
+
+// Generate a unique hash from a string
+function generateHashFromString(str: string): number {
+  return str.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+}
+
+interface ProjectCardProps {
+  project: ProjectCardType;
+}
+
+export function ProjectCard({ project }: Readonly<ProjectCardProps>) {
+  const {
+    title,
+    description,
+    image,
+    language,
+    url,
+    // githubUrl is not used directly in this component
+    stars,
+    forks,
+    updatedAt,
+    topics,
+    isArchived,
+  } = project;
+
+  // Format the updated date
+  const updatedTimeAgo = formatDistanceToNow(new Date(updatedAt), { addSuffix: true });
+
+  // Generate a project image based on repository data
+  const getProjectImage = () => {
+    // Generate a unique but consistent hash for this repository
+    const repoNameHash = generateHashFromString(title);
+
+    return (
+      <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+        {/* Use language-specific image */}
+        <LanguageImage
+          language={language}
+          seed={repoNameHash}
+        />
+
+        {/* GitHub icon overlay in top right */}
+        <div className="absolute top-4 right-4 bg-black/40 p-2 rounded-full backdrop-blur-sm shadow-sm z-10">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="text-white"
+          >
+            <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path>
+            <path d="M9 18c-4.51 2-5-2-7-2"></path>
+          </svg>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <Link
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="block h-full group"
+    >
+      <Card className="h-full hover:shadow-lg transition-all duration-300 overflow-hidden group project-card">
+        <div className="h-48 flex items-center justify-center relative overflow-hidden">
+          {image ? (
+            <Image
+              src={image}
+              alt={title}
+              fill
+              className="object-cover transition-transform duration-500 group-hover:scale-110"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            />
+          ) : (
+            getProjectImage()
+          )}
+
+          {/* Hover overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+            <div className="p-4 text-white">
+              <span className="text-sm font-medium">View Project</span>
+            </div>
+          </div>
+        </div>
+
+        <CardContent className="pt-6">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-xl font-semibold group-hover:text-primary transition-colors line-clamp-1">
+              {title.charAt(0).toUpperCase() + title.slice(1).replace(/-/g, ' ')}
+            </h3>
+
+            <ExternalLink className="h-4 w-4 text-muted-foreground" />
+          </div>
+
+          {description && (
+            <p className="text-muted-foreground mb-4 line-clamp-2">
+              {description}
+            </p>
+          )}
+
+          {/* Topics as tags */}
+          {topics && topics.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {topics.slice(0, 3).map((topic) => (
+                <span key={topic} className="px-2 py-1 bg-muted text-muted-foreground rounded-md text-xs">
+                  {topic}
+                </span>
+              ))}
+              {topics.length > 3 && (
+                <span className="px-2 py-1 bg-muted text-muted-foreground rounded-md text-xs">
+                  +{topics.length - 3} more
+                </span>
+              )}
+            </div>
+          )}
+
+          {/* Repository stats */}
+          <div className="flex items-center justify-between text-sm text-muted-foreground mt-auto">
+            <div className="flex items-center gap-3">
+              {language && (
+                <div className="flex items-center gap-1.5">
+                  <span
+                    className="w-3 h-3 rounded-full bg-primary/20"
+                  />
+                  <span>{language}</span>
+                </div>
+              )}
+
+              <div className="flex items-center gap-1">
+                <Star className="h-4 w-4" />
+                <span>{stars}</span>
+              </div>
+
+              <div className="flex items-center gap-1">
+                <GitFork className="h-4 w-4" />
+                <span>{forks}</span>
+              </div>
+            </div>
+
+            {isArchived && (
+              <Badge variant="outline" className="text-muted-foreground border-muted-foreground/30">
+                Archived
+              </Badge>
+            )}
+          </div>
+
+          {/* Updated time */}
+          <div className="flex items-center gap-1 mt-3 text-xs text-muted-foreground">
+            <Clock className="h-3.5 w-3.5" />
+            <span>Updated {updatedTimeAgo}</span>
+          </div>
+        </CardContent>
+      </Card>
+    </Link>
+  );
+}

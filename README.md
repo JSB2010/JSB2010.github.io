@@ -1,8 +1,65 @@
-# JSB2010.github.io
-This is Github repository that contains all files for jsb2010.github.io, and the accosiated domain of jacobbarkin.com. This site is using Github pages, and the main website, jacobbarkin.com. uses CloudFlare for DNS records and hosting. You may look through the files/code for the logic behind the site, and if you have any suggestions, feel free to make a pull request, or contact me through the site's contact page. Let me know if you have any questions about it as well. Thanks!
+# Jacob Barkin Portfolio Website
 
-## Functionality
-### HTML
-This site is using generic HTML and CSS code for handling, and was created using VS Code. 
-### Firebase
-Firebase is used for the contact form so that all messages are saved in a centralized, seucre database, and that I can recive emails when a new form is submitted. 
+This is a modern redesign of my personal portfolio website using Next.js and shadcn UI.
+
+## Tech Stack
+
+- **Framework**: [Next.js](https://nextjs.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **UI Components**: [shadcn UI](https://ui.shadcn.com/)
+- **Theme Switching**: [next-themes](https://github.com/pacocoursey/next-themes)
+- **Icons**: [Lucide React](https://lucide.dev/guide/packages/lucide-react)
+
+## Features
+
+- Modern, responsive design
+- Light and dark mode support
+- Accessible UI components
+- Fast page loads with Next.js
+- Type-safe with TypeScript
+
+## Getting Started
+
+1. Clone the repository
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Run the development server:
+
+```bash
+npm run dev
+```
+
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
+
+## Project Structure
+
+- `src/app/*` - Next.js app router pages
+- `src/components/*` - React components
+  - `src/components/ui/*` - shadcn UI components
+- `public/*` - Static assets
+
+## Adding New shadcn UI Components
+
+To add more shadcn UI components, run:
+
+```bash
+npx shadcn@latest add [component-name]
+```
+
+For example:
+
+```bash
+npx shadcn@latest add accordion
+```
+
+## Deployment
+
+This site can be deployed to any platform that supports Next.js, such as Vercel, Netlify, or GitHub Pages.
+
+## License
+
+This project is open source and available under the [MIT License](LICENSE).
