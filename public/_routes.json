@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "include": ["/*"],
+  "exclude": [
+    "/_next/*",
+    "/api/*",
+    "/_vercel/*",
+    "/_next/static/*",
+    "/static/*",
+    "/public/*",
+    "/images/*"
+  ]
+}
