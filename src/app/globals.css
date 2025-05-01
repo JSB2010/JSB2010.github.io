@@ -52,12 +52,15 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
   --primary: oklch(0.65 0.25 240); /* Vibrant Blue - brighter */
+  --primary-rgb: 14, 165, 233; /* RGB equivalent for animations */
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.6 0.25 220); /* Lighter Blue */
+  --secondary-rgb: 59, 130, 246; /* RGB equivalent for animations */
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
   --accent: oklch(0.7 0.18 160); /* Green accent */
+  --accent-rgb: 16, 185, 129; /* RGB equivalent for animations */
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
@@ -86,12 +89,15 @@
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
   --primary: oklch(0.75 0.28 240); /* Brighter Vibrant Blue */
+  --primary-rgb: 56, 189, 248; /* RGB equivalent for animations */
   --primary-foreground: oklch(0.145 0 0);
   --secondary: oklch(0.7 0.28 220); /* Brighter Lighter Blue */
+  --secondary-rgb: 96, 165, 250; /* RGB equivalent for animations */
   --secondary-foreground: oklch(0.145 0 0);
   --muted: oklch(0.269 0 0);
   --muted-foreground: oklch(0.708 0 0);
   --accent: oklch(0.8 0.2 160); /* Brighter Green accent */
+  --accent-rgb: 52, 211, 153; /* RGB equivalent for animations */
   --accent-foreground: oklch(0.145 0 0);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);

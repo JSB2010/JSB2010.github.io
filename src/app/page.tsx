@@ -11,6 +11,13 @@ import {
   ArrowRight
 } from "lucide-react";
 
+// Import Aceternity UI components
+import { BackgroundGradient } from "@/components/ui/aceternity/background-gradient";
+import { MovingBorder } from "@/components/ui/aceternity/moving-border";
+import { Spotlight } from "@/components/ui/aceternity/spotlight";
+import { TextRevealCard } from "@/components/ui/aceternity/text-reveal-card";
+import { Meteors } from "@/components/ui/aceternity/meteors";
+
 export default function Home() {
   // Dynamic greeting based on time of day
   const getTimeGreeting = () => {
@@ -28,33 +35,37 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-background to-background/50 dark:from-background dark:to-background/80 z-10"></div>
         <div className="absolute inset-0 bg-[url('/images/mountains-bg.jpg')] bg-cover bg-center opacity-20 dark:opacity-10"></div>
 
-        {/* Animated particles for technology theme */}
-        <div className="absolute inset-0 z-0 overflow-hidden">
-          <div className="particle-1 animate-float"></div>
-          <div className="particle-2 animate-float"></div>
-          <div className="particle-3 animate-float"></div>
-          <div className="particle-4 animate-float"></div>
-          <div className="particle-5 animate-float"></div>
-        </div>
+        {/* Meteors animation */}
+        <Meteors number={15} className="z-0" />
+
+        <Spotlight className="absolute inset-0 z-0" />
 
         <div className="container relative z-20">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div className="flex flex-col gap-6 text-center md:text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mx-auto md:mx-0 w-fit">
-                <span className="relative flex h-3 w-3">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
-                </span>
-                {getTimeGreeting()}, welcome to my portfolio!
-              </div>
+              <MovingBorder
+                className="p-0.5"
+                containerClassName="rounded-full mx-auto md:mx-0 w-fit"
+                duration={3000}
+              >
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-background text-primary text-sm font-medium">
+                  <span className="relative flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+                  </span>
+                  {getTimeGreeting()}, welcome to my portfolio!
+                </div>
+              </MovingBorder>
 
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight gradient-text">
-                Jacob Barkin
-              </h1>
-
-              <p className="text-xl md:text-2xl text-muted-foreground">
-                Developer & Financial Education Advocate
-              </p>
+              <TextRevealCard
+                text="Jacob Barkin"
+                revealText="Developer & Advocate"
+                className="border-none shadow-none p-0 bg-transparent"
+              >
+                <p className="text-xl md:text-2xl text-muted-foreground mt-4">
+                  Developer & Financial Education Advocate
+                </p>
+              </TextRevealCard>
 
               <div className="flex flex-wrap gap-3 justify-center md:justify-start">
                 <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-sm flex items-center gap-1">
@@ -74,12 +85,14 @@ export default function Home() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 mt-2 justify-center md:justify-start">
-                <Button asChild size="lg" className="bg-primary hover:opacity-90 transition-opacity border-none">
-                  <Link href="/projects">
-                    <Code className="mr-2 h-5 w-5" />
-                    View My Projects
-                  </Link>
-                </Button>
+                <BackgroundGradient className="rounded-xl">
+                  <Button asChild size="lg" className="bg-primary hover:opacity-90 transition-opacity border-none">
+                    <Link href="/projects">
+                      <Code className="mr-2 h-5 w-5" />
+                      View My Projects
+                    </Link>
+                  </Button>
+                </BackgroundGradient>
                 <Button variant="outline" asChild size="lg" className="border-primary/20 hover:bg-primary/5">
                   <Link href="/about">
                     <User className="mr-2 h-5 w-5" />
@@ -161,184 +174,249 @@ export default function Home() {
             </div>
 
             <div className="flex justify-center md:justify-end">
-              <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden border-4 border-background shadow-xl">
-                <Image
-                  src="/images/Jacob City.png"
-                  alt="Jacob Barkin"
-                  fill
-                  className="object-cover"
-                  priority
-                />
-              </div>
+              <BackgroundGradient className="rounded-full">
+                <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden border-4 border-background shadow-xl">
+                  <Image
+                    src="/images/Jacob City.png"
+                    alt="Jacob Barkin"
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                </div>
+              </BackgroundGradient>
             </div>
           </div>
         </div>
       </section>
 
       {/* Interests Section */}
-      <section className="py-20 theme-technology">
-        {/* Animated blobs in background */}
-        <div className="blob blob-1 interests-blob-1"></div>
-        <div className="blob blob-2 interests-blob-2"></div>
-        <div className="blob blob-3 interests-blob-3"></div>
+      <section className="py-20 theme-technology relative overflow-hidden">
+        {/* Background effects */}
+        <Spotlight className="absolute inset-0 z-0" />
+        <Meteors number={10} className="z-0" />
 
         <div className="container relative z-10">
           <div className="flex flex-col items-center mb-12">
-            <h2 className="text-3xl font-bold tracking-tight mb-4 gradient-text">My Interests</h2>
-            <div className="h-1 w-20 bg-gradient-blue-green rounded-full"></div>
+            <TextRevealCard
+              text="My Interests"
+              revealText="Explore My Passions"
+              className="border-none shadow-none p-0 bg-transparent"
+            >
+              <div className="h-1 w-20 bg-gradient-blue-green rounded-full mx-auto mt-4"></div>
+            </TextRevealCard>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <Card className="card-modern md:col-span-1">
-              <CardContent className="pt-6">
-                <div className="flex flex-col items-center text-center">
-                  <div className="p-3 rounded-full bg-primary mb-4 text-white">
-                    <Laptop className="h-8 w-8" />
+            {/* Technology Card */}
+            <BackgroundGradient className="rounded-xl">
+              <Card className="border-0 bg-background/80 backdrop-blur-sm">
+                <CardContent className="pt-6">
+                  <div className="flex flex-col items-center text-center">
+                    <MovingBorder className="p-0.5" containerClassName="rounded-full mb-4">
+                      <div className="p-3 rounded-full bg-background text-primary">
+                        <Laptop className="h-8 w-8" />
+                      </div>
+                    </MovingBorder>
+                    <h3 className="text-xl font-semibold mb-2">Technology</h3>
+                    <p className="text-muted-foreground text-sm">
+                      Software development, accessibility, and creating technology that makes a difference.
+                    </p>
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">Technology</h3>
-                  <p className="text-muted-foreground text-sm">
-                    Software development, accessibility, and creating technology that makes a difference.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </BackgroundGradient>
 
-            <Card className="card-modern md:col-span-1">
-              <CardContent className="pt-6">
-                <div className="flex flex-col items-center text-center">
-                  <div className="p-3 rounded-full bg-primary mb-4 text-white">
-                    <LineChart className="h-8 w-8" />
+            {/* Finance Card */}
+            <BackgroundGradient className="rounded-xl">
+              <Card className="border-0 bg-background/80 backdrop-blur-sm">
+                <CardContent className="pt-6">
+                  <div className="flex flex-col items-center text-center">
+                    <MovingBorder className="p-0.5" containerClassName="rounded-full mb-4">
+                      <div className="p-3 rounded-full bg-background text-primary">
+                        <LineChart className="h-8 w-8" />
+                      </div>
+                    </MovingBorder>
+                    <h3 className="text-xl font-semibold mb-2">Finance</h3>
+                    <p className="text-muted-foreground text-sm">
+                      Empowering youth through financial literacy for a secure future.
+                    </p>
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">Finance</h3>
-                  <p className="text-muted-foreground text-sm">
-                    Empowering youth through financial literacy for a secure future.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </BackgroundGradient>
 
-            <Card className="card-modern md:col-span-1">
-              <CardContent className="pt-6">
-                <div className="flex flex-col items-center text-center">
-                  <div className="p-3 rounded-full bg-primary mb-4 text-white">
-                    <Train className="h-8 w-8" />
+            {/* Transit Card */}
+            <BackgroundGradient className="rounded-xl">
+              <Card className="border-0 bg-background/80 backdrop-blur-sm">
+                <CardContent className="pt-6">
+                  <div className="flex flex-col items-center text-center">
+                    <MovingBorder className="p-0.5" containerClassName="rounded-full mb-4">
+                      <div className="p-3 rounded-full bg-background text-primary">
+                        <Train className="h-8 w-8" />
+                      </div>
+                    </MovingBorder>
+                    <h3 className="text-xl font-semibold mb-2">Transit</h3>
+                    <p className="text-muted-foreground text-sm">
+                      Research and advocacy for improved public transit systems.
+                    </p>
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">Transit</h3>
-                  <p className="text-muted-foreground text-sm">
-                    Research and advocacy for improved public transit systems.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </BackgroundGradient>
 
-            <Card className="card-modern md:col-span-1">
-              <CardContent className="pt-6">
-                <div className="flex flex-col items-center text-center">
-                  <div className="p-3 rounded-full bg-primary mb-4 text-white">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="h-8 w-8"
-                    >
-                      <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" />
-                    </svg>
+            {/* Aviation Card */}
+            <BackgroundGradient className="rounded-xl">
+              <Card className="border-0 bg-background/80 backdrop-blur-sm">
+                <CardContent className="pt-6">
+                  <div className="flex flex-col items-center text-center">
+                    <MovingBorder className="p-0.5" containerClassName="rounded-full mb-4">
+                      <div className="p-3 rounded-full bg-background text-primary">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="h-8 w-8"
+                        >
+                          <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" />
+                        </svg>
+                      </div>
+                    </MovingBorder>
+                    <h3 className="text-xl font-semibold mb-2">Aviation</h3>
+                    <p className="text-muted-foreground text-sm">
+                      Fascination with aircraft, flight dynamics, and aerospace technology.
+                    </p>
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">Aviation</h3>
-                  <p className="text-muted-foreground text-sm">
-                    Fascination with aircraft, flight dynamics, and aerospace technology.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </BackgroundGradient>
           </div>
         </div>
       </section>
 
       {/* Featured Projects Section */}
-      <section className="py-20 theme-space">
-        {/* Animated blobs in background */}
-        <div className="blob blob-1"></div>
-        <div className="blob blob-2"></div>
-        <div className="blob blob-3"></div>
+      <section className="py-20 theme-space relative overflow-hidden">
+        {/* Background effects */}
+        <Spotlight className="absolute inset-0 z-0" />
+        <Meteors number={8} className="z-0" />
 
         <div className="container relative z-10">
           <div className="flex flex-col items-center mb-12">
-            <h2 className="text-3xl font-bold tracking-tight mb-4 gradient-text">Featured Projects</h2>
-            <div className="h-1 w-20 bg-gradient-blue-green rounded-full"></div>
+            <TextRevealCard
+              text="Featured Projects"
+              revealText="Explore My Work"
+              className="border-none shadow-none p-0 bg-transparent"
+            >
+              <div className="h-1 w-20 bg-gradient-blue-green rounded-full mx-auto mt-4"></div>
+            </TextRevealCard>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Ask The Kidz */}
             <Link href="https://www.askthekidz.com" target="_blank" rel="noopener noreferrer" className="block h-full">
-              <Card className="project-card">
-                <div className="project-card-image bg-gradient-to-r from-primary to-secondary">
-                  <LineChart className="project-card-icon h-20 w-20 text-white" />
-                </div>
-                <div className="project-card-content">
-                  <h3 className="project-card-title">Ask The Kidz</h3>
-                  <p className="text-muted-foreground">
-                    A platform dedicated to empowering youth through financial education, providing resources and guidance for building a secure financial future.
-                  </p>
-                  <div className="project-card-tags">
-                    <span className="project-card-tag bg-primary/10 text-primary">Financial Education</span>
-                    <span className="project-card-tag bg-secondary/10 text-secondary">Youth Empowerment</span>
+              <BackgroundGradient className="rounded-xl h-full">
+                <Card className="border-0 bg-background/80 backdrop-blur-sm h-full">
+                  <div className="relative h-48 overflow-hidden rounded-t-xl">
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
+                      <MovingBorder className="p-0.5" containerClassName="rounded-full">
+                        <div className="p-4 rounded-full bg-background text-primary">
+                          <LineChart className="h-12 w-12" />
+                        </div>
+                      </MovingBorder>
+                    </div>
                   </div>
-                </div>
-              </Card>
+                  <div className="p-6">
+                    <h3 className="text-xl font-semibold mb-3 text-foreground group-hover:text-primary transition-colors">
+                      Ask The Kidz
+                    </h3>
+                    <p className="text-muted-foreground mb-4">
+                      A platform dedicated to empowering youth through financial education, providing resources and guidance for building a secure financial future.
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs">Financial Education</span>
+                      <span className="px-3 py-1 rounded-full bg-secondary/10 text-secondary text-xs">Youth Empowerment</span>
+                    </div>
+                  </div>
+                </Card>
+              </BackgroundGradient>
             </Link>
 
+            {/* Public Transportation Research */}
             <Link href="/public-transportation" className="block h-full">
-              <Card className="project-card">
-                <div className="project-card-image bg-gradient-to-r from-primary/90 to-primary">
-                  <Train className="project-card-icon h-20 w-20 text-white" />
-                </div>
-                <div className="project-card-content">
-                  <h3 className="project-card-title">Public Transportation Research</h3>
-                  <p className="text-muted-foreground">
-                    Comprehensive research on public transportation systems in Colorado, focusing on accessibility improvements and sustainable solutions.
-                  </p>
-                  <div className="project-card-tags">
-                    <span className="project-card-tag bg-primary/10 text-primary">Research</span>
-                    <span className="project-card-tag bg-secondary/10 text-secondary">Accessibility</span>
-                    <span className="project-card-tag bg-green-500/10 text-green-500">Sustainability</span>
+              <BackgroundGradient className="rounded-xl h-full">
+                <Card className="border-0 bg-background/80 backdrop-blur-sm h-full">
+                  <div className="relative h-48 overflow-hidden rounded-t-xl">
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-primary flex items-center justify-center">
+                      <MovingBorder className="p-0.5" containerClassName="rounded-full">
+                        <div className="p-4 rounded-full bg-background text-primary">
+                          <Train className="h-12 w-12" />
+                        </div>
+                      </MovingBorder>
+                    </div>
                   </div>
-                </div>
-              </Card>
+                  <div className="p-6">
+                    <h3 className="text-xl font-semibold mb-3 text-foreground group-hover:text-primary transition-colors">
+                      Public Transportation Research
+                    </h3>
+                    <p className="text-muted-foreground mb-4">
+                      Comprehensive research on public transportation systems in Colorado, focusing on accessibility improvements and sustainable solutions.
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs">Research</span>
+                      <span className="px-3 py-1 rounded-full bg-secondary/10 text-secondary text-xs">Accessibility</span>
+                      <span className="px-3 py-1 rounded-full bg-green-500/10 text-green-500 text-xs">Sustainability</span>
+                    </div>
+                  </div>
+                </Card>
+              </BackgroundGradient>
             </Link>
 
+            {/* Portfolio Website */}
             <Link href="/projects" className="block h-full">
-              <Card className="project-card">
-                <div className="project-card-image bg-gradient-to-r from-secondary/90 to-primary/90">
-                  <Code className="project-card-icon h-20 w-20 text-white" />
-                </div>
-                <div className="project-card-content">
-                  <h3 className="project-card-title">Portfolio Website</h3>
-                  <p className="text-muted-foreground">
-                    A modern, responsive portfolio website showcasing my projects, skills, and interests with a focus on accessibility and user experience.
-                  </p>
-                  <div className="project-card-tags">
-                    <span className="project-card-tag bg-primary/10 text-primary">Next.js</span>
-                    <span className="project-card-tag bg-secondary/10 text-secondary">Tailwind CSS</span>
-                    <span className="project-card-tag bg-blue-500/10 text-blue-500">shadcn UI</span>
+              <BackgroundGradient className="rounded-xl h-full">
+                <Card className="border-0 bg-background/80 backdrop-blur-sm h-full">
+                  <div className="relative h-48 overflow-hidden rounded-t-xl">
+                    <div className="absolute inset-0 bg-gradient-to-r from-secondary/90 to-primary/90 flex items-center justify-center">
+                      <MovingBorder className="p-0.5" containerClassName="rounded-full">
+                        <div className="p-4 rounded-full bg-background text-primary">
+                          <Code className="h-12 w-12" />
+                        </div>
+                      </MovingBorder>
+                    </div>
                   </div>
-                </div>
-              </Card>
+                  <div className="p-6">
+                    <h3 className="text-xl font-semibold mb-3 text-foreground group-hover:text-primary transition-colors">
+                      Portfolio Website
+                    </h3>
+                    <p className="text-muted-foreground mb-4">
+                      A modern, responsive portfolio website showcasing my projects, skills, and interests with a focus on accessibility and user experience.
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs">Next.js</span>
+                      <span className="px-3 py-1 rounded-full bg-secondary/10 text-secondary text-xs">Tailwind CSS</span>
+                      <span className="px-3 py-1 rounded-full bg-blue-500/10 text-blue-500 text-xs">shadcn UI</span>
+                    </div>
+                  </div>
+                </Card>
+              </BackgroundGradient>
             </Link>
           </div>
 
           <div className="flex justify-center mt-12">
-            <Button asChild className="bg-primary hover:opacity-90 transition-opacity border-none">
-              <Link href="/projects" className="group">
-                View All Projects
-                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </Button>
+            <MovingBorder className="p-0.5 rounded-lg">
+              <Button asChild className="bg-primary hover:opacity-90 transition-opacity border-none">
+                <Link href="/projects" className="group">
+                  View All Projects
+                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </Button>
+            </MovingBorder>
           </div>
         </div>
       </section>

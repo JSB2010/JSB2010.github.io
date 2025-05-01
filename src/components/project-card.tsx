@@ -8,6 +8,9 @@ import Image from "next/image";
 import { ExternalLink, Star, GitFork, Clock } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { LanguageImage } from "./language-images";
+import { BackgroundGradient } from "@/components/ui/aceternity/background-gradient";
+import { MovingBorder } from "@/components/ui/aceternity/moving-border";
+import { ThreeDCard } from "@/components/ui/aceternity/3d-card";
 
 // We've moved language-specific styling to the language-images component
 
@@ -80,96 +83,109 @@ export function ProjectCard({ project }: Readonly<ProjectCardProps>) {
       rel="noopener noreferrer"
       className="block h-full group"
     >
-      <Card className="h-full hover:shadow-lg transition-all duration-300 overflow-hidden group project-card">
-        <div className="h-48 flex items-center justify-center relative overflow-hidden">
-          {image ? (
-            <Image
-              src={image}
-              alt={title}
-              fill
-              className="object-cover transition-transform duration-500 group-hover:scale-110"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            />
-          ) : (
-            getProjectImage()
-          )}
-
-          {/* Hover overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
-            <div className="p-4 text-white">
-              <span className="text-sm font-medium">View Project</span>
-            </div>
-          </div>
-        </div>
-
-        <CardContent className="pt-6">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-xl font-semibold group-hover:text-primary transition-colors line-clamp-1">
-              {title.charAt(0).toUpperCase() + title.slice(1).replace(/-/g, ' ')}
-            </h3>
-
-            <ExternalLink className="h-4 w-4 text-muted-foreground" />
-          </div>
-
-          {description && (
-            <p className="text-muted-foreground mb-4 line-clamp-2">
-              {description}
-            </p>
-          )}
-
-          {/* Topics as tags */}
-          {topics && topics.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-4">
-              {topics.slice(0, 3).map((topic) => (
-                <span key={topic} className="px-2 py-1 bg-muted text-muted-foreground rounded-md text-xs">
-                  {topic}
-                </span>
-              ))}
-              {topics.length > 3 && (
-                <span className="px-2 py-1 bg-muted text-muted-foreground rounded-md text-xs">
-                  +{topics.length - 3} more
-                </span>
+      <ThreeDCard
+        className="h-full w-full"
+        rotationIntensity={10}
+        glareOpacity={0.2}
+        glareSize={0.6}
+      >
+        <BackgroundGradient className="rounded-xl h-full">
+          <Card className="h-full border-0 bg-background/80 backdrop-blur-sm overflow-hidden group project-card">
+            <div className="h-48 flex items-center justify-center relative overflow-hidden">
+              {image ? (
+                <Image
+                  src={image}
+                  alt={title}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
+              ) : (
+                getProjectImage()
               )}
-            </div>
-          )}
 
-          {/* Repository stats */}
-          <div className="flex items-center justify-between text-sm text-muted-foreground mt-auto">
-            <div className="flex items-center gap-3">
-              {language && (
-                <div className="flex items-center gap-1.5">
-                  <span
-                    className="w-3 h-3 rounded-full bg-primary/20"
-                  />
-                  <span>{language}</span>
+              {/* Hover overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                <div className="p-4 text-white">
+                  <span className="text-sm font-medium flex items-center gap-1">
+                    <ExternalLink className="h-3 w-3" /> View Project
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-xl font-semibold group-hover:text-primary transition-colors line-clamp-1">
+                  {title.charAt(0).toUpperCase() + title.slice(1).replace(/-/g, ' ')}
+                </h3>
+
+                <ExternalLink className="h-4 w-4 text-muted-foreground" />
+              </div>
+
+              {description && (
+                <p className="text-muted-foreground mb-4 line-clamp-2">
+                  {description}
+                </p>
+              )}
+
+              {/* Topics as tags */}
+              {topics && topics.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {topics.slice(0, 3).map((topic) => (
+                    <MovingBorder key={topic} className="p-px" containerClassName="rounded-md" duration={5000}>
+                      <span className="px-2 py-1 bg-background text-primary rounded-md text-xs">
+                        {topic}
+                      </span>
+                    </MovingBorder>
+                  ))}
+                  {topics.length > 3 && (
+                    <span className="px-2 py-1 bg-muted text-muted-foreground rounded-md text-xs">
+                      +{topics.length - 3} more
+                    </span>
+                  )}
                 </div>
               )}
 
-              <div className="flex items-center gap-1">
-                <Star className="h-4 w-4" />
-                <span>{stars}</span>
+              {/* Repository stats */}
+              <div className="flex items-center justify-between text-sm text-muted-foreground mt-auto">
+                <div className="flex items-center gap-3">
+                  {language && (
+                    <div className="flex items-center gap-1.5">
+                      <span
+                        className="w-3 h-3 rounded-full bg-primary/20"
+                      />
+                      <span>{language}</span>
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-1">
+                    <Star className="h-4 w-4" />
+                    <span>{stars}</span>
+                  </div>
+
+                  <div className="flex items-center gap-1">
+                    <GitFork className="h-4 w-4" />
+                    <span>{forks}</span>
+                  </div>
+                </div>
+
+                {isArchived && (
+                  <Badge variant="outline" className="text-muted-foreground border-muted-foreground/30">
+                    Archived
+                  </Badge>
+                )}
               </div>
 
-              <div className="flex items-center gap-1">
-                <GitFork className="h-4 w-4" />
-                <span>{forks}</span>
+              {/* Updated time */}
+              <div className="flex items-center gap-1 mt-3 text-xs text-muted-foreground">
+                <Clock className="h-3.5 w-3.5" />
+                <span>Updated {updatedTimeAgo}</span>
               </div>
-            </div>
-
-            {isArchived && (
-              <Badge variant="outline" className="text-muted-foreground border-muted-foreground/30">
-                Archived
-              </Badge>
-            )}
-          </div>
-
-          {/* Updated time */}
-          <div className="flex items-center gap-1 mt-3 text-xs text-muted-foreground">
-            <Clock className="h-3.5 w-3.5" />
-            <span>Updated {updatedTimeAgo}</span>
-          </div>
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
+        </BackgroundGradient>
+      </ThreeDCard>
     </Link>
   );
 }
