@@ -81,7 +81,7 @@ export function ProjectCard({ project }: Readonly<ProjectCardProps>) {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="block h-full group"
+      className="block h-full w-full group"
     >
       <ThreeDCard
         className="h-full w-full"
@@ -114,7 +114,7 @@ export function ProjectCard({ project }: Readonly<ProjectCardProps>) {
               </div>
             </div>
 
-            <CardContent className="pt-6 flex flex-col h-64">
+            <CardContent className="pt-6 flex flex-col">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-xl font-semibold group-hover:text-primary transition-colors line-clamp-1">
                   {title.charAt(0).toUpperCase() + title.slice(1).replace(/-/g, ' ')}

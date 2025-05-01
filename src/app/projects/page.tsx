@@ -224,7 +224,7 @@ export default async function ProjectsPage() {
           </div>
 
           {githubProjects.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid-container">
               {githubProjects.map((project) => (
                 <GitHubProjectCard key={project.id} project={project} />
               ))}

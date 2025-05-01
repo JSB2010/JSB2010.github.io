@@ -64,11 +64,12 @@ export default function AboutPage() {
               <BackgroundGradient className="rounded-2xl h-full">
                 <div className="relative h-full w-full rounded-2xl overflow-hidden shadow-xl">
                   <Image
-                    src="/images/Jacob City.png"
+                    src="/images/jacob-profile.png"
                     alt="Jacob Barkin"
                     fill
                     className="object-cover"
                     priority
+                    sizes="(max-width: 768px) 100vw, 50vw"
                   />
                   <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent mix-blend-overlay"></div>
                 </div>
