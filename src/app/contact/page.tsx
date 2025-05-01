@@ -7,8 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Mail,
   Send,
-  GithubIcon,
-  LinkedinIcon
+  Github,
+  Linkedin
 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -20,15 +20,15 @@ export default function ContactPage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative py-20 overflow-hidden">
+      <section className="relative py-12 sm:py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-background to-background/50 dark:from-background dark:to-background/80 z-10"></div>
         <div className="absolute inset-0 bg-[url('/images/mountains-bg.jpg')] bg-cover bg-center opacity-20 dark:opacity-10"></div>
 
-        <div className="container relative z-20">
+        <div className="container relative z-20 px-4 sm:px-6">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">Get In Touch</h1>
-            <div className="h-1 w-20 bg-primary rounded-full mx-auto mb-8"></div>
-            <p className="text-xl text-muted-foreground">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 sm:mb-6">Get In Touch</h1>
+            <div className="h-1 w-16 sm:w-20 bg-primary rounded-full mx-auto mb-4 sm:mb-6 md:mb-8"></div>
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground">
               Have a question or want to collaborate? I'd love to hear from you!
             </p>
           </div>
@@ -36,21 +36,21 @@ export default function ContactPage() {
       </section>
 
       {/* Contact Form Section */}
-      <section className="py-16">
-        <div className="container">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <section className="py-10 sm:py-12 md:py-16">
+        <div className="container px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
             <div>
-              <h2 className="text-3xl font-bold mb-6">Send Me a Message</h2>
-              <p className="text-muted-foreground mb-8">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-6">Send Me a Message</h2>
+              <p className="text-sm sm:text-base text-muted-foreground mb-6 sm:mb-8">
                 Fill out the form below and I'll get back to you as soon as possible. I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision.
               </p>
 
               <ContactForm />
             </div>
 
-            <div>
-              <h2 className="text-3xl font-bold mb-6">Connect With Me</h2>
-              <p className="text-muted-foreground mb-8">
+            <div className="mt-8 lg:mt-0">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-6">Connect With Me</h2>
+              <p className="text-sm sm:text-base text-muted-foreground mb-6 sm:mb-8">
                 You can also reach out to me through these platforms or follow my work.
               </p>
 
@@ -65,7 +65,7 @@ export default function ContactPage() {
                 />
 
                 <ContactCard
-                  icon={<LinkedinIcon className="h-6 w-6" />}
+                  icon={<Linkedin className="h-6 w-6" />}
                   title="LinkedIn"
                   description="Connect with me professionally and stay updated on my career journey."
                   actionText="Connect on LinkedIn"
@@ -74,7 +74,7 @@ export default function ContactPage() {
                 />
 
                 <ContactCard
-                  icon={<GithubIcon className="h-6 w-6" />}
+                  icon={<Github className="h-6 w-6" />}
                   title="GitHub"
                   description="Check out my code repositories and development projects."
                   actionText="Follow on GitHub"
@@ -94,44 +94,64 @@ export default function ContactPage() {
 
 function ContactForm() {
   return (
-    <form className="space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <label htmlFor="name" className="text-sm font-medium">
+    <form className="space-y-4 sm:space-y-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+        <div className="space-y-1.5 sm:space-y-2">
+          <label htmlFor="name" className="text-xs sm:text-sm font-medium">
             Name
           </label>
-          <Input id="name" placeholder="Your name" required />
+          <Input
+            id="name"
+            placeholder="Your name"
+            required
+            className="h-9 sm:h-10 text-sm"
+          />
         </div>
 
-        <div className="space-y-2">
-          <label htmlFor="email" className="text-sm font-medium">
+        <div className="space-y-1.5 sm:space-y-2">
+          <label htmlFor="email" className="text-xs sm:text-sm font-medium">
             Email
           </label>
-          <Input id="email" type="email" placeholder="Your email" required />
+          <Input
+            id="email"
+            type="email"
+            placeholder="Your email"
+            required
+            className="h-9 sm:h-10 text-sm"
+          />
         </div>
       </div>
 
-      <div className="space-y-2">
-        <label htmlFor="subject" className="text-sm font-medium">
+      <div className="space-y-1.5 sm:space-y-2">
+        <label htmlFor="subject" className="text-xs sm:text-sm font-medium">
           Subject
         </label>
-        <Input id="subject" placeholder="What's this about?" required />
+        <Input
+          id="subject"
+          placeholder="What's this about?"
+          required
+          className="h-9 sm:h-10 text-sm"
+        />
       </div>
 
-      <div className="space-y-2">
-        <label htmlFor="message" className="text-sm font-medium">
+      <div className="space-y-1.5 sm:space-y-2">
+        <label htmlFor="message" className="text-xs sm:text-sm font-medium">
           Message
         </label>
         <Textarea
           id="message"
           placeholder="Your message..."
-          rows={6}
+          rows={5}
           required
+          className="min-h-[100px] sm:min-h-[120px] text-sm"
         />
       </div>
 
-      <Button type="submit" className="w-full sm:w-auto">
-        <Send className="mr-2 h-4 w-4" />
+      <Button
+        type="submit"
+        className="w-full sm:w-auto h-9 sm:h-10 text-sm"
+      >
+        <Send className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
         Send Message
       </Button>
     </form>
@@ -155,19 +175,28 @@ function ContactCard({
 }>) {
   return (
     <Card className="overflow-hidden">
-      <div className={`h-2 bg-gradient-to-r ${gradient}`}></div>
-      <CardContent className="pt-6">
-        <div className="flex items-start gap-4">
-          <div className="p-3 rounded-full bg-primary/10 text-primary">
+      <div className={`h-1.5 sm:h-2 bg-gradient-to-r ${gradient}`}></div>
+      <CardContent className="pt-4 sm:pt-6 p-4 sm:p-6">
+        <div className="flex items-start gap-3 sm:gap-4">
+          <div className="p-2 sm:p-3 rounded-full bg-primary/10 text-primary">
             {icon}
           </div>
 
           <div className="flex-1">
-            <h3 className="font-semibold mb-1">{title}</h3>
-            <p className="text-sm text-muted-foreground mb-4">{description}</p>
+            <h3 className="text-sm sm:text-base font-semibold mb-0.5 sm:mb-1">{title}</h3>
+            <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4">{description}</p>
 
-            <Button asChild variant="outline" size="sm">
-              <Link href={actionLink} target={actionLink.startsWith('http') ? "_blank" : undefined} rel={actionLink.startsWith('http') ? "noopener noreferrer" : undefined}>
+            <Button
+              asChild
+              variant="outline"
+              size="sm"
+              className="h-8 sm:h-9 text-xs sm:text-sm"
+            >
+              <Link
+                href={actionLink}
+                target={actionLink.startsWith('http') ? "_blank" : undefined}
+                rel={actionLink.startsWith('http') ? "noopener noreferrer" : undefined}
+              >
                 {actionText}
               </Link>
             </Button>

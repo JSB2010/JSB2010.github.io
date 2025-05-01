@@ -103,7 +103,7 @@ export default async function ProjectsPage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative py-24 overflow-hidden">
+      <section className="relative py-12 sm:py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-background to-background/50 dark:from-background dark:to-background/80 z-10"></div>
         <div className="absolute inset-0 bg-[url('/images/mountains-bg.jpg')] bg-cover bg-center opacity-20 dark:opacity-10"></div>
 
@@ -114,17 +114,17 @@ export default async function ProjectsPage() {
           <div className="particle-3 animate-float"></div>
         </div>
 
-        <div className="container relative z-20">
+        <div className="container relative z-20 px-4 sm:px-6">
           <div className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mx-auto mb-6">
-              <span className="relative flex h-3 w-3">
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-primary/10 text-primary text-xs sm:text-sm font-medium mx-auto mb-4 sm:mb-6">
+              <span className="relative flex h-2.5 sm:h-3 w-2.5 sm:w-3">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+                <span className="relative inline-flex rounded-full h-2.5 sm:h-3 w-2.5 sm:w-3 bg-primary"></span>
               </span>
-              <span className="ml-2">Portfolio Showcase</span>
+              <span className="ml-1 sm:ml-2">Portfolio Showcase</span>
             </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 gradient-text">My Projects</h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4 sm:mb-6 gradient-text">My Projects</h1>
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
               Explore my work across technology, financial education, and public transportation research.
             </p>
           </div>
@@ -132,22 +132,22 @@ export default async function ProjectsPage() {
       </section>
 
       {/* Project Categories Navigation */}
-      <section className="py-8 border-b border-border/40 sticky top-0 bg-background/80 backdrop-blur-md z-30">
-        <div className="container">
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            <Button variant="ghost" className="rounded-full" size="sm">
+      <section className="py-4 sm:py-6 md:py-8 border-b border-border/40 sticky top-0 bg-background/80 backdrop-blur-md z-30">
+        <div className="container px-2 sm:px-4">
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 md:gap-4">
+            <Button variant="ghost" className="rounded-full text-xs sm:text-sm h-8 sm:h-9" size="sm">
               All Projects
             </Button>
-            <Button variant="ghost" className="rounded-full" size="sm">
+            <Button variant="ghost" className="rounded-full text-xs sm:text-sm h-8 sm:h-9" size="sm">
               Featured
             </Button>
-            <Button variant="ghost" className="rounded-full" size="sm">
+            <Button variant="ghost" className="rounded-full text-xs sm:text-sm h-8 sm:h-9" size="sm">
               GitHub
             </Button>
-            <Button variant="ghost" className="rounded-full" size="sm">
+            <Button variant="ghost" className="rounded-full text-xs sm:text-sm h-8 sm:h-9" size="sm">
               Web Development
             </Button>
-            <Button variant="ghost" className="rounded-full" size="sm">
+            <Button variant="ghost" className="rounded-full text-xs sm:text-sm h-8 sm:h-9" size="sm">
               Research
             </Button>
           </div>
@@ -155,16 +155,16 @@ export default async function ProjectsPage() {
       </section>
 
       {/* Featured Projects */}
-      <section className="py-20">
-        <div className="container">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-12">
+      <section className="py-10 sm:py-14 md:py-20">
+        <div className="container px-4 sm:px-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 sm:gap-4 mb-8 sm:mb-10 md:mb-12">
             <div>
-              <h2 className="text-3xl font-bold">Featured Projects</h2>
-              <p className="text-muted-foreground mt-2">Highlighted work and major initiatives</p>
+              <h2 className="text-2xl sm:text-3xl font-bold">Featured Projects</h2>
+              <p className="text-sm sm:text-base text-muted-foreground mt-1 sm:mt-2">Highlighted work and major initiatives</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
             {featuredProjects.map((project) => (
               <ProjectCard key={project.id} project={project} />
             ))}
@@ -174,16 +174,16 @@ export default async function ProjectsPage() {
 
       {/* Other Projects */}
       {otherProjects.length > 0 && (
-        <section className="py-20 bg-muted/30">
-          <div className="container">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-12">
+        <section className="py-10 sm:py-14 md:py-20 bg-muted/30">
+          <div className="container px-4 sm:px-6">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 sm:gap-4 mb-8 sm:mb-10 md:mb-12">
               <div>
-                <h2 className="text-3xl font-bold">Other Projects</h2>
-                <p className="text-muted-foreground mt-2">Additional work and smaller initiatives</p>
+                <h2 className="text-2xl sm:text-3xl font-bold">Other Projects</h2>
+                <p className="text-sm sm:text-base text-muted-foreground mt-1 sm:mt-2">Additional work and smaller initiatives</p>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
               {otherProjects.map((project) => (
                 <ProjectCard key={project.id} project={project} />
               ))}
@@ -193,27 +193,31 @@ export default async function ProjectsPage() {
       )}
 
       {/* GitHub Projects */}
-      <section className="py-20">
-        <div className="container">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-12">
+      <section className="py-10 sm:py-14 md:py-20">
+        <div className="container px-4 sm:px-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 sm:gap-4 mb-8 sm:mb-10 md:mb-12">
             <div>
-              <h2 className="text-3xl font-bold">GitHub Projects</h2>
-              <p className="text-muted-foreground mt-2">Open source contributions and personal repositories</p>
+              <h2 className="text-2xl sm:text-3xl font-bold">GitHub Projects</h2>
+              <p className="text-sm sm:text-base text-muted-foreground mt-1 sm:mt-2">Open source contributions and personal repositories</p>
             </div>
 
-            <Button asChild variant="outline" className="border-primary/20 hover:bg-primary/5">
+            <Button
+              asChild
+              variant="outline"
+              className="border-primary/20 hover:bg-primary/5 text-xs sm:text-sm h-9 sm:h-10 mt-3 md:mt-0"
+            >
               <Link href="https://github.com/JSB2010" target="_blank" rel="noopener noreferrer">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
+                  width="16"
+                  height="16"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="mr-2 h-5 w-5"
+                  className="mr-1.5 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5"
                 >
                   <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path>
                   <path d="M9 18c-4.51 2-5-2-7-2"></path>
@@ -289,7 +293,7 @@ function ProjectCard({ project }: Readonly<{ project: any }>) {
       className="block h-full group"
     >
       <Card className="h-full hover:shadow-lg transition-all duration-300 overflow-hidden group project-card">
-        <div className={`h-48 bg-gradient-to-r ${project.gradient} flex items-center justify-center relative overflow-hidden`}>
+        <div className={`h-36 sm:h-40 md:h-48 bg-gradient-to-r ${project.gradient} flex items-center justify-center relative overflow-hidden`}>
           {project.image ? (
             <Image
               src={project.image}
@@ -297,54 +301,56 @@ function ProjectCard({ project }: Readonly<{ project: any }>) {
               width={300}
               height={200}
               className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
+              loading="lazy"
+              sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
             />
           ) : (
-            <div className="transition-transform duration-300 group-hover:scale-110">
+            <div className="transition-transform duration-300 group-hover:scale-110 scale-75 sm:scale-90 md:scale-100">
               {project.icon}
             </div>
           )}
 
           {/* Hover overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
-            <div className="p-4 text-white">
-              <span className="text-sm font-medium">View Project</span>
+            <div className="p-3 sm:p-4 text-white">
+              <span className="text-xs sm:text-sm font-medium">View Project</span>
             </div>
           </div>
         </div>
 
-        <CardContent className="pt-6">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-xl font-semibold group-hover:text-primary transition-colors">{project.title}</h3>
+        <CardContent className="pt-4 sm:pt-6 p-4 sm:p-6">
+          <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+            <h3 className="text-lg sm:text-xl font-semibold group-hover:text-primary transition-colors">{project.title}</h3>
             {project.link.startsWith('http') && (
-              <ExternalLink className="h-4 w-4 text-muted-foreground" />
+              <ExternalLink className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground flex-shrink-0 ml-2" />
             )}
           </div>
 
-          <p className="text-muted-foreground mb-4 line-clamp-2">
+          <p className="text-sm text-muted-foreground mb-3 sm:mb-4 line-clamp-2">
             {project.description}
           </p>
 
-          <div className="flex flex-wrap gap-2 mb-4">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-3 sm:mb-4">
             {project.tags.map((tag: string) => (
-              <span key={tag} className="px-2 py-1 bg-muted text-muted-foreground rounded-md text-xs">
+              <span key={tag} className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-muted text-muted-foreground rounded-md text-xs">
                 {tag}
               </span>
             ))}
           </div>
 
           {project.github && (
-            <div className="flex items-center text-sm text-muted-foreground mt-auto">
+            <div className="flex items-center text-xs sm:text-sm text-muted-foreground mt-auto">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
+                width="14"
+                height="14"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="mr-2"
+                className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4"
               >
                 <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path>
                 <path d="M9 18c-4.51 2-5-2-7-2"></path>

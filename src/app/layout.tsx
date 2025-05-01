@@ -15,6 +15,9 @@ export const viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
+  minimumScale: 1,
+  userScalable: true,
+  viewportFit: "cover",
   themeColor: "#3b82f6",
 };
 
@@ -94,7 +97,7 @@ export default function RootLayout({
         >
           <div className="relative flex min-h-screen flex-col">
             <Header />
-            <main className="flex-1 w-full mx-auto">{children}</main>
+            <main className="flex-1 w-full mx-auto px-4 sm:px-6 lg:px-8">{children}</main>
             <Footer />
           </div>
           <JsonLd />

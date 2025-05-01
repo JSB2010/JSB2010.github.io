@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 
 const navItems = [
@@ -25,16 +25,17 @@ export default function Header() {
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center space-x-2 group">
-            <div className="w-10 h-10 overflow-hidden transition-transform group-hover:scale-110">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 overflow-hidden transition-transform group-hover:scale-110">
               <Image
                 src="/images/Updated logo.png"
                 alt="Jacob Barkin Logo"
                 width={40}
                 height={40}
                 className="object-contain"
+                priority
               />
             </div>
-            <span className="font-bold text-xl gradient-text">Jacob Barkin</span>
+            <span className="font-bold text-lg sm:text-xl gradient-text">Jacob Barkin</span>
           </Link>
         </div>
 
@@ -60,14 +61,25 @@ export default function Header() {
         </nav>
 
         {/* Mobile Navigation */}
-        <Sheet>
+        <Sheet defaultOpen={false}>
           <SheetTrigger asChild className="md:hidden">
-            <Button variant="outline" size="icon" className="border-primary/20 hover:bg-primary/5">
+            <Button
+              variant="outline"
+              size="icon"
+              className="border-primary/20 hover:bg-primary/5 h-10 w-10 rounded-full"
+              aria-label="Open menu"
+            >
               <Menu className="h-5 w-5" />
               <span className="sr-only">Toggle menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="border-l-primary/20">
+          <SheetContent
+            side="right"
+            className="border-l-primary/20 w-[280px] sm:w-[350px]"
+            aria-label="Navigation Menu"
+          >
+            <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+            <SheetDescription className="sr-only">Navigation links for Jacob Barkin's website</SheetDescription>
             <div className="flex items-center gap-2 mb-8">
               <div className="w-10 h-10 overflow-hidden">
                 <Image
@@ -76,25 +88,30 @@ export default function Header() {
                   width={40}
                   height={40}
                   className="object-contain"
+                  priority
                 />
               </div>
               <span className="font-bold text-xl gradient-text">Jacob Barkin</span>
             </div>
-            <nav className="flex flex-col gap-4">
+            <nav className="flex flex-col gap-2">
               {navItems.map((item) => (
                 <Link
                   key={item.path}
                   href={item.path}
-                  className={`text-sm font-medium transition-all hover:text-primary p-2 rounded-md ${
+                  className={`flex items-center text-base font-medium transition-all hover:text-primary p-3 rounded-md ${
                     pathname === item.path
-                      ? "text-primary bg-primary/10"
+                      ? "text-primary bg-primary/10 font-semibold"
                       : "text-muted-foreground hover:bg-muted/50"
                   }`}
                 >
                   {item.name}
+                  {pathname === item.path && (
+                    <div className="ml-2 h-1.5 w-1.5 rounded-full bg-primary"></div>
+                  )}
                 </Link>
               ))}
-              <div className="mt-4 pt-4 border-t">
+              <div className="mt-6 pt-6 border-t flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Switch theme</span>
                 <ThemeToggle />
               </div>
             </nav>

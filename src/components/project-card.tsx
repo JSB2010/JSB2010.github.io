@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProjectCard as ProjectCardType } from "@/lib/github";
@@ -37,6 +38,25 @@ export function ProjectCard({ project }: Readonly<ProjectCardProps>) {
     topics,
     isArchived,
   } = project;
+
+  // State to track if we're on a small screen
+  const [isSmallScreen, setIsSmallScreen] = React.useState(false);
+
+  // Effect to check screen size
+  React.useEffect(() => {
+    const checkScreenSize = () => {
+      setIsSmallScreen(window.innerWidth < 640);
+    };
+
+    // Initial check
+    checkScreenSize();
+
+    // Add event listener for resize
+    window.addEventListener('resize', checkScreenSize);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   // Format the updated date
   const updatedTimeAgo = formatDistanceToNow(new Date(updatedAt), { addSuffix: true });
@@ -85,20 +105,22 @@ export function ProjectCard({ project }: Readonly<ProjectCardProps>) {
     >
       <ThreeDCard
         className="h-full w-full"
-        rotationIntensity={10}
+        rotationIntensity={5} /* Reduced for better mobile experience */
         glareOpacity={0.2}
         glareSize={0.6}
+        disabled={isSmallScreen} /* Disable 3D effect on mobile */
       >
         <BackgroundGradient className="rounded-xl h-full">
           <Card className="h-full border-0 bg-background/80 backdrop-blur-sm overflow-hidden group project-card">
-            <div className="h-48 flex items-center justify-center relative overflow-hidden">
+            <div className="h-40 sm:h-48 flex items-center justify-center relative overflow-hidden">
               {image ? (
                 <Image
                   src={image}
                   alt={title}
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-110"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  loading="lazy"
                 />
               ) : (
                 getProjectImage()
@@ -114,76 +136,76 @@ export function ProjectCard({ project }: Readonly<ProjectCardProps>) {
               </div>
             </div>
 
-            <CardContent className="pt-6 flex flex-col">
+            <CardContent className="pt-4 sm:pt-6 flex flex-col p-4 sm:p-6">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-xl font-semibold group-hover:text-primary transition-colors line-clamp-1">
+                <h3 className="text-lg sm:text-xl font-semibold group-hover:text-primary transition-colors line-clamp-1">
                   {title.charAt(0).toUpperCase() + title.slice(1).replace(/-/g, ' ')}
                 </h3>
 
-                <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                <ExternalLink className="h-4 w-4 text-muted-foreground flex-shrink-0 ml-2" />
               </div>
 
-              <div className="min-h-[3rem] mb-4">
+              <div className="min-h-[2.5rem] sm:min-h-[3rem] mb-3 sm:mb-4">
                 {description ? (
-                  <p className="text-muted-foreground line-clamp-2">
+                  <p className="text-sm sm:text-base text-muted-foreground line-clamp-2">
                     {description}
                   </p>
                 ) : (
-                  <p className="text-muted-foreground/50 italic">No description available</p>
+                  <p className="text-sm sm:text-base text-muted-foreground/50 italic">No description available</p>
                 )}
               </div>
 
               {/* Topics as tags */}
               {topics && topics.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {topics.slice(0, 3).map((topic) => (
+                <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-3 sm:mb-4">
+                  {topics.slice(0, isSmallScreen ? 2 : 3).map((topic) => (
                     <MovingBorder key={topic} className="p-px" containerClassName="rounded-md" duration={5000}>
-                      <span className="px-2 py-1 bg-background text-primary rounded-md text-xs">
+                      <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-background text-primary rounded-md text-xs">
                         {topic}
                       </span>
                     </MovingBorder>
                   ))}
-                  {topics.length > 3 && (
-                    <span className="px-2 py-1 bg-muted text-muted-foreground rounded-md text-xs">
-                      +{topics.length - 3} more
+                  {topics.length > (isSmallScreen ? 2 : 3) && (
+                    <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-muted text-muted-foreground rounded-md text-xs">
+                      +{topics.length - (isSmallScreen ? 2 : 3)} more
                     </span>
                   )}
                 </div>
               )}
 
               {/* Repository stats */}
-              <div className="flex items-center justify-between text-sm text-muted-foreground mt-auto">
-                <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center justify-between text-xs sm:text-sm text-muted-foreground mt-auto flex-wrap">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                   {language && (
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1 sm:gap-1.5">
                       <span
-                        className="w-3 h-3 rounded-full bg-primary/20"
+                        className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-primary/20"
                       />
-                      <span className="truncate max-w-[80px]">{language}</span>
+                      <span className="truncate max-w-[70px] sm:max-w-[80px]">{language}</span>
                     </div>
                   )}
 
                   <div className="flex items-center gap-1">
-                    <Star className="h-4 w-4" />
+                    <Star className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     <span>{stars}</span>
                   </div>
 
                   <div className="flex items-center gap-1">
-                    <GitFork className="h-4 w-4" />
+                    <GitFork className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     <span>{forks}</span>
                   </div>
                 </div>
 
                 {isArchived && (
-                  <Badge variant="outline" className="text-muted-foreground border-muted-foreground/30">
+                  <Badge variant="outline" className="text-muted-foreground border-muted-foreground/30 text-xs">
                     Archived
                   </Badge>
                 )}
               </div>
 
               {/* Updated time */}
-              <div className="flex items-center gap-1 mt-3 text-xs text-muted-foreground">
-                <Clock className="h-3.5 w-3.5" />
+              <div className="flex items-center gap-1 mt-2 sm:mt-3 text-xs text-muted-foreground">
+                <Clock className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                 <span>Updated {updatedTimeAgo}</span>
               </div>
             </CardContent>
