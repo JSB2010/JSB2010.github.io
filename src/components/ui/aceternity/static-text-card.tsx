@@ -7,10 +7,14 @@ export const StaticTextCard = ({
   text,
   children,
   className,
+  gradientText = false,
+  textSize = "text-2xl",
 }: {
   text: string;
   children?: React.ReactNode;
   className?: string;
+  gradientText?: boolean;
+  textSize?: string;
 }) => {
   return (
     <div
@@ -20,7 +24,14 @@ export const StaticTextCard = ({
       )}
     >
       <div className="relative z-10">
-        <div className="text-2xl font-bold text-foreground">{text}</div>
+        <div className={cn(
+          textSize, "font-bold",
+          gradientText
+            ? "gradient-text"
+            : "text-foreground"
+        )}>
+          {text}
+        </div>
         {children}
       </div>
     </div>

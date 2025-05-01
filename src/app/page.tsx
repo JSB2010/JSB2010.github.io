@@ -56,8 +56,10 @@ export default function Home() {
               <StaticTextCard
                 text="Jacob Barkin"
                 className="border-none shadow-none p-0 bg-transparent"
+                gradientText={true}
+                textSize="text-4xl md:text-5xl"
               >
-                <p className="text-xl md:text-2xl text-muted-foreground mt-4">
+                <p className="text-xl md:text-2xl text-muted-foreground mt-6">
                   Developer & Financial Education Advocate
                 </p>
               </StaticTextCard>
