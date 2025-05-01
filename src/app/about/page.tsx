@@ -20,7 +20,6 @@ import { BackgroundGradient } from "@/components/ui/aceternity/background-gradie
 import { MovingBorder } from "@/components/ui/aceternity/moving-border";
 import { Spotlight } from "@/components/ui/aceternity/spotlight";
 import { TextRevealCard } from "@/components/ui/aceternity/text-reveal-card";
-import { Meteors } from "@/components/ui/aceternity/meteors";
 import { ThreeDCard } from "@/components/ui/aceternity/3d-card";
 
 export const metadata: Metadata = {
@@ -69,6 +68,7 @@ export default function AboutPage() {
                     alt="Jacob Barkin"
                     fill
                     className="object-cover"
+                    priority
                   />
                   <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent mix-blend-overlay"></div>
                 </div>
@@ -98,7 +98,7 @@ export default function AboutPage() {
             </div>
           </div>
         </div>
-        <Meteors number={10} className="opacity-30" />
+
       </section>
 
       {/* Education Section */}
@@ -160,7 +160,6 @@ export default function AboutPage() {
       {/* Skills Section */}
       <section className="py-16 relative overflow-hidden">
         <Spotlight className="hidden md:block" />
-        <Meteors number={8} className="opacity-30" />
 
         <div className="container relative z-10">
           <TextRevealCard

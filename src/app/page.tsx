@@ -15,7 +15,6 @@ import {
 import { BackgroundGradient } from "@/components/ui/aceternity/background-gradient";
 import { MovingBorder } from "@/components/ui/aceternity/moving-border";
 import { TextRevealCard } from "@/components/ui/aceternity/text-reveal-card";
-import { Meteors } from "@/components/ui/aceternity/meteors";
 
 export default function Home() {
   // Dynamic greeting based on time of day
@@ -34,8 +33,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-background to-background/50 dark:from-background dark:to-background/80 z-10"></div>
         <div className="absolute inset-0 bg-[url('/images/mountains-bg.jpg')] bg-cover bg-center opacity-20 dark:opacity-10"></div>
 
-        {/* Meteors animation */}
-        <Meteors number={15} className="z-0" />
+
 
         <div className="container relative z-20">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
@@ -189,8 +187,7 @@ export default function Home() {
 
       {/* Interests Section */}
       <section className="py-20 theme-technology relative overflow-hidden">
-        {/* Background effects */}
-        <Meteors number={10} className="z-0" />
+
 
         <div className="container relative z-10">
           <div className="flex flex-col items-center mb-12">
@@ -298,8 +295,7 @@ export default function Home() {
 
       {/* Featured Projects Section */}
       <section className="py-20 theme-space relative overflow-hidden">
-        {/* Background effects */}
-        <Meteors number={8} className="z-0" />
+
 
         <div className="container relative z-10">
           <div className="flex flex-col items-center mb-12">
