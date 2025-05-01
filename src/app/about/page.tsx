@@ -62,14 +62,14 @@ export default function AboutPage() {
               glareSize={0.6}
             >
               <BackgroundGradient className="rounded-2xl h-full">
-                <div className="relative h-full w-full rounded-2xl overflow-hidden shadow-xl">
+                <div className="relative h-full w-full rounded-2xl overflow-hidden shadow-xl flex items-center justify-center">
                   <Image
-                    src="/images/jacob-profile.png"
+                    src="/images/Jacob City.png"
                     alt="Jacob Barkin"
-                    fill
-                    className="object-cover"
+                    width={400}
+                    height={400}
+                    className="object-cover w-full h-full"
                     priority
-                    sizes="(max-width: 768px) 100vw, 50vw"
                   />
                   <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent mix-blend-overlay"></div>
                 </div>
