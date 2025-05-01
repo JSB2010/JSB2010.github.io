@@ -148,7 +148,14 @@ This project uses Firebase for backend functionality. Follow these steps to set 
    firebase deploy --only functions
    ```
 
-6. Update `.env.local` with your Firebase configuration (use `.env.local.example` as a template)
+6. Update `.env.local` with your Firebase configuration (use `.env.example` as a template)
+
+7. **Important: Securing Firebase API Keys**
+   - Firebase API keys for client-side code are designed to be public, but should still be protected
+   - This project uses environment variables to store Firebase configuration
+   - The `.env.local` file is included in `.gitignore` to prevent committing API keys to the repository
+   - For production, add these environment variables to your hosting platform (Cloudflare Pages)
+   - See the Deployment section for instructions on adding environment variables to Cloudflare Pages
 
 ## Deployment
 
@@ -165,7 +172,11 @@ npm run build
    - Build command: `npm run build`
    - Build output directory: `out`
    - Node.js version: 20.x or later
-   - Environment variables: Add your Firebase configuration variables
+   - Environment variables: Add your Firebase configuration variables from `.env.local` to Cloudflare Pages environment variables:
+     - Go to your Cloudflare Pages project
+     - Navigate to Settings > Environment variables
+     - Add each variable from `.env.local` as a production environment variable
+     - Make sure to add all the `NEXT_PUBLIC_FIREBASE_*` variables
 
 Alternatively, you can deploy to any platform that supports static sites, such as GitHub Pages, Netlify, or Vercel.
 
