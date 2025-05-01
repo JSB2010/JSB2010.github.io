@@ -11,6 +11,12 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
+
 export const metadata: Metadata = {
   title: {
     default: "Jacob Barkin | Developer & Financial Education Advocate",
@@ -46,13 +52,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     type: "website",
   },
-  twitter: {
-    card: "summary_large_image",
-    title: "Jacob Barkin | Developer & Financial Education Advocate",
-    description: "Developer, financial education advocate, and technology enthusiast. Explore my projects, interests, and professional journey.",
-    images: ["/images/Updated logo.png"],
-    creator: "@JacobBarkin",
-  },
+
   robots: {
     index: true,
     follow: true,
@@ -64,11 +64,7 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 5,
-  },
+
   verification: {
     google: "verification_token",
   },
@@ -84,6 +80,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/images/Updated logo.png" sizes="any" />
+        <link rel="manifest" href="/manifest.webmanifest" />
+        <link rel="apple-touch-icon" href="/images/Updated logo.png" />
+        <meta name="theme-color" content="#3b82f6" />
       </head>
       <body className={`${inter.variable} antialiased min-h-screen bg-background`}>
         <ThemeProvider
