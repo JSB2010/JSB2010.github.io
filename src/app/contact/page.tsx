@@ -2,13 +2,11 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { ContactForm } from "@/components/contact/contact-form";
 import {
   Mail,
-  Send,
-  Github,
-  Linkedin
+  Github as GitHubIcon,
+  Linkedin as LinkedInIcon
 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -65,7 +63,7 @@ export default function ContactPage() {
                 />
 
                 <ContactCard
-                  icon={<Linkedin className="h-6 w-6" />}
+                  icon={<LinkedInIcon className="h-6 w-6" />}
                   title="LinkedIn"
                   description="Connect with me professionally and stay updated on my career journey."
                   actionText="Connect on LinkedIn"
@@ -74,7 +72,7 @@ export default function ContactPage() {
                 />
 
                 <ContactCard
-                  icon={<Github className="h-6 w-6" />}
+                  icon={<GitHubIcon className="h-6 w-6" />}
                   title="GitHub"
                   description="Check out my code repositories and development projects."
                   actionText="Follow on GitHub"
@@ -92,71 +90,7 @@ export default function ContactPage() {
   );
 }
 
-function ContactForm() {
-  return (
-    <form className="space-y-4 sm:space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-        <div className="space-y-1.5 sm:space-y-2">
-          <label htmlFor="name" className="text-xs sm:text-sm font-medium">
-            Name
-          </label>
-          <Input
-            id="name"
-            placeholder="Your name"
-            required
-            className="h-9 sm:h-10 text-sm"
-          />
-        </div>
 
-        <div className="space-y-1.5 sm:space-y-2">
-          <label htmlFor="email" className="text-xs sm:text-sm font-medium">
-            Email
-          </label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="Your email"
-            required
-            className="h-9 sm:h-10 text-sm"
-          />
-        </div>
-      </div>
-
-      <div className="space-y-1.5 sm:space-y-2">
-        <label htmlFor="subject" className="text-xs sm:text-sm font-medium">
-          Subject
-        </label>
-        <Input
-          id="subject"
-          placeholder="What's this about?"
-          required
-          className="h-9 sm:h-10 text-sm"
-        />
-      </div>
-
-      <div className="space-y-1.5 sm:space-y-2">
-        <label htmlFor="message" className="text-xs sm:text-sm font-medium">
-          Message
-        </label>
-        <Textarea
-          id="message"
-          placeholder="Your message..."
-          rows={5}
-          required
-          className="min-h-[100px] sm:min-h-[120px] text-sm"
-        />
-      </div>
-
-      <Button
-        type="submit"
-        className="w-full sm:w-auto h-9 sm:h-10 text-sm"
-      >
-        <Send className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
-        Send Message
-      </Button>
-    </form>
-  );
-}
 
 function ContactCard({
   icon,

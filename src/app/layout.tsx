@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { FirebaseProvider } from "@/components/firebase/firebase-provider";
+import { AuthProvider } from "@/components/auth/auth-provider";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import JsonLd from "@/components/json-ld";
@@ -73,6 +75,11 @@ export const metadata: Metadata = {
     google: "verification_token",
   },
   category: "technology",
+  icons: {
+    icon: "/images/Updated logo.png",
+    shortcut: "/images/Updated logo.png",
+    apple: "/images/Updated logo.png",
+  },
 };
 
 export default function RootLayout({
@@ -85,7 +92,6 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/images/Updated logo.png" sizes="any" />
         <link rel="manifest" href="/manifest.webmanifest" />
-        <link rel="apple-touch-icon" href="/images/Updated logo.png" sizes="180x180" />
         {/* Theme color is added in metadata */}
       </head>
       <body className={`${inter.variable} antialiased min-h-screen bg-background`}>
@@ -95,12 +101,16 @@ export default function RootLayout({
           enableSystem
           storageKey="jacob-barkin-theme"
         >
-          <div className="relative flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-1 w-full mx-auto px-4 sm:px-6 lg:px-8">{children}</main>
-            <Footer />
-          </div>
-          <JsonLd />
+          <FirebaseProvider>
+            <AuthProvider>
+              <div className="relative flex min-h-screen flex-col">
+                <Header />
+                <main className="flex-1 w-full mx-auto px-4 sm:px-6 lg:px-8">{children}</main>
+                <Footer />
+              </div>
+              <JsonLd />
+            </AuthProvider>
+          </FirebaseProvider>
         </ThemeProvider>
       </body>
     </html>

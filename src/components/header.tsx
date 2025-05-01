@@ -5,6 +5,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { SignInButton } from "@/components/auth/sign-in-button";
 
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
@@ -57,7 +58,10 @@ export default function Header() {
               }`}></span>
             </Link>
           ))}
-          <ThemeToggle />
+          <div className="flex items-center gap-2">
+            <SignInButton />
+            <ThemeToggle />
+          </div>
         </nav>
 
         {/* Mobile Navigation */}
@@ -110,9 +114,15 @@ export default function Header() {
                   )}
                 </Link>
               ))}
-              <div className="mt-6 pt-6 border-t flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Theme mode</span>
-                <ThemeToggle />
+              <div className="mt-6 pt-6 border-t flex flex-col gap-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Theme mode</span>
+                  <ThemeToggle />
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Account</span>
+                  <SignInButton />
+                </div>
               </div>
             </nav>
           </SheetContent>

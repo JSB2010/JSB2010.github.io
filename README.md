@@ -10,6 +10,8 @@ This is a modern redesign of my personal portfolio website using Next.js and sha
 - **Theme Switching**: [next-themes](https://github.com/pacocoursey/next-themes)
 - **Icons**: [Lucide React](https://lucide.dev/guide/packages/lucide-react)
 - **Animations**: [Aceternity UI](https://ui.aceternity.com/) components
+- **Backend**: [Firebase](https://firebase.google.com/) (Firestore, Functions, Analytics)
+- **Form Handling**: [React Hook Form](https://react-hook-form.com/) with [Zod](https://zod.dev/) validation
 - **Static Export**: Configured for Cloudflare Pages deployment
 
 ## Features
@@ -22,6 +24,9 @@ This is a modern redesign of my personal portfolio website using Next.js and sha
 - Turbopack for faster development
 - Blue-to-green gradient theme
 - GitHub project integration
+- Firebase-powered contact form with email notifications
+- Project view tracking and analytics
+- User feedback system for projects
 - SEO optimized with proper metadata
 - Progressive Web App (PWA) support
 
@@ -34,13 +39,19 @@ This is a modern redesign of my personal portfolio website using Next.js and sha
 npm install
 ```
 
-3. Run the development server:
+3. Set up Firebase:
+   - Create a Firebase project at [firebase.google.com](https://firebase.google.com/)
+   - Enable Firestore, Functions, and Analytics
+   - Copy the Firebase configuration to `.env.local` (use `.env.local.example` as a template)
+   - Set up email configuration for contact form notifications (see Firebase Setup section)
+
+4. Run the development server:
 
 ```bash
 npm run dev
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
 
 ## Development Scripts
 
@@ -69,14 +80,26 @@ npm run dev
 - `src/components/*` - React components
   - `src/components/ui/*` - shadcn UI components
   - `src/components/ui/aceternity/*` - Aceternity UI components
+  - `src/components/contact/*` - Contact form components
+  - `src/components/projects/*` - Project-related components
+  - `src/components/firebase/*` - Firebase integration components
   - `src/components/project-card.tsx` - Project card component
   - `src/components/header.tsx` - Site header
   - `src/components/footer.tsx` - Site footer
   - `src/components/theme-toggle.tsx` - Theme toggle button
+- `src/lib/*` - Utility functions and libraries
+  - `src/lib/firebase/*` - Firebase configuration and utilities
+  - `src/lib/github.ts` - GitHub API integration
+  - `src/lib/utils.ts` - General utility functions
+- `functions/*` - Firebase Cloud Functions
+  - `functions/src/index.ts` - Cloud Functions implementation
 - `public/*` - Static assets
   - `public/images/*` - Images used throughout the site
 - `next.config.js` - Next.js configuration
 - `tailwind.config.js` - Tailwind CSS configuration
+- `firebase.json` - Firebase configuration
+- `firestore.rules` - Firestore security rules
+- `firestore.indexes.json` - Firestore indexes configuration
 
 ## Adding New shadcn UI Components
 
@@ -91,6 +114,41 @@ For example:
 ```bash
 npx shadcn@latest add accordion
 ```
+
+## Firebase Setup
+
+This project uses Firebase for backend functionality. Follow these steps to set up Firebase:
+
+1. Create a Firebase project at [firebase.google.com](https://firebase.google.com/)
+
+2. Enable the following Firebase services:
+   - Firestore Database
+   - Firebase Functions
+   - Firebase Analytics (optional)
+
+3. Set up Firebase CLI:
+   ```bash
+   npm install -g firebase-tools
+   firebase login
+   firebase init
+   ```
+
+   Select the following features:
+   - Firestore
+   - Functions
+   - Hosting (optional)
+
+4. Configure email for contact form:
+   ```bash
+   firebase functions:config:set email.host="smtp.example.com" email.port="587" email.secure="false" email.user="your-email@example.com" email.pass="your-password"
+   ```
+
+5. Deploy Firebase Functions:
+   ```bash
+   firebase deploy --only functions
+   ```
+
+6. Update `.env.local` with your Firebase configuration (use `.env.local.example` as a template)
 
 ## Deployment
 
@@ -107,6 +165,7 @@ npm run build
    - Build command: `npm run build`
    - Build output directory: `out`
    - Node.js version: 20.x or later
+   - Environment variables: Add your Firebase configuration variables
 
 Alternatively, you can deploy to any platform that supports static sites, such as GitHub Pages, Netlify, or Vercel.
 

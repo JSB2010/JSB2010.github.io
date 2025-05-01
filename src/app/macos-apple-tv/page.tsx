@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
+import { ProjectDetail } from "@/components/projects/project-detail";
 import {
   Monitor,
   Tv,
@@ -18,7 +19,11 @@ export const metadata: Metadata = {
 
 export default function MacOSAppleTVPage() {
   return (
-    <>
+    <ProjectDetail
+      projectId="macos-apple-tv-integration"
+      projectName="macOS Apple TV Integration"
+      showFeedback={true}
+    >
       {/* Hero Section */}
       <section className="relative py-20 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-background to-background/50 dark:from-background dark:to-background/80 z-10"></div>
@@ -284,7 +289,7 @@ export default function MacOSAppleTVPage() {
           </div>
         </div>
       </section>
-    </>
+    </ProjectDetail>
   );
 }
 
@@ -293,12 +298,12 @@ function SetupStep({
   title,
   description,
   icon
-}: {
+}: Readonly<{
   number: number,
   title: string,
   description: string,
   icon: React.ReactNode
-}) {
+}>) {
   return (
     <div className="flex gap-6">
       <div className="relative">

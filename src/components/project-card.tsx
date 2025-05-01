@@ -12,6 +12,7 @@ import { LanguageImage } from "./language-images";
 import { BackgroundGradient } from "@/components/ui/aceternity/background-gradient";
 import { MovingBorder } from "@/components/ui/aceternity/moving-border";
 import { ThreeDCard } from "@/components/ui/aceternity/3d-card";
+import { GitHubProjectTracker } from "@/components/projects/github-project-tracker";
 
 // We've moved language-specific styling to the language-images component
 
@@ -97,12 +98,16 @@ export function ProjectCard({ project }: Readonly<ProjectCardProps>) {
   };
 
   return (
-    <Link
-      href={url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="block h-full w-full group"
-    >
+    <>
+      {/* Track GitHub project view */}
+      <GitHubProjectTracker projectName={title} projectUrl={url} />
+
+      <Link
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block h-full w-full group"
+      >
       <ThreeDCard
         className="h-full w-full"
         rotationIntensity={5} /* Reduced for better mobile experience */
@@ -213,5 +218,6 @@ export function ProjectCard({ project }: Readonly<ProjectCardProps>) {
         </BackgroundGradient>
       </ThreeDCard>
     </Link>
+    </>
   );
 }

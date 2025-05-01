@@ -9,6 +9,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import ProjectMaterials from "./project-materials";
+import { ProjectDetail } from "@/components/projects/project-detail";
 import {
   Train,
   Bus,
@@ -23,7 +24,10 @@ import {
 
 export default function PublicTransportationPage() {
   return (
-    <>
+    <ProjectDetail
+      projectId="public-transportation-research"
+      projectName="Public Transportation Research"
+    >
       {/* Hero Section */}
       <section className="relative py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-background to-background/50 dark:from-background dark:to-background/80 z-10"></div>
@@ -218,7 +222,7 @@ export default function PublicTransportationPage() {
           </div>
         </div>
       </section>
-    </>
+    </ProjectDetail>
   );
 }
 
