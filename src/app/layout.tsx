@@ -15,6 +15,7 @@ export const viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
+  themeColor: "#3b82f6",
 };
 
 export const metadata: Metadata = {
@@ -81,8 +82,8 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/images/Updated logo.png" sizes="any" />
         <link rel="manifest" href="/manifest.webmanifest" />
-        <link rel="apple-touch-icon" href="/images/Updated logo.png" />
-        <meta name="theme-color" content="#3b82f6" />
+        <link rel="apple-touch-icon" href="/images/Updated logo.png" sizes="180x180" />
+        {/* Theme color is added in metadata */}
       </head>
       <body className={`${inter.variable} antialiased min-h-screen bg-background`}>
         <ThemeProvider
