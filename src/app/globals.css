@@ -122,6 +122,37 @@
   * {
     @apply border-border outline-ring/50;
   }
+
+  /* Add smooth transitions for theme changes */
+  :root {
+    --theme-transition-duration: 0.3s;
+    --theme-transition-timing: ease;
+  }
+
+  /* Only apply transitions after the app is mounted to prevent initial flash */
+  .theme-transitions-enabled * {
+    transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+    transition-timing-function: var(--theme-transition-timing);
+    transition-duration: var(--theme-transition-duration);
+  }
+
+  /* Disable transitions for elements that shouldn't animate during theme changes */
+  .no-theme-transition,
+  .no-theme-transition * {
+    transition: none !important;
+  }
+
+  /* Disable transitions for specific properties */
+  .animate-float,
+  .blob,
+  .particle-1,
+  .particle-2,
+  .particle-3,
+  .particle-4,
+  .particle-5 {
+    transition-property: none;
+  }
+
   body {
     @apply bg-background text-foreground;
     -webkit-tap-highlight-color: transparent;

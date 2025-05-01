@@ -192,8 +192,8 @@ const fallbackPatterns = [
   "diagonal-pattern.svg",
 ];
 
-// Default background for fallback patterns
-const defaultBgColor = "linear-gradient(135deg, #3b82f610, #3b82f630)";
+// Default background for fallback patterns - with dark mode support
+const defaultBgColor = "linear-gradient(135deg, var(--primary-rgb, 59, 130, 246, 0.1), var(--primary-rgb, 59, 130, 246, 0.3))";
 
 interface LanguageImageProps {
   language: string | null;

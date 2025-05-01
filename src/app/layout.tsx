@@ -93,7 +93,7 @@ export default function RootLayout({
           attribute="class"
           defaultTheme="system"
           enableSystem
-          disableTransitionOnChange
+          storageKey="jacob-barkin-theme"
         >
           <div className="relative flex min-h-screen flex-col">
             <Header />

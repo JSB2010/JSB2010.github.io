@@ -75,7 +75,7 @@ export function ProjectCard({ project }: Readonly<ProjectCardProps>) {
         />
 
         {/* GitHub icon overlay in top right */}
-        <div className="absolute top-4 right-4 bg-black/40 p-2 rounded-full backdrop-blur-sm shadow-sm z-10">
+        <div className="absolute top-4 right-4 bg-black/40 dark:bg-black/60 p-2 rounded-full backdrop-blur-sm shadow-sm z-10">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
@@ -127,7 +127,7 @@ export function ProjectCard({ project }: Readonly<ProjectCardProps>) {
               )}
 
               {/* Hover overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 dark:from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
                 <div className="p-4 text-white">
                   <span className="text-sm font-medium flex items-center gap-1">
                     <ExternalLink className="h-3 w-3" /> View Project
@@ -179,7 +179,7 @@ export function ProjectCard({ project }: Readonly<ProjectCardProps>) {
                   {language && (
                     <div className="flex items-center gap-1 sm:gap-1.5">
                       <span
-                        className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-primary/20"
+                        className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-primary/20 dark:bg-primary/30"
                       />
                       <span className="truncate max-w-[70px] sm:max-w-[80px]">{language}</span>
                     </div>

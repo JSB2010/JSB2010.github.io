@@ -111,7 +111,7 @@ export default function Header() {
                 </Link>
               ))}
               <div className="mt-6 pt-6 border-t flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Switch theme</span>
+                <span className="text-sm text-muted-foreground">Theme mode</span>
                 <ThemeToggle />
               </div>
             </nav>
