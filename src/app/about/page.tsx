@@ -22,7 +22,6 @@ import { Spotlight } from "@/components/ui/aceternity/spotlight";
 import { TextRevealCard } from "@/components/ui/aceternity/text-reveal-card";
 import { Meteors } from "@/components/ui/aceternity/meteors";
 import { ThreeDCard } from "@/components/ui/aceternity/3d-card";
-import { WavyBackground } from "@/components/ui/aceternity/wavy-background";
 
 export const metadata: Metadata = {
   title: "About Me | Jacob Barkin",
@@ -33,12 +32,9 @@ export default function AboutPage() {
   return (
     <>
       {/* Hero Section */}
-      <WavyBackground
-        className="py-20 overflow-hidden"
-        colors={["rgba(var(--primary-rgb), 0.3)", "rgba(var(--secondary-rgb), 0.3)", "rgba(var(--accent-rgb), 0.3)"]}
-        waveOpacity={0.3}
-        blur={10}
-      >
+      <section className="py-20 overflow-hidden relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-background to-background/50 dark:from-background dark:to-background/80 z-10"></div>
+        <div className="absolute inset-0 bg-[url('/images/mountains-bg.jpg')] bg-cover bg-center opacity-20 dark:opacity-10"></div>
         <div className="container relative z-20">
           <div className="max-w-3xl mx-auto text-center">
             <TextRevealCard
@@ -53,7 +49,7 @@ export default function AboutPage() {
             </p>
           </div>
         </div>
-      </WavyBackground>
+      </section>
 
       {/* Bio Section */}
       <section className="py-16 relative overflow-hidden">
@@ -107,13 +103,6 @@ export default function AboutPage() {
 
       {/* Education Section */}
       <section className="py-16 bg-muted/50 relative overflow-hidden">
-        <WavyBackground
-          className="absolute inset-0"
-          colors={["rgba(var(--primary-rgb), 0.1)", "rgba(var(--secondary-rgb), 0.1)"]}
-          waveOpacity={0.2}
-          blur={20}
-          speed="slow"
-        />
         <div className="container relative z-10">
           <TextRevealCard
             text="Education"

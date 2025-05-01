@@ -114,7 +114,7 @@ export function ProjectCard({ project }: Readonly<ProjectCardProps>) {
               </div>
             </div>
 
-            <CardContent className="pt-6">
+            <CardContent className="pt-6 flex flex-col h-64">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-xl font-semibold group-hover:text-primary transition-colors line-clamp-1">
                   {title.charAt(0).toUpperCase() + title.slice(1).replace(/-/g, ' ')}
@@ -123,11 +123,15 @@ export function ProjectCard({ project }: Readonly<ProjectCardProps>) {
                 <ExternalLink className="h-4 w-4 text-muted-foreground" />
               </div>
 
-              {description && (
-                <p className="text-muted-foreground mb-4 line-clamp-2">
-                  {description}
-                </p>
-              )}
+              <div className="min-h-[3rem] mb-4">
+                {description ? (
+                  <p className="text-muted-foreground line-clamp-2">
+                    {description}
+                  </p>
+                ) : (
+                  <p className="text-muted-foreground/50 italic">No description available</p>
+                )}
+              </div>
 
               {/* Topics as tags */}
               {topics && topics.length > 0 && (
@@ -149,13 +153,13 @@ export function ProjectCard({ project }: Readonly<ProjectCardProps>) {
 
               {/* Repository stats */}
               <div className="flex items-center justify-between text-sm text-muted-foreground mt-auto">
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                   {language && (
                     <div className="flex items-center gap-1.5">
                       <span
                         className="w-3 h-3 rounded-full bg-primary/20"
                       />
-                      <span>{language}</span>
+                      <span className="truncate max-w-[80px]">{language}</span>
                     </div>
                   )}
 

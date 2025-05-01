@@ -14,7 +14,6 @@ import {
 // Import Aceternity UI components
 import { BackgroundGradient } from "@/components/ui/aceternity/background-gradient";
 import { MovingBorder } from "@/components/ui/aceternity/moving-border";
-import { Spotlight } from "@/components/ui/aceternity/spotlight";
 import { TextRevealCard } from "@/components/ui/aceternity/text-reveal-card";
 import { Meteors } from "@/components/ui/aceternity/meteors";
 
@@ -37,8 +36,6 @@ export default function Home() {
 
         {/* Meteors animation */}
         <Meteors number={15} className="z-0" />
-
-        <Spotlight className="absolute inset-0 z-0" />
 
         <div className="container relative z-20">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
@@ -193,7 +190,6 @@ export default function Home() {
       {/* Interests Section */}
       <section className="py-20 theme-technology relative overflow-hidden">
         {/* Background effects */}
-        <Spotlight className="absolute inset-0 z-0" />
         <Meteors number={10} className="z-0" />
 
         <div className="container relative z-10">
@@ -209,17 +205,17 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {/* Technology Card */}
-            <BackgroundGradient className="rounded-xl">
-              <Card className="border-0 bg-background/80 backdrop-blur-sm">
-                <CardContent className="pt-6">
-                  <div className="flex flex-col items-center text-center">
+            <BackgroundGradient className="rounded-xl h-full">
+              <Card className="border-0 bg-background/80 backdrop-blur-sm h-full flex flex-col">
+                <CardContent className="pt-6 flex-grow flex flex-col">
+                  <div className="flex flex-col items-center text-center h-full">
                     <MovingBorder className="p-0.5" containerClassName="rounded-full mb-4">
                       <div className="p-3 rounded-full bg-background text-primary">
                         <Laptop className="h-8 w-8" />
                       </div>
                     </MovingBorder>
                     <h3 className="text-xl font-semibold mb-2">Technology</h3>
-                    <p className="text-muted-foreground text-sm">
+                    <p className="text-muted-foreground text-sm flex-grow">
                       Software development, accessibility, and creating technology that makes a difference.
                     </p>
                   </div>
@@ -228,17 +224,17 @@ export default function Home() {
             </BackgroundGradient>
 
             {/* Finance Card */}
-            <BackgroundGradient className="rounded-xl">
-              <Card className="border-0 bg-background/80 backdrop-blur-sm">
-                <CardContent className="pt-6">
-                  <div className="flex flex-col items-center text-center">
+            <BackgroundGradient className="rounded-xl h-full">
+              <Card className="border-0 bg-background/80 backdrop-blur-sm h-full flex flex-col">
+                <CardContent className="pt-6 flex-grow flex flex-col">
+                  <div className="flex flex-col items-center text-center h-full">
                     <MovingBorder className="p-0.5" containerClassName="rounded-full mb-4">
                       <div className="p-3 rounded-full bg-background text-primary">
                         <LineChart className="h-8 w-8" />
                       </div>
                     </MovingBorder>
                     <h3 className="text-xl font-semibold mb-2">Finance</h3>
-                    <p className="text-muted-foreground text-sm">
+                    <p className="text-muted-foreground text-sm flex-grow">
                       Empowering youth through financial literacy for a secure future.
                     </p>
                   </div>
@@ -247,17 +243,17 @@ export default function Home() {
             </BackgroundGradient>
 
             {/* Transit Card */}
-            <BackgroundGradient className="rounded-xl">
-              <Card className="border-0 bg-background/80 backdrop-blur-sm">
-                <CardContent className="pt-6">
-                  <div className="flex flex-col items-center text-center">
+            <BackgroundGradient className="rounded-xl h-full">
+              <Card className="border-0 bg-background/80 backdrop-blur-sm h-full flex flex-col">
+                <CardContent className="pt-6 flex-grow flex flex-col">
+                  <div className="flex flex-col items-center text-center h-full">
                     <MovingBorder className="p-0.5" containerClassName="rounded-full mb-4">
                       <div className="p-3 rounded-full bg-background text-primary">
                         <Train className="h-8 w-8" />
                       </div>
                     </MovingBorder>
                     <h3 className="text-xl font-semibold mb-2">Transit</h3>
-                    <p className="text-muted-foreground text-sm">
+                    <p className="text-muted-foreground text-sm flex-grow">
                       Research and advocacy for improved public transit systems.
                     </p>
                   </div>
@@ -266,10 +262,10 @@ export default function Home() {
             </BackgroundGradient>
 
             {/* Aviation Card */}
-            <BackgroundGradient className="rounded-xl">
-              <Card className="border-0 bg-background/80 backdrop-blur-sm">
-                <CardContent className="pt-6">
-                  <div className="flex flex-col items-center text-center">
+            <BackgroundGradient className="rounded-xl h-full">
+              <Card className="border-0 bg-background/80 backdrop-blur-sm h-full flex flex-col">
+                <CardContent className="pt-6 flex-grow flex flex-col">
+                  <div className="flex flex-col items-center text-center h-full">
                     <MovingBorder className="p-0.5" containerClassName="rounded-full mb-4">
                       <div className="p-3 rounded-full bg-background text-primary">
                         <svg
@@ -289,7 +285,7 @@ export default function Home() {
                       </div>
                     </MovingBorder>
                     <h3 className="text-xl font-semibold mb-2">Aviation</h3>
-                    <p className="text-muted-foreground text-sm">
+                    <p className="text-muted-foreground text-sm flex-grow">
                       Fascination with aircraft, flight dynamics, and aerospace technology.
                     </p>
                   </div>
@@ -303,7 +299,6 @@ export default function Home() {
       {/* Featured Projects Section */}
       <section className="py-20 theme-space relative overflow-hidden">
         {/* Background effects */}
-        <Spotlight className="absolute inset-0 z-0" />
         <Meteors number={8} className="z-0" />
 
         <div className="container relative z-10">
