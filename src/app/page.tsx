@@ -15,6 +15,7 @@ import {
 import { BackgroundGradient } from "@/components/ui/aceternity/background-gradient";
 import { MovingBorder } from "@/components/ui/aceternity/moving-border";
 import { TextRevealCard } from "@/components/ui/aceternity/text-reveal-card";
+import { StaticTextCard } from "@/components/ui/aceternity/static-text-card";
 
 export default function Home() {
   // Dynamic greeting based on time of day
@@ -52,15 +53,15 @@ export default function Home() {
                 </div>
               </MovingBorder>
 
-              <TextRevealCard
+              <StaticTextCard
                 text="Jacob Barkin"
-                revealText="Developer & Advocate"
+                subText="Developer & Advocate"
                 className="border-none shadow-none p-0 bg-transparent"
               >
                 <p className="text-xl md:text-2xl text-muted-foreground mt-4">
                   Developer & Financial Education Advocate
                 </p>
-              </TextRevealCard>
+              </StaticTextCard>
 
               <div className="flex flex-wrap gap-3 justify-center md:justify-start">
                 <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-sm flex items-center gap-1">

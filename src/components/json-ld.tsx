@@ -1,11 +1,7 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
-
 export default function JsonLd() {
-  const pathname = usePathname();
   const baseUrl = 'https://jsb2010.github.io';
-  const currentUrl = `${baseUrl}${pathname}`;
 
   // Base person schema
   const personSchema = {
@@ -40,13 +36,16 @@ export default function JsonLd() {
     },
   };
 
-  // Combine schemas
-  const schemas = [personSchema, websiteSchema];
-
   return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schemas) }}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+      />
+    </>
   );
 }
