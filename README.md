@@ -42,6 +42,19 @@ npm run dev
 
 4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
+## Development Scripts
+
+- `npm run dev` - Start the development server with Turbopack
+- `npm run build` - Build the site for production
+- `npm run start` - Start the production server
+- `npm run lint` - Run ESLint to check for code issues
+- `npm run optimize-images` - Optimize images in the public/images directory
+- `npm run check-a11y` - Check for accessibility issues (requires the site to be running)
+- `npm run test-site` - Run basic tests to verify the site is working correctly
+- `npm test` - Run Jest unit tests
+- `npm run test:watch` - Run Jest in watch mode
+- `npm run test:coverage` - Run Jest with coverage reporting
+
 ## Project Structure
 
 - `src/app/*` - Next.js app router pages and layouts
@@ -96,6 +109,56 @@ npm run build
    - Node.js version: 20.x or later
 
 Alternatively, you can deploy to any platform that supports static sites, such as GitHub Pages, Netlify, or Vercel.
+
+## Testing and CI/CD
+
+This project includes automated testing and continuous integration:
+
+### Unit Testing
+
+Unit tests are written using Jest and React Testing Library:
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with coverage report
+npm run test:coverage
+```
+
+### Functional Testing
+
+A basic functional test script is included to verify the site is working correctly:
+
+```bash
+# Build the site first
+npm run build
+
+# Run the functional tests
+npm run test-site
+```
+
+### Accessibility Testing
+
+Check for accessibility issues:
+
+```bash
+# Start the development server
+npm run dev
+
+# In another terminal, run the accessibility check
+npm run check-a11y
+```
+
+### Continuous Integration
+
+This project uses GitHub Actions for CI/CD:
+
+- **CI Workflow**: Runs linting, tests, and build on every push and pull request
+- **Lighthouse CI**: Checks performance, accessibility, best practices, and SEO
 
 ## Branch Information
 

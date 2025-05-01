@@ -16,7 +16,7 @@ export const HoverEffect = ({
   }[];
   className?: string;
 }) => {
-  let [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   return (
     <div
@@ -26,11 +26,12 @@ export const HoverEffect = ({
       )}
     >
       {items.map((item, idx) => (
-        <div
-          key={idx}
-          className="relative group block p-2 h-full w-full"
+        <button
+          key={`card-hover-${item.title}-${idx}`}
+          className="relative group block p-2 h-full w-full text-left border-0 bg-transparent"
           onMouseEnter={() => setHoveredIndex(idx)}
           onMouseLeave={() => setHoveredIndex(null)}
+          aria-label={`View ${item.title}`}
         >
           <AnimatePresence>
             {hoveredIndex === idx && (

@@ -32,7 +32,7 @@ export const ProjectCards = ({
   projects: ProjectCardProps[];
   className?: string;
 }) => {
-  let [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   return (
     <div
@@ -43,7 +43,7 @@ export const ProjectCards = ({
     >
       {projects.map((project, idx) => (
         <Link
-          key={idx}
+          key={`project-card-${project.title}-${idx}`}
           href={project.link}
           target={project.isExternal ? "_blank" : undefined}
           rel={project.isExternal ? "noopener noreferrer" : undefined}
@@ -68,7 +68,7 @@ export const ProjectCards = ({
               />
             )}
           </AnimatePresence>
-          
+
           <BackgroundGradient className="rounded-xl h-full">
             <div className="rounded-xl h-full overflow-hidden border border-border/40 bg-background/80 backdrop-blur-sm relative z-10">
               <div className="relative h-48 overflow-hidden">
@@ -80,7 +80,7 @@ export const ProjectCards = ({
                     className="object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                 ) : (
-                  <div className={`absolute inset-0 bg-gradient-to-r ${project.gradient || 'from-primary to-secondary'} flex items-center justify-center`}>
+                  <div className={`absolute inset-0 bg-gradient-to-r ${project.gradient ?? 'from-primary to-secondary'} flex items-center justify-center`}>
                     <MovingBorder className="p-0.5" containerClassName="rounded-full">
                       <div className="p-4 rounded-full bg-background text-primary">
                         {project.icon}
@@ -88,7 +88,7 @@ export const ProjectCards = ({
                     </MovingBorder>
                   </div>
                 )}
-                
+
                 {/* Hover overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
                   <div className="p-4 text-white">
@@ -98,28 +98,28 @@ export const ProjectCards = ({
                   </div>
                 </div>
               </div>
-              
+
               <div className="p-6">
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-xl font-semibold group-hover:text-primary transition-colors">
                     {project.title}
                   </h3>
-                  
+
                   {project.isExternal && (
                     <ExternalLink className="h-4 w-4 text-muted-foreground" />
                   )}
                 </div>
-                
+
                 <p className="text-muted-foreground mb-4 line-clamp-2">
                   {project.description}
                 </p>
-                
+
                 {/* Tags */}
                 {project.tags && project.tags.length > 0 && (
                   <div className="flex flex-wrap gap-2 mb-4">
-                    {project.tags.map((tag, tagIdx) => (
-                      <span 
-                        key={tagIdx} 
+                    {project.tags.map((tag) => (
+                      <span
+                        key={`${project.title}-tag-${tag}`}
                         className="px-2 py-1 bg-primary/10 text-primary rounded-md text-xs"
                       >
                         {tag}
@@ -127,7 +127,7 @@ export const ProjectCards = ({
                     ))}
                   </div>
                 )}
-                
+
                 {/* Stats */}
                 {project.stats && (
                   <div className="flex items-center justify-between text-sm text-muted-foreground mt-auto">
@@ -138,7 +138,7 @@ export const ProjectCards = ({
                           <span>{project.stats.stars}</span>
                         </div>
                       )}
-                      
+
                       {project.stats.forks !== undefined && (
                         <div className="flex items-center gap-1">
                           <GitFork className="h-4 w-4" />
@@ -146,7 +146,7 @@ export const ProjectCards = ({
                         </div>
                       )}
                     </div>
-                    
+
                     {project.stats.updatedAt && (
                       <div className="flex items-center gap-1 text-xs">
                         <Clock className="h-3.5 w-3.5" />

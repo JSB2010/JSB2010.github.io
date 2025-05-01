@@ -113,7 +113,7 @@ export default function Home() {
               </div>
 
               <p className="text-sm sm:text-base text-muted-foreground max-w-md mx-auto md:mx-0">
-                I'm passionate about technology, financial education, and making a positive impact.
+                I&apos;m passionate about technology, financial education, and making a positive impact.
                 With a focus on accessibility and innovation, I develop solutions that help people learn and grow.
               </p>
 

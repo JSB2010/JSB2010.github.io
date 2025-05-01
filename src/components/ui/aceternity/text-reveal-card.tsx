@@ -16,11 +16,11 @@ export const TextRevealCard = ({
   className?: string;
 }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLButtonElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!ref.current) return;
     const rect = ref.current.getBoundingClientRect();
     const width = rect.width;
@@ -41,18 +41,7 @@ export const TextRevealCard = ({
     setIsHovered(false);
   };
 
-  const maskImage = useTransform(
-    [x, y],
-    ([xVal, yVal]) => {
-      const xOffset = (xVal * 100).toFixed(2);
-      const yOffset = (yVal * 100).toFixed(2);
-      return `radial-gradient(
-        250px circle at ${xOffset}% ${yOffset}%, 
-        rgba(255,255,255,1) 0%, 
-        rgba(255,255,255,0) 80%
-      )`;
-    }
-  );
+
 
   const springConfig = { stiffness: 125, damping: 15, mass: 0.1 };
   const xSpring = useSpring(x, springConfig);
@@ -64,21 +53,22 @@ export const TextRevealCard = ({
       const xOffset = (xVal * 100).toFixed(2);
       const yOffset = (yVal * 100).toFixed(2);
       return `radial-gradient(
-        250px circle at ${xOffset}% ${yOffset}%, 
-        rgba(255,255,255,1) 0%, 
+        250px circle at ${xOffset}% ${yOffset}%,
+        rgba(255,255,255,1) 0%,
         rgba(255,255,255,0) 80%
       )`;
     }
   );
 
   return (
-    <div
+    <button
+      type="button"
       ref={ref}
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       className={cn(
-        "relative overflow-hidden rounded-xl border border-border bg-background p-8",
+        "relative overflow-hidden rounded-xl border border-border bg-background p-8 text-left w-full",
         className
       )}
     >
@@ -97,6 +87,6 @@ export const TextRevealCard = ({
       >
         {revealText}
       </motion.div>
-    </div>
+    </button>
   );
 };

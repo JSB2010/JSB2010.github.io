@@ -18,7 +18,6 @@ export const Spotlight = ({ children, className = "" }: SpotlightProps) => {
   const updateMousePosition = (ev: MouseEvent) => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
-    const { w, h } = containerSize.current;
     const x = ev.clientX - rect.left;
     const y = ev.clientY - rect.top;
     mousePosition.current = { x, y };
@@ -68,26 +67,26 @@ export const Spotlight = ({ children, className = "" }: SpotlightProps) => {
     return () => {
       window.removeEventListener("mousemove", updateMousePosition);
     };
-  }, [isHovered]);
+  }, [isHovered, updateAnimation]);
 
   return (
-    <div
+    <button
+      type="button"
       ref={containerRef}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className={cn(
-        "relative overflow-hidden rounded-md",
+        "relative overflow-hidden rounded-md text-left border-0 bg-transparent w-full",
         className
       )}
     >
       <div
         className="pointer-events-none absolute -inset-px z-10 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
         style={{
-          background:
-            "radial-gradient(600px circle at var(--x) var(--y), rgba(var(--primary-rgb), 0.15), transparent 40%)",
+          background: `radial-gradient(600px circle at var(--x) var(--y), rgba(var(--primary-rgb), 0.15), transparent 40%)`,
         }}
       />
       {children}
-    </div>
+    </button>
   );
 };

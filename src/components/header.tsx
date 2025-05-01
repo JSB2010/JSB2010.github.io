@@ -79,7 +79,7 @@ export default function Header() {
             aria-label="Navigation Menu"
           >
             <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-            <SheetDescription className="sr-only">Navigation links for Jacob Barkin's website</SheetDescription>
+            <SheetDescription className="sr-only">Navigation links for Jacob Barkin&apos;s website</SheetDescription>
             <div className="flex items-center gap-2 mb-8">
               <div className="w-10 h-10 overflow-hidden">
                 <Image

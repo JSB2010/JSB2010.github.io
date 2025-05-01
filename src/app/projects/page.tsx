@@ -284,7 +284,18 @@ export default async function ProjectsPage() {
   );
 }
 
-function ProjectCard({ project }: Readonly<{ project: any }>) {
+interface FeaturedProject {
+  title: string;
+  description: string;
+  link: string;
+  image?: string;
+  icon?: React.ReactNode;
+  gradient: string;
+  tags: string[];
+  github?: boolean;
+}
+
+function ProjectCard({ project }: Readonly<{ project: FeaturedProject }>) {
   return (
     <Link
       href={project.link}
