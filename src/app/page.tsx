@@ -55,7 +55,6 @@ export default function Home() {
 
               <StaticTextCard
                 text="Jacob Barkin"
-                subText="Developer & Advocate"
                 className="border-none shadow-none p-0 bg-transparent"
               >
                 <p className="text-xl md:text-2xl text-muted-foreground mt-4">
