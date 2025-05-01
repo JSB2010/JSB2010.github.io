@@ -1,3 +1,12 @@
 # Redirects for Cloudflare Pages
-# Redirect all requests to index.html for client-side routing
-/*    /index.html   200
+# Specific routes for SPA client-side routing
+/about              /index.html   200
+/projects           /index.html   200
+/contact            /index.html   200
+/public-transportation /index.html 200
+/macbook-pro-opencore /index.html 200
+/macos-apple-tv     /index.html   200
+
+# Assets should be served directly
+/_next/*            /_next/:splat  200
+/images/*           /images/:splat 200

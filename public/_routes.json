@@ -5,7 +5,6 @@
     "/_next/*",
     "/api/*",
     "/_vercel/*",
-    "/_next/static/*",
     "/static/*",
     "/public/*",
     "/images/*"
