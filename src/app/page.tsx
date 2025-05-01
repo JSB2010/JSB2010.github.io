@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -10,6 +12,7 @@ import {
   User,
   ArrowRight
 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 // Import Aceternity UI components
 import { BackgroundGradient } from "@/components/ui/aceternity/background-gradient";
@@ -18,14 +21,48 @@ import { TextRevealCard } from "@/components/ui/aceternity/text-reveal-card";
 import { StaticTextCard } from "@/components/ui/aceternity/static-text-card";
 
 export default function Home() {
-  // Dynamic greeting based on time of day
+  // State to store the current greeting
+  const [greeting, setGreeting] = useState("Welcome");
+
+  // Function to get time-based greeting
   const getTimeGreeting = () => {
     const currentHour = new Date().getHours();
-    if (currentHour < 12) return "Good Morning";
-    if (currentHour < 18) return "Good Afternoon";
-    if (currentHour < 21) return "Good Evening";
-    return "Good Night";
+
+    // Early morning (midnight to 5:59 AM)
+    if (currentHour >= 0 && currentHour < 6) {
+      return "Good Night";
+    }
+    // Morning (6:00 AM to 11:59 AM)
+    else if (currentHour >= 6 && currentHour < 12) {
+      return "Good Morning";
+    }
+    // Afternoon (12:00 PM to 5:59 PM)
+    else if (currentHour >= 12 && currentHour < 18) {
+      return "Good Afternoon";
+    }
+    // Evening (6:00 PM to 9:59 PM)
+    else if (currentHour >= 18 && currentHour < 22) {
+      return "Good Evening";
+    }
+    // Night (10:00 PM to 11:59 PM)
+    else {
+      return "Good Night";
+    }
   };
+
+  // Update greeting when component mounts and set interval to update it
+  useEffect(() => {
+    // Set initial greeting
+    setGreeting(getTimeGreeting());
+
+    // Update greeting every minute to handle time changes
+    const intervalId = setInterval(() => {
+      setGreeting(getTimeGreeting());
+    }, 60000); // 60000 ms = 1 minute
+
+    // Clean up interval on component unmount
+    return () => clearInterval(intervalId);
+  }, []);
 
   return (
     <>
@@ -49,7 +86,7 @@ export default function Home() {
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
                   </span>
-                  {getTimeGreeting()}, welcome to my portfolio!
+                  {greeting}, welcome to my portfolio!
                 </div>
               </MovingBorder>
 
