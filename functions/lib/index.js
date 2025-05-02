@@ -77,7 +77,74 @@ exports.submitContactForm = functions.https.onCall(async (data, context) => {
     }
     catch (error) {
         console.error('Error submitting contact form:', error);
-        throw new functions.https.HttpsError('internal', 'An error occurred while processing your request');
+        // Determine the error type and provide a more specific error message
+        let errorCode = 'internal';
+        let errorMessage = 'An error occurred while processing your request';
+        if (error.code === 'auth/invalid-email') {
+            errorCode = 'invalid-argument';
+            errorMessage = 'The email address is not valid.';
+        }
+        else if (error.code === 'permission-denied') {
+            errorCode = 'permission-denied';
+            errorMessage = 'You do not have permission to submit this form.';
+        }
+        else if (error.code === 'resource-exhausted') {
+            errorCode = 'resource-exhausted';
+            errorMessage = 'Too many requests. Please try again later.';
+        }
+        else if (error.code === 'unavailable') {
+            errorCode = 'unavailable';
+            errorMessage = 'The service is currently unavailable. Please try again later.';
+        }
+        else if (error.code === 'not-found') {
+            errorCode = 'not-found';
+            errorMessage = 'The requested resource was not found.';
+        }
+        else if (error.code === 'already-exists') {
+            errorCode = 'already-exists';
+            errorMessage = 'This submission already exists.';
+        }
+        else if (error.code === 'failed-precondition') {
+            errorCode = 'failed-precondition';
+            errorMessage = 'The operation failed because a precondition was not met.';
+        }
+        else if (error.code === 'aborted') {
+            errorCode = 'aborted';
+            errorMessage = 'The operation was aborted.';
+        }
+        else if (error.code === 'out-of-range') {
+            errorCode = 'out-of-range';
+            errorMessage = 'The operation was attempted past the valid range.';
+        }
+        else if (error.code === 'unimplemented') {
+            errorCode = 'unimplemented';
+            errorMessage = 'The operation is not implemented or not supported.';
+        }
+        else if (error.code === 'data-loss') {
+            errorCode = 'data-loss';
+            errorMessage = 'Unrecoverable data loss or corruption.';
+        }
+        else if (error.code === 'unauthenticated') {
+            errorCode = 'unauthenticated';
+            errorMessage = 'The request does not have valid authentication credentials.';
+        }
+        else if (error.code === 'cancelled') {
+            errorCode = 'cancelled';
+            errorMessage = 'The operation was cancelled.';
+        }
+        else if (error.code === 'unknown') {
+            errorCode = 'unknown';
+            errorMessage = 'Unknown error occurred.';
+        }
+        else if (error.code === 'deadline-exceeded') {
+            errorCode = 'deadline-exceeded';
+            errorMessage = 'Deadline expired before operation could complete.';
+        }
+        // If we have a more specific error message from the error object, use it
+        if (error.message) {
+            errorMessage = `${errorMessage}: ${error.message}`;
+        }
+        throw new functions.https.HttpsError(errorCode, errorMessage, { originalError: error.toString() });
     }
 });
 /**
@@ -137,7 +204,19 @@ async function sendEmailNotification(data, submissionId) {
     }
     catch (error) {
         console.error('Error sending email notification:', error);
+        // Log detailed error information for debugging
+        if (error.code) {
+            console.error('Error code:', error.code);
+        }
+        if (error.message) {
+            console.error('Error message:', error.message);
+        }
+        if (error.response) {
+            console.error('SMTP Response:', error.response);
+        }
         // Don't throw an error here, as we still want to return success for the form submission
+        // But we'll log detailed information to help with debugging
+        console.log('Email configuration attempted to be used, but failed');
     }
 }
 /**
