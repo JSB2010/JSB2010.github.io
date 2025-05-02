@@ -2,11 +2,11 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ContactForm } from "@/components/contact/contact-form";
+import { ContactFormApi } from "@/components/contact/contact-form-api";
 import {
   Mail,
-  Github as GitHubIcon,
-  Linkedin as LinkedInIcon
+  Github,
+  Linkedin
 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -43,7 +43,7 @@ export default function ContactPage() {
                 Fill out the form below and I'll get back to you as soon as possible. I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision.
               </p>
 
-              <ContactForm />
+              <ContactFormApi />
             </div>
 
             <div className="mt-8 lg:mt-0">
@@ -63,7 +63,7 @@ export default function ContactPage() {
                 />
 
                 <ContactCard
-                  icon={<LinkedInIcon className="h-6 w-6" />}
+                  icon={<Linkedin className="h-6 w-6" />}
                   title="LinkedIn"
                   description="Connect with me professionally and stay updated on my career journey."
                   actionText="Connect on LinkedIn"
@@ -72,7 +72,7 @@ export default function ContactPage() {
                 />
 
                 <ContactCard
-                  icon={<GitHubIcon className="h-6 w-6" />}
+                  icon={<Github className="h-6 w-6" />}
                   title="GitHub"
                   description="Check out my code repositories and development projects."
                   actionText="Follow on GitHub"

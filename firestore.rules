@@ -3,7 +3,7 @@ service cloud.firestore {
   match /databases/{database}/documents {
     // Contact form submissions - allow anonymous creation and reading for testing
     match /contactSubmissions/{submission} {
-      // Allow anyone to create contact submissions
+      // Allow anyone to create contact submissions with no restrictions
       allow create: if true;
 
       // Allow reading for testing purposes (you may want to restrict this in production)
