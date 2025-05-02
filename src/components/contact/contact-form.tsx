@@ -41,19 +41,75 @@ export function ContactForm() {
     },
   });
 
+  // Helper function to extract error details
+  const getErrorMessage = (error: any): string => {
+    // Default error message
+    let errorDetails = "There was an error submitting your message. ";
+
+    // Add error code if available
+    if (error.code) {
+      errorDetails += `Error code: ${error.code}. `;
+    }
+
+    // Add error message or details
+    if (error.message) {
+      errorDetails += `${error.message}`;
+    } else if (error.details) {
+      errorDetails += `${error.details}`;
+    }
+
+    // Add additional details from Firebase Functions error
+    if (error.details && typeof error.details === 'object') {
+      if (error.details.message) {
+        errorDetails += ` ${error.details.message}`;
+      }
+
+      if (error.details.originalError) {
+        errorDetails += ` (${error.details.originalError})`;
+      }
+    }
+
+    // Handle specific error types
+
+    // Network errors
+    if (error.name === 'FirebaseError' && error.code === 'functions/network-error') {
+      return "Network error: Please check your internet connection and try again.";
+    }
+
+    // Authentication errors
+    if (error.code === 'functions/unauthenticated' || error.code === 'functions/permission-denied') {
+      return "Authentication error: You don't have permission to perform this action.";
+    }
+
+    // Firestore errors
+    if (error.details && error.details.originalError === 'firestore_error') {
+      return "Database error: There was an issue saving your submission to our database. Please try again later.";
+    }
+
+    // Email errors
+    if (error.message?.includes('SMTP')) {
+      return "Email notification error: There was an issue sending the email notification. Your submission was saved, but we couldn't send a notification email.";
+    }
+
+    return errorDetails;
+  };
+
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
     setErrorMessage(null);
 
     try {
-      // Get Firebase Functions instance
-      const functions = getFunctions(firebaseApp);
+      // Set the region for the functions
+      const region = 'us-central1';
+      const functionsWithRegion = getFunctions(firebaseApp, region);
 
       // Call the submitContactForm function
-      const submitContactForm = httpsCallable(functions, 'submitContactForm');
+      const submitContactForm = httpsCallable(functionsWithRegion, 'submitContactForm');
 
       // Submit the form data and log the response
       console.log("Submitting form data:", data);
+      console.log("Using Firebase Functions region:", region);
+
       const result = await submitContactForm(data);
       console.log("Form submission response:", result);
 
@@ -70,38 +126,19 @@ export function ContactForm() {
     } catch (error: any) {
       console.error("Error submitting form:", error);
 
-      // Extract detailed error information
-      let errorDetails = "There was an error submitting your message. ";
-
-      if (error.code) {
-        errorDetails += `Error code: ${error.code}. `;
-      }
-
-      if (error.message) {
-        errorDetails += `${error.message}`;
-      } else if (error.details) {
-        errorDetails += `${error.details}`;
-      }
-
-      // If we have a Firebase Functions error with more details
-      if (error.details && typeof error.details === 'object') {
-        if (error.details.message) {
-          errorDetails += ` ${error.details.message}`;
-        }
-      }
-
-      // Network-related errors
-      if (error.name === 'FirebaseError' && error.code === 'functions/network-error') {
-        errorDetails = "Network error: Please check your internet connection and try again.";
-      }
-
-      // Authentication-related errors
-      if (error.code === 'functions/unauthenticated' || error.code === 'functions/permission-denied') {
-        errorDetails = "Authentication error: You don't have permission to perform this action.";
-      }
+      // Get error message
+      const errorDetails = getErrorMessage(error);
 
       // Set the error message
       setErrorMessage(errorDetails);
+
+      // Log additional debugging information to the console
+      console.log("Error details:", {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        stack: error.stack
+      });
     } finally {
       setIsSubmitting(false);
     }

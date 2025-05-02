@@ -45,18 +45,27 @@ const db = admin.firestore();
  * Stores the submission in Firestore and sends an email notification
  */
 exports.submitContactForm = functions.https.onCall(async (data, context) => {
+    console.log('Contact form submission received:', {
+        name: data.name,
+        email: data.email,
+        subject: data.subject,
+        messageLength: data.message ? data.message.length : 0
+    });
     try {
         // Validate the data
         if (!data.name || !data.email || !data.subject || !data.message) {
+            console.log('Validation failed: Missing required fields');
             throw new functions.https.HttpsError('invalid-argument', 'Missing required fields');
         }
         // Validate email format
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(data.email)) {
+            console.log('Validation failed: Invalid email format');
             throw new functions.https.HttpsError('invalid-argument', 'Invalid email format');
         }
         // Create a timestamp
         const timestamp = admin.firestore.Timestamp.now();
+        console.log('Timestamp created');
         // Prepare the data for Firestore
         const contactData = {
             name: data.name,
@@ -65,10 +74,30 @@ exports.submitContactForm = functions.https.onCall(async (data, context) => {
             message: data.message,
             timestamp,
         };
-        // Save to Firestore
-        const docRef = await db.collection('contactSubmissions').add(contactData);
-        // Send email notification
-        await sendEmailNotification(contactData, docRef.id);
+        console.log('Contact data prepared for Firestore');
+        // Save to Firestore - wrap in try/catch to isolate Firestore errors
+        let docRef;
+        try {
+            console.log('Attempting to save to Firestore...');
+            docRef = await db.collection('contactSubmissions').add(contactData);
+            console.log('Successfully saved to Firestore with ID:', docRef.id);
+        }
+        catch (firestoreError) {
+            console.error('Error saving to Firestore:', firestoreError);
+            throw new functions.https.HttpsError('internal', 'Failed to save your submission to our database. Please try again later.', { originalError: 'firestore_error' });
+        }
+        // Send email notification - wrap in try/catch to isolate email errors
+        try {
+            console.log('Attempting to send email notification...');
+            await sendEmailNotification(contactData, docRef.id);
+            console.log('Email notification sent successfully');
+        }
+        catch (emailError) {
+            console.error('Error sending email notification:', emailError);
+            // Don't throw an error here, as we still want to return success
+            // The submission was saved to Firestore, which is the most important part
+        }
+        console.log('Contact form submission completed successfully');
         return {
             success: true,
             message: 'Contact form submitted successfully',
@@ -151,8 +180,9 @@ exports.submitContactForm = functions.https.onCall(async (data, context) => {
  * Send an email notification for new contact form submissions
  */
 async function sendEmailNotification(data, submissionId) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
     try {
+        console.log('Starting email notification process...');
         // Get email configuration from environment variables
         const emailConfig = {
             host: (_b = (_a = functions.config().email) === null || _a === void 0 ? void 0 : _a.host) !== null && _b !== void 0 ? _b : 'smtp.gmail.com',
@@ -163,11 +193,31 @@ async function sendEmailNotification(data, submissionId) {
                 pass: (_j = (_h = functions.config().email) === null || _h === void 0 ? void 0 : _h.pass) !== null && _j !== void 0 ? _j : '', // App password from environment
             },
         };
+        console.log('Email configuration loaded:', {
+            host: emailConfig.host,
+            port: emailConfig.port,
+            secure: emailConfig.secure,
+            user: emailConfig.auth.user,
+            // Don't log the password
+        });
         // Create a transporter
+        console.log('Creating nodemailer transporter...');
         const transporter = nodemailer.createTransport(emailConfig);
+        // Verify SMTP connection configuration
+        console.log('Verifying SMTP connection...');
+        try {
+            await transporter.verify();
+            console.log('SMTP connection verified successfully');
+        }
+        catch (verifyError) {
+            console.error('SMTP connection verification failed:', verifyError);
+            throw new Error(`SMTP verification failed: ${(_k = verifyError.message) !== null && _k !== void 0 ? _k : 'Unknown error'}`);
+        }
         // Format the date
         const formattedDate = new Date(data.timestamp.toDate()).toLocaleString();
+        console.log('Formatted date:', formattedDate);
         // Prepare email content
+        console.log('Preparing email content...');
         const mailOptions = {
             from: `"Jacob Barkin Website" <${emailConfig.auth.user}>`,
             to: 'jacobsamuelbarkin@gmail.com', // Your email address
@@ -198,9 +248,11 @@ async function sendEmailNotification(data, submissionId) {
         <p><small>Timestamp: ${formattedDate}</small></p>
       `,
         };
+        console.log('Email content prepared');
         // Send the email
-        await transporter.sendMail(mailOptions);
-        console.log('Email notification sent successfully');
+        console.log('Sending email...');
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Email notification sent successfully', info.messageId);
     }
     catch (error) {
         console.error('Error sending email notification:', error);
