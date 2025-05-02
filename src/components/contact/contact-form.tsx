@@ -229,12 +229,33 @@ export function ContactForm() {
       addDebugLog(`Firebase app config: ${JSON.stringify(firebaseConfigInfo)}`);
       console.log("Firebase app config check:", firebaseConfigInfo);
 
-      // Sign in anonymously to Firebase
+      // Try to sign in anonymously to Firebase, but don't block form submission if it fails
+      let anonymousUser = null;
       try {
-        addDebugLog("Attempting to sign in anonymously to Firebase...");
-        const auth = getAuth(firebaseApp);
-        const userCredential = await signInAnonymously(auth);
-        addDebugLog(`Successfully signed in anonymously with UID: ${userCredential.user.uid}`);
+        // Only attempt anonymous auth if we're in production
+        if (process.env.NODE_ENV === 'production') {
+          addDebugLog("Attempting to sign in anonymously to Firebase...");
+          const auth = getAuth(firebaseApp);
+
+          // Check if we're already signed in
+          if (auth.currentUser) {
+            addDebugLog(`Already signed in with UID: ${auth.currentUser.uid}`);
+            anonymousUser = auth.currentUser;
+          } else {
+            // Set a timeout for the sign-in operation
+            const signInPromise = signInAnonymously(auth);
+            const timeoutPromise = new Promise((_, reject) => {
+              setTimeout(() => reject(new Error('Anonymous sign-in timed out')), 5000);
+            });
+
+            // Race the sign-in operation against the timeout
+            const userCredential = await Promise.race([signInPromise, timeoutPromise]) as any;
+            anonymousUser = userCredential.user;
+            addDebugLog(`Successfully signed in anonymously with UID: ${anonymousUser.uid}`);
+          }
+        } else {
+          addDebugLog("Skipping anonymous authentication in development mode");
+        }
       } catch (authError: any) {
         addDebugLog(`WARNING: Failed to sign in anonymously: ${authError.message}`);
         // Continue without anonymous auth - we'll still try to submit the form
@@ -294,10 +315,8 @@ export function ContactForm() {
         addDebugLog("Preparing data for Firestore...");
         console.log("Preparing data for Firestore...");
 
-        // Get the current user if available
-        const auth = getAuth(firebaseApp);
-        const currentUser = auth.currentUser;
-        const userId = currentUser ? currentUser.uid : null;
+        // Use the anonymous user if available
+        const userId = anonymousUser ? anonymousUser.uid : null;
 
         if (userId) {
           addDebugLog(`Including authenticated user ID in submission: ${userId}`);
@@ -312,8 +331,7 @@ export function ContactForm() {
           userAgent: navigator.userAgent,
           submittedAt: new Date().toISOString(),
           environment: process.env.NODE_ENV,
-          userId: userId, // Include the user ID if available
-          anonymous: userId ? true : undefined, // Mark as anonymous auth if we have a user ID
+          ...(userId ? { userId: userId, anonymous: true } : {}), // Only include these fields if we have a user ID
           debugInfo: {
             url: window.location.href,
             timestamp: Date.now(),
