@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { getFunctions, httpsCallable } from "firebase/functions";
+// Firebase functions import removed as we're using direct Firestore access
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -106,77 +106,93 @@ export function ContactForm() {
     const timeoutId = setTimeout(() => {
       setIsSubmitting(false);
       setErrorMessage("The request timed out. Please try again or contact me directly via email.");
-    }, 15000); // 15 seconds timeout
+    }, 20000); // 20 seconds timeout
 
     try {
-      // Set the region for the functions
-      const region = 'us-central1';
-      const functionsWithRegion = getFunctions(firebaseApp, region);
+      console.log("Starting form submission process...");
 
-      // Create a reference to the Firebase Function
-      const submitContactForm = httpsCallable(functionsWithRegion, 'submitContactForm');
+      // Log Firebase app configuration for debugging
+      console.log("Firebase app config check:", {
+        apiKey: firebaseApp.options.apiKey ? `${firebaseApp.options.apiKey.substring(0, 5)}...` : 'undefined',
+        authDomain: firebaseApp.options.authDomain ?? 'undefined',
+        projectId: firebaseApp.options.projectId ?? 'undefined',
+        appId: firebaseApp.options.appId ? 'defined' : 'undefined',
+      });
 
-      // Submit the form data directly to Firestore as a fallback
+      // Skip Firebase Functions and use direct Firestore write only
+      console.log("Using direct Firestore write approach...");
+
       try {
+        console.log("Importing Firestore modules...");
         const { getFirestore, collection, addDoc } = await import('firebase/firestore');
+
+        console.log("Getting Firestore instance...");
         const db = getFirestore(firebaseApp);
 
-        // Add the form data to Firestore directly
-        await addDoc(collection(db, 'contactSubmissions'), {
+        console.log("Preparing data for Firestore...");
+        const submissionData = {
           ...data,
           timestamp: new Date(),
-          source: 'direct_client_submission' // Mark this as a direct submission
-        });
+          source: 'direct_client_submission',
+          userAgent: navigator.userAgent,
+          submittedAt: new Date().toISOString()
+        };
 
-        console.log('Form data saved directly to Firestore as a fallback');
+        console.log("Adding document to Firestore collection...");
+        const docRef = await addDoc(collection(db, 'contactSubmissions'), submissionData);
+
+        console.log('Form data saved directly to Firestore with ID:', docRef.id);
+
+        // Clear the timeout since the request completed successfully
+        clearTimeout(timeoutId);
+
+        // Show success message
+        setIsSuccess(true);
+
+        // Reset form
+        reset();
+
+        // Hide success message after 5 seconds
+        setTimeout(() => {
+          setIsSuccess(false);
+        }, 5000);
+
+        return; // Exit early, skipping the Firebase Function call
       } catch (firestoreError) {
         console.error("Direct Firestore write failed:", firestoreError);
-        // Continue with the function call even if direct write fails
+        throw firestoreError; // Re-throw to be caught by the outer catch block
       }
 
-      // Call the Firebase Function with a timeout
-      const functionPromise = submitContactForm(data);
+      // We're using direct Firestore access instead of Firebase Functions
+      // This approach bypasses the need for server-side processing
 
-      // Wait for the function to complete or timeout
-      const result = await Promise.race([
-        functionPromise,
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Function call timed out')), 10000)
-        )
-      ]);
-
-      console.log("Form submission response:", result);
-
-      // Clear the timeout since the request completed successfully
-      clearTimeout(timeoutId);
-
-      // Show success message
-      setIsSuccess(true);
-
-      // Reset form
-      reset();
-
-      // Hide success message after 5 seconds
-      setTimeout(() => {
-        setIsSuccess(false);
-      }, 5000);
     } catch (error: any) {
       console.error("Error submitting form:", error);
 
       // Clear the timeout since we're handling the error
       clearTimeout(timeoutId);
 
+      // Check if it's a Firestore permission error
+      if (error.code === 'permission-denied') {
+        setErrorMessage("You don't have permission to submit this form. Please contact me directly via email instead.");
+      }
+      // Check if it's a network error
+      else if (error.name === 'FirebaseError' && error.code === 'failed-precondition') {
+        setErrorMessage("There was an issue connecting to the database. Please try again later or contact me directly via email.");
+      }
       // Check if it's a timeout error
-      if (error.message === 'Function call timed out') {
-        setErrorMessage("The request timed out, but your message might have been saved. Please check your email for a confirmation or try again later.");
-      } else {
+      else if (error.message?.includes('timeout') || error.message?.includes('timed out')) {
+        setErrorMessage("The request timed out. Please try again later or contact me directly via email.");
+      }
+      else {
         // Get error message for other types of errors
         const errorDetails = getErrorMessage(error);
         setErrorMessage(errorDetails);
       }
 
       // Log additional debugging information to the console
-      console.log("Error details:", {
+      console.log("Detailed error information:", {
+        name: error.name,
         code: error.code,
         message: error.message,
         details: error.details,
