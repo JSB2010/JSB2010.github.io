@@ -1,10 +1,16 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Contact form submissions - only allow creation, no reading/updating/deleting
+    // Contact form submissions - allow anonymous creation and reading for testing
     match /contactSubmissions/{submission} {
+      // Allow anyone to create contact submissions
       allow create: if true;
-      allow read, update, delete: if false;
+
+      // Allow reading for testing purposes (you may want to restrict this in production)
+      allow read: if true;
+
+      // No one can update or delete submissions
+      allow update, delete: if false;
     }
 
     // Project views - allow reading, only allow creation/updating through functions

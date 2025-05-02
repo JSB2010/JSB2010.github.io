@@ -98,15 +98,79 @@ export function ContactForm() {
     return userFriendlyMessage;
   };
 
+  // Helper function to handle successful form submission
+  const handleSubmissionSuccess = (docId: string) => {
+    console.log('Form data saved successfully with ID:', docId);
+
+    // Show success message
+    setIsSuccess(true);
+
+    // Reset form
+    reset();
+
+    // Hide success message after 5 seconds
+    setTimeout(() => {
+      setIsSuccess(false);
+    }, 5000);
+  };
+
+  // Helper function to handle form submission errors
+  const handleSubmissionError = (error: any) => {
+    console.error("Error submitting form:", error);
+
+    // Specific error handling for common Firestore errors
+    if (error.name === 'FirebaseError') {
+      switch (error.code) {
+        case 'permission-denied':
+          setErrorMessage("You don't have permission to submit this form. Please try again or contact me directly via email.");
+          break;
+        case 'unavailable':
+          setErrorMessage("The Firebase service is currently unavailable. Please try again later or contact me directly via email.");
+          break;
+        case 'failed-precondition':
+          setErrorMessage("There was an issue connecting to the database. Please try again later or contact me directly via email.");
+          break;
+        case 'resource-exhausted':
+          setErrorMessage("The service is experiencing high traffic. Please try again later or contact me directly via email.");
+          break;
+        default:
+          if (error.message?.includes('timeout') || error.message?.includes('timed out')) {
+            setErrorMessage("The request timed out. Please try again later or contact me directly via email.");
+          } else {
+            // Get error message for other types of errors
+            const errorDetails = getErrorMessage(error);
+            setErrorMessage(errorDetails);
+          }
+      }
+    } else if (error.message?.includes('timeout') || error.message?.includes('timed out')) {
+      setErrorMessage("The request timed out. Please try again later or contact me directly via email.");
+    } else {
+      // Get error message for other types of errors
+      const errorDetails = getErrorMessage(error);
+      setErrorMessage(errorDetails);
+    }
+
+    // Log additional debugging information to the console
+    console.log("Detailed error information:", {
+      name: error.name,
+      code: error.code,
+      message: error.message,
+      details: error.details,
+      stack: error.stack
+    });
+  };
+
+  // Main form submission handler
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
     setErrorMessage(null);
 
     // Set a timeout to prevent the form from being stuck in the submitting state
+    // Reduced from 20 seconds to 10 seconds for better user experience
     const timeoutId = setTimeout(() => {
       setIsSubmitting(false);
       setErrorMessage("The request timed out. Please try again or contact me directly via email.");
-    }, 20000); // 20 seconds timeout
+    }, 10000); // 10 seconds timeout
 
     try {
       console.log("Starting form submission process...");
@@ -151,41 +215,40 @@ export function ContactForm() {
           // Clear the timeout since the request completed successfully
           clearTimeout(timeoutId);
 
-          // Show success message
-          setIsSuccess(true);
-
-          // Reset form
-          reset();
-
-          // Hide success message after 5 seconds
-          setTimeout(() => {
-            setIsSuccess(false);
-          }, 5000);
+          // Use the helper function to handle success
+          handleSubmissionSuccess('dev-mode-simulation');
 
           return;
         }
 
         // In production, actually submit to Firestore
         console.log("Adding document to Firestore collection...");
-        const docRef = await addDoc(collection(db, 'contactSubmissions'), submissionData);
 
-        console.log('Form data saved directly to Firestore with ID:', docRef.id);
+        try {
+          // Set a shorter timeout specifically for the Firestore operation
+          const firestorePromise = addDoc(collection(db, 'contactSubmissions'), submissionData);
 
-        // Clear the timeout since the request completed successfully
-        clearTimeout(timeoutId);
+          // Create a timeout promise
+          const timeoutPromise = new Promise((_, reject) => {
+            setTimeout(() => reject(new Error('Firestore operation timed out')), 5000);
+          });
 
-        // Show success message
-        setIsSuccess(true);
+          // Race the Firestore operation against the timeout
+          const docRef = await Promise.race([firestorePromise, timeoutPromise]) as any;
 
-        // Reset form
-        reset();
+          console.log('Form data saved directly to Firestore with ID:', docRef.id);
 
-        // Hide success message after 5 seconds
-        setTimeout(() => {
-          setIsSuccess(false);
-        }, 5000);
+          // Clear the timeout since the request completed successfully
+          clearTimeout(timeoutId);
 
-        return; // Exit early, skipping the Firebase Function call
+          // Use the helper function to handle success
+          handleSubmissionSuccess(docRef.id);
+
+          return; // Exit early, skipping the Firebase Function call
+        } catch (innerError) {
+          console.error("Error during Firestore write operation:", innerError);
+          throw innerError; // Re-throw to be caught by the outer catch block
+        }
       } catch (firestoreError) {
         console.error("Direct Firestore write failed:", firestoreError);
 
@@ -200,16 +263,8 @@ export function ContactForm() {
           // Clear the timeout since the request completed successfully
           clearTimeout(timeoutId);
 
-          // Show success message
-          setIsSuccess(true);
-
-          // Reset form
-          reset();
-
-          // Hide success message after 5 seconds
-          setTimeout(() => {
-            setIsSuccess(false);
-          }, 5000);
+          // Use the helper function to handle success
+          handleSubmissionSuccess('dev-mode-fallback');
 
           return;
         }
@@ -221,8 +276,6 @@ export function ContactForm() {
       // This approach bypasses the need for server-side processing
 
     } catch (error: any) {
-      console.error("Error submitting form:", error);
-
       // Clear the timeout since we're handling the error
       clearTimeout(timeoutId);
 
@@ -242,33 +295,8 @@ export function ContactForm() {
         return;
       }
 
-      // Production error handling
-      // Check if it's a Firestore permission error
-      if (error.code === 'permission-denied') {
-        setErrorMessage("You don't have permission to submit this form. Please contact me directly via email instead.");
-      }
-      // Check if it's a network error
-      else if (error.name === 'FirebaseError' && error.code === 'failed-precondition') {
-        setErrorMessage("There was an issue connecting to the database. Please try again later or contact me directly via email.");
-      }
-      // Check if it's a timeout error
-      else if (error.message?.includes('timeout') || error.message?.includes('timed out')) {
-        setErrorMessage("The request timed out. Please try again later or contact me directly via email.");
-      }
-      else {
-        // Get error message for other types of errors
-        const errorDetails = getErrorMessage(error);
-        setErrorMessage(errorDetails);
-      }
-
-      // Log additional debugging information to the console
-      console.log("Detailed error information:", {
-        name: error.name,
-        code: error.code,
-        message: error.message,
-        details: error.details,
-        stack: error.stack
-      });
+      // Use the helper function to handle errors in production
+      handleSubmissionError(error);
     } finally {
       // Ensure isSubmitting is set to false (this will be redundant if the timeout hasn't fired)
       setIsSubmitting(false);
