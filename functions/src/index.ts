@@ -86,14 +86,14 @@ export const submitContactForm = functions.https.onCall(async (data: any, contex
  */
 async function sendEmailNotification(data: ContactFormData, submissionId: string) {
   try {
-    // Email configuration for Gmail with app password
+    // Get email configuration from environment variables
     const emailConfig: EmailConfig = {
-      host: 'smtp.gmail.com',
-      port: 587,
-      secure: false, // true for 465, false for other ports
+      host: functions.config().email?.host ?? 'smtp.gmail.com',
+      port: parseInt(functions.config().email?.port ?? '587'),
+      secure: functions.config().email?.secure === 'true', // true for 465, false for other ports
       auth: {
-        user: 'jacobsamuelbarkin@gmail.com',
-        pass: 'phnv varx llta soll', // App password
+        user: functions.config().email?.user ?? 'jacobsamuelbarkin@gmail.com',
+        pass: functions.config().email?.pass ?? '', // App password from environment
       },
     };
 

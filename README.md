@@ -140,8 +140,10 @@ This project uses Firebase for backend functionality. Follow these steps to set 
 
 4. Configure email for contact form:
    ```bash
-   firebase functions:config:set email.host="smtp.example.com" email.port="587" email.secure="false" email.user="your-email@example.com" email.pass="your-password"
+   firebase functions:config:set email.host="smtp.gmail.com" email.port="587" email.secure="false" email.user="your-email@gmail.com" email.pass="your-app-password"
    ```
+
+   Note: For Gmail, you need to use an App Password instead of your regular password. You can create one at https://myaccount.google.com/apppasswords
 
 5. Deploy Firebase Functions:
    ```bash
@@ -176,7 +178,29 @@ npm run build
      - Go to your Cloudflare Pages project
      - Navigate to Settings > Environment variables
      - Add each variable from `.env.local` as a production environment variable
-     - Make sure to add all the `NEXT_PUBLIC_FIREBASE_*` variables
+     - Make sure to add all the following variables:
+
+       **Firebase Client Configuration:**
+       - `NEXT_PUBLIC_FIREBASE_API_KEY`
+       - `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`
+       - `NEXT_PUBLIC_FIREBASE_PROJECT_ID`
+       - `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`
+       - `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`
+       - `NEXT_PUBLIC_FIREBASE_APP_ID`
+       - `NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID`
+
+       **Firebase Admin Configuration:**
+       - `FIREBASE_PROJECT_ID`
+
+       **Email Configuration (for reference):**
+       - `FIREBASE_EMAIL_HOST`
+       - `FIREBASE_EMAIL_PORT`
+       - `FIREBASE_EMAIL_SECURE`
+       - `FIREBASE_EMAIL_USER`
+       - `FIREBASE_EMAIL_PASS`
+
+       **reCAPTCHA Configuration:**
+       - `NEXT_PUBLIC_RECAPTCHA_SITE_KEY`
 
 Alternatively, you can deploy to any platform that supports static sites, such as GitHub Pages, Netlify, or Vercel.
 
