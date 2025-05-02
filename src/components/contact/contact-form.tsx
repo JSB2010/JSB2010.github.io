@@ -169,11 +169,34 @@ export function ContactForm() {
     });
   };
 
+  // Function to check network connectivity
+  const checkNetworkStatus = () => {
+    const status = {
+      online: navigator.onLine,
+      connectionType: (navigator as any).connection ? (navigator as any).connection.effectiveType : 'unknown',
+      saveData: (navigator as any).connection ? (navigator as any).connection.saveData : false
+    };
+
+    addDebugLog(`Network status: ${JSON.stringify(status)}`);
+    return status;
+  };
+
   // Main form submission handler
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
     setErrorMessage(null);
     setDebugLogs([]); // Clear previous debug logs
+
+    // Check network status
+    if (typeof window !== 'undefined') {
+      const networkStatus = checkNetworkStatus();
+      if (!networkStatus.online) {
+        addDebugLog("ERROR: Device is offline. Cannot connect to Firebase.");
+        setErrorMessage("Your device appears to be offline. Please check your internet connection and try again.");
+        setIsSubmitting(false);
+        return;
+      }
+    }
 
     addDebugLog(`Form submission started with data: ${JSON.stringify({
       name: data.name,
@@ -229,7 +252,32 @@ export function ContactForm() {
         addDebugLog("Getting Firestore instance...");
         console.log("Getting Firestore instance...");
         const db = getFirestore(firebaseApp);
+
+        // Check if we're in a browser environment
+        if (typeof window !== 'undefined') {
+          // Try to detect if Firebase emulators are running
+          try {
+            const useEmulator = process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === 'true';
+            if (useEmulator) {
+              addDebugLog("Firebase emulator mode enabled, connecting to local emulator");
+              const { connectFirestoreEmulator } = await import('firebase/firestore');
+              connectFirestoreEmulator(db, 'localhost', 8080);
+              addDebugLog("Connected to Firestore emulator on localhost:8080");
+            } else {
+              addDebugLog("Using production Firestore (emulator mode disabled)");
+            }
+          } catch (emulatorError) {
+            addDebugLog(`Note: Firebase emulator detection failed: ${emulatorError.message}`);
+          }
+        }
+
         addDebugLog(`Firestore instance obtained for project: ${db.app.options.projectId}`);
+
+        // Add CORS information for debugging
+        if (typeof window !== 'undefined') {
+          addDebugLog(`Current origin: ${window.location.origin}`);
+          addDebugLog(`Firebase project domain: ${db.app.options.authDomain}`);
+        }
 
         addDebugLog("Preparing data for Firestore...");
         console.log("Preparing data for Firestore...");
@@ -287,15 +335,15 @@ export function ContactForm() {
           }
 
           // Set a shorter timeout specifically for the Firestore operation
-          addDebugLog("Setting up Firestore operation with 5-second timeout...");
+          addDebugLog("Setting up Firestore operation with 15-second timeout...");
           const firestorePromise = addDoc(collectionRef, submissionData);
 
-          // Create a timeout promise
+          // Create a timeout promise with increased timeout (15 seconds instead of 5)
           const timeoutPromise = new Promise((_, reject) => {
             setTimeout(() => {
-              addDebugLog("ERROR: Firestore operation timed out after 5 seconds");
-              reject(new Error('Firestore operation timed out'));
-            }, 5000);
+              addDebugLog("ERROR: Firestore operation timed out after 15 seconds");
+              reject(new Error('Firestore operation timed out after 15 seconds - possible network or configuration issue'));
+            }, 15000);
           });
 
           // Race the Firestore operation against the timeout
