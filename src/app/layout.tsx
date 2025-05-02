@@ -91,6 +91,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/images/Updated logo.png" sizes="any" />
+        <link rel="apple-touch-icon" href="/images/Updated logo.png" sizes="180x180" />
         <link rel="manifest" href="/manifest.webmanifest" />
         {/* Theme color is added in metadata */}
       </head>

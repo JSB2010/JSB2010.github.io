@@ -84,15 +84,16 @@ exports.submitContactForm = functions.https.onCall(async (data, context) => {
  * Send an email notification for new contact form submissions
  */
 async function sendEmailNotification(data, submissionId) {
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j;
     try {
-        // Email configuration for Gmail with app password
+        // Get email configuration from environment variables
         const emailConfig = {
-            host: 'smtp.gmail.com',
-            port: 587,
-            secure: false, // true for 465, false for other ports
+            host: (_b = (_a = functions.config().email) === null || _a === void 0 ? void 0 : _a.host) !== null && _b !== void 0 ? _b : 'smtp.gmail.com',
+            port: parseInt((_d = (_c = functions.config().email) === null || _c === void 0 ? void 0 : _c.port) !== null && _d !== void 0 ? _d : '587'),
+            secure: ((_e = functions.config().email) === null || _e === void 0 ? void 0 : _e.secure) === 'true', // true for 465, false for other ports
             auth: {
-                user: 'jacobsamuelbarkin@gmail.com',
-                pass: 'phnv varx llta soll', // App password
+                user: (_g = (_f = functions.config().email) === null || _f === void 0 ? void 0 : _f.user) !== null && _g !== void 0 ? _g : 'jacobsamuelbarkin@gmail.com',
+                pass: (_j = (_h = functions.config().email) === null || _h === void 0 ? void 0 : _h.pass) !== null && _j !== void 0 ? _j : '', // App password from environment
             },
         };
         // Create a transporter
