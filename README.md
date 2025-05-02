@@ -161,7 +161,9 @@ This project uses Firebase for backend functionality. Follow these steps to set 
 
 ## Deployment
 
-This site is configured for static export and can be deployed to Cloudflare Pages:
+This site is configured for static export and must be deployed to Cloudflare Pages:
+
+> **Important Note**: Firebase Hosting has been disabled for this project. Do not attempt to deploy to Firebase Hosting.
 
 1. Build the site locally:
 ```bash
@@ -202,7 +204,7 @@ npm run build
        **reCAPTCHA Configuration:**
        - `NEXT_PUBLIC_RECAPTCHA_SITE_KEY`
 
-Alternatively, you can deploy to any platform that supports static sites, such as GitHub Pages, Netlify, or Vercel.
+Alternatively, you can deploy to any platform that supports static sites, such as GitHub Pages or Netlify, but Cloudflare Pages is the recommended platform.
 
 ## Testing and CI/CD
 

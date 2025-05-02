@@ -2,6 +2,8 @@
 
 This guide will walk you through setting up Firebase for the Jacob Barkin website.
 
+> **Important Note**: Firebase Hosting has been disabled for this project. Do not attempt to enable or deploy to Firebase Hosting. Use Cloudflare Pages for hosting instead.
+
 ## Prerequisites
 
 - Node.js 20.x or later
@@ -46,8 +48,9 @@ This guide will walk you through setting up Firebase for the Jacob Barkin websit
 2. Scroll down to "Your apps" section
 3. Click the web app icon (</>) to add a web app if you haven't already
 4. Enter "Jacob Barkin Website" as the app nickname
-5. Register the app
-6. Copy the Firebase configuration object (it looks like this):
+5. **Do NOT check "Also set up Firebase Hosting"** - we use Cloudflare Pages instead
+6. Register the app
+7. Copy the Firebase configuration object (it looks like this):
 
 ```javascript
 const firebaseConfig = {
@@ -97,7 +100,7 @@ firebase init
 3. Select the following features:
    - Firestore
    - Functions
-   - Hosting (optional)
+   - **DO NOT select Hosting** - we use Cloudflare Pages instead
 
 4. Select your Firebase project
 5. Accept the default options for Firestore rules and indexes
