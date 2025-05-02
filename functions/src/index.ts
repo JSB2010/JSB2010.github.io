@@ -39,6 +39,16 @@ export const submitContactForm = functions.https.onCall(async (data: any, contex
   });
 
   try {
+    // Log Firebase config
+    console.log('Firebase config check:', {
+      projectId: process.env.FIREBASE_PROJECT_ID ?? admin.app().options.projectId,
+      databaseURL: admin.app().options.databaseURL,
+      storageBucket: admin.app().options.storageBucket,
+    });
+
+    // Log Firestore instance
+    console.log('Firestore instance:', db ? 'Initialized' : 'Not initialized');
+
     // Validate the data
     if (!data.name || !data.email || !data.subject || !data.message) {
       console.log('Validation failed: Missing required fields');
@@ -72,18 +82,45 @@ export const submitContactForm = functions.https.onCall(async (data: any, contex
     };
     console.log('Contact data prepared for Firestore');
 
+    // Check if the contactSubmissions collection exists
+    try {
+      console.log('Checking if contactSubmissions collection exists...');
+      const collections = await db.listCollections();
+      const collectionIds = collections.map(col => col.id);
+      console.log('Available collections:', collectionIds);
+
+      if (!collectionIds.includes('contactSubmissions')) {
+        console.log('contactSubmissions collection does not exist, will be created automatically');
+      }
+    } catch (listError) {
+      console.error('Error listing collections:', listError);
+    }
+
     // Save to Firestore - wrap in try/catch to isolate Firestore errors
     let docRef;
     try {
       console.log('Attempting to save to Firestore...');
+
+      // Try to get a document from the collection first to test permissions
+      try {
+        const testQuery = await db.collection('contactSubmissions').limit(1).get();
+        console.log('Test query successful, documents count:', testQuery.size);
+      } catch (testError) {
+        console.error('Test query failed:', testError);
+      }
+
       docRef = await db.collection('contactSubmissions').add(contactData);
       console.log('Successfully saved to Firestore with ID:', docRef.id);
-    } catch (firestoreError) {
+    } catch (firestoreError: any) {
       console.error('Error saving to Firestore:', firestoreError);
+      console.error('Error code:', firestoreError.code);
+      console.error('Error message:', firestoreError.message);
+      console.error('Error details:', JSON.stringify(firestoreError));
+
       throw new functions.https.HttpsError(
         'internal',
-        'Failed to save your submission to our database. Please try again later.',
-        { originalError: 'firestore_error' }
+        `Failed to save your submission to our database: ${firestoreError.message ?? 'Unknown error'}`,
+        { originalError: 'firestore_error', details: firestoreError.toString() }
       );
     }
 
@@ -92,8 +129,10 @@ export const submitContactForm = functions.https.onCall(async (data: any, contex
       console.log('Attempting to send email notification...');
       await sendEmailNotification(contactData, docRef.id);
       console.log('Email notification sent successfully');
-    } catch (emailError) {
+    } catch (emailError: any) {
       console.error('Error sending email notification:', emailError);
+      console.error('Error message:', emailError.message);
+      console.error('Error stack:', emailError.stack);
       // Don't throw an error here, as we still want to return success
       // The submission was saved to Firestore, which is the most important part
     }

@@ -99,17 +99,51 @@ export function ContactForm() {
     setErrorMessage(null);
 
     try {
+      // Log Firebase app configuration
+      console.log("Firebase app config:", {
+        apiKey: firebaseApp.options.apiKey,
+        authDomain: firebaseApp.options.authDomain,
+        projectId: firebaseApp.options.projectId,
+        appId: firebaseApp.options.appId,
+      });
+
       // Set the region for the functions
       const region = 'us-central1';
       const functionsWithRegion = getFunctions(firebaseApp, region);
+      console.log("Firebase Functions instance created with region:", region);
+
+      // Try a direct Firestore write to test permissions
+      try {
+        console.log("Testing direct Firestore write...");
+        const { getFirestore, collection, addDoc } = await import('firebase/firestore');
+        const db = getFirestore(firebaseApp);
+
+        // Create a test document
+        const testData = {
+          name: 'Test User',
+          email: 'test@example.com',
+          subject: 'Test Subject',
+          message: 'This is a test message from the contact form',
+          timestamp: new Date(),
+          isTest: true
+        };
+
+        // Add the test document to the contactSubmissions collection
+        const docRef = await addDoc(collection(db, 'contactSubmissions'), testData);
+        console.log('Direct Firestore write test successful with ID:', docRef.id);
+      } catch (firestoreError) {
+        console.error("Direct Firestore write test failed:", firestoreError);
+      }
 
       // Call the submitContactForm function
+      console.log("Creating callable function reference...");
       const submitContactForm = httpsCallable(functionsWithRegion, 'submitContactForm');
 
       // Submit the form data and log the response
       console.log("Submitting form data:", data);
       console.log("Using Firebase Functions region:", region);
 
+      console.log("Calling submitContactForm function...");
       const result = await submitContactForm(data);
       console.log("Form submission response:", result);
 
@@ -139,6 +173,18 @@ export function ContactForm() {
         details: error.details,
         stack: error.stack
       });
+
+      // Try to get more information about the error
+      if (error.code === 'functions/internal') {
+        console.log("Internal server error detected. This could be due to:");
+        console.log("1. Firebase Functions configuration issues");
+        console.log("2. Firestore permissions issues");
+        console.log("3. Email sending issues");
+        console.log("4. Server-side code errors");
+
+        // Try to get the Firebase Functions logs
+        console.log("Please check the Firebase Functions logs for more details.");
+      }
     } finally {
       setIsSubmitting(false);
     }

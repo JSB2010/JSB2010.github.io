@@ -45,6 +45,7 @@ const db = admin.firestore();
  * Stores the submission in Firestore and sends an email notification
  */
 exports.submitContactForm = functions.https.onCall(async (data, context) => {
+    var _a, _b;
     console.log('Contact form submission received:', {
         name: data.name,
         email: data.email,
@@ -52,6 +53,14 @@ exports.submitContactForm = functions.https.onCall(async (data, context) => {
         messageLength: data.message ? data.message.length : 0
     });
     try {
+        // Log Firebase config
+        console.log('Firebase config check:', {
+            projectId: (_a = process.env.FIREBASE_PROJECT_ID) !== null && _a !== void 0 ? _a : admin.app().options.projectId,
+            databaseURL: admin.app().options.databaseURL,
+            storageBucket: admin.app().options.storageBucket,
+        });
+        // Log Firestore instance
+        console.log('Firestore instance:', db ? 'Initialized' : 'Not initialized');
         // Validate the data
         if (!data.name || !data.email || !data.subject || !data.message) {
             console.log('Validation failed: Missing required fields');
@@ -75,16 +84,40 @@ exports.submitContactForm = functions.https.onCall(async (data, context) => {
             timestamp,
         };
         console.log('Contact data prepared for Firestore');
+        // Check if the contactSubmissions collection exists
+        try {
+            console.log('Checking if contactSubmissions collection exists...');
+            const collections = await db.listCollections();
+            const collectionIds = collections.map(col => col.id);
+            console.log('Available collections:', collectionIds);
+            if (!collectionIds.includes('contactSubmissions')) {
+                console.log('contactSubmissions collection does not exist, will be created automatically');
+            }
+        }
+        catch (listError) {
+            console.error('Error listing collections:', listError);
+        }
         // Save to Firestore - wrap in try/catch to isolate Firestore errors
         let docRef;
         try {
             console.log('Attempting to save to Firestore...');
+            // Try to get a document from the collection first to test permissions
+            try {
+                const testQuery = await db.collection('contactSubmissions').limit(1).get();
+                console.log('Test query successful, documents count:', testQuery.size);
+            }
+            catch (testError) {
+                console.error('Test query failed:', testError);
+            }
             docRef = await db.collection('contactSubmissions').add(contactData);
             console.log('Successfully saved to Firestore with ID:', docRef.id);
         }
         catch (firestoreError) {
             console.error('Error saving to Firestore:', firestoreError);
-            throw new functions.https.HttpsError('internal', 'Failed to save your submission to our database. Please try again later.', { originalError: 'firestore_error' });
+            console.error('Error code:', firestoreError.code);
+            console.error('Error message:', firestoreError.message);
+            console.error('Error details:', JSON.stringify(firestoreError));
+            throw new functions.https.HttpsError('internal', `Failed to save your submission to our database: ${(_b = firestoreError.message) !== null && _b !== void 0 ? _b : 'Unknown error'}`, { originalError: 'firestore_error', details: firestoreError.toString() });
         }
         // Send email notification - wrap in try/catch to isolate email errors
         try {
@@ -94,6 +127,8 @@ exports.submitContactForm = functions.https.onCall(async (data, context) => {
         }
         catch (emailError) {
             console.error('Error sending email notification:', emailError);
+            console.error('Error message:', emailError.message);
+            console.error('Error stack:', emailError.stack);
             // Don't throw an error here, as we still want to return success
             // The submission was saved to Firestore, which is the most important part
         }
