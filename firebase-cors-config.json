@@ -1,9 +1,7 @@
-{
-  "cors": [
-    {
-      "origin": ["https://modern-redesign-shadcn.jsb2010-github-io.pages.dev", "https://jacobbarkin.com", "https://www.jacobbarkin.com"],
-      "method": ["GET", "POST", "PUT", "DELETE"],
-      "maxAgeSeconds": 3600
-    }
-  ]
-}
+[
+  {
+    "origin": ["https://modern-redesign-shadcn.jsb2010-github-io.pages.dev", "https://jacobbarkin.com", "https://www.jacobbarkin.com"],
+    "method": ["GET", "POST", "PUT", "DELETE"],
+    "maxAgeSeconds": 3600
+  }
+]
