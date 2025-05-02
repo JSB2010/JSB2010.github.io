@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ContactFormServerless } from "@/components/contact/contact-form-serverless";
+import { ContactFormHtml } from "@/components/contact/contact-form-html";
 import { Mail } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 
@@ -40,7 +40,7 @@ export default function ContactPage() {
                 Fill out the form below and I'll get back to you as soon as possible. I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision.
               </p>
 
-              <ContactFormServerless />
+              <ContactFormHtml />
             </div>
 
             <div className="mt-8 lg:mt-0">
