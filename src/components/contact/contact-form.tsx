@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Send, Loader2, CheckCircle } from "lucide-react";
 import { firebaseApp } from "@/lib/firebase/config";
+import { getAuth, signInAnonymously } from "firebase/auth";
 
 // Form validation schema
 const formSchema = z.object({
@@ -228,6 +229,17 @@ export function ContactForm() {
       addDebugLog(`Firebase app config: ${JSON.stringify(firebaseConfigInfo)}`);
       console.log("Firebase app config check:", firebaseConfigInfo);
 
+      // Sign in anonymously to Firebase
+      try {
+        addDebugLog("Attempting to sign in anonymously to Firebase...");
+        const auth = getAuth(firebaseApp);
+        const userCredential = await signInAnonymously(auth);
+        addDebugLog(`Successfully signed in anonymously with UID: ${userCredential.user.uid}`);
+      } catch (authError: any) {
+        addDebugLog(`WARNING: Failed to sign in anonymously: ${authError.message}`);
+        // Continue without anonymous auth - we'll still try to submit the form
+      }
+
       // Skip Firebase Functions and use direct Firestore write only
       addDebugLog("Using direct Firestore write approach...");
       console.log("Using direct Firestore write approach...");
@@ -281,6 +293,18 @@ export function ContactForm() {
 
         addDebugLog("Preparing data for Firestore...");
         console.log("Preparing data for Firestore...");
+
+        // Get the current user if available
+        const auth = getAuth(firebaseApp);
+        const currentUser = auth.currentUser;
+        const userId = currentUser ? currentUser.uid : null;
+
+        if (userId) {
+          addDebugLog(`Including authenticated user ID in submission: ${userId}`);
+        } else {
+          addDebugLog("No authenticated user ID available for submission");
+        }
+
         const submissionData = {
           ...data,
           timestamp: new Date(),
@@ -288,6 +312,8 @@ export function ContactForm() {
           userAgent: navigator.userAgent,
           submittedAt: new Date().toISOString(),
           environment: process.env.NODE_ENV,
+          userId: userId, // Include the user ID if available
+          anonymous: userId ? true : undefined, // Mark as anonymous auth if we have a user ID
           debugInfo: {
             url: window.location.href,
             timestamp: Date.now(),
