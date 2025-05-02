@@ -25,6 +25,15 @@ export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [debugLogs, setDebugLogs] = useState<string[]>([]);
+  const [showDebug, setShowDebug] = useState(true); // Set to true to show debug panel by default
+
+  // Function to add a log message to the debug panel
+  const addDebugLog = (message: string) => {
+    const timestamp = new Date().toISOString().split('T')[1].split('.')[0]; // HH:MM:SS format
+    const logMessage = `[${timestamp}] ${message}`;
+    setDebugLogs(prev => [...prev, logMessage]);
+  };
 
   const {
     register,
@@ -164,36 +173,65 @@ export function ContactForm() {
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
     setErrorMessage(null);
+    setDebugLogs([]); // Clear previous debug logs
+
+    addDebugLog(`Form submission started with data: ${JSON.stringify({
+      name: data.name,
+      email: data.email,
+      subject: data.subject,
+      messageLength: data.message.length
+    })}`);
 
     // Set a timeout to prevent the form from being stuck in the submitting state
     // Reduced from 20 seconds to 10 seconds for better user experience
     const timeoutId = setTimeout(() => {
+      addDebugLog("TIMEOUT: Form submission timed out after 10 seconds");
       setIsSubmitting(false);
       setErrorMessage("The request timed out. Please try again or contact me directly via email.");
     }, 10000); // 10 seconds timeout
 
     try {
-      console.log("Starting form submission process...");
+      addDebugLog("Starting form submission process...");
 
       // Log Firebase app configuration for debugging
-      console.log("Firebase app config check:", {
+      const firebaseConfigInfo = {
         apiKey: firebaseApp.options.apiKey ? `${firebaseApp.options.apiKey.substring(0, 5)}...` : 'undefined',
         authDomain: firebaseApp.options.authDomain ?? 'undefined',
         projectId: firebaseApp.options.projectId ?? 'undefined',
         appId: firebaseApp.options.appId ? 'defined' : 'undefined',
         environment: process.env.NODE_ENV
-      });
+      };
+
+      addDebugLog(`Firebase app config: ${JSON.stringify(firebaseConfigInfo)}`);
+      console.log("Firebase app config check:", firebaseConfigInfo);
 
       // Skip Firebase Functions and use direct Firestore write only
+      addDebugLog("Using direct Firestore write approach...");
       console.log("Using direct Firestore write approach...");
 
       try {
+        addDebugLog("Importing Firestore modules...");
         console.log("Importing Firestore modules...");
-        const { getFirestore, collection, addDoc } = await import('firebase/firestore');
 
+        let getFirestore, collection, addDoc;
+
+        try {
+          const firestore = await import('firebase/firestore');
+          getFirestore = firestore.getFirestore;
+          collection = firestore.collection;
+          addDoc = firestore.addDoc;
+          addDebugLog("Firestore modules imported successfully");
+        } catch (importError) {
+          addDebugLog(`ERROR importing Firestore modules: ${importError.message}`);
+          throw importError;
+        }
+
+        addDebugLog("Getting Firestore instance...");
         console.log("Getting Firestore instance...");
         const db = getFirestore(firebaseApp);
+        addDebugLog(`Firestore instance obtained for project: ${db.app.options.projectId}`);
 
+        addDebugLog("Preparing data for Firestore...");
         console.log("Preparing data for Firestore...");
         const submissionData = {
           ...data,
@@ -201,8 +239,20 @@ export function ContactForm() {
           source: 'direct_client_submission',
           userAgent: navigator.userAgent,
           submittedAt: new Date().toISOString(),
-          environment: process.env.NODE_ENV
+          environment: process.env.NODE_ENV,
+          debugInfo: {
+            url: window.location.href,
+            timestamp: Date.now(),
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+          }
         };
+        addDebugLog(`Submission data prepared: ${JSON.stringify({
+          name: submissionData.name,
+          email: submissionData.email,
+          subject: submissionData.subject,
+          timestamp: submissionData.timestamp,
+          source: submissionData.source
+        })}`);
 
         // In development mode, log the submission data but don't actually submit
         if (process.env.NODE_ENV === 'development') {
@@ -222,53 +272,90 @@ export function ContactForm() {
         }
 
         // In production, actually submit to Firestore
+        addDebugLog("Adding document to Firestore collection 'contactSubmissions'...");
         console.log("Adding document to Firestore collection...");
 
         try {
+          addDebugLog("Creating Firestore collection reference...");
+          let collectionRef;
+          try {
+            collectionRef = collection(db, 'contactSubmissions');
+            addDebugLog("Collection reference created successfully");
+          } catch (collectionError) {
+            addDebugLog(`ERROR creating collection reference: ${collectionError.message}`);
+            throw collectionError;
+          }
+
           // Set a shorter timeout specifically for the Firestore operation
-          const firestorePromise = addDoc(collection(db, 'contactSubmissions'), submissionData);
+          addDebugLog("Setting up Firestore operation with 5-second timeout...");
+          const firestorePromise = addDoc(collectionRef, submissionData);
 
           // Create a timeout promise
           const timeoutPromise = new Promise((_, reject) => {
-            setTimeout(() => reject(new Error('Firestore operation timed out')), 5000);
+            setTimeout(() => {
+              addDebugLog("ERROR: Firestore operation timed out after 5 seconds");
+              reject(new Error('Firestore operation timed out'));
+            }, 5000);
           });
 
           // Race the Firestore operation against the timeout
+          addDebugLog("Starting Firestore write operation...");
           const docRef = await Promise.race([firestorePromise, timeoutPromise]) as any;
 
+          addDebugLog(`SUCCESS: Form data saved to Firestore with ID: ${docRef.id}`);
           console.log('Form data saved directly to Firestore with ID:', docRef.id);
 
           // Clear the timeout since the request completed successfully
           clearTimeout(timeoutId);
+          addDebugLog("Main timeout cleared");
 
           // Use the helper function to handle success
+          addDebugLog("Showing success message to user");
           handleSubmissionSuccess(docRef.id);
 
           return; // Exit early, skipping the Firebase Function call
         } catch (innerError) {
+          addDebugLog(`ERROR during Firestore write operation: ${innerError.message}`);
           console.error("Error during Firestore write operation:", innerError);
+
+          // Add detailed error information
+          if (innerError.name) addDebugLog(`Error name: ${innerError.name}`);
+          if (innerError.code) addDebugLog(`Error code: ${innerError.code}`);
+          if (innerError.stack) addDebugLog(`Error stack: ${innerError.stack.split('\n')[0]}`);
+
           throw innerError; // Re-throw to be caught by the outer catch block
         }
       } catch (firestoreError) {
+        addDebugLog(`ERROR in Firestore operations: ${firestoreError.message}`);
         console.error("Direct Firestore write failed:", firestoreError);
+
+        // Add detailed error information
+        if (firestoreError.name) addDebugLog(`Error name: ${firestoreError.name}`);
+        if (firestoreError.code) addDebugLog(`Error code: ${firestoreError.code}`);
+        if (firestoreError.stack) addDebugLog(`Error stack: ${firestoreError.stack.split('\n')[0]}`);
 
         // In development mode, show a more helpful error message
         if (process.env.NODE_ENV === 'development') {
+          addDebugLog("DEVELOPMENT MODE: Simulating successful submission despite error");
           console.log("DEVELOPMENT MODE: This error is expected in development if you don't have Firebase emulators running.");
           console.log("In development mode, we'll simulate a successful submission instead.");
 
           // Simulate a successful submission after a short delay
+          addDebugLog("Waiting 1 second before simulating success...");
           await new Promise(resolve => setTimeout(resolve, 1000));
 
           // Clear the timeout since the request completed successfully
           clearTimeout(timeoutId);
+          addDebugLog("Main timeout cleared");
 
           // Use the helper function to handle success
+          addDebugLog("Showing simulated success message to user");
           handleSubmissionSuccess('dev-mode-fallback');
 
           return;
         }
 
+        addDebugLog("Re-throwing error to be caught by outer catch block");
         throw firestoreError; // Re-throw to be caught by the outer catch block in production
       }
 
@@ -278,33 +365,93 @@ export function ContactForm() {
     } catch (error: any) {
       // Clear the timeout since we're handling the error
       clearTimeout(timeoutId);
+      addDebugLog("Main timeout cleared due to error");
+
+      addDebugLog(`FINAL ERROR HANDLER: ${error.message}`);
+
+      // Add detailed error information
+      if (error.name) addDebugLog(`Error name: ${error.name}`);
+      if (error.code) addDebugLog(`Error code: ${error.code}`);
+      if (error.stack) addDebugLog(`Error stack: ${error.stack.split('\n')[0]}`);
 
       // In development mode, show a more helpful error message
       if (process.env.NODE_ENV === 'development') {
+        addDebugLog("DEVELOPMENT MODE: Showing development-specific error message");
         setErrorMessage("Development mode: This error is expected if you don't have Firebase emulators running. In production, this would attempt to write to the actual Firestore database.");
 
         // Log additional debugging information to the console
-        console.log("DEVELOPMENT MODE ERROR:", {
+        const errorDetails = {
           name: error.name,
           code: error.code,
           message: error.message,
           details: error.details,
           stack: error.stack
-        });
+        };
+
+        addDebugLog(`Development mode error details: ${JSON.stringify(errorDetails)}`);
+        console.log("DEVELOPMENT MODE ERROR:", errorDetails);
 
         return;
       }
 
       // Use the helper function to handle errors in production
+      addDebugLog("Using error handler for production environment");
       handleSubmissionError(error);
     } finally {
       // Ensure isSubmitting is set to false (this will be redundant if the timeout hasn't fired)
+      addDebugLog("Form submission process completed (success or failure)");
       setIsSubmitting(false);
     }
   };
 
+  // Debug Panel Component
+  const DebugPanel = () => {
+    if (!showDebug) return null;
+
+    return (
+      <div className="mt-6 p-4 border border-yellow-300 bg-yellow-50 dark:bg-yellow-900/20 dark:border-yellow-800 rounded-md">
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="text-sm font-medium text-yellow-800 dark:text-yellow-300">Debug Panel</h3>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => setDebugLogs([])}
+              className="text-xs px-2 py-1 bg-yellow-200 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200 rounded"
+            >
+              Clear
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowDebug(false)}
+              className="text-xs px-2 py-1 bg-yellow-200 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200 rounded"
+            >
+              Hide
+            </button>
+          </div>
+        </div>
+        <div className="bg-white dark:bg-gray-900 p-2 rounded border border-yellow-200 dark:border-yellow-900 h-60 overflow-y-auto text-xs font-mono">
+          {debugLogs.length === 0 ? (
+            <p className="text-gray-500 dark:text-gray-400">No logs yet. Submit the form to see debug information.</p>
+          ) : (
+            debugLogs.map((log, index) => (
+              <div key={index} className={`py-1 ${log.includes('ERROR') ? 'text-red-600 dark:text-red-400' : log.includes('SUCCESS') ? 'text-green-600 dark:text-green-400' : 'text-gray-800 dark:text-gray-200'}`}>
+                {log}
+              </div>
+            ))
+          )}
+        </div>
+        <p className="mt-2 text-xs text-yellow-700 dark:text-yellow-400">
+          This debug panel is temporary and will be removed after troubleshooting.
+        </p>
+      </div>
+    );
+  };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
+      {/* Debug Panel */}
+      <DebugPanel />
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <div className="space-y-1.5 sm:space-y-2">
           <label htmlFor="name" className="text-xs sm:text-sm font-medium">
