@@ -41,35 +41,13 @@ export function ContactForm() {
     },
   });
 
-  // Helper function to extract error details
+  // Helper function to extract error details and provide user-friendly messages
   const getErrorMessage = (error: any): string => {
-    // Default error message
-    let errorDetails = "There was an error submitting your message. ";
+    // Default user-friendly message
+    let userFriendlyMessage = "There was an error submitting your message. ";
 
-    // Add error code if available
-    if (error.code) {
-      errorDetails += `Error code: ${error.code}. `;
-    }
-
-    // Add error message or details
-    if (error.message) {
-      errorDetails += `${error.message}`;
-    } else if (error.details) {
-      errorDetails += `${error.details}`;
-    }
-
-    // Add additional details from Firebase Functions error
-    if (error.details && typeof error.details === 'object') {
-      if (error.details.message) {
-        errorDetails += ` ${error.details.message}`;
-      }
-
-      if (error.details.originalError) {
-        errorDetails += ` (${error.details.originalError})`;
-      }
-    }
-
-    // Handle specific error types
+    // For developers, log the detailed error
+    console.log("Detailed error information:", error);
 
     // Network errors
     if (error.name === 'FirebaseError' && error.code === 'functions/network-error') {
@@ -83,69 +61,94 @@ export function ContactForm() {
 
     // Firestore errors
     if (error.details && error.details.originalError === 'firestore_error') {
-      return "Database error: There was an issue saving your submission to our database. Please try again later.";
+      return "Database error: There was an issue saving your submission. Please try again later or contact me directly via email.";
     }
 
     // Email errors
-    if (error.message?.includes('SMTP')) {
-      return "Email notification error: There was an issue sending the email notification. Your submission was saved, but we couldn't send a notification email.";
+    if (error.message?.includes('SMTP') || error.message?.includes('email')) {
+      return "Your message was received, but there was an issue sending the notification email. I'll still receive your message.";
     }
 
-    return errorDetails;
+    // Timeout errors
+    if (error.code === 'functions/deadline-exceeded' || error.message?.includes('timeout') || error.message?.includes('timed out')) {
+      return "The request took too long to complete. Your message might have been saved. Please try again later or contact me directly via email.";
+    }
+
+    // Internal server errors
+    if (error.code === 'functions/internal') {
+      return "There was an internal server error. Your message might have been saved directly to the database. Please try again later if you don't receive a response.";
+    }
+
+    // Unavailable errors
+    if (error.code === 'functions/unavailable') {
+      return "The service is currently unavailable. Please try again later or contact me directly via email.";
+    }
+
+    // If we have a specific error message from Firebase, add it
+    if (error.message) {
+      // Clean up the message to be more user-friendly
+      const cleanMessage = error.message
+        .replace(/^FirebaseError: /, '')
+        .replace(/^Error: /, '')
+        .replace(/^functions\//, '');
+
+      userFriendlyMessage += cleanMessage;
+    }
+
+    return userFriendlyMessage;
   };
 
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
     setErrorMessage(null);
 
-    try {
-      // Log Firebase app configuration
-      console.log("Firebase app config:", {
-        apiKey: firebaseApp.options.apiKey,
-        authDomain: firebaseApp.options.authDomain,
-        projectId: firebaseApp.options.projectId,
-        appId: firebaseApp.options.appId,
-      });
+    // Set a timeout to prevent the form from being stuck in the submitting state
+    const timeoutId = setTimeout(() => {
+      setIsSubmitting(false);
+      setErrorMessage("The request timed out. Please try again or contact me directly via email.");
+    }, 15000); // 15 seconds timeout
 
+    try {
       // Set the region for the functions
       const region = 'us-central1';
       const functionsWithRegion = getFunctions(firebaseApp, region);
-      console.log("Firebase Functions instance created with region:", region);
 
-      // Try a direct Firestore write to test permissions
+      // Create a reference to the Firebase Function
+      const submitContactForm = httpsCallable(functionsWithRegion, 'submitContactForm');
+
+      // Submit the form data directly to Firestore as a fallback
       try {
-        console.log("Testing direct Firestore write...");
         const { getFirestore, collection, addDoc } = await import('firebase/firestore');
         const db = getFirestore(firebaseApp);
 
-        // Create a test document
-        const testData = {
-          name: 'Test User',
-          email: 'test@example.com',
-          subject: 'Test Subject',
-          message: 'This is a test message from the contact form',
+        // Add the form data to Firestore directly
+        await addDoc(collection(db, 'contactSubmissions'), {
+          ...data,
           timestamp: new Date(),
-          isTest: true
-        };
+          source: 'direct_client_submission' // Mark this as a direct submission
+        });
 
-        // Add the test document to the contactSubmissions collection
-        const docRef = await addDoc(collection(db, 'contactSubmissions'), testData);
-        console.log('Direct Firestore write test successful with ID:', docRef.id);
+        console.log('Form data saved directly to Firestore as a fallback');
       } catch (firestoreError) {
-        console.error("Direct Firestore write test failed:", firestoreError);
+        console.error("Direct Firestore write failed:", firestoreError);
+        // Continue with the function call even if direct write fails
       }
 
-      // Call the submitContactForm function
-      console.log("Creating callable function reference...");
-      const submitContactForm = httpsCallable(functionsWithRegion, 'submitContactForm');
+      // Call the Firebase Function with a timeout
+      const functionPromise = submitContactForm(data);
 
-      // Submit the form data and log the response
-      console.log("Submitting form data:", data);
-      console.log("Using Firebase Functions region:", region);
+      // Wait for the function to complete or timeout
+      const result = await Promise.race([
+        functionPromise,
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Function call timed out')), 10000)
+        )
+      ]);
 
-      console.log("Calling submitContactForm function...");
-      const result = await submitContactForm(data);
       console.log("Form submission response:", result);
+
+      // Clear the timeout since the request completed successfully
+      clearTimeout(timeoutId);
 
       // Show success message
       setIsSuccess(true);
@@ -160,11 +163,17 @@ export function ContactForm() {
     } catch (error: any) {
       console.error("Error submitting form:", error);
 
-      // Get error message
-      const errorDetails = getErrorMessage(error);
+      // Clear the timeout since we're handling the error
+      clearTimeout(timeoutId);
 
-      // Set the error message
-      setErrorMessage(errorDetails);
+      // Check if it's a timeout error
+      if (error.message === 'Function call timed out') {
+        setErrorMessage("The request timed out, but your message might have been saved. Please check your email for a confirmation or try again later.");
+      } else {
+        // Get error message for other types of errors
+        const errorDetails = getErrorMessage(error);
+        setErrorMessage(errorDetails);
+      }
 
       // Log additional debugging information to the console
       console.log("Error details:", {
@@ -173,19 +182,8 @@ export function ContactForm() {
         details: error.details,
         stack: error.stack
       });
-
-      // Try to get more information about the error
-      if (error.code === 'functions/internal') {
-        console.log("Internal server error detected. This could be due to:");
-        console.log("1. Firebase Functions configuration issues");
-        console.log("2. Firestore permissions issues");
-        console.log("3. Email sending issues");
-        console.log("4. Server-side code errors");
-
-        // Try to get the Firebase Functions logs
-        console.log("Please check the Firebase Functions logs for more details.");
-      }
     } finally {
+      // Ensure isSubmitting is set to false (this will be redundant if the timeout hasn't fired)
       setIsSubmitting(false);
     }
   };
@@ -261,22 +259,39 @@ export function ContactForm() {
       </div>
 
       {errorMessage && (
-        <div className="p-3 bg-red-100 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md text-red-800 dark:text-red-300 text-sm">
+        <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md text-red-800 dark:text-red-300 text-sm">
           <div className="flex items-start">
             <div className="flex-shrink-0 mt-0.5">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
               </svg>
             </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800 dark:text-red-300">Error Details</h3>
+            <div className="ml-3 flex-1">
+              <h3 className="text-sm font-medium text-red-800 dark:text-red-300">Unable to Send Message</h3>
               <div className="mt-1 text-sm text-red-700 dark:text-red-400">
                 {errorMessage}
               </div>
-              <div className="mt-2">
-                <p className="text-xs text-red-700 dark:text-red-400">
-                  If this error persists, please contact me directly at <a href="mailto:Jacobsamuelbarkin@gmail.com" className="underline">Jacobsamuelbarkin@gmail.com</a>
-                </p>
+              <div className="mt-3 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setErrorMessage(null);
+                    setIsSubmitting(false);
+                  }}
+                  className="inline-flex items-center justify-center px-3 py-1.5 text-xs font-medium rounded-md border border-red-300 dark:border-red-700 text-red-700 dark:text-red-300 bg-transparent hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
+                >
+                  Try Again
+                </button>
+                <a
+                  href={`mailto:Jacobsamuelbarkin@gmail.com?subject=${encodeURIComponent(
+                    `Contact Form: ${document.getElementById('subject')?.value ?? 'Message from website'}`
+                  )}&body=${encodeURIComponent(
+                    `Name: ${document.getElementById('name')?.value ?? ''}\nEmail: ${document.getElementById('email')?.value ?? ''}\n\nMessage:\n${document.getElementById('message')?.value ?? ''}`
+                  )}`}
+                  className="inline-flex items-center justify-center px-3 py-1.5 text-xs font-medium rounded-md bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 hover:bg-red-200 dark:hover:bg-red-800/30 transition-colors"
+                >
+                  Send via Email Instead
+                </a>
               </div>
             </div>
           </div>
@@ -284,9 +299,21 @@ export function ContactForm() {
       )}
 
       {isSuccess && (
-        <div className="p-3 bg-green-100 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md text-green-800 dark:text-green-300 text-sm flex items-center">
-          <CheckCircle className="h-4 w-4 mr-2" />
-          Your message has been sent successfully! I'll get back to you soon.
+        <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md text-green-800 dark:text-green-300 text-sm">
+          <div className="flex items-start">
+            <div className="flex-shrink-0 mt-0.5">
+              <CheckCircle className="h-5 w-5 text-green-500" />
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-green-800 dark:text-green-300">Message Sent Successfully!</h3>
+              <div className="mt-1 text-sm text-green-700 dark:text-green-400">
+                Thank you for reaching out. I've received your message and will get back to you as soon as possible.
+              </div>
+              <div className="mt-2 text-xs text-green-600 dark:text-green-500">
+                A copy of your message has been saved to my database and I've been notified by email.
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
