@@ -15,10 +15,9 @@ const nextConfig = {
         hostname: 'cdn.simpleicons.org',
       },
     ],
-    unoptimized: true, // Always unoptimized to work with static export
+    // Only unoptimize images in production build
+    unoptimized: process.env.NODE_ENV === 'production',
   },
-  // Enable static exports for Cloudflare Pages
-  output: 'export',
   // Disable ESLint during builds
   eslint: {
     ignoreDuringBuilds: true,
@@ -28,5 +27,10 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
 };
+
+// Only enable static export for production builds
+if (process.env.NODE_ENV === 'production') {
+  nextConfig.output = 'export';
+}
 
 module.exports = nextConfig;

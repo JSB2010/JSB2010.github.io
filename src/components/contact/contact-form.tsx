@@ -117,6 +117,7 @@ export function ContactForm() {
         authDomain: firebaseApp.options.authDomain ?? 'undefined',
         projectId: firebaseApp.options.projectId ?? 'undefined',
         appId: firebaseApp.options.appId ? 'defined' : 'undefined',
+        environment: process.env.NODE_ENV
       });
 
       // Skip Firebase Functions and use direct Firestore write only
@@ -135,9 +136,36 @@ export function ContactForm() {
           timestamp: new Date(),
           source: 'direct_client_submission',
           userAgent: navigator.userAgent,
-          submittedAt: new Date().toISOString()
+          submittedAt: new Date().toISOString(),
+          environment: process.env.NODE_ENV
         };
 
+        // In development mode, log the submission data but don't actually submit
+        if (process.env.NODE_ENV === 'development') {
+          console.log("DEVELOPMENT MODE: Would have submitted this data to Firestore:", submissionData);
+          console.log("Simulating successful submission in development mode");
+
+          // Simulate a successful submission after a short delay
+          await new Promise(resolve => setTimeout(resolve, 1000));
+
+          // Clear the timeout since the request completed successfully
+          clearTimeout(timeoutId);
+
+          // Show success message
+          setIsSuccess(true);
+
+          // Reset form
+          reset();
+
+          // Hide success message after 5 seconds
+          setTimeout(() => {
+            setIsSuccess(false);
+          }, 5000);
+
+          return;
+        }
+
+        // In production, actually submit to Firestore
         console.log("Adding document to Firestore collection...");
         const docRef = await addDoc(collection(db, 'contactSubmissions'), submissionData);
 
@@ -160,7 +188,33 @@ export function ContactForm() {
         return; // Exit early, skipping the Firebase Function call
       } catch (firestoreError) {
         console.error("Direct Firestore write failed:", firestoreError);
-        throw firestoreError; // Re-throw to be caught by the outer catch block
+
+        // In development mode, show a more helpful error message
+        if (process.env.NODE_ENV === 'development') {
+          console.log("DEVELOPMENT MODE: This error is expected in development if you don't have Firebase emulators running.");
+          console.log("In development mode, we'll simulate a successful submission instead.");
+
+          // Simulate a successful submission after a short delay
+          await new Promise(resolve => setTimeout(resolve, 1000));
+
+          // Clear the timeout since the request completed successfully
+          clearTimeout(timeoutId);
+
+          // Show success message
+          setIsSuccess(true);
+
+          // Reset form
+          reset();
+
+          // Hide success message after 5 seconds
+          setTimeout(() => {
+            setIsSuccess(false);
+          }, 5000);
+
+          return;
+        }
+
+        throw firestoreError; // Re-throw to be caught by the outer catch block in production
       }
 
       // We're using direct Firestore access instead of Firebase Functions
@@ -172,6 +226,23 @@ export function ContactForm() {
       // Clear the timeout since we're handling the error
       clearTimeout(timeoutId);
 
+      // In development mode, show a more helpful error message
+      if (process.env.NODE_ENV === 'development') {
+        setErrorMessage("Development mode: This error is expected if you don't have Firebase emulators running. In production, this would attempt to write to the actual Firestore database.");
+
+        // Log additional debugging information to the console
+        console.log("DEVELOPMENT MODE ERROR:", {
+          name: error.name,
+          code: error.code,
+          message: error.message,
+          details: error.details,
+          stack: error.stack
+        });
+
+        return;
+      }
+
+      // Production error handling
       // Check if it's a Firestore permission error
       if (error.code === 'permission-denied') {
         setErrorMessage("You don't have permission to submit this form. Please contact me directly via email instead.");
