@@ -25,7 +25,7 @@ export function ContactFormServerless() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [debugLogs, setDebugLogs] = useState<string[]>([]);
   const [showDebug, setShowDebug] = useState(true); // Set to true to show debug panel by default
-  
+
   // Function to add a log message to the debug panel
   const addDebugLog = (message: string) => {
     const timestamp = new Date().toISOString().split('T')[1].split('.')[0]; // HH:MM:SS format
@@ -55,7 +55,7 @@ export function ContactFormServerless() {
       connectionType: (navigator as any).connection ? (navigator as any).connection.effectiveType : 'unknown',
       saveData: (navigator as any).connection ? (navigator as any).connection.saveData : false
     };
-    
+
     addDebugLog(`Network status: ${JSON.stringify(status)}`);
     return status;
   };
@@ -63,13 +63,13 @@ export function ContactFormServerless() {
   // Helper function to handle successful form submission
   const handleSubmissionSuccess = (id: string) => {
     addDebugLog(`Form data saved successfully with ID: ${id}`);
-    
+
     // Show success message
     setIsSuccess(true);
-    
+
     // Reset form
     reset();
-    
+
     // Hide success message after 5 seconds
     setTimeout(() => {
       setIsSuccess(false);
@@ -81,7 +81,7 @@ export function ContactFormServerless() {
     setIsSubmitting(true);
     setErrorMessage(null);
     setDebugLogs([]); // Clear previous debug logs
-    
+
     // Check network status
     if (typeof window !== 'undefined') {
       const networkStatus = checkNetworkStatus();
@@ -92,7 +92,7 @@ export function ContactFormServerless() {
         return;
       }
     }
-    
+
     addDebugLog(`Form submission started with data: ${JSON.stringify({
       name: data.name,
       email: data.email,
@@ -109,7 +109,7 @@ export function ContactFormServerless() {
 
     try {
       addDebugLog("Starting form submission process...");
-      
+
       // Prepare the submission data
       const submissionData = {
         ...data,
@@ -117,21 +117,20 @@ export function ContactFormServerless() {
         timestamp: new Date().toISOString(),
         source: 'serverless_submission'
       };
-      
+
       addDebugLog("Preparing to submit form to serverless function...");
-      
-      // Get the current origin for the API endpoint
-      const origin = window.location.origin;
-      const apiEndpoint = `${origin}/api/contact-form`;
+
+      // Use the Next.js API route
+      const apiEndpoint = '/api/contact-form';
       addDebugLog(`Submitting to API endpoint: ${apiEndpoint}`);
-      
+
       // Set a timeout for the fetch operation
       const controller = new AbortController();
       const fetchTimeout = setTimeout(() => {
         addDebugLog("ERROR: API request timed out after 5 seconds");
         controller.abort();
       }, 5000);
-      
+
       // Submit the form data to the serverless function
       const response = await fetch(apiEndpoint, {
         method: 'POST',
@@ -141,38 +140,38 @@ export function ContactFormServerless() {
         body: JSON.stringify(submissionData),
         signal: controller.signal
       });
-      
+
       // Clear the fetch timeout
       clearTimeout(fetchTimeout);
-      
+
       addDebugLog(`API response status: ${response.status}`);
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         addDebugLog(`ERROR: API returned error status: ${response.status}`);
         addDebugLog(`Error details: ${JSON.stringify(errorData)}`);
         throw new Error(`API error: ${response.status} ${errorData.message || ''}`);
       }
-      
+
       const responseData = await response.json();
       addDebugLog(`SUCCESS: Form submitted successfully with ID: ${responseData.id}`);
-      
+
       // Clear the main timeout since the request completed successfully
       clearTimeout(timeoutId);
       addDebugLog("Main timeout cleared");
-      
+
       // Show success message
       handleSubmissionSuccess(responseData.id);
     } catch (error: any) {
       // Clear the timeout since we're handling the error
       clearTimeout(timeoutId);
       addDebugLog("Main timeout cleared due to error");
-      
+
       addDebugLog(`FINAL ERROR HANDLER: ${error.message}`);
-      
+
       // Set error message
       setErrorMessage(`There was an error submitting your message: ${error.message}. Please try again or contact me directly via email.`);
-      
+
       // Log additional debugging information to the console
       console.error("Error submitting form:", error);
     } finally {
@@ -185,7 +184,7 @@ export function ContactFormServerless() {
   // Debug Panel Component
   const DebugPanel = () => {
     if (!showDebug) return null;
-    
+
     return (
       <div className="mt-6 p-4 border border-yellow-300 bg-yellow-50 dark:bg-yellow-900/20 dark:border-yellow-800 rounded-md">
         <div className="flex justify-between items-center mb-2">
@@ -212,12 +211,12 @@ export function ContactFormServerless() {
             <p className="text-gray-500 dark:text-gray-400">No logs yet. Submit the form to see debug information.</p>
           ) : (
             debugLogs.map((log, index) => {
-              const logClass = log.includes('ERROR') 
-                ? 'text-red-600 dark:text-red-400' 
-                : log.includes('SUCCESS') 
-                  ? 'text-green-600 dark:text-green-400' 
+              const logClass = log.includes('ERROR')
+                ? 'text-red-600 dark:text-red-400'
+                : log.includes('SUCCESS')
+                  ? 'text-green-600 dark:text-green-400'
                   : 'text-gray-800 dark:text-gray-200';
-              
+
               return (
                 <div key={`log-${index}`} className={`py-1 ${logClass}`}>
                   {log}
@@ -237,7 +236,7 @@ export function ContactFormServerless() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
       {/* Debug Panel */}
       <DebugPanel />
-      
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <div className="space-y-1.5 sm:space-y-2">
           <label htmlFor="name" className="text-xs sm:text-sm font-medium">
