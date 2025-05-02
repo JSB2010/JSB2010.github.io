@@ -1,18 +1,16 @@
 # Redirects for Cloudflare Pages
-# Next.js generates separate HTML files for each page, so we don't need to redirect to index.html
+# SPA (Single Page Application) setup for client-side routing
 
 # Assets should be served directly
 /_next/*            /_next/:splat  200
 /images/*           /images/:splat 200
+/spa-redirect.js    /spa-redirect.js 200
 
-# Specific routes - ensure they're handled by their respective HTML files
-/about              /about.html    200
-/projects           /projects.html 200
-/contact            /contact.html  200
-/public-transportation /public-transportation.html 200
-/macbook-pro-opencore /macbook-pro-opencore.html 200
-/macos-apple-tv     /macos-apple-tv.html 200
-/auth/email-signin  /auth/email-signin.html 200
+# Special route for handling client-side routing
+/index.html         /index.html    200
 
-# 404 fallback - only for routes that don't exist
-/*                  /404.html      404
+# Handle 404 page specially for SPA routing
+/404.html           /404.html      200
+
+# All routes should be handled by the SPA
+/*                  /index.html    200
