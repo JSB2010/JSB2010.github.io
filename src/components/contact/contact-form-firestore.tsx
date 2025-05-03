@@ -128,12 +128,24 @@ export function ContactFormFirestore() {
         addDebugLog(`Current origin: ${window.location.origin}`);
       }
 
-      // Submit to Firestore - simple direct approach like the test HTML page
+      // Submit to Firestore with a timeout
       const contactSubmissionsRef = collection(db, 'contactSubmissions');
       addDebugLog(`Collection path: ${contactSubmissionsRef.path}`);
 
-      // Direct submission to Firestore
-      const docRef = await addDoc(contactSubmissionsRef, submissionData);
+      // Create a timeout promise
+      addDebugLog("Setting up submission with 15-second timeout...");
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => {
+          reject(new Error('Firestore submission timed out after 15 seconds'));
+        }, 15000);
+      });
+
+      // Race between the Firestore operation and the timeout
+      addDebugLog("Starting Firestore submission with timeout...");
+      const docRef = await Promise.race([
+        addDoc(contactSubmissionsRef, submissionData),
+        timeoutPromise
+      ]) as { id: string };
 
       // Success!
       addDebugLog(`Successfully submitted to Firestore with ID: ${docRef.id}`);
@@ -179,13 +191,24 @@ export function ContactFormFirestore() {
 
       // Check for specific error types
       if (err.message.includes('timeout') || err.message.includes('timed out')) {
-        userMessage = 'The request timed out. This could be due to network issues or high server load. Please try again later.';
+        userMessage = 'The request timed out. This could be due to network issues or high server load. Please try the email option below.';
+        addDebugLog('Detected timeout error - suggesting email fallback');
       } else if (err.message.includes('CORS') || err.message.includes('cross-origin')) {
-        userMessage = 'There was a cross-origin request error. Please try again later or contact me directly via email.';
+        userMessage = 'There was a cross-origin request error. Please use the email option below.';
+        addDebugLog('Detected CORS error - suggesting email fallback');
+      } else if (err.message.includes('network') || err.message.includes('connection')) {
+        userMessage = 'Network connection error. Please check your internet connection or use the email option below.';
+        addDebugLog('Detected network error - suggesting email fallback');
       }
 
       // Set the error message for the user
       setErrorMessage(userMessage);
+
+      // Log the full error for debugging
+      addDebugLog(`Full error object: ${JSON.stringify(error, Object.getOwnPropertyNames(error))}`);
+
+      // Suggest using the mailto link as a fallback
+      addDebugLog('Suggesting mailto fallback option');
     } finally {
       setIsSubmitting(false);
     }
@@ -202,6 +225,26 @@ export function ContactFormFirestore() {
         {debugLogs.map((log, i) => (
           <div key={i} className="text-xs">{log}</div>
         ))}
+      </div>
+    );
+  };
+
+  // Direct email link component as a fallback
+  const DirectEmailLink = () => {
+    return (
+      <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md">
+        <h3 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2">
+          Send Message Directly via Email
+        </h3>
+        <p className="text-sm text-blue-700 dark:text-blue-400 mb-3">
+          If you're experiencing issues with the form, you can send me an email directly:
+        </p>
+        <a
+          href="mailto:Jacobsamuelbarkin@gmail.com"
+          className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md bg-blue-100 dark:bg-blue-800/50 text-blue-800 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-700/50 transition-colors"
+        >
+          Email Me Directly
+        </a>
       </div>
     );
   };
@@ -333,23 +376,28 @@ export function ContactFormFirestore() {
         </div>
       )}
 
-      <Button
-        type="submit"
-        className="w-full sm:w-auto h-9 sm:h-10 text-sm"
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? (
-          <>
-            <Loader2 className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" />
-            Sending...
-          </>
-        ) : (
-          <>
-            <Send className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
-            Send Message
-          </>
-        )}
-      </Button>
+      <div className="flex flex-col sm:flex-row gap-3">
+        <Button
+          type="submit"
+          className="w-full sm:w-auto h-9 sm:h-10 text-sm"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2 className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" />
+              Sending...
+            </>
+          ) : (
+            <>
+              <Send className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              Send Message
+            </>
+          )}
+        </Button>
+      </div>
+
+      {/* Always show the direct email link as a fallback option */}
+      <DirectEmailLink />
     </form>
   );
 }
