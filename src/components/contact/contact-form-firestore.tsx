@@ -8,9 +8,9 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Loader2, Send, CheckCircle, AlertCircle } from 'lucide-react';
-import { db, firebaseApp } from '@/lib/firebase/config';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { getApp } from 'firebase/app';
+// Import Firebase modules directly from CDN for consistency with test page
+import { initializeApp } from 'firebase/app';
+import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 // Form validation schema
 const formSchema = z.object({
@@ -21,6 +21,21 @@ const formSchema = z.object({
 });
 
 type FormValues = z.infer<typeof formSchema>;
+
+// Firebase configuration - same as the test HTML page
+const firebaseConfig = {
+  apiKey: "AIzaSyCZAmGriqlYJL_RLvRx7iKGQz7pbY2nrB0",
+  authDomain: "jacob-barkin-website.firebaseapp.com",
+  projectId: "jacob-barkin-website",
+  storageBucket: "jacob-barkin-website.firebasestorage.app",
+  messagingSenderId: "1093183769646",
+  appId: "1:1093183769646:web:0fbbcd20023cb9ec8823bf",
+  measurementId: "G-KTBS67S2PC"
+};
+
+// Initialize Firebase directly in the component
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 export function ContactFormFirestore() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -46,6 +61,7 @@ export function ContactFormFirestore() {
   // Function to add debug logs
   const addDebugLog = (message: string) => {
     setDebugLogs(prev => [...prev, `${new Date().toISOString().substring(11, 19)}: ${message}`]);
+    console.log(`[Contact Form] ${message}`); // Also log to console for easier debugging
   };
 
   // Function to check network connectivity
@@ -67,11 +83,13 @@ export function ContactFormFirestore() {
     return status;
   };
 
-  // Main form submission handler
+  // Main form submission handler - simplified to match the test HTML page
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
     setErrorMessage(null);
     setDebugLogs([]); // Clear previous debug logs
+
+    addDebugLog('Form submitted, preparing data...');
 
     // Check network status
     if (typeof window !== 'undefined') {
@@ -84,7 +102,18 @@ export function ContactFormFirestore() {
       }
     }
 
-    addDebugLog(`Form submission started with data: ${JSON.stringify({
+    // Prepare the submission data - exactly like the test HTML page
+    const submissionData = {
+      name: data.name,
+      email: data.email,
+      subject: data.subject,
+      message: data.message,
+      timestamp: serverTimestamp(),
+      userAgent: navigator.userAgent,
+      source: 'website_contact_form'
+    };
+
+    addDebugLog(`Submission data prepared: ${JSON.stringify({
       name: data.name,
       email: data.email,
       subject: data.subject,
@@ -92,90 +121,43 @@ export function ContactFormFirestore() {
     })}`);
 
     try {
-      addDebugLog("Starting form submission process...");
-
-      // Prepare the submission data
-      const submissionData = {
-        name: data.name,
-        email: data.email,
-        subject: data.subject,
-        message: data.message,
-        timestamp: serverTimestamp(),
-        userAgent: navigator.userAgent,
-        source: 'website_contact_form'
-      };
-
-      addDebugLog("Preparing to submit to Firestore...");
+      addDebugLog('Submitting to Firestore...');
 
       // Log the current origin for debugging CORS issues
       if (typeof window !== 'undefined') {
         addDebugLog(`Current origin: ${window.location.origin}`);
       }
 
-      // Submit to Firestore
+      // Submit to Firestore - simple direct approach like the test HTML page
       const contactSubmissionsRef = collection(db, 'contactSubmissions');
+      addDebugLog(`Collection path: ${contactSubmissionsRef.path}`);
 
-      // Set a longer timeout for the Firestore operation
-      addDebugLog("Setting up Firestore operation with 60-second timeout...");
+      // Direct submission to Firestore
+      const docRef = await addDoc(contactSubmissionsRef, submissionData);
 
-      // Create a timeout promise
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => {
-          addDebugLog("ERROR: Firestore operation timed out after 60 seconds");
-          reject(new Error('Firestore operation timed out after 60 seconds - possible network or configuration issue'));
-        }, 60000);
-      });
+      // Success!
+      addDebugLog(`Successfully submitted to Firestore with ID: ${docRef.id}`);
 
-      // Simplified approach - direct submission with detailed logging
-      try {
-        addDebugLog("Starting direct Firestore submission...");
+      // Show success message
+      setIsSuccess(true);
 
-        // Log Firebase configuration
-        const app = getApp();
-        const options = app.options;
-        addDebugLog(`Firebase project ID: ${options.projectId}`);
-        addDebugLog(`Firebase app name: ${app.name}`);
+      // Reset form
+      reset();
 
-        // Log the collection reference
-        addDebugLog(`Collection path: ${contactSubmissionsRef.path}`);
-
-        // Add a timestamp for tracking
-        const clientTimestamp = new Date().toISOString();
-        submissionData.clientTimestamp = clientTimestamp;
-        addDebugLog(`Added client timestamp: ${clientTimestamp}`);
-
-        // Direct submission to Firestore
-        addDebugLog("Calling addDoc on contactSubmissions collection...");
-        const docRef = await addDoc(contactSubmissionsRef, submissionData);
-
-        // Success!
-        addDebugLog(`Successfully submitted to Firestore with ID: ${docRef.id}`);
-
-        // Show success message
-        setIsSuccess(true);
-
-        // Reset form
-        reset();
-
-        // Hide success message after 5 seconds
-        setTimeout(() => {
-          setIsSuccess(false);
-        }, 5000);
-      } catch (firestoreError: any) {
-        // Handle specific Firestore errors
-        addDebugLog(`Firestore operation error: ${firestoreError.message}`);
-
-        if (firestoreError.code) {
-          addDebugLog(`Firestore error code: ${firestoreError.code}`);
-        }
-
-        throw firestoreError; // Re-throw to be caught by the outer catch block
-      }
+      // Hide success message after 5 seconds
+      setTimeout(() => {
+        setIsSuccess(false);
+      }, 5000);
 
     } catch (error: unknown) {
       const err = error as Error;
       console.error('Error submitting form:', err);
       addDebugLog(`ERROR: ${err.message}`);
+
+      // Log error details
+      if ((error as any).code) {
+        addDebugLog(`Error code: ${(error as any).code}`);
+      }
 
       // Default user-friendly error message
       let userMessage = 'There was an error submitting your message. Please try again or contact me directly via email.';
@@ -183,8 +165,6 @@ export function ContactFormFirestore() {
       // If it's a Firebase-specific error, provide more details
       const firebaseError = error as { code?: string };
       if (firebaseError.code) {
-        addDebugLog(`Firebase error code: ${firebaseError.code}`);
-
         // Customize error message based on error code
         if (firebaseError.code === 'permission-denied') {
           userMessage = 'You do not have permission to submit this form. Please try contacting me directly via email.';
@@ -197,16 +177,11 @@ export function ContactFormFirestore() {
         }
       }
 
-      // Check for timeout errors
+      // Check for specific error types
       if (err.message.includes('timeout') || err.message.includes('timed out')) {
         userMessage = 'The request timed out. This could be due to network issues or high server load. Please try again later.';
-        addDebugLog('Detected timeout error');
-      }
-
-      // Check for CORS errors
-      if (err.message.includes('CORS') || err.message.includes('cross-origin')) {
+      } else if (err.message.includes('CORS') || err.message.includes('cross-origin')) {
         userMessage = 'There was a cross-origin request error. Please try again later or contact me directly via email.';
-        addDebugLog('Detected CORS error');
       }
 
       // Set the error message for the user
