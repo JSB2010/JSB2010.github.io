@@ -3,7 +3,6 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { FirebaseProvider } from "@/components/firebase/firebase-provider";
-import { AuthProvider } from "@/components/auth/auth-provider";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import JsonLd from "@/components/json-ld";
@@ -103,14 +102,12 @@ export default function RootLayout({
           storageKey="jacob-barkin-theme"
         >
           <FirebaseProvider>
-            <AuthProvider>
-              <div className="relative flex min-h-screen flex-col">
-                <Header />
-                <main className="flex-1 w-full mx-auto px-4 sm:px-6 lg:px-8">{children}</main>
-                <Footer />
-              </div>
-              <JsonLd />
-            </AuthProvider>
+            <div className="relative flex min-h-screen flex-col">
+              <Header />
+              <main className="flex-1 w-full mx-auto px-4 sm:px-6 lg:px-8">{children}</main>
+              <Footer />
+            </div>
+            <JsonLd />
           </FirebaseProvider>
         </ThemeProvider>
       </body>

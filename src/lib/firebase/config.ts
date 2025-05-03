@@ -2,7 +2,6 @@
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAnalytics, isSupported } from 'firebase/analytics';
-import { getAuth } from 'firebase/auth';
 
 // Fallback values for development - DO NOT USE IN PRODUCTION
 // These are the same values that are in .env.local and publicly visible in the client-side code
@@ -53,7 +52,6 @@ if (!getApps().length) {
 
 // Initialize Firebase services
 const db = getFirestore(firebaseApp);
-const auth = getAuth(firebaseApp);
 
 // Initialize Analytics and only load it in the browser
 const analytics = typeof window !== 'undefined'
@@ -71,4 +69,4 @@ const initializeAnalytics = async () => {
   return null;
 };
 
-export { firebaseApp, db, auth, analytics, initializeAnalytics };
+export { firebaseApp, db, analytics, initializeAnalytics };

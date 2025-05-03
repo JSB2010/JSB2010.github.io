@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { ProjectViewTracker } from "@/components/projects/project-view-tracker";
 import { ProjectFeedback } from "@/components/projects/project-feedback";
-import { FavoriteButton } from "@/components/projects/favorite-button";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import { firebaseApp } from "@/lib/firebase/config";
 import { Card } from "@/components/ui/card";
@@ -70,11 +69,6 @@ export function ProjectDetail({
 
       {/* Main content */}
       <div className="relative">
-        {/* Favorite button */}
-        <div className="absolute top-0 right-0 z-10">
-          <FavoriteButton projectId={projectId} projectName={projectName} />
-        </div>
-
         {children}
       </div>
 
