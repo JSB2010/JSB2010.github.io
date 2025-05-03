@@ -55,14 +55,15 @@ exports.sendContactEmailNotification = (0, firestore_1.onDocumentCreated)({
     const data = snapshot.data();
     console.log(`New contact form submission detected with ID: ${submissionId}`);
     try {
-        // Email configuration with your provided credentials
+        // Email configuration with hardcoded values for now
+        // In production, these should be set using Firebase environment variables
         const emailConfig = {
             host: 'smtp.gmail.com',
             port: 587,
             secure: false, // true for 465, false for other ports
             auth: {
                 user: 'jacobsamuelbarkin@gmail.com',
-                pass: 'phnv varx llta soll', // Your app password
+                pass: 'phnv varx llta soll', // Your app password - consider updating this if it's expired
             },
         };
         console.log('Email configuration loaded:', {
@@ -83,7 +84,28 @@ exports.sendContactEmailNotification = (0, firestore_1.onDocumentCreated)({
         }
         catch (verifyError) {
             console.error('SMTP connection verification failed:', verifyError);
-            throw new Error(`SMTP verification failed: ${(_a = verifyError.message) !== null && _a !== void 0 ? _a : 'Unknown error'}`);
+            // Log detailed error information for debugging
+            if (verifyError.code) {
+                console.error('SMTP Error code:', verifyError.code);
+            }
+            if (verifyError.response) {
+                console.error('SMTP Response:', verifyError.response);
+            }
+            // Check if it's an authentication error
+            if (verifyError.message && verifyError.message.includes('auth')) {
+                console.error('This appears to be an authentication error. The app password may have expired.');
+                // Return a specific error instead of throwing
+                return {
+                    success: false,
+                    error: 'Email authentication failed. The app password may have expired.',
+                    details: verifyError.message
+                };
+            }
+            // Return error instead of throwing to prevent retries
+            return {
+                success: false,
+                error: `SMTP verification failed: ${(_a = verifyError.message) !== null && _a !== void 0 ? _a : 'Unknown error'}`
+            };
         }
         // Format the date
         const timestamp = data.timestamp instanceof admin.firestore.Timestamp

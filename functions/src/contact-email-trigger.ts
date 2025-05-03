@@ -33,14 +33,15 @@ export const sendContactEmailNotification = onDocumentCreated({
     console.log(`New contact form submission detected with ID: ${submissionId}`);
 
     try {
-      // Email configuration from environment variables
+      // Email configuration with hardcoded values for now
+      // In production, these should be set using Firebase environment variables
       const emailConfig: EmailConfig = {
-        host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-        port: parseInt(process.env.EMAIL_PORT || '587'),
-        secure: process.env.EMAIL_SECURE === 'true', // true for 465, false for other ports
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false, // true for 465, false for other ports
         auth: {
-          user: process.env.EMAIL_USER || '',
-          pass: process.env.EMAIL_PASS || '',
+          user: 'jacobsamuelbarkin@gmail.com',
+          pass: 'phnv varx llta soll', // Your app password - consider updating this if it's expired
         },
       };
 
@@ -63,7 +64,33 @@ export const sendContactEmailNotification = onDocumentCreated({
         console.log('SMTP connection verified successfully');
       } catch (verifyError: any) {
         console.error('SMTP connection verification failed:', verifyError);
-        throw new Error(`SMTP verification failed: ${verifyError.message ?? 'Unknown error'}`);
+
+        // Log detailed error information for debugging
+        if (verifyError.code) {
+          console.error('SMTP Error code:', verifyError.code);
+        }
+
+        if (verifyError.response) {
+          console.error('SMTP Response:', verifyError.response);
+        }
+
+        // Check if it's an authentication error
+        if (verifyError.message && verifyError.message.includes('auth')) {
+          console.error('This appears to be an authentication error. The app password may have expired.');
+
+          // Return a specific error instead of throwing
+          return {
+            success: false,
+            error: 'Email authentication failed. The app password may have expired.',
+            details: verifyError.message
+          };
+        }
+
+        // Return error instead of throwing to prevent retries
+        return {
+          success: false,
+          error: `SMTP verification failed: ${verifyError.message ?? 'Unknown error'}`
+        };
       }
 
       // Format the date

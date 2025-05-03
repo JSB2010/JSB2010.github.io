@@ -106,60 +106,94 @@ export function ContactFormFirestore() {
 
       addDebugLog("Preparing to submit to Firestore...");
 
+      // Log the current origin for debugging CORS issues
+      if (typeof window !== 'undefined') {
+        addDebugLog(`Current origin: ${window.location.origin}`);
+      }
+
       // Submit to Firestore
       const contactSubmissionsRef = collection(db, 'contactSubmissions');
 
-      // Set a shorter timeout specifically for the Firestore operation
-      addDebugLog("Setting up Firestore operation with 15-second timeout...");
+      // Set a timeout for the Firestore operation
+      addDebugLog("Setting up Firestore operation with 30-second timeout...");
 
       // Create a timeout promise
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => {
-          addDebugLog("ERROR: Firestore operation timed out after 15 seconds");
-          reject(new Error('Firestore operation timed out after 15 seconds - possible network or configuration issue'));
-        }, 15000);
+          addDebugLog("ERROR: Firestore operation timed out after 30 seconds");
+          reject(new Error('Firestore operation timed out after 30 seconds - possible network or configuration issue'));
+        }, 30000);
       });
 
       // Race between the Firestore operation and the timeout
-      const docRef = await Promise.race([
-        addDoc(contactSubmissionsRef, submissionData),
-        timeoutPromise
-      ]) as { id: string };
+      try {
+        const docRef = await Promise.race([
+          addDoc(contactSubmissionsRef, submissionData),
+          timeoutPromise
+        ]) as { id: string };
 
-      addDebugLog(`Successfully submitted to Firestore with ID: ${docRef.id}`);
+        addDebugLog(`Successfully submitted to Firestore with ID: ${docRef.id}`);
 
-      // Show success message
-      setIsSuccess(true);
+        // Show success message
+        setIsSuccess(true);
 
-      // Reset form
-      reset();
+        // Reset form
+        reset();
 
-      // Hide success message after 5 seconds
-      setTimeout(() => {
-        setIsSuccess(false);
-      }, 5000);
+        // Hide success message after 5 seconds
+        setTimeout(() => {
+          setIsSuccess(false);
+        }, 5000);
+      } catch (firestoreError: any) {
+        // Handle specific Firestore errors
+        addDebugLog(`Firestore operation error: ${firestoreError.message}`);
+
+        if (firestoreError.code) {
+          addDebugLog(`Firestore error code: ${firestoreError.code}`);
+        }
+
+        throw firestoreError; // Re-throw to be caught by the outer catch block
+      }
 
     } catch (error: unknown) {
       const err = error as Error;
       console.error('Error submitting form:', err);
       addDebugLog(`ERROR: ${err.message}`);
 
-      // Provide a user-friendly error message
-      setErrorMessage(
-        'There was an error submitting your message. Please try again or contact me directly via email.'
-      );
+      // Default user-friendly error message
+      let userMessage = 'There was an error submitting your message. Please try again or contact me directly via email.';
 
       // If it's a Firebase-specific error, provide more details
       const firebaseError = error as { code?: string };
       if (firebaseError.code) {
         addDebugLog(`Firebase error code: ${firebaseError.code}`);
 
+        // Customize error message based on error code
         if (firebaseError.code === 'permission-denied') {
-          setErrorMessage('You do not have permission to submit this form. Please try contacting me directly via email.');
+          userMessage = 'You do not have permission to submit this form. Please try contacting me directly via email.';
         } else if (firebaseError.code.includes('unavailable') || firebaseError.code.includes('network')) {
-          setErrorMessage('Network error. Please check your internet connection and try again.');
+          userMessage = 'Network error. Please check your internet connection and try again.';
+        } else if (firebaseError.code === 'resource-exhausted') {
+          userMessage = 'The service is currently experiencing high traffic. Please try again later or contact me directly via email.';
+        } else if (firebaseError.code === 'unauthenticated') {
+          userMessage = 'Authentication error. Please try again or contact me directly via email.';
         }
       }
+
+      // Check for timeout errors
+      if (err.message.includes('timeout') || err.message.includes('timed out')) {
+        userMessage = 'The request timed out. This could be due to network issues or high server load. Please try again later.';
+        addDebugLog('Detected timeout error');
+      }
+
+      // Check for CORS errors
+      if (err.message.includes('CORS') || err.message.includes('cross-origin')) {
+        userMessage = 'There was a cross-origin request error. Please try again later or contact me directly via email.';
+        addDebugLog('Detected CORS error');
+      }
+
+      // Set the error message for the user
+      setErrorMessage(userMessage);
     } finally {
       setIsSubmitting(false);
     }
