@@ -8,9 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Loader2, Send, CheckCircle, AlertCircle } from 'lucide-react';
-// Import Firebase modules directly from CDN for consistency with test page
-import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 // Form validation schema
 const formSchema = z.object({
@@ -22,20 +19,7 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-// Firebase configuration - same as the test HTML page
-const firebaseConfig = {
-  apiKey: "AIzaSyCZAmGriqlYJL_RLvRx7iKGQz7pbY2nrB0",
-  authDomain: "jacob-barkin-website.firebaseapp.com",
-  projectId: "jacob-barkin-website",
-  storageBucket: "jacob-barkin-website.firebasestorage.app",
-  messagingSenderId: "1093183769646",
-  appId: "1:1093183769646:web:0fbbcd20023cb9ec8823bf",
-  measurementId: "G-KTBS67S2PC"
-};
-
-// Initialize Firebase directly in the component
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+// Component for handling contact form submissions via API endpoint
 
 export function ContactFormFirestore() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -102,13 +86,12 @@ export function ContactFormFirestore() {
       }
     }
 
-    // Prepare the submission data - exactly like the test HTML page
+    // Prepare the submission data for the API
     const submissionData = {
       name: data.name,
       email: data.email,
       subject: data.subject,
       message: data.message,
-      timestamp: serverTimestamp(),
       userAgent: navigator.userAgent,
       source: 'website_contact_form'
     };
@@ -121,34 +104,53 @@ export function ContactFormFirestore() {
     })}`);
 
     try {
-      addDebugLog('Submitting to Firestore...');
+      addDebugLog('Submitting form via API endpoint...');
 
-      // Log the current origin for debugging CORS issues
+      // Log the current origin for debugging
       if (typeof window !== 'undefined') {
         addDebugLog(`Current origin: ${window.location.origin}`);
       }
-
-      // Submit to Firestore with a timeout
-      const contactSubmissionsRef = collection(db, 'contactSubmissions');
-      addDebugLog(`Collection path: ${contactSubmissionsRef.path}`);
 
       // Create a timeout promise
       addDebugLog("Setting up submission with 15-second timeout...");
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => {
-          reject(new Error('Firestore submission timed out after 15 seconds'));
+          reject(new Error('API request timed out after 15 seconds'));
         }, 15000);
       });
 
-      // Race between the Firestore operation and the timeout
-      addDebugLog("Starting Firestore submission with timeout...");
-      const docRef = await Promise.race([
-        addDoc(contactSubmissionsRef, submissionData),
+      // Set up the fetch request
+      addDebugLog("Preparing API request...");
+      const apiEndpoint = '/api/submit-contact';
+
+      // Create the fetch promise
+      const fetchPromise = fetch(apiEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(submissionData)
+      }).then(async (response) => {
+        addDebugLog(`API response status: ${response.status}`);
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          addDebugLog(`API error: ${JSON.stringify(errorData)}`);
+          throw new Error(`API error: ${response.status} ${errorData.message || ''}`);
+        }
+
+        return response.json();
+      });
+
+      // Race between the fetch operation and the timeout
+      addDebugLog("Starting API request with timeout...");
+      const responseData = await Promise.race([
+        fetchPromise,
         timeoutPromise
-      ]) as { id: string };
+      ]);
 
       // Success!
-      addDebugLog(`Successfully submitted to Firestore with ID: ${docRef.id}`);
+      addDebugLog(`Successfully submitted form via API with ID: ${responseData.id}`);
 
       // Show success message
       setIsSuccess(true);
