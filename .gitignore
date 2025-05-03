@@ -3,12 +3,7 @@
 # dependencies
 /node_modules
 /.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
+.pnp.js
 
 # testing
 /coverage
@@ -16,6 +11,30 @@
 # next.js
 /.next/
 /out/
+/deploy-temp/
+/deploy-static/
+.next
+out
+node_modules
+**/.next/**/*.pack
+**/.next/cache/**
+**/node_modules/**
+**/node_modules/@cloudflare/**
+**/node_modules/@next/**
+**/node_modules/.cache/**
+**/.next/cache/webpack/**
+**/.next/server/**
+**/.next/static/**
+**/.next/trace
+**/.next/types/**
+
+# Specific large files
+node_modules/@next/swc-darwin-arm64/next-swc.darwin-arm64.node
+.next/cache/webpack/server-production/0.pack
+.next/cache/webpack/server-production/8.pack
+node_modules/@cloudflare/workerd-darwin-arm64/bin/workerd
+.next/cache/webpack/client-production/0.pack
+.next/cache/webpack/server-production/4.pack
 
 # production
 /build
@@ -23,16 +42,18 @@
 # misc
 .DS_Store
 *.pem
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.pnpm-debug.log*
 
-# env files
-.env*
-!.env.example
+# local env files
+.env*.local
 
 # vercel
 .vercel
@@ -40,3 +61,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# IDE
+.idea
+.vscode
