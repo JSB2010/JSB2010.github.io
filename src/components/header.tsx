@@ -59,7 +59,6 @@ export default function Header() {
             </Link>
           ))}
           <div className="flex items-center gap-2">
-            <SignInButton />
             <ThemeToggle />
           </div>
         </nav>
@@ -118,10 +117,6 @@ export default function Header() {
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Theme mode</span>
                   <ThemeToggle />
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Account</span>
-                  <SignInButton />
                 </div>
               </div>
             </nav>
