@@ -1,0 +1,16 @@
+# Redirects for Cloudflare Pages
+# SPA (Single Page Application) setup for client-side routing
+
+# Assets should be served directly
+/_next/*            /_next/:splat  200
+/images/*           /images/:splat 200
+/spa-redirect.js    /spa-redirect.js 200
+
+# Special route for handling client-side routing
+/index.html         /index.html    200
+
+# Handle 404 page specially for SPA routing
+/404.html           /404.html      200
+
+# All routes should be handled by the SPA
+/*                  /index.html    200

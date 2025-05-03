@@ -1,0 +1,27 @@
+{
+    "livePreview.defaultPreviewPath": "/index.html",
+    "workbench.colorCustomizations": {
+        "activityBar.activeBackground": "#5290c5",
+        "activityBar.background": "#5290c5",
+        "activityBar.foreground": "#15202b",
+        "activityBar.inactiveForeground": "#15202b99",
+        "activityBarBadge.background": "#8f3063",
+        "activityBarBadge.foreground": "#e7e7e7",
+        "commandCenter.border": "#e7e7e799",
+        "sash.hoverBorder": "#5290c5",
+        "statusBar.background": "#3976ab",
+        "statusBar.foreground": "#e7e7e7",
+        "statusBarItem.hoverBackground": "#5290c5",
+        "statusBarItem.remoteBackground": "#3976ab",
+        "statusBarItem.remoteForeground": "#e7e7e7",
+        "titleBar.activeBackground": "#3976ab",
+        "titleBar.activeForeground": "#e7e7e7",
+        "titleBar.inactiveBackground": "#3976ab99",
+        "titleBar.inactiveForeground": "#e7e7e799"
+    },
+    "peacock.color": "#3976ab",
+    "sonarlint.connectedMode.project": {
+        "connectionId": "jsb2010",
+        "projectKey": "JSB2010_JSB2010.github.io"
+    }
+}

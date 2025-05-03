@@ -1,0 +1,21 @@
+{
+  "name": "Jacob Barkin Portfolio",
+  "short_name": "Jacob Barkin",
+  "description": "Jacob Barkin - Developer, financial education advocate, and technology enthusiast.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "icons": [
+    {
+      "src": "/images/Updated logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/Updated logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
