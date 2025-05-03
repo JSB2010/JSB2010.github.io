@@ -8,8 +8,9 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Loader2, Send, CheckCircle, AlertCircle } from 'lucide-react';
-import { db } from '@/lib/firebase/config';
+import { db, firebaseApp } from '@/lib/firebase/config';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { getApp } from 'firebase/app';
 
 // Form validation schema
 const formSchema = z.object({
@@ -125,47 +126,32 @@ export function ContactFormFirestore() {
         }, 60000);
       });
 
-      // Use a two-phase approach:
-      // 1. Submit to Firestore with a short timeout
-      // 2. If successful, show success message immediately without waiting for cloud function
+      // Simplified approach - direct submission with detailed logging
       try {
-        // First attempt with a shorter timeout (10 seconds)
-        addDebugLog("Attempting Firestore submission with 10-second initial timeout...");
-        const quickTimeoutPromise = new Promise((resolve, _) => {
-          setTimeout(() => {
-            addDebugLog("Initial Firestore operation taking longer than 10 seconds, but continuing in background...");
-            // Instead of rejecting, we'll resolve with a special value
-            // This allows us to show a success message while the operation continues
-            resolve({ id: 'pending-submission' });
-          }, 10000);
-        });
+        addDebugLog("Starting direct Firestore submission...");
 
-        // Try the quick submission first
-        const docRef = await Promise.race([
-          addDoc(contactSubmissionsRef, submissionData),
-          quickTimeoutPromise
-        ]) as { id: string };
+        // Log Firebase configuration
+        const app = getApp();
+        const options = app.options;
+        addDebugLog(`Firebase project ID: ${options.projectId}`);
+        addDebugLog(`Firebase app name: ${app.name}`);
 
-        // If we got a real document ID, it was successful
-        if (docRef.id !== 'pending-submission') {
-          addDebugLog(`Successfully submitted to Firestore with ID: ${docRef.id}`);
-        } else {
-          // If we got the pending ID, the submission is still in progress
-          addDebugLog("Submission taking longer than expected, but continuing in background");
+        // Log the collection reference
+        addDebugLog(`Collection path: ${contactSubmissionsRef.path}`);
 
-          // Continue the submission in the background with the longer timeout
-          Promise.race([
-            addDoc(contactSubmissionsRef, submissionData),
-            timeoutPromise
-          ]).then((actualDocRef: any) => {
-            addDebugLog(`Background submission completed with ID: ${actualDocRef.id}`);
-          }).catch((err) => {
-            addDebugLog(`Background submission failed: ${err.message}`);
-            // We don't show this error to the user since we've already shown success
-          });
-        }
+        // Add a timestamp for tracking
+        const clientTimestamp = new Date().toISOString();
+        submissionData.clientTimestamp = clientTimestamp;
+        addDebugLog(`Added client timestamp: ${clientTimestamp}`);
 
-        // Show success message regardless - the submission is either complete or in progress
+        // Direct submission to Firestore
+        addDebugLog("Calling addDoc on contactSubmissions collection...");
+        const docRef = await addDoc(contactSubmissionsRef, submissionData);
+
+        // Success!
+        addDebugLog(`Successfully submitted to Firestore with ID: ${docRef.id}`);
+
+        // Show success message
         setIsSuccess(true);
 
         // Reset form
