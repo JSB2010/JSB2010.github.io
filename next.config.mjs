@@ -102,27 +102,26 @@ const nextConfig = {
     trailingSlash: true, // Add trailing slashes for better SPA routing
   } : {}),
 
-  // Custom webpack configuration for production builds
-  webpack: (config, { isServer }) => {
-    // Only run on the client build once
-    if (!isServer && process.env.NODE_ENV === 'production') {
-      // Add a custom plugin to copy the necessary files after the build
-      config.plugins?.push({
-        apply: (compiler) => {
-          compiler.hooks.afterEmit.tapPromise('CopySPAFilesPlugin', async () => {
-            await copySPAFiles();
-          });
-        }
-      });
+  // Only apply webpack configuration in production mode
+  ...(process.env.NODE_ENV === 'production' ? {
+    webpack: (config, { isServer }) => {
+      // Only run on the client build once
+      if (!isServer) {
+        // Add a custom plugin to copy the necessary files after the build
+        config.plugins?.push({
+          apply: (compiler) => {
+            compiler.hooks.afterEmit.tapPromise('CopySPAFilesPlugin', async () => {
+              await copySPAFiles();
+            });
+          }
+        });
+      }
+
+      return config;
     }
+  } : {}),
 
-    return config;
-  },
-
-  // Enable Turbopack
-  experimental: {
-    // Empty experimental section to avoid warnings
-  },
+  // No experimental options needed as Turbopack is now stable
 
   // Post-build hooks are handled in the webpack configuration
   // for production builds
