@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Loader2, Send, CheckCircle, AlertCircle } from 'lucide-react';
-import Script from 'next/script';
 
 // Form validation schema
 const formSchema = z.object({
@@ -21,23 +20,13 @@ const formSchema = z.object({
 // Form values type
 type FormValues = z.infer<typeof formSchema>;
 
-// Declare global variables to match the test page approach
-declare global {
-  interface Window {
-    firebaseApp: any;
-    firestore: any;
-    firebaseLoaded: boolean;
-    initializeFirebase: () => Promise<void>;
-    submitToFirestore: (data: any) => Promise<{ id: string }>;
-  }
-}
-
 export function ContactFormFixed() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [debugLogs, setDebugLogs] = useState<string[]>([]);
-  const [firebaseReady, setFirebaseReady] = useState(false);
+  const [firebaseApp, setFirebaseApp] = useState<any>(null);
+  const [firestore, setFirestore] = useState<any>(null);
 
   const {
     register,
@@ -62,88 +51,48 @@ export function ContactFormFixed() {
 
   // Initialize Firebase when the component mounts
   useEffect(() => {
-    // Add the Firebase initialization script
-    const script = document.createElement('script');
-    script.type = 'module';
-    script.innerHTML = `
-      // Import Firebase modules from CDN
-      import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js';
-      import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js';
-      
-      // Firebase configuration
-      const firebaseConfig = {
-        apiKey: "AIzaSyCZAmGriqlYJL_RLvRx7iKGQz7pbY2nrB0",
-        authDomain: "jacob-barkin-website.firebaseapp.com",
-        projectId: "jacob-barkin-website",
-        storageBucket: "jacob-barkin-website.firebasestorage.app",
-        messagingSenderId: "1093183769646",
-        appId: "1:1093183769646:web:0fbbcd20023cb9ec8823bf",
-        measurementId: "G-KTBS67S2PC"
-      };
-      
-      // Initialize Firebase
-      window.initializeFirebase = async () => {
-        console.log('Initializing Firebase...');
-        try {
-          window.firebaseApp = initializeApp(firebaseConfig);
-          window.firestore = getFirestore(window.firebaseApp);
-          window.firebaseLoaded = true;
-          console.log('Firebase initialized successfully');
-          
-          // Dispatch an event to notify the component
-          window.dispatchEvent(new Event('firebaseReady'));
-          
-          return true;
-        } catch (error) {
-          console.error('Error initializing Firebase:', error);
-          return false;
+    let isMounted = true;
+
+    const initializeFirebase = async () => {
+      try {
+        addDebugLog('Loading Firebase SDK...');
+
+        // Dynamically import Firebase modules
+        const firebaseAppModule = await import('firebase/app');
+        const firestoreModule = await import('firebase/firestore');
+
+        // Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyCZAmGriqlYJL_RLvRx7iKGQz7pbY2nrB0",
+          authDomain: "jacob-barkin-website.firebaseapp.com",
+          projectId: "jacob-barkin-website",
+          storageBucket: "jacob-barkin-website.firebasestorage.app",
+          messagingSenderId: "1093183769646",
+          appId: "1:1093183769646:web:0fbbcd20023cb9ec8823bf",
+          measurementId: "G-KTBS67S2PC"
+        };
+
+        addDebugLog('Initializing Firebase...');
+
+        // Initialize Firebase
+        const app = firebaseAppModule.initializeApp(firebaseConfig);
+        const db = firestoreModule.getFirestore(app);
+
+        if (isMounted) {
+          setFirebaseApp(app);
+          setFirestore(db);
+          addDebugLog('Firebase initialized successfully');
         }
-      };
-      
-      // Function to submit to Firestore
-      window.submitToFirestore = async (data) => {
-        console.log('Submitting to Firestore...');
-        try {
-          const contactSubmissionsRef = collection(window.firestore, 'contactSubmissions');
-          const submissionWithTimestamp = {
-            ...data,
-            timestamp: serverTimestamp()
-          };
-          
-          const docRef = await addDoc(contactSubmissionsRef, submissionWithTimestamp);
-          console.log('Successfully submitted to Firestore with ID:', docRef.id);
-          
-          return { id: docRef.id };
-        } catch (error) {
-          console.error('Error submitting to Firestore:', error);
-          throw error;
-        }
-      };
-      
-      // Initialize Firebase immediately
-      window.initializeFirebase();
-    `;
-    
-    document.body.appendChild(script);
-    
-    // Listen for the firebaseReady event
-    const handleFirebaseReady = () => {
-      addDebugLog('Firebase is ready to use');
-      setFirebaseReady(true);
+      } catch (error) {
+        addDebugLog(`Error initializing Firebase: ${(error as Error).message}`);
+        console.error('Error initializing Firebase:', error);
+      }
     };
-    
-    window.addEventListener('firebaseReady', handleFirebaseReady);
-    
-    // Check if Firebase is already initialized
-    if (window.firebaseLoaded) {
-      addDebugLog('Firebase was already initialized');
-      setFirebaseReady(true);
-    }
-    
+
+    initializeFirebase();
+
     return () => {
-      // Clean up
-      window.removeEventListener('firebaseReady', handleFirebaseReady);
-      document.body.removeChild(script);
+      isMounted = false;
     };
   }, []);
 
@@ -152,45 +101,44 @@ export function ContactFormFixed() {
     setIsSubmitting(true);
     setErrorMessage(null);
     setDebugLogs([]); // Clear previous debug logs
-    
+
     addDebugLog('Form submitted, preparing data...');
-    
-    // Check if Firebase is ready
-    if (!window.firebaseLoaded) {
-      addDebugLog('Firebase is not initialized yet. Attempting to initialize...');
-      try {
-        await window.initializeFirebase();
-      } catch (error) {
-        addDebugLog('Failed to initialize Firebase');
-        setErrorMessage('Failed to initialize Firebase. Please try again later.');
-        setIsSubmitting(false);
-        return;
-      }
+
+    // Check if Firebase is initialized
+    if (!firestore) {
+      addDebugLog('Firebase is not initialized yet.');
+      setErrorMessage('Firebase is not initialized yet. Please try again in a moment.');
+      setIsSubmitting(false);
+      return;
     }
-    
-    // Prepare the submission data
-    const submissionData = {
-      name: data.name,
-      email: data.email,
-      subject: data.subject,
-      message: data.message,
-      userAgent: navigator.userAgent,
-      source: 'website_contact_form_fixed'
-    };
-    
-    addDebugLog(`Submission data prepared: ${JSON.stringify({
-      name: data.name,
-      email: data.email,
-      subject: data.subject,
-      messageLength: data.message.length
-    })}`);
-    
-    // Log the current origin for debugging CORS issues
-    if (typeof window !== 'undefined') {
-      addDebugLog(`Current origin: ${window.location.origin}`);
-    }
-    
+
     try {
+      // Import Firestore functions
+      const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
+
+      // Prepare the submission data
+      const submissionData = {
+        name: data.name,
+        email: data.email,
+        subject: data.subject,
+        message: data.message,
+        timestamp: serverTimestamp(),
+        userAgent: navigator.userAgent,
+        source: 'website_contact_form_fixed'
+      };
+
+      addDebugLog(`Submission data prepared: ${JSON.stringify({
+        name: data.name,
+        email: data.email,
+        subject: data.subject,
+        messageLength: data.message.length
+      })}`);
+
+      // Log the current origin for debugging CORS issues
+      if (typeof window !== 'undefined') {
+        addDebugLog(`Current origin: ${window.location.origin}`);
+      }
+
       // Create a timeout promise
       addDebugLog("Setting up submission with 20-second timeout...");
       const timeoutPromise = new Promise((_, reject) => {
@@ -198,25 +146,26 @@ export function ContactFormFixed() {
           reject(new Error('Firestore submission timed out after 20 seconds'));
         }, 20000);
       });
-      
+
       // Submit to Firestore with a timeout
       addDebugLog('Submitting to Firestore...');
-      
+      const contactSubmissionsRef = collection(firestore, 'contactSubmissions');
+
       // Race between the Firestore operation and the timeout
       const docRef = await Promise.race([
-        window.submitToFirestore(submissionData),
+        addDoc(contactSubmissionsRef, submissionData),
         timeoutPromise
       ]) as { id: string };
-      
+
       // Success!
       addDebugLog(`Successfully submitted to Firestore with ID: ${docRef.id}`);
-      
+
       // Show success message
       setIsSuccess(true);
-      
+
       // Reset form
       reset();
-      
+
       // Hide success message after 5 seconds
       setTimeout(() => {
         setIsSuccess(false);
@@ -225,10 +174,32 @@ export function ContactFormFixed() {
       const err = error as Error;
       console.error('Error submitting form:', err);
       addDebugLog(`ERROR: ${err.message}`);
-      
+
+      // Default user-friendly error message
+      let userMessage = 'There was an error submitting your message. Please try again or contact me directly via email.';
+
+      // If it's a Firebase-specific error, provide more details
+      const firebaseError = error as { code?: string };
+      if (firebaseError.code) {
+        addDebugLog(`Firebase error code: ${firebaseError.code}`);
+
+        // Customize error message based on error code
+        if (firebaseError.code === 'permission-denied') {
+          userMessage = 'You do not have permission to submit this form. Please try contacting me directly via email.';
+        } else if (firebaseError.code.includes('unavailable') || firebaseError.code.includes('network')) {
+          userMessage = 'Network error. Please check your internet connection and try again.';
+        }
+      }
+
+      // Check for specific error types
+      if (err.message.includes('timeout') || err.message.includes('timed out')) {
+        userMessage = 'The request timed out. This could be due to network issues or high server load. Please try the email option below.';
+        addDebugLog('Detected timeout error');
+      }
+
       // Set the error message for the user
-      setErrorMessage('There was an error submitting your message. Please try again or contact me directly via email.');
-      
+      setErrorMessage(userMessage);
+
       // Log the full error for debugging
       addDebugLog(`Full error object: ${JSON.stringify(error, Object.getOwnPropertyNames(error))}`);
     } finally {
@@ -249,7 +220,7 @@ export function ContactFormFixed() {
       </div>
     );
   };
-  
+
   // Direct email link component as a fallback
   const DirectEmailLink = () => {
     return (
@@ -273,8 +244,8 @@ export function ContactFormFixed() {
   return (
     <div className="w-full max-w-2xl mx-auto">
       <DebugPanel />
-      
-      {!firebaseReady && (
+
+      {!firestore && (
         <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md mb-4">
           <p className="text-sm text-yellow-700 dark:text-yellow-400 flex items-center">
             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -282,7 +253,7 @@ export function ContactFormFixed() {
           </p>
         </div>
       )}
-      
+
       {isSuccess ? (
         <div className="flex flex-col items-center justify-center p-6 text-center bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
           <CheckCircle className="h-12 w-12 text-green-500 dark:text-green-400 mb-4" />
@@ -315,7 +286,7 @@ export function ContactFormFixed() {
               </div>
             </div>
           )}
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <label htmlFor="name" className="text-sm font-medium">
@@ -333,7 +304,7 @@ export function ContactFormFixed() {
                 </p>
               )}
             </div>
-            
+
             <div className="space-y-2">
               <label htmlFor="email" className="text-sm font-medium">
                 Email
@@ -352,7 +323,7 @@ export function ContactFormFixed() {
               )}
             </div>
           </div>
-          
+
           <div className="space-y-2">
             <label htmlFor="subject" className="text-sm font-medium">
               Subject
@@ -369,7 +340,7 @@ export function ContactFormFixed() {
               </p>
             )}
           </div>
-          
+
           <div className="space-y-2">
             <label htmlFor="message" className="text-sm font-medium">
               Message
@@ -387,19 +358,19 @@ export function ContactFormFixed() {
               </p>
             )}
           </div>
-          
+
           <div className="flex flex-col sm:flex-row gap-3">
             <Button
               type="submit"
               className="w-full sm:w-auto h-9 sm:h-10 text-sm"
-              disabled={isSubmitting || !firebaseReady}
+              disabled={isSubmitting || !firestore}
             >
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" />
                   Sending...
                 </>
-              ) : !firebaseReady ? (
+              ) : !firestore ? (
                 <>
                   <Loader2 className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" />
                   Initializing...
@@ -412,7 +383,7 @@ export function ContactFormFixed() {
               )}
             </Button>
           </div>
-          
+
           {/* Always show the direct email link as a fallback option */}
           <DirectEmailLink />
         </form>
