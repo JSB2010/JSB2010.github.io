@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -69,7 +71,7 @@ export function ContactFormDirect() {
     setIsSubmitting(true);
     setErrorMessage(null);
     setDebugLogs([]); // Clear previous debug logs
-    
+
     addDebugLog('Form submitted, preparing data...');
 
     // Check network status
@@ -85,11 +87,11 @@ export function ContactFormDirect() {
 
     try {
       addDebugLog('Loading Firebase SDK...');
-      
+
       // Dynamically import Firebase modules
       const { initializeApp } = await import('firebase/app');
       const { getFirestore, collection, addDoc, serverTimestamp } = await import('firebase/firestore');
-      
+
       // Firebase configuration - same as the test HTML page
       const firebaseConfig = {
         apiKey: "AIzaSyCZAmGriqlYJL_RLvRx7iKGQz7pbY2nrB0",
@@ -100,15 +102,15 @@ export function ContactFormDirect() {
         appId: "1:1093183769646:web:0fbbcd20023cb9ec8823bf",
         measurementId: "G-KTBS67S2PC"
       };
-      
+
       addDebugLog('Initializing Firebase...');
-      
+
       // Initialize Firebase
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
-      
+
       addDebugLog('Firebase initialized successfully');
-      
+
       // Prepare the submission data
       const submissionData = {
         name: data.name,
@@ -119,19 +121,19 @@ export function ContactFormDirect() {
         userAgent: navigator.userAgent,
         source: 'website_contact_form_direct'
       };
-      
+
       addDebugLog(`Submission data prepared: ${JSON.stringify({
         name: data.name,
         email: data.email,
         subject: data.subject,
         messageLength: data.message.length
       })}`);
-      
+
       // Log the current origin for debugging CORS issues
       if (typeof window !== 'undefined') {
         addDebugLog(`Current origin: ${window.location.origin}`);
       }
-      
+
       // Create a timeout promise
       addDebugLog("Setting up submission with 20-second timeout...");
       const timeoutPromise = new Promise((_, reject) => {
@@ -139,26 +141,26 @@ export function ContactFormDirect() {
           reject(new Error('Firestore submission timed out after 20 seconds'));
         }, 20000);
       });
-      
+
       // Submit to Firestore with a timeout
       addDebugLog('Submitting to Firestore...');
       const contactSubmissionsRef = collection(db, 'contactSubmissions');
-      
+
       // Race between the Firestore operation and the timeout
       const docRef = await Promise.race([
         addDoc(contactSubmissionsRef, submissionData),
         timeoutPromise
       ]) as { id: string };
-      
+
       // Success!
       addDebugLog(`Successfully submitted to Firestore with ID: ${docRef.id}`);
-      
+
       // Show success message
       setIsSuccess(true);
-      
+
       // Reset form
       reset();
-      
+
       // Hide success message after 5 seconds
       setTimeout(() => {
         setIsSuccess(false);
@@ -167,15 +169,15 @@ export function ContactFormDirect() {
       const err = error as Error;
       console.error('Error submitting form:', err);
       addDebugLog(`ERROR: ${err.message}`);
-      
+
       // Log error details
       if ((error as any).code) {
         addDebugLog(`Error code: ${(error as any).code}`);
       }
-      
+
       // Default user-friendly error message
       let userMessage = 'There was an error submitting your message. Please try again or contact me directly via email.';
-      
+
       // If it's a Firebase-specific error, provide more details
       const firebaseError = error as { code?: string };
       if (firebaseError.code) {
@@ -190,7 +192,7 @@ export function ContactFormDirect() {
           userMessage = 'Authentication error. Please try again or contact me directly via email.';
         }
       }
-      
+
       // Check for specific error types
       if (err.message.includes('timeout') || err.message.includes('timed out')) {
         userMessage = 'The request timed out. This could be due to network issues or high server load. Please try the email option below.';
@@ -202,10 +204,10 @@ export function ContactFormDirect() {
         userMessage = 'Network connection error. Please check your internet connection or use the email option below.';
         addDebugLog('Detected network error - suggesting email fallback');
       }
-      
+
       // Set the error message for the user
       setErrorMessage(userMessage);
-      
+
       // Log the full error for debugging
       addDebugLog(`Full error object: ${JSON.stringify(error, Object.getOwnPropertyNames(error))}`);
     } finally {
@@ -227,7 +229,7 @@ export function ContactFormDirect() {
       </div>
     );
   };
-  
+
   // Direct email link component as a fallback
   const DirectEmailLink = () => {
     return (
@@ -251,7 +253,7 @@ export function ContactFormDirect() {
   return (
     <div className="w-full max-w-2xl mx-auto">
       <DebugPanel />
-      
+
       {isSuccess ? (
         <div className="flex flex-col items-center justify-center p-6 text-center bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
           <CheckCircle className="h-12 w-12 text-green-500 dark:text-green-400 mb-4" />
@@ -284,7 +286,7 @@ export function ContactFormDirect() {
               </div>
             </div>
           )}
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <label htmlFor="name" className="text-sm font-medium">
@@ -302,7 +304,7 @@ export function ContactFormDirect() {
                 </p>
               )}
             </div>
-            
+
             <div className="space-y-2">
               <label htmlFor="email" className="text-sm font-medium">
                 Email
@@ -321,7 +323,7 @@ export function ContactFormDirect() {
               )}
             </div>
           </div>
-          
+
           <div className="space-y-2">
             <label htmlFor="subject" className="text-sm font-medium">
               Subject
@@ -338,7 +340,7 @@ export function ContactFormDirect() {
               </p>
             )}
           </div>
-          
+
           <div className="space-y-2">
             <label htmlFor="message" className="text-sm font-medium">
               Message
@@ -356,7 +358,7 @@ export function ContactFormDirect() {
               </p>
             )}
           </div>
-          
+
           <div className="flex flex-col sm:flex-row gap-3">
             <Button
               type="submit"
@@ -376,7 +378,7 @@ export function ContactFormDirect() {
               )}
             </Button>
           </div>
-          
+
           {/* Always show the direct email link as a fallback option */}
           <DirectEmailLink />
         </form>
