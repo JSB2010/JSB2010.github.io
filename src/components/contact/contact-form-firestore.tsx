@@ -121,6 +121,7 @@ export function ContactFormFirestore() {
 
       // Set up the fetch request
       addDebugLog("Preparing API request...");
+      // Use the Cloudflare Pages Function endpoint
       const apiEndpoint = '/api/submit-contact';
 
       // Create the fetch promise

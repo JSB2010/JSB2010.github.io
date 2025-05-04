@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "routes": [
+    {
+      "pattern": "/api/submit-contact",
+      "function": "api/submit-contact"
+    }
+  ]
+}
