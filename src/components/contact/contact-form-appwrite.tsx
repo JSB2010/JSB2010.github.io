@@ -32,6 +32,7 @@ export function ContactFormAppwrite() {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -53,8 +54,8 @@ export function ContactFormAppwrite() {
     if (typeof navigator !== 'undefined') {
       return {
         online: navigator.onLine,
-        connection: 'navigator' in window && 'connection' in navigator 
-          ? (navigator as any).connection?.effectiveType 
+        connection: 'navigator' in window && 'connection' in navigator
+          ? (navigator as any).connection?.effectiveType
           : 'unknown'
       };
     }
@@ -64,12 +65,13 @@ export function ContactFormAppwrite() {
   // Debug panel component
   const DebugPanel = () => {
     if (!showDebug) return null;
-    
+
     return (
       <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-md text-xs font-mono overflow-auto max-h-40">
         <div className="flex justify-between items-center mb-2">
           <h4 className="font-semibold">Debug Logs</h4>
-          <button 
+          <button
+            type="button"
             onClick={() => setDebugLogs([])}
             className="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
           >
@@ -173,7 +175,7 @@ export function ContactFormAppwrite() {
         addDebugLog(`Form submitted successfully with ID: ${result.id}`);
         setIsSuccess(true);
         reset(); // Reset form fields
-        
+
         // Hide success message after 5 seconds
         setTimeout(() => {
           setIsSuccess(false);
@@ -185,7 +187,7 @@ export function ContactFormAppwrite() {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
       addDebugLog(`ERROR: ${errorMessage}`);
-      
+
       // Check if it's a timeout error
       if (errorMessage.includes('timed out')) {
         setErrorMessage('The request timed out. Please try again or use the direct email option below.');
@@ -199,19 +201,19 @@ export function ContactFormAppwrite() {
 
   // Direct email link component as a fallback
   const DirectEmailLink = () => {
-    // Get form values
-    const name = document.getElementById('name') as HTMLInputElement;
-    const email = document.getElementById('email') as HTMLInputElement;
-    const subject = document.getElementById('subject') as HTMLInputElement;
-    const message = document.getElementById('message') as HTMLTextAreaElement;
-    
-    // Generate mailto link
+    // Generate mailto link - using form values from React Hook Form
     const generateMailtoLink = () => {
-      if (!name?.value || !email?.value) return 'mailto:Jacobsamuelbarkin@gmail.com';
+      // Use the watch function to get current form values safely
+      const currentName = watch('name');
+      const currentEmail = watch('email');
+      const currentSubject = watch('subject');
+      const currentMessage = watch('message');
 
-      const mailtoSubject = encodeURIComponent(subject?.value || 'Contact Form');
+      if (!currentName || !currentEmail) return 'mailto:Jacobsamuelbarkin@gmail.com';
+
+      const mailtoSubject = encodeURIComponent(currentSubject || 'Contact Form');
       const mailtoBody = encodeURIComponent(
-        `Name: ${name.value}\nEmail: ${email.value}\n\nMessage:\n${message?.value || ''}`
+        `Name: ${currentName}\nEmail: ${currentEmail}\n\nMessage:\n${currentMessage || ''}`
       );
       return `mailto:Jacobsamuelbarkin@gmail.com?subject=${mailtoSubject}&body=${mailtoBody}`;
     };
@@ -331,9 +333,9 @@ export function ContactFormAppwrite() {
               </button>
               <a
                 href={`mailto:Jacobsamuelbarkin@gmail.com?subject=${encodeURIComponent(
-                  `Contact Form: ${document.getElementById('subject')?.value ?? 'Message from website'}`
+                  `Contact Form: ${watch('subject') ?? 'Message from website'}`
                 )}&body=${encodeURIComponent(
-                  `Name: ${document.getElementById('name')?.value ?? ''}\nEmail: ${document.getElementById('email')?.value ?? ''}\n\nMessage:\n${document.getElementById('message')?.value ?? ''}`
+                  `Name: ${watch('name') ?? ''}\nEmail: ${watch('email') ?? ''}\n\nMessage:\n${watch('message') ?? ''}`
                 )}`}
                 className="inline-flex items-center justify-center px-3 py-1.5 text-xs font-medium rounded-md border border-red-300 dark:border-red-700 text-red-700 dark:text-red-300 bg-transparent hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
               >
