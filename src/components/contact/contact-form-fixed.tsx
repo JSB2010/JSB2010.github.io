@@ -49,38 +49,25 @@ export function ContactFormFixed() {
     console.log(`[Contact Form] ${message}`);
   };
 
-  // Initialize Firebase when the component mounts
+  // Initialize Firebase API key and project ID
   useEffect(() => {
     let isMounted = true;
 
     const initializeFirebase = async () => {
       try {
-        addDebugLog('Loading Firebase SDK...');
-
-        // Dynamically import Firebase modules
-        const firebaseAppModule = await import('firebase/app');
-        const firestoreModule = await import('firebase/firestore');
+        addDebugLog('Loading Firebase configuration...');
 
         // Firebase configuration
         const firebaseConfig = {
           apiKey: "AIzaSyCZAmGriqlYJL_RLvRx7iKGQz7pbY2nrB0",
-          authDomain: "jacob-barkin-website.firebaseapp.com",
           projectId: "jacob-barkin-website",
-          storageBucket: "jacob-barkin-website.firebasestorage.app",
-          messagingSenderId: "1093183769646",
-          appId: "1:1093183769646:web:0fbbcd20023cb9ec8823bf",
-          measurementId: "G-KTBS67S2PC"
         };
 
-        addDebugLog('Initializing Firebase...');
-
-        // Initialize Firebase
-        const app = firebaseAppModule.initializeApp(firebaseConfig);
-        const db = firestoreModule.getFirestore(app);
+        addDebugLog('Firebase configuration loaded successfully');
 
         if (isMounted) {
-          setFirebaseApp(app);
-          setFirestore(db);
+          setFirebaseApp(firebaseConfig);
+          setFirestore(true); // Just use this as a flag to indicate Firebase is ready
           addDebugLog('Firebase initialized successfully');
         }
       } catch (error) {
@@ -105,7 +92,7 @@ export function ContactFormFixed() {
     addDebugLog('Form submitted, preparing data...');
 
     // Check if Firebase is initialized
-    if (!firestore) {
+    if (!firebaseApp) {
       addDebugLog('Firebase is not initialized yet.');
       setErrorMessage('Firebase is not initialized yet. Please try again in a moment.');
       setIsSubmitting(false);
@@ -113,18 +100,17 @@ export function ContactFormFixed() {
     }
 
     try {
-      // Import Firestore functions
-      const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
-
       // Prepare the submission data
       const submissionData = {
-        name: data.name,
-        email: data.email,
-        subject: data.subject,
-        message: data.message,
-        timestamp: serverTimestamp(),
-        userAgent: navigator.userAgent,
-        source: 'website_contact_form_fixed'
+        fields: {
+          name: { stringValue: data.name },
+          email: { stringValue: data.email },
+          subject: { stringValue: data.subject },
+          message: { stringValue: data.message },
+          userAgent: { stringValue: navigator.userAgent },
+          source: { stringValue: 'website_contact_form_direct_rest' },
+          timestamp: { timestampValue: new Date().toISOString() }
+        }
       };
 
       addDebugLog(`Submission data prepared: ${JSON.stringify({
@@ -140,25 +126,44 @@ export function ContactFormFixed() {
       }
 
       // Create a timeout promise
-      addDebugLog("Setting up submission with 20-second timeout...");
+      addDebugLog("Setting up submission with 15-second timeout...");
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => {
-          reject(new Error('Firestore submission timed out after 20 seconds'));
-        }, 20000);
+          reject(new Error('Firestore submission timed out after 15 seconds'));
+        }, 15000);
       });
 
-      // Submit to Firestore with a timeout
-      addDebugLog('Submitting to Firestore...');
-      const contactSubmissionsRef = collection(firestore, 'contactSubmissions');
+      // Submit to Firestore REST API directly
+      addDebugLog('Submitting to Firestore REST API...');
 
-      // Race between the Firestore operation and the timeout
-      const docRef = await Promise.race([
-        addDoc(contactSubmissionsRef, submissionData),
+      const projectId = (firebaseApp as any).projectId;
+      const apiKey = (firebaseApp as any).apiKey;
+
+      const firestoreApiUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/contactSubmissions?key=${apiKey}`;
+
+      addDebugLog(`Using Firestore API URL: ${firestoreApiUrl.replace(apiKey, 'API_KEY_HIDDEN')}`);
+
+      // Race between the fetch operation and the timeout
+      const response = await Promise.race([
+        fetch(firestoreApiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(submissionData)
+        }),
         timeoutPromise
-      ]) as { id: string };
+      ]) as Response;
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Firestore API error: ${response.status} ${JSON.stringify(errorData)}`);
+      }
+
+      const responseData = await response.json();
 
       // Success!
-      addDebugLog(`Successfully submitted to Firestore with ID: ${docRef.id}`);
+      addDebugLog(`Successfully submitted to Firestore with ID: ${responseData.name}`);
 
       // Show success message
       setIsSuccess(true);
@@ -178,23 +183,13 @@ export function ContactFormFixed() {
       // Default user-friendly error message
       let userMessage = 'There was an error submitting your message. Please try again or contact me directly via email.';
 
-      // If it's a Firebase-specific error, provide more details
-      const firebaseError = error as { code?: string };
-      if (firebaseError.code) {
-        addDebugLog(`Firebase error code: ${firebaseError.code}`);
-
-        // Customize error message based on error code
-        if (firebaseError.code === 'permission-denied') {
-          userMessage = 'You do not have permission to submit this form. Please try contacting me directly via email.';
-        } else if (firebaseError.code.includes('unavailable') || firebaseError.code.includes('network')) {
-          userMessage = 'Network error. Please check your internet connection and try again.';
-        }
-      }
-
       // Check for specific error types
       if (err.message.includes('timeout') || err.message.includes('timed out')) {
         userMessage = 'The request timed out. This could be due to network issues or high server load. Please try the email option below.';
         addDebugLog('Detected timeout error');
+      } else if (err.message.includes('CORS') || err.message.includes('cross-origin')) {
+        userMessage = 'There was a cross-origin request error. Please try the email option below.';
+        addDebugLog('Detected CORS error');
       }
 
       // Set the error message for the user
