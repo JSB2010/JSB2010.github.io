@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -25,8 +25,8 @@ export function ContactFormFixed() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [debugLogs, setDebugLogs] = useState<string[]>([]);
-  const [firebaseApp, setFirebaseApp] = useState<any>(null);
-  const [firestore, setFirestore] = useState<any>(null);
+  const [iframeReady, setIframeReady] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const {
     register,
@@ -49,39 +49,53 @@ export function ContactFormFixed() {
     console.log(`[Contact Form] ${message}`);
   };
 
-  // Initialize Firebase API key and project ID
+  // Set up message listener for iframe communication
   useEffect(() => {
-    let isMounted = true;
+    const handleMessage = (event: MessageEvent) => {
+      // For security, you might want to check event.origin
+      // if (event.origin !== window.location.origin) return;
 
-    const initializeFirebase = async () => {
-      try {
-        addDebugLog('Loading Firebase configuration...');
+      if (event.data && event.data.type) {
+        switch (event.data.type) {
+          case 'READY':
+            addDebugLog('Firebase iframe is ready to receive submissions');
+            setIframeReady(true);
+            break;
+          case 'LOG':
+            addDebugLog(`Iframe: ${event.data.message}`);
+            break;
+          case 'SUCCESS':
+            addDebugLog(`Successfully submitted to Firestore with ID: ${event.data.documentId}`);
+            setIsSuccess(true);
+            setIsSubmitting(false);
 
-        // Firebase configuration
-        const firebaseConfig = {
-          apiKey: "AIzaSyCZAmGriqlYJL_RLvRx7iKGQz7pbY2nrB0",
-          projectId: "jacob-barkin-website",
-        };
+            // Reset form
+            reset();
 
-        addDebugLog('Firebase configuration loaded successfully');
-
-        if (isMounted) {
-          setFirebaseApp(firebaseConfig);
-          setFirestore(true); // Just use this as a flag to indicate Firebase is ready
-          addDebugLog('Firebase initialized successfully');
+            // Hide success message after 5 seconds
+            setTimeout(() => {
+              setIsSuccess(false);
+            }, 5000);
+            break;
+          case 'ERROR':
+            addDebugLog(`ERROR from iframe: ${event.data.message}`);
+            setErrorMessage('There was an error submitting your message. Please try again or contact me directly via email.');
+            setIsSubmitting(false);
+            break;
         }
-      } catch (error) {
-        addDebugLog(`Error initializing Firebase: ${(error as Error).message}`);
-        console.error('Error initializing Firebase:', error);
       }
     };
 
-    initializeFirebase();
+    // Add message listener
+    window.addEventListener('message', handleMessage);
+
+    // Log that we're waiting for the iframe
+    addDebugLog('Waiting for Firebase iframe to initialize...');
 
     return () => {
-      isMounted = false;
+      window.removeEventListener('message', handleMessage);
     };
-  }, []);
+  }, [reset]);
 
   // Main form submission handler
   const onSubmit = async (data: FormValues) => {
@@ -91,9 +105,9 @@ export function ContactFormFixed() {
 
     addDebugLog('Form submitted, preparing data...');
 
-    // Check if Firebase is initialized
-    if (!firebaseApp) {
-      addDebugLog('Firebase is not initialized yet.');
+    // Check if iframe is ready
+    if (!iframeReady || !iframeRef.current) {
+      addDebugLog('Firebase iframe is not ready yet.');
       setErrorMessage('Firebase is not initialized yet. Please try again in a moment.');
       setIsSubmitting(false);
       return;
@@ -102,15 +116,12 @@ export function ContactFormFixed() {
     try {
       // Prepare the submission data
       const submissionData = {
-        fields: {
-          name: { stringValue: data.name },
-          email: { stringValue: data.email },
-          subject: { stringValue: data.subject },
-          message: { stringValue: data.message },
-          userAgent: { stringValue: navigator.userAgent },
-          source: { stringValue: 'website_contact_form_direct_rest' },
-          timestamp: { timestampValue: new Date().toISOString() }
-        }
+        name: data.name,
+        email: data.email,
+        subject: data.subject,
+        message: data.message,
+        userAgent: navigator.userAgent,
+        source: 'website_contact_form_iframe'
       };
 
       addDebugLog(`Submission data prepared: ${JSON.stringify({
@@ -120,84 +131,43 @@ export function ContactFormFixed() {
         messageLength: data.message.length
       })}`);
 
-      // Log the current origin for debugging CORS issues
+      // Log the current origin for debugging
       if (typeof window !== 'undefined') {
         addDebugLog(`Current origin: ${window.location.origin}`);
       }
 
-      // Create a timeout promise
-      addDebugLog("Setting up submission with 15-second timeout...");
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => {
-          reject(new Error('Firestore submission timed out after 15 seconds'));
-        }, 15000);
-      });
+      // Create a timeout for the iframe submission
+      addDebugLog("Setting up submission with 20-second timeout...");
+      const timeoutId = setTimeout(() => {
+        addDebugLog("ERROR: Iframe submission timed out after 20 seconds");
+        setErrorMessage('The request timed out. This could be due to network issues or high server load. Please try the email option below.');
+        setIsSubmitting(false);
+      }, 20000);
 
-      // Submit to Firestore REST API directly
-      addDebugLog('Submitting to Firestore REST API...');
+      // Send the data to the iframe
+      addDebugLog('Sending data to Firebase iframe...');
+      iframeRef.current.contentWindow?.postMessage({
+        type: 'SUBMIT',
+        formData: submissionData
+      }, '*');
 
-      const projectId = (firebaseApp as any).projectId;
-      const apiKey = (firebaseApp as any).apiKey;
+      // Note: We don't set isSubmitting to false here because the iframe will send a message back
+      // when the submission is complete, and we'll handle it in the message listener
 
-      const firestoreApiUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/contactSubmissions?key=${apiKey}`;
-
-      addDebugLog(`Using Firestore API URL: ${firestoreApiUrl.replace(apiKey, 'API_KEY_HIDDEN')}`);
-
-      // Race between the fetch operation and the timeout
-      const response = await Promise.race([
-        fetch(firestoreApiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(submissionData)
-        }),
-        timeoutPromise
-      ]) as Response;
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(`Firestore API error: ${response.status} ${JSON.stringify(errorData)}`);
-      }
-
-      const responseData = await response.json();
-
-      // Success!
-      addDebugLog(`Successfully submitted to Firestore with ID: ${responseData.name}`);
-
-      // Show success message
-      setIsSuccess(true);
-
-      // Reset form
-      reset();
-
-      // Hide success message after 5 seconds
-      setTimeout(() => {
-        setIsSuccess(false);
-      }, 5000);
+      // Clear the timeout when component unmounts
+      return () => clearTimeout(timeoutId);
     } catch (error: unknown) {
       const err = error as Error;
       console.error('Error submitting form:', err);
       addDebugLog(`ERROR: ${err.message}`);
 
-      // Default user-friendly error message
-      let userMessage = 'There was an error submitting your message. Please try again or contact me directly via email.';
-
-      // Check for specific error types
-      if (err.message.includes('timeout') || err.message.includes('timed out')) {
-        userMessage = 'The request timed out. This could be due to network issues or high server load. Please try the email option below.';
-        addDebugLog('Detected timeout error');
-      } else if (err.message.includes('CORS') || err.message.includes('cross-origin')) {
-        userMessage = 'There was a cross-origin request error. Please try the email option below.';
-        addDebugLog('Detected CORS error');
-      }
-
       // Set the error message for the user
-      setErrorMessage(userMessage);
+      setErrorMessage('There was an error submitting your message. Please try again or contact me directly via email.');
 
       // Log the full error for debugging
       addDebugLog(`Full error object: ${JSON.stringify(error, Object.getOwnPropertyNames(error))}`);
-    } finally {
+
+      // Reset submission state
       setIsSubmitting(false);
     }
   };
@@ -240,7 +210,15 @@ export function ContactFormFixed() {
     <div className="w-full max-w-2xl mx-auto">
       <DebugPanel />
 
-      {!firestore && (
+      {/* Hidden iframe for Firebase submission */}
+      <iframe
+        ref={iframeRef}
+        src="/firebase-submit.html"
+        className="hidden"
+        title="Firebase Submission"
+      />
+
+      {!iframeReady && (
         <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md mb-4">
           <p className="text-sm text-yellow-700 dark:text-yellow-400 flex items-center">
             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -358,14 +336,14 @@ export function ContactFormFixed() {
             <Button
               type="submit"
               className="w-full sm:w-auto h-9 sm:h-10 text-sm"
-              disabled={isSubmitting || !firestore}
+              disabled={isSubmitting || !iframeReady}
             >
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" />
                   Sending...
                 </>
-              ) : !firestore ? (
+              ) : !iframeReady ? (
                 <>
                   <Loader2 className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" />
                   Initializing...
