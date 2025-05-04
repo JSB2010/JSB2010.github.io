@@ -62,21 +62,69 @@ export function ContactFormAppwrite() {
     return { online: true, connection: 'unknown' };
   };
 
+  // Function to test Appwrite connection
+  const testAppwriteConnection = async () => {
+    addDebugLog('Testing Appwrite connection...');
+    try {
+      // Try to list documents (with a limit of 1) to test the connection
+      const result = await databases.listDocuments(
+        databaseId,
+        contactSubmissionsCollectionId,
+        [
+          // Add a filter that will likely return no results but still test the connection
+          // This avoids exposing actual submissions
+          {
+            key: 'name',
+            value: 'connection_test_' + Date.now(),
+            operator: 'equal'
+          }
+        ],
+        1
+      );
+
+      addDebugLog('✅ Appwrite connection successful!');
+      addDebugLog(`Total documents: ${result.total} (filtered)`);
+      return true;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      addDebugLog(`❌ Appwrite connection failed: ${errorMessage}`);
+
+      if (error instanceof Error && 'code' in error) {
+        const appwriteError = error as any;
+        addDebugLog(`Error code: ${appwriteError.code}, type: ${appwriteError.type}`);
+      }
+
+      return false;
+    }
+  };
+
   // Debug panel component
   const DebugPanel = () => {
     if (!showDebug) return null;
 
     return (
-      <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-md text-xs font-mono overflow-auto max-h-40">
+      <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-md text-xs font-mono overflow-auto max-h-60">
         <div className="flex justify-between items-center mb-2">
           <h4 className="font-semibold">Debug Logs</h4>
-          <button
-            type="button"
-            onClick={() => setDebugLogs([])}
-            className="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-          >
-            Clear
-          </button>
+          <div className="flex space-x-2">
+            <button
+              type="button"
+              onClick={async () => {
+                addDebugLog('--- Testing Appwrite Connection ---');
+                await testAppwriteConnection();
+              }}
+              className="text-xs text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-200"
+            >
+              Test Connection
+            </button>
+            <button
+              type="button"
+              onClick={() => setDebugLogs([])}
+              className="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+            >
+              Clear
+            </button>
+          </div>
         </div>
         {debugLogs.length === 0 ? (
           <p className="text-gray-500 dark:text-gray-400">No logs yet</p>
@@ -170,8 +218,20 @@ export function ContactFormAppwrite() {
       const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
       addDebugLog(`ERROR: ${errorMessage}`);
 
+      // Add more detailed debugging for network errors
+      if (errorMessage === 'Failed to fetch') {
+        addDebugLog('Network error details:');
+        addDebugLog(`- Current URL: ${window.location.href}`);
+        addDebugLog(`- Appwrite endpoint: ${process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://nyc.cloud.appwrite.io/v1'}`);
+        addDebugLog(`- Project ID: ${process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '6816ef35001da24d113d'}`);
+        addDebugLog(`- Database ID: ${databaseId}`);
+        addDebugLog(`- Collection ID: ${contactSubmissionsCollectionId}`);
+
+        setErrorMessage('Network error: Could not connect to Appwrite. This might be due to CORS restrictions or network connectivity issues. Please try again later or use the direct email option below.');
+        setShowDebug(true); // Show debug panel automatically for network errors
+      }
       // Check if it's a timeout error
-      if (errorMessage.includes('timed out')) {
+      else if (errorMessage.includes('timed out')) {
         setErrorMessage('The request timed out. Please try again or use the direct email option below.');
       } else {
         setErrorMessage(`Error submitting form: ${errorMessage}`);
@@ -362,17 +422,26 @@ export function ContactFormAppwrite() {
           </Button>
         )}
 
-        {/* Debug toggle button - only visible in development */}
-        {process.env.NODE_ENV === 'development' && (
-          <button
-            type="button"
-            onClick={() => setShowDebug(!showDebug)}
-            className="text-xs text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 flex items-center"
-          >
-            <RefreshCw className="h-3 w-3 mr-1" />
-            {showDebug ? 'Hide Debug' : 'Show Debug'}
-          </button>
-        )}
+        {/* Debug toggle button - visible in development and production for troubleshooting */}
+        <button
+          type="button"
+          onClick={() => {
+            setShowDebug(!showDebug);
+            if (!showDebug) {
+              // Add configuration info to debug logs when showing debug panel
+              addDebugLog('Appwrite Configuration:');
+              addDebugLog(`- Endpoint: ${process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://nyc.cloud.appwrite.io/v1'}`);
+              addDebugLog(`- Project ID: ${process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '6816ef35001da24d113d'}`);
+              addDebugLog(`- Database ID: ${databaseId}`);
+              addDebugLog(`- Collection ID: ${contactSubmissionsCollectionId}`);
+              addDebugLog(`- Environment: ${process.env.NODE_ENV}`);
+            }
+          }}
+          className="text-xs text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 flex items-center"
+        >
+          <RefreshCw className="h-3 w-3 mr-1" />
+          {showDebug ? 'Hide Debug' : 'Show Debug'}
+        </button>
 
         {/* Direct email link as fallback */}
         <DirectEmailLink />
