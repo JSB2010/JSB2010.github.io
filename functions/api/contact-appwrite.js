@@ -72,7 +72,7 @@ export async function onRequest(context) {
       // Initialize Appwrite
       const { databases } = initAppwrite();
 
-      const databaseId = process.env.APPWRITE_DATABASE_ID || 'your-database-id';
+      const databaseId = process.env.APPWRITE_DATABASE_ID || 'contact-form-db';
       const collectionId = process.env.APPWRITE_CONTACT_COLLECTION_ID || 'contact-submissions';
 
       // Submit to Appwrite Database

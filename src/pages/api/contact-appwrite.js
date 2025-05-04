@@ -72,7 +72,7 @@ export default async function handler(req, res) {
     // Submit to Appwrite Database
     console.log('Submitting to Appwrite...');
 
-    const databaseId = process.env.APPWRITE_DATABASE_ID || 'your-database-id';
+    const databaseId = process.env.APPWRITE_DATABASE_ID || 'contact-form-db';
     const collectionId = process.env.APPWRITE_CONTACT_COLLECTION_ID || 'contact-submissions';
 
     const document = await databases.createDocument(
