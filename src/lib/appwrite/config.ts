@@ -6,9 +6,9 @@ const client = new Client();
 
 // Fallback values for development - DO NOT USE IN PRODUCTION
 const fallbackConfig = {
-  endpoint: 'https://cloud.appwrite.io/v1',
-  projectId: 'your-project-id', // This will be replaced with actual values
-  databaseId: 'your-database-id',
+  endpoint: 'https://nyc.cloud.appwrite.io/v1',
+  projectId: '6816ef35001da24d113d',
+  databaseId: 'contact-form-db',
   collectionId: 'contact-submissions'
 };
 

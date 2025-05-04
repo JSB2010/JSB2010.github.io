@@ -2,10 +2,10 @@
 
 This document provides instructions for setting up Appwrite for the contact form functionality.
 
-## Prerequisites
+## Project Information
 
-1. Create an Appwrite account at [https://appwrite.io/](https://appwrite.io/)
-2. Create a new project in Appwrite
+- **API Endpoint**: https://nyc.cloud.appwrite.io/v1
+- **Project ID**: 6816ef35001da24d113d
 
 ## Setup Steps
 

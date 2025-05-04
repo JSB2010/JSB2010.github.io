@@ -5,12 +5,12 @@ import { sendContactFormEmail } from '../../lib/appwrite/email-service';
 // Initialize Appwrite client (server-side)
 const initAppwrite = () => {
   const client = new Client();
-  
+
   client
-    .setEndpoint(process.env.APPWRITE_ENDPOINT || 'https://cloud.appwrite.io/v1')
-    .setProject(process.env.APPWRITE_PROJECT_ID || 'your-project-id')
+    .setEndpoint(process.env.APPWRITE_ENDPOINT || 'https://nyc.cloud.appwrite.io/v1')
+    .setProject(process.env.APPWRITE_PROJECT_ID || '6816ef35001da24d113d')
     .setKey(process.env.APPWRITE_API_KEY || 'your-api-key'); // Server API key
-  
+
   return {
     client,
     databases: new Databases(client)
@@ -56,7 +56,7 @@ export default async function handler(req, res) {
 
     // Initialize Appwrite
     const { databases } = initAppwrite();
-    
+
     // Prepare submission data
     const submissionData = {
       name,
@@ -68,20 +68,20 @@ export default async function handler(req, res) {
       source: source || 'contact_form_api',
       ipAddress: req.headers['x-forwarded-for'] || req.socket.remoteAddress
     };
-    
+
     // Submit to Appwrite Database
     console.log('Submitting to Appwrite...');
-    
+
     const databaseId = process.env.APPWRITE_DATABASE_ID || 'your-database-id';
     const collectionId = process.env.APPWRITE_CONTACT_COLLECTION_ID || 'contact-submissions';
-    
+
     const document = await databases.createDocument(
       databaseId,
       collectionId,
       ID.unique(),
       submissionData
     );
-    
+
     console.log(`Successfully submitted to Appwrite with ID: ${document.$id}`);
 
     // Send an email notification

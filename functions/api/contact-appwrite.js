@@ -5,12 +5,12 @@ import { formatEmailBody } from '../../src/lib/appwrite/email-service';
 // Initialize Appwrite client (server-side)
 const initAppwrite = () => {
   const client = new Client();
-  
+
   client
-    .setEndpoint(process.env.APPWRITE_ENDPOINT || 'https://cloud.appwrite.io/v1')
-    .setProject(process.env.APPWRITE_PROJECT_ID || 'your-project-id')
+    .setEndpoint(process.env.APPWRITE_ENDPOINT || 'https://nyc.cloud.appwrite.io/v1')
+    .setProject(process.env.APPWRITE_PROJECT_ID || '6816ef35001da24d113d')
     .setKey(process.env.APPWRITE_API_KEY || 'your-api-key'); // Server API key
-  
+
   return {
     client,
     databases: new Databases(client)
@@ -41,11 +41,11 @@ export async function onRequest(context) {
 
   try {
     console.log('Processing contact form submission...');
-    
+
     // Get form data from request body
     const data = await context.request.json();
     const { name, email, subject, message } = data;
-    
+
     // Validate required fields
     if (!name || !email || !message) {
       return new Response(
@@ -53,7 +53,7 @@ export async function onRequest(context) {
         { status: 400, headers }
       );
     }
-    
+
     // Prepare submission data
     const submissionData = {
       name,
@@ -65,16 +65,16 @@ export async function onRequest(context) {
       source: 'cloudflare_pages_function',
       ipAddress: context.request.headers.get('CF-Connecting-IP') || 'Unknown'
     };
-    
+
     console.log('Submitting to Appwrite...');
-    
+
     try {
       // Initialize Appwrite
       const { databases } = initAppwrite();
-      
+
       const databaseId = process.env.APPWRITE_DATABASE_ID || 'your-database-id';
       const collectionId = process.env.APPWRITE_CONTACT_COLLECTION_ID || 'contact-submissions';
-      
+
       // Submit to Appwrite Database
       const document = await databases.createDocument(
         databaseId,
@@ -82,11 +82,11 @@ export async function onRequest(context) {
         ID.unique(),
         submissionData
       );
-      
+
       console.log(`Successfully submitted to Appwrite with ID: ${document.$id}`);
     } catch (appwriteError) {
       console.error('Error submitting to Appwrite:', appwriteError);
-      
+
       // If Appwrite submission fails, we'll still try to send the email
       // but we'll include the error in the response
       return new Response(
@@ -98,14 +98,14 @@ export async function onRequest(context) {
         { status: 500, headers }
       );
     }
-    
+
     // Format email body
     const emailBody = formatEmailBody(submissionData);
-    
+
     // Log the email content (in a real implementation, you would send an actual email)
     console.log('Email notification would be sent with the following content:');
     console.log(emailBody);
-    
+
     // Return a success response
     return new Response(
       JSON.stringify({
@@ -117,7 +117,7 @@ export async function onRequest(context) {
     );
   } catch (error) {
     console.error('Error processing contact form submission:', error);
-    
+
     return new Response(
       JSON.stringify({
         success: false,
