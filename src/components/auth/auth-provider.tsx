@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext } from "react";
-import { trackEvent } from "@/lib/firebase/analytics";
+import { trackEvent } from "@/lib/analytics";
 
 // Create a simplified context without auth functionality
 interface AuthContextType {

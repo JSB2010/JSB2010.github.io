@@ -8,7 +8,7 @@ import {
   SiCss3,
   SiJavascript,
   SiPython,
-  SiFirebase,
+  SiAppwrite,
   SiReact
 } from "react-icons/si";
 
@@ -233,8 +233,8 @@ export default function AboutPage() {
               glareSize={0.4}
             >
               <SkillCard
-                icon={<SiFirebase className="h-6 w-6" />}
-                title="Firebase"
+                icon={<SiAppwrite className="h-6 w-6" />}
+                title="Appwrite"
                 level={70}
               />
             </ThreeDCard>
