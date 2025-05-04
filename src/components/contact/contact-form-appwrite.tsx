@@ -134,58 +134,38 @@ export function ContactFormAppwrite() {
         messageLength: data.message.length
       })}`);
 
-      // Set up the fetch request
-      addDebugLog("Preparing API request...");
-      // Use the API endpoint - try both paths for compatibility
-      const apiEndpoint = window.location.hostname.includes('localhost')
-        ? '/api/contact-appwrite'  // Use Next.js API route in development
-        : '/api/contact-appwrite'; // Use Cloudflare Function in production
+      // Use Appwrite SDK directly
+      addDebugLog("Preparing Appwrite SDK request...");
 
-      // Create the fetch promise
-      const fetchPromise = fetch(apiEndpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(submissionData)
-      }).then(async (response) => {
-        addDebugLog(`API response status: ${response.status}`);
-
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          addDebugLog(`API error: ${JSON.stringify(errorData)}`);
-          throw new Error(`API error: ${response.status} ${errorData.message || ''}`);
-        }
-
-        return response.json();
-      });
-
-      // Set a timeout for the fetch operation
+      // Set a timeout for the operation
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => {
-          reject(new Error('Request timed out after 10 seconds'));
-        }, 10000);
+          reject(new Error('Request timed out after 15 seconds'));
+        }, 15000);
       });
 
-      // Race the fetch against the timeout
-      addDebugLog("Sending request to API...");
-      const result = await Promise.race([fetchPromise, timeoutPromise]) as { success: boolean; message: string; id?: string };
+      // Create the Appwrite promise
+      const appwritePromise = databases.createDocument(
+        databaseId,
+        contactSubmissionsCollectionId,
+        ID.unique(),
+        submissionData
+      );
 
-      addDebugLog(`API request completed: ${JSON.stringify(result)}`);
+      // Race the Appwrite request against the timeout
+      addDebugLog("Sending request to Appwrite...");
+      const document = await Promise.race([appwritePromise, timeoutPromise]);
 
-      if (result.success) {
-        addDebugLog(`Form submitted successfully with ID: ${result.id}`);
-        setIsSuccess(true);
-        reset(); // Reset form fields
+      addDebugLog(`Appwrite request completed successfully with ID: ${document.$id}`);
 
-        // Hide success message after 5 seconds
-        setTimeout(() => {
-          setIsSuccess(false);
-        }, 5000);
-      } else {
-        addDebugLog(`ERROR: ${result.message}`);
-        setErrorMessage(result.message || 'An unknown error occurred');
-      }
+      setIsSuccess(true);
+      reset(); // Reset form fields
+
+      // Hide success message after 5 seconds
+      setTimeout(() => {
+        setIsSuccess(false);
+      }, 5000);
+
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
       addDebugLog(`ERROR: ${errorMessage}`);
@@ -195,6 +175,23 @@ export function ContactFormAppwrite() {
         setErrorMessage('The request timed out. Please try again or use the direct email option below.');
       } else {
         setErrorMessage(`Error submitting form: ${errorMessage}`);
+      }
+
+      // Log more details if available
+      if (error instanceof Error && 'code' in error) {
+        const appwriteError = error as any;
+        addDebugLog(`Appwrite error code: ${appwriteError.code}, type: ${appwriteError.type}`);
+
+        // Handle specific Appwrite errors
+        if (appwriteError.code === 401) {
+          setErrorMessage('Authentication error. Please try again later.');
+        } else if (appwriteError.code === 403) {
+          setErrorMessage('Permission denied. The form is currently unavailable.');
+        } else if (appwriteError.code === 429) {
+          setErrorMessage('Too many requests. Please try again later.');
+        } else if (appwriteError.code >= 500) {
+          setErrorMessage('Server error. Please try again later or use the direct email option below.');
+        }
       }
     } finally {
       setIsSubmitting(false);
