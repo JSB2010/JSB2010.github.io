@@ -136,8 +136,10 @@ export function ContactFormAppwrite() {
 
       // Set up the fetch request
       addDebugLog("Preparing API request...");
-      // Use the API endpoint
-      const apiEndpoint = '/api/contact-appwrite';
+      // Use the API endpoint - try both paths for compatibility
+      const apiEndpoint = window.location.hostname.includes('localhost')
+        ? '/api/contact-appwrite'  // Use Next.js API route in development
+        : '/api/contact-appwrite'; // Use Cloudflare Function in production
 
       // Create the fetch promise
       const fetchPromise = fetch(apiEndpoint, {

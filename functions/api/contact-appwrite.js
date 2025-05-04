@@ -3,13 +3,14 @@ import { Client, Databases, ID } from 'appwrite';
 import { formatEmailBody } from '../../src/lib/appwrite/email-service';
 
 // Initialize Appwrite client (server-side)
-const initAppwrite = () => {
+const initAppwrite = (env) => {
   const client = new Client();
 
+  // Use environment variables from context.env in Cloudflare Pages
   client
-    .setEndpoint(process.env.APPWRITE_ENDPOINT || 'https://nyc.cloud.appwrite.io/v1')
-    .setProject(process.env.APPWRITE_PROJECT_ID || '6816ef35001da24d113d')
-    .setKey(process.env.APPWRITE_API_KEY || 'your-api-key'); // Server API key
+    .setEndpoint(env.APPWRITE_ENDPOINT || 'https://nyc.cloud.appwrite.io/v1')
+    .setProject(env.APPWRITE_PROJECT_ID || '6816ef35001da24d113d')
+    .setKey(env.APPWRITE_API_KEY || 'your-api-key'); // Server API key
 
   return {
     client,
@@ -18,12 +19,23 @@ const initAppwrite = () => {
 };
 
 export async function onRequest(context) {
+  console.log('Contact form function called with method:', context.request.method);
+
   // Set CORS headers
   const headers = new Headers({
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Content-Type': 'application/json'
+  });
+
+  // Log environment variables (without exposing sensitive values)
+  console.log('Environment variables check:', {
+    hasAppwriteEndpoint: !!context.env.APPWRITE_ENDPOINT,
+    hasAppwriteProjectId: !!context.env.APPWRITE_PROJECT_ID,
+    hasAppwriteApiKey: !!context.env.APPWRITE_API_KEY,
+    hasAppwriteDatabaseId: !!context.env.APPWRITE_DATABASE_ID,
+    hasAppwriteCollectionId: !!context.env.APPWRITE_CONTACT_COLLECTION_ID
   });
 
   // Handle OPTIONS requests for CORS preflight
@@ -69,11 +81,11 @@ export async function onRequest(context) {
     console.log('Submitting to Appwrite...');
 
     try {
-      // Initialize Appwrite
-      const { databases } = initAppwrite();
+      // Initialize Appwrite with environment variables from context.env
+      const { databases } = initAppwrite(context.env);
 
-      const databaseId = process.env.APPWRITE_DATABASE_ID || 'contact-form-db';
-      const collectionId = process.env.APPWRITE_CONTACT_COLLECTION_ID || 'contact-submissions';
+      const databaseId = context.env.APPWRITE_DATABASE_ID || 'contact-form-db';
+      const collectionId = context.env.APPWRITE_CONTACT_COLLECTION_ID || 'contact-submissions';
 
       // Submit to Appwrite Database
       const document = await databases.createDocument(
