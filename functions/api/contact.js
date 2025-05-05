@@ -1,12 +1,15 @@
 // Cloudflare Pages Function for contact form submissions
 export async function onRequest(context) {
+  console.log("Contact form function called with method:", context.request.method);
+  console.log("Request URL:", context.request.url);
+
   // Set CORS headers
-  const headers = new Headers({
+  const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Content-Type': 'application/json'
-  });
+  };
 
   // Handle OPTIONS requests for CORS preflight
   if (context.request.method === 'OPTIONS') {
@@ -15,11 +18,14 @@ export async function onRequest(context) {
 
   // Only allow POST requests
   if (context.request.method !== 'POST') {
+    console.log("Method not allowed:", context.request.method);
     return new Response(
-      JSON.stringify({ error: 'Method not allowed' }),
+      JSON.stringify({ success: false, error: 'Method not allowed', method: context.request.method }),
       { status: 405, headers }
     );
   }
+
+  console.log("POST request received, proceeding with form submission");
 
   try {
     console.log('Processing contact form submission...');

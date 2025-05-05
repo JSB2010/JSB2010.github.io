@@ -440,25 +440,36 @@ export function ContactFormAppwrite() {
         )}
 
         {/* Debug toggle button - visible in development and production for troubleshooting */}
-        <button
-          type="button"
-          onClick={() => {
-            setShowDebug(!showDebug);
-            if (!showDebug) {
-              // Add configuration info to debug logs when showing debug panel
-              addDebugLog('Appwrite Configuration:');
-              addDebugLog(`- Endpoint: ${process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://nyc.cloud.appwrite.io/v1'}`);
-              addDebugLog(`- Project ID: ${process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '6816ef35001da24d113d'}`);
-              addDebugLog(`- Database ID: ${databaseId}`);
-              addDebugLog(`- Collection ID: ${contactSubmissionsCollectionId}`);
-              addDebugLog(`- Environment: ${process.env.NODE_ENV}`);
-            }
-          }}
-          className="text-xs text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 flex items-center"
-        >
-          <RefreshCw className="h-3 w-3 mr-1" />
-          {showDebug ? 'Hide Debug' : 'Show Debug'}
-        </button>
+        <div className="flex flex-col items-center space-y-2">
+          <button
+            type="button"
+            onClick={() => {
+              setShowDebug(!showDebug);
+              if (!showDebug) {
+                // Add configuration info to debug logs when showing debug panel
+                addDebugLog('Appwrite Configuration:');
+                addDebugLog(`- Endpoint: ${process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://nyc.cloud.appwrite.io/v1'}`);
+                addDebugLog(`- Project ID: ${process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '6816ef35001da24d113d'}`);
+                addDebugLog(`- Database ID: ${databaseId}`);
+                addDebugLog(`- Collection ID: ${contactSubmissionsCollectionId}`);
+                addDebugLog(`- Environment: ${process.env.NODE_ENV}`);
+              }
+            }}
+            className="text-xs text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 flex items-center"
+          >
+            <RefreshCw className="h-3 w-3 mr-1" />
+            {showDebug ? 'Hide Debug' : 'Show Debug'}
+          </button>
+
+          <a
+            href="/test-form.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-blue-400 hover:text-blue-600 dark:text-blue-500 dark:hover:text-blue-300"
+          >
+            Try Simple Test Form
+          </a>
+        </div>
 
         {/* Direct email link as fallback */}
         <DirectEmailLink />
