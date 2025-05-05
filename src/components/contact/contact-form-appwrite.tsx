@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Loader2, Send, CheckCircle, AlertCircle, RefreshCw } from 'lucide-react';
-import { databases, databaseId, contactSubmissionsCollectionId } from '@/lib/appwrite/config';
+import { databases, databaseId, contactSubmissionsCollectionId, submitContactForm } from '@/lib/appwrite/custom-client';
 
 // Form validation schema
 const formSchema = z.object({
@@ -182,8 +182,8 @@ export function ContactFormAppwrite() {
         messageLength: data.message.length
       })}`);
 
-      // Use Cloudflare Pages Function instead of Appwrite SDK directly
-      addDebugLog("Preparing API request to Cloudflare Function...");
+      // Use the custom Appwrite client directly
+      addDebugLog("Preparing direct Appwrite SDK request...");
 
       // Set a timeout for the operation
       const timeoutPromise = new Promise((_, reject) => {
@@ -192,30 +192,19 @@ export function ContactFormAppwrite() {
         }, 15000);
       });
 
-      // Create the fetch promise
-      const fetchPromise = fetch('/api/contact-simple', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(submissionData)
-      }).then(async (response) => {
-        addDebugLog(`API response status: ${response.status}`);
-
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          addDebugLog(`API error: ${JSON.stringify(errorData)}`);
-          throw new Error(`API error: ${response.status} ${errorData.message || ''}`);
-        }
-
-        return response.json();
+      // Create the Appwrite promise
+      const appwritePromise = submitContactForm({
+        name: data.name,
+        email: data.email,
+        subject: data.subject,
+        message: data.message
       });
 
-      // Race the fetch against the timeout
-      addDebugLog("Sending request to API...");
-      const result = await Promise.race([fetchPromise, timeoutPromise]) as { success: boolean; message: string; id?: string };
+      // Race the Appwrite request against the timeout
+      addDebugLog("Sending request to Appwrite...");
+      const result = await Promise.race([appwritePromise, timeoutPromise]) as { success: boolean; message: string; id?: string };
 
-      addDebugLog(`API request completed: ${JSON.stringify(result)}`);
+      addDebugLog(`Appwrite request completed: ${JSON.stringify(result)}`);
 
       if (!result.success) {
         throw new Error(result.message || 'Unknown error');
@@ -468,7 +457,7 @@ export function ContactFormAppwrite() {
               rel="noopener noreferrer"
               className="text-xs text-blue-400 hover:text-blue-600 dark:text-blue-500 dark:hover:text-blue-300"
             >
-              Try Simple Test Form
+              Test Form
             </a>
             <a
               href="/test-functions.html"
@@ -477,6 +466,14 @@ export function ContactFormAppwrite() {
               className="text-xs text-blue-400 hover:text-blue-600 dark:text-blue-500 dark:hover:text-blue-300"
             >
               Test Functions
+            </a>
+            <a
+              href="/test-sdk.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-blue-400 hover:text-blue-600 dark:text-blue-500 dark:hover:text-blue-300"
+            >
+              Test SDK
             </a>
           </div>
         </div>
