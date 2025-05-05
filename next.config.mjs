@@ -61,6 +61,10 @@ async function copySPAFiles() {
 const nextConfig = {
   reactStrictMode: true,
 
+  // Enable React Developer Tools in all environments
+  // This ensures React DevTools can connect to the React instance
+  crossOrigin: 'anonymous',
+
   // Image configuration
   images: {
     remotePatterns: [
@@ -102,10 +106,11 @@ const nextConfig = {
     trailingSlash: true, // Add trailing slashes for better SPA routing
   } : {}),
 
-  // Only apply webpack configuration in production mode
-  ...(process.env.NODE_ENV === 'production' ? {
-    webpack: (config, { isServer }) => {
-      // Only run on the client build once
+  // Apply webpack configuration for both production and development modes
+  webpack: (config, { dev, isServer }) => {
+    // Production-specific configuration
+    if (!dev) {
+      // Only run on the client build once in production
       if (!isServer) {
         // Add a custom plugin to copy the necessary files after the build
         config.plugins?.push({
@@ -116,10 +121,17 @@ const nextConfig = {
           }
         });
       }
-
-      return config;
     }
-  } : {}),
+
+    // Configuration for React Developer Tools to work properly
+    // This ensures React is not minified in a way that breaks React DevTools
+    if (dev) {
+      // Ensure React DevTools can properly connect to React
+      config.optimization.minimize = false;
+    }
+
+    return config;
+  },
 
   // No experimental options needed as Turbopack is now stable
 

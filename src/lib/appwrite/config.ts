@@ -1,8 +1,5 @@
 // Appwrite client-side configuration
-import { Client, Databases, Account } from 'appwrite';
-
-// Initialize Appwrite client
-const client = new Client();
+import { Client, Databases, ID } from 'appwrite';
 
 // Fallback values for development - DO NOT USE IN PRODUCTION
 const fallbackConfig = {
@@ -12,6 +9,9 @@ const fallbackConfig = {
   collectionId: 'contact-submissions'
 };
 
+// Initialize Appwrite client
+const client = new Client();
+
 // Configure Appwrite client
 client
   .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT ?? fallbackConfig.endpoint)
@@ -19,7 +19,6 @@ client
 
 // Initialize Appwrite services
 const databases = new Databases(client);
-const account = new Account(client);
 
 // Database and collection IDs
 const databaseId = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID ?? fallbackConfig.databaseId;
@@ -36,4 +35,47 @@ if (process.env.NODE_ENV === 'development') {
   });
 }
 
-export { client, databases, account, databaseId, contactSubmissionsCollectionId };
+/**
+ * Submit contact form data to Appwrite database
+ * @param data Form data to submit
+ * @returns Promise with submission result
+ */
+export async function submitContactForm(data: {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+}) {
+  try {
+    // Only include the basic form fields that are defined in the Appwrite collection schema
+    // This avoids errors with undefined attributes
+    const submissionData = {
+      name: data.name,
+      email: data.email,
+      subject: data.subject,
+      message: data.message
+    };
+
+    // Create document in Appwrite database
+    const document = await databases.createDocument(
+      databaseId,
+      contactSubmissionsCollectionId,
+      ID.unique(),
+      submissionData
+    );
+
+    return {
+      success: true,
+      id: document.$id,
+      message: 'Form submitted successfully'
+    };
+  } catch (error) {
+    console.error('Error submitting contact form:', error);
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : 'Unknown error occurred'
+    };
+  }
+}
+
+export { client, databases, databaseId, contactSubmissionsCollectionId, ID };

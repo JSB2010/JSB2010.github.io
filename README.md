@@ -66,6 +66,42 @@ npm run dev
 - `npm run test:watch` - Run Jest in watch mode
 - `npm run test:coverage` - Run Jest with coverage reporting
 
+## Using React Developer Tools
+
+This project is configured to work with [React Developer Tools](https://react.dev/learn/react-developer-tools), a browser extension that helps you inspect and debug your React components.
+
+### Setup
+
+1. Install the React Developer Tools extension for your browser:
+   - [Chrome Extension](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi)
+   - [Firefox Extension](https://addons.mozilla.org/en-US/firefox/addon/react-devtools/)
+   - [Edge Extension](https://microsoftedge.microsoft.com/addons/detail/react-developer-tools/gpphkfbcpidddadnkolkpfckpihlkkil)
+
+2. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+3. Open your browser's developer tools (F12 or Ctrl+Shift+I / Cmd+Option+I)
+
+4. Look for the "Components" and "Profiler" tabs in the developer tools panel
+
+### Features
+
+- **Components tab**: Inspect and edit the React component tree
+- **Profiler tab**: Record and analyze component render performance
+- **Component state**: View and modify component state and props
+- **Component search**: Find components by name or props
+
+### Troubleshooting
+
+If React Developer Tools isn't connecting to your application:
+
+1. Make sure you're running the app in development mode (`npm run dev`)
+2. Verify that the React Developer Tools extension is installed and enabled
+3. Try restarting your browser and the development server
+4. If using production build, note that React DevTools has been configured to work but with limited functionality
+
 ## Project Structure
 
 - `src/app/*` - Next.js app router pages and layouts
