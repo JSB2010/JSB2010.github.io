@@ -193,7 +193,7 @@ export function ContactFormAppwrite() {
       });
 
       // Create the fetch promise
-      const fetchPromise = fetch('/api/contact', {
+      const fetchPromise = fetch('/api/contact-simple', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -461,14 +461,24 @@ export function ContactFormAppwrite() {
             {showDebug ? 'Hide Debug' : 'Show Debug'}
           </button>
 
-          <a
-            href="/test-form.html"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-blue-400 hover:text-blue-600 dark:text-blue-500 dark:hover:text-blue-300"
-          >
-            Try Simple Test Form
-          </a>
+          <div className="flex space-x-3">
+            <a
+              href="/test-form.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-blue-400 hover:text-blue-600 dark:text-blue-500 dark:hover:text-blue-300"
+            >
+              Try Simple Test Form
+            </a>
+            <a
+              href="/test-functions.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-blue-400 hover:text-blue-600 dark:text-blue-500 dark:hover:text-blue-300"
+            >
+              Test Functions
+            </a>
+          </div>
         </div>
 
         {/* Direct email link as fallback */}
