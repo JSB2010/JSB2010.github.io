@@ -182,8 +182,8 @@ export function ContactFormAppwrite() {
         messageLength: data.message.length
       })}`);
 
-      // Use Appwrite SDK directly
-      addDebugLog("Preparing Appwrite SDK request...");
+      // Use Cloudflare Pages Function instead of Appwrite SDK directly
+      addDebugLog("Preparing API request to Cloudflare Function...");
 
       // Set a timeout for the operation
       const timeoutPromise = new Promise((_, reject) => {
@@ -192,19 +192,36 @@ export function ContactFormAppwrite() {
         }, 15000);
       });
 
-      // Create the Appwrite promise
-      const appwritePromise = databases.createDocument(
-        databaseId,
-        contactSubmissionsCollectionId,
-        ID.unique(),
-        submissionData
-      );
+      // Create the fetch promise
+      const fetchPromise = fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(submissionData)
+      }).then(async (response) => {
+        addDebugLog(`API response status: ${response.status}`);
 
-      // Race the Appwrite request against the timeout
-      addDebugLog("Sending request to Appwrite...");
-      const document = await Promise.race([appwritePromise, timeoutPromise]);
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          addDebugLog(`API error: ${JSON.stringify(errorData)}`);
+          throw new Error(`API error: ${response.status} ${errorData.message || ''}`);
+        }
 
-      addDebugLog(`Appwrite request completed successfully with ID: ${document.$id}`);
+        return response.json();
+      });
+
+      // Race the fetch against the timeout
+      addDebugLog("Sending request to API...");
+      const result = await Promise.race([fetchPromise, timeoutPromise]) as { success: boolean; message: string; id?: string };
+
+      addDebugLog(`API request completed: ${JSON.stringify(result)}`);
+
+      if (!result.success) {
+        throw new Error(result.message || 'Unknown error');
+      }
+
+      addDebugLog(`Form submitted successfully with ID: ${result.id}`);
 
       setIsSuccess(true);
       reset(); // Reset form fields
