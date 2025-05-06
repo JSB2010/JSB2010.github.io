@@ -1,0 +1,11 @@
+{
+  "name": "simple-tests",
+  "version": "1.0.0",
+  "description": "Simple tests for the portfolio website",
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}

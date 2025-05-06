@@ -1,0 +1,64 @@
+# Optimize Cloudflare Pages build process
+name = "jacob-barkin-portfolio"
+main = "./"
+compatibility_date = "2023-10-30"
+compatibility_flags = ["nodejs_compat"]
+
+# Build configuration
+[build]
+command = "npm run build"
+publish = ".next"
+node_bundler = "esbuild"
+
+# Cache dependencies to speed up builds
+[build.environment]
+NPM_FLAGS = "--no-audit --no-fund"
+NODE_ENV = "production"
+
+# Add content compression
+[build.processing]
+skip_processing = false
+
+[build.processing.css]
+bundle = true
+minify = true
+
+[build.processing.js]
+bundle = true
+minify = true
+
+[build.processing.html]
+pretty_urls = true
+
+[build.processing.images]
+compress = true
+
+# Configure caching behavior
+[cache]
+# Cache build dependencies for faster builds
+[cache.build]
+enabled = true
+
+# Define redirects
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
+force = false
+conditions = {Workers = false}
+
+# Configure custom headers (in addition to _headers file)
+[[headers]]
+for = "/fonts/*"
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "/_next/static/*"
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"
+
+# Configure environment variables for production
+[env.production]
+NODE_ENV = "production"
+NEXT_PUBLIC_SITE_URL = "https://jsb2010.github.io"

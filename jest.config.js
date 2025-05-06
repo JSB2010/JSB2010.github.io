@@ -1,3 +1,5 @@
+"use strict";
+
 const nextJest = require('next/jest');
 
 const createJestConfig = nextJest({
@@ -16,6 +18,14 @@ const customJestConfig = {
     '^@/app/(.*)$': '<rootDir>/src/app/$1',
     '^@/hooks/(.*)$': '<rootDir>/src/hooks/$1',
   },
+  testMatch: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
+  verbose: true,
+  transform: {
+    '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { configFile: './babel.config.json' }]
+  },
+  transformIgnorePatterns: [
+    '/node_modules/(?!(@testing-library)/)',
+  ]
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

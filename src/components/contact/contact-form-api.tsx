@@ -24,10 +24,12 @@ export function ContactFormApi() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [debugLogs, setDebugLogs] = useState<string[]>([]);
-  const [showDebug, setShowDebug] = useState(true); // Set to true to show debug panel by default
-  
-  // Function to add a log message to the debug panel
+  const [showDebug, setShowDebug] = useState(process.env.NODE_ENV === 'development'); // Only show debug panel in development mode
+
+  // Function to add a log message to the debug panel (only in development mode)
   const addDebugLog = (message: string) => {
+    if (process.env.NODE_ENV !== 'development') return;
+
     const timestamp = new Date().toISOString().split('T')[1].split('.')[0]; // HH:MM:SS format
     const logMessage = `[${timestamp}] ${message}`;
     setDebugLogs(prev => [...prev, logMessage]);
@@ -53,8 +55,10 @@ export function ContactFormApi() {
     // Default user-friendly message
     let userFriendlyMessage = "There was an error submitting your message. ";
 
-    // For developers, log the detailed error
-    console.log("Detailed error information:", error);
+    // For developers, log the detailed error (only in development mode)
+    if (process.env.NODE_ENV === 'development') {
+      console.log("Detailed error information:", error);
+    }
 
     // Network errors
     if (error.name === 'AbortError') {
@@ -86,7 +90,7 @@ export function ContactFormApi() {
       connectionType: (navigator as any).connection ? (navigator as any).connection.effectiveType : 'unknown',
       saveData: (navigator as any).connection ? (navigator as any).connection.saveData : false
     };
-    
+
     addDebugLog(`Network status: ${JSON.stringify(status)}`);
     return status;
   };
@@ -94,13 +98,13 @@ export function ContactFormApi() {
   // Helper function to handle successful form submission
   const handleSubmissionSuccess = (id: string) => {
     addDebugLog(`Form data saved successfully with ID: ${id}`);
-    
+
     // Show success message
     setIsSuccess(true);
-    
+
     // Reset form
     reset();
-    
+
     // Hide success message after 5 seconds
     setTimeout(() => {
       setIsSuccess(false);
@@ -110,17 +114,19 @@ export function ContactFormApi() {
   // Helper function to handle form submission errors
   const handleSubmissionError = (error: any) => {
     addDebugLog(`Error submitting form: ${error.message}`);
-    
+
     // Get error message for other types of errors
     const errorDetails = getErrorMessage(error);
     setErrorMessage(errorDetails);
-    
-    // Log additional debugging information to the console
-    console.log("Detailed error information:", {
-      name: error.name,
-      message: error.message,
-      stack: error.stack
-    });
+
+    // Log additional debugging information to the console (only in development mode)
+    if (process.env.NODE_ENV === 'development') {
+      console.log("Detailed error information:", {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      });
+    }
   };
 
   // Main form submission handler
@@ -128,7 +134,7 @@ export function ContactFormApi() {
     setIsSubmitting(true);
     setErrorMessage(null);
     setDebugLogs([]); // Clear previous debug logs
-    
+
     // Check network status
     if (typeof window !== 'undefined') {
       const networkStatus = checkNetworkStatus();
@@ -139,7 +145,7 @@ export function ContactFormApi() {
         return;
       }
     }
-    
+
     addDebugLog(`Form submission started with data: ${JSON.stringify({
       name: data.name,
       email: data.email,
@@ -156,7 +162,7 @@ export function ContactFormApi() {
 
     try {
       addDebugLog("Starting form submission process...");
-      
+
       // Prepare the submission data
       addDebugLog("Preparing data for API submission...");
       const submissionData = {
@@ -170,7 +176,7 @@ export function ContactFormApi() {
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
         }
       };
-      
+
       addDebugLog(`Submission data prepared: ${JSON.stringify({
         name: submissionData.name,
         email: submissionData.email,
@@ -182,22 +188,22 @@ export function ContactFormApi() {
       // Add origin information for debugging
       if (typeof window !== 'undefined') {
         addDebugLog(`Current origin: ${window.location.origin}`);
-        addDebugLog(`API endpoint: ${window.location.origin}/api/contact`);
+        addDebugLog(`API endpoint: ${window.location.origin}/api/contact-unified`);
       }
 
       // Submit to the API endpoint
       addDebugLog("Sending data to API endpoint...");
-      
+
       // Set a timeout for the fetch operation
       const controller = new AbortController();
       const fetchTimeout = setTimeout(() => {
         addDebugLog("ERROR: API request timed out after 10 seconds");
         controller.abort();
       }, 10000);
-      
+
       try {
         addDebugLog("Starting API request...");
-        const response = await fetch('/api/contact', {
+        const response = await fetch('/api/contact-unified', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -205,48 +211,48 @@ export function ContactFormApi() {
           body: JSON.stringify(submissionData),
           signal: controller.signal
         });
-        
+
         // Clear the fetch timeout
         clearTimeout(fetchTimeout);
-        
+
         addDebugLog(`API response status: ${response.status}`);
-        
+
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
           addDebugLog(`ERROR: API returned error status: ${response.status}`);
           addDebugLog(`Error details: ${JSON.stringify(errorData)}`);
           throw new Error(`API error: ${response.status} ${errorData.message || ''}`);
         }
-        
+
         const responseData = await response.json();
         addDebugLog(`SUCCESS: Form data submitted via API with ID: ${responseData.id}`);
-        
+
         // Clear the main timeout since the request completed successfully
         clearTimeout(timeoutId);
         addDebugLog("Main timeout cleared");
-        
+
         // Use the helper function to handle success
         addDebugLog("Showing success message to user");
         handleSubmissionSuccess(responseData.id);
       } catch (fetchError: any) {
         // Clear the fetch timeout
         clearTimeout(fetchTimeout);
-        
+
         addDebugLog(`ERROR during API request: ${fetchError.message}`);
-        
+
         // Add detailed error information
         if (fetchError.name) addDebugLog(`Error name: ${fetchError.name}`);
         if (fetchError.stack) addDebugLog(`Error stack: ${fetchError.stack.split('\n')[0]}`);
-        
+
         throw fetchError; // Re-throw to be caught by the outer catch block
       }
     } catch (error: any) {
       // Clear the timeout since we're handling the error
       clearTimeout(timeoutId);
       addDebugLog("Main timeout cleared due to error");
-      
+
       addDebugLog(`FINAL ERROR HANDLER: ${error.message}`);
-      
+
       // Add detailed error information
       if (error.name) addDebugLog(`Error name: ${error.name}`);
       if (error.stack) addDebugLog(`Error stack: ${error.stack.split('\n')[0]}`);
@@ -262,8 +268,9 @@ export function ContactFormApi() {
           message: error.message,
           stack: error.stack
         };
-        
+
         addDebugLog(`Development mode error details: ${JSON.stringify(errorDetails)}`);
+        // This console.log is already only shown in development mode
         console.log("DEVELOPMENT MODE ERROR:", errorDetails);
 
         return;
@@ -282,7 +289,7 @@ export function ContactFormApi() {
   // Debug Panel Component
   const DebugPanel = () => {
     if (!showDebug) return null;
-    
+
     return (
       <div className="mt-6 p-4 border border-yellow-300 bg-yellow-50 dark:bg-yellow-900/20 dark:border-yellow-800 rounded-md">
         <div className="flex justify-between items-center mb-2">
@@ -314,7 +321,7 @@ export function ContactFormApi() {
                 : log.includes('SUCCESS') 
                   ? 'text-green-600 dark:text-green-400' 
                   : 'text-gray-800 dark:text-gray-200';
-              
+
               return (
                 <div key={`log-${index}`} className={`py-1 ${logClass}`}>
                   {log}
@@ -332,9 +339,9 @@ export function ContactFormApi() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
-      {/* Debug Panel */}
-      <DebugPanel />
-      
+      {/* Debug Panel - only shown in development mode */}
+      {process.env.NODE_ENV === 'development' && <DebugPanel />}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <div className="space-y-1.5 sm:space-y-2">
           <label htmlFor="name" className="text-xs sm:text-sm font-medium">

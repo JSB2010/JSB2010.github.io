@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Loader2, Send, CheckCircle, AlertCircle } from 'lucide-react';
-import { submitContactForm } from '@/lib/appwrite/config';
+import { submitContactForm, SubmissionMethod } from '@/lib/api/contact';
 
 // Form validation schema
 const formSchema = z.object({
@@ -47,16 +47,25 @@ export function ContactFormNew() {
     setErrorMessage(null);
 
     try {
-      // Submit form data to Appwrite
-      const result = await submitContactForm({
-        name: data.name,
-        email: data.email,
-        subject: data.subject,
-        message: data.message
-      });
+      // Submit form data using the unified API with Appwrite as the submission method
+      const result = await submitContactForm(
+        {
+          name: data.name,
+          email: data.email,
+          subject: data.subject,
+          message: data.message,
+          timestamp: new Date().toISOString(),
+          source: 'contact_page_form',
+          userAgent: navigator.userAgent
+        },
+        { method: SubmissionMethod.APPWRITE }
+      );
 
       if (!result.success) {
-        throw new Error(result.message || 'Unknown error');
+        // Handle error from the submitContactForm function
+        console.error('Form submission failed:', result.message);
+        setErrorMessage(result.message);
+        return;
       }
 
       // Show success message
@@ -68,13 +77,15 @@ export function ContactFormNew() {
         setIsSuccess(false);
       }, 5000);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-      console.error('Form submission error:', errorMessage);
+      // This catch block handles unexpected errors not caught by the submitContactForm function
+      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
+      console.error('Unexpected form submission error:', errorMessage);
 
       // Set user-friendly error message
-      if (errorMessage.includes('Unknown attribute')) {
-        console.error('Schema mismatch error:', errorMessage);
-        setErrorMessage('There was an issue with the form submission. Please try again or contact me directly via email.');
+      if (errorMessage.includes('Network') || errorMessage.includes('connection')) {
+        setErrorMessage('Network error. Please check your internet connection and try again.');
+      } else if (errorMessage.includes('schema') || errorMessage.includes('validation')) {
+        setErrorMessage('There was an issue with the form data. Please check your inputs and try again.');
       } else {
         setErrorMessage(`Error submitting form: ${errorMessage}`);
       }
@@ -85,19 +96,62 @@ export function ContactFormNew() {
 
   // Direct email link component as a fallback
   const DirectEmailLink = () => {
+    // Function to handle email submission via the unified API
+    const handleEmailSubmit = async () => {
+      if (!watch('name') || !watch('email') || !watch('message')) {
+        setErrorMessage('Please fill out the form before sending via email.');
+        return;
+      }
+
+      setIsSubmitting(true);
+      try {
+        // Use the unified API with EMAIL method
+        const result = await submitContactForm(
+          {
+            name: watch('name'),
+            email: watch('email'),
+            subject: watch('subject') || 'Contact Form Submission',
+            message: watch('message'),
+            timestamp: new Date().toISOString(),
+            source: 'contact_page_email_fallback'
+          },
+          { method: SubmissionMethod.EMAIL }
+        );
+
+        if (!result.success) {
+          setErrorMessage(result.message);
+        }
+      } catch (error) {
+        setErrorMessage('Failed to open email client. Please try the direct link below.');
+      } finally {
+        setIsSubmitting(false);
+      }
+    };
+
     return (
       <div className="mt-4 text-sm text-center">
         <p className="mb-1 text-muted-foreground">
           If you're having trouble with the form, you can also email me directly:
         </p>
-        <a
-          href="mailto:Jacobsamuelbarkin@gmail.com"
-          className="text-primary hover:underline"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Jacobsamuelbarkin@gmail.com
-        </a>
+        <div className="flex flex-col sm:flex-row justify-center gap-2 mt-2">
+          <button
+            type="button"
+            onClick={handleEmailSubmit}
+            className="text-primary hover:underline"
+            disabled={isSubmitting}
+          >
+            Send via Email Client
+          </button>
+          <span className="hidden sm:inline text-muted-foreground">or</span>
+          <a
+            href="mailto:Jacobsamuelbarkin@gmail.com"
+            className="text-primary hover:underline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Jacobsamuelbarkin@gmail.com
+          </a>
+        </div>
       </div>
     );
   };

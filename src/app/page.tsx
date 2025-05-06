@@ -19,6 +19,9 @@ import { BackgroundGradient } from "@/components/ui/aceternity/background-gradie
 import { MovingBorder } from "@/components/ui/aceternity/moving-border";
 import { TextRevealCard } from "@/components/ui/aceternity/text-reveal-card";
 import { StaticTextCard } from "@/components/ui/aceternity/static-text-card";
+import { OptimizedBackgroundImage } from "@/components/ui/optimized-background-image";
+import { ResponsiveImage } from "@/components/ui/responsive-image";
+import { LazyLoad } from "@/components/ui/lazy-load";
 
 export default function Home() {
   // State to store the current greeting
@@ -65,11 +68,15 @@ export default function Home() {
   }, []);
 
   return (
-    <>
-      {/* Hero Section */}
+    <>      {/* Hero Section */}
       <section className="relative py-12 sm:py-16 md:py-24 lg:py-28 overflow-hidden theme-mountains">
         <div className="absolute inset-0 bg-gradient-to-b from-background to-background/50 dark:from-background dark:to-background/80 z-10"></div>
-        <div className="absolute inset-0 bg-[url('/images/mountains-bg.jpg')] bg-cover bg-center opacity-20 dark:opacity-10"></div>
+        <OptimizedBackgroundImage 
+          src="/images/mountains-bg.jpg" 
+          alt="Mountains background" 
+          priority={true}
+          overlayClassName="opacity-20 dark:opacity-10"
+        />
 
 
         <div className="container relative z-20">
@@ -220,78 +227,76 @@ export default function Home() {
 
             <div className="flex justify-center md:justify-end mt-6 sm:mt-0">
               <BackgroundGradient className="rounded-full">
-                <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72 rounded-full overflow-hidden border-2 sm:border-4 border-background shadow-xl">
-                  <Image
+                <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72 rounded-full overflow-hidden border-2 sm:border-4 border-background shadow-xl">                  <ResponsiveImage
                     src="/images/Jacob City.png"
                     alt="Jacob Barkin"
                     fill
                     className="object-cover"
-                    priority
                     sizes="(max-width: 640px) 192px, (max-width: 768px) 224px, (max-width: 1024px) 256px, 288px"
+                    priority={true}
+                    quality={90}
                   />
                 </div>
               </BackgroundGradient>
             </div>
           </div>
         </div>
-      </section>
+      </section>      {/* Interests Section */}
+      <LazyLoad className="py-12 sm:py-16 md:py-20 theme-technology relative overflow-hidden">
+        <section>
+          <div className="container relative z-10">
+            <div className="flex flex-col items-center mb-8 sm:mb-12">
+              <TextRevealCard
+                text="My Interests"
+                revealText="Explore My Passions"
+                className="border-none shadow-none p-0 bg-transparent"
+              >
+                <div className="h-1 w-16 sm:w-20 bg-gradient-blue-green rounded-full mx-auto mt-3 sm:mt-4"></div>
+              </TextRevealCard>
+            </div>
 
-      {/* Interests Section */}
-      <section className="py-12 sm:py-16 md:py-20 theme-technology relative overflow-hidden">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+              {/* Technology Card */}
+              <BackgroundGradient className="rounded-xl h-full">
+                <Card className="border-0 bg-background/80 backdrop-blur-sm h-full flex flex-col">
+                  <CardContent className="pt-4 sm:pt-6 p-4 sm:p-6 flex-grow flex flex-col">
+                    <div className="flex flex-col items-center text-center h-full">
+                      <MovingBorder className="p-0.5" containerClassName="rounded-full mb-3 sm:mb-4">
+                        <div className="p-2 sm:p-3 rounded-full bg-background text-primary">
+                          <Laptop className="h-6 w-6 sm:h-8 sm:w-8" />
+                        </div>
+                      </MovingBorder>
+                      <h3 className="text-lg sm:text-xl font-semibold mb-1 sm:mb-2">Technology</h3>
+                      <p className="text-xs sm:text-sm text-muted-foreground flex-grow">
+                        Software development, accessibility, and creating technology that makes a difference.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </BackgroundGradient>
 
-        <div className="container relative z-10">
-          <div className="flex flex-col items-center mb-8 sm:mb-12">
-            <TextRevealCard
-              text="My Interests"
-              revealText="Explore My Passions"
-              className="border-none shadow-none p-0 bg-transparent"
-            >
-              <div className="h-1 w-16 sm:w-20 bg-gradient-blue-green rounded-full mx-auto mt-3 sm:mt-4"></div>
-            </TextRevealCard>
-          </div>
+              {/* Finance Card */}
+              <BackgroundGradient className="rounded-xl h-full">
+                <Card className="border-0 bg-background/80 backdrop-blur-sm h-full flex flex-col">
+                  <CardContent className="pt-4 sm:pt-6 p-4 sm:p-6 flex-grow flex flex-col">
+                    <div className="flex flex-col items-center text-center h-full">
+                      <MovingBorder className="p-0.5" containerClassName="rounded-full mb-3 sm:mb-4">
+                        <div className="p-2 sm:p-3 rounded-full bg-background text-primary">
+                          <LineChart className="h-6 w-6 sm:h-8 sm:w-8" />
+                        </div>
+                      </MovingBorder>
+                      <h3 className="text-lg sm:text-xl font-semibold mb-1 sm:mb-2">Finance</h3>
+                      <p className="text-xs sm:text-sm text-muted-foreground flex-grow">
+                        Empowering youth through financial literacy for a secure future.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </BackgroundGradient>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-            {/* Technology Card */}
-            <BackgroundGradient className="rounded-xl h-full">
-              <Card className="border-0 bg-background/80 backdrop-blur-sm h-full flex flex-col">
-                <CardContent className="pt-4 sm:pt-6 p-4 sm:p-6 flex-grow flex flex-col">
-                  <div className="flex flex-col items-center text-center h-full">
-                    <MovingBorder className="p-0.5" containerClassName="rounded-full mb-3 sm:mb-4">
-                      <div className="p-2 sm:p-3 rounded-full bg-background text-primary">
-                        <Laptop className="h-6 w-6 sm:h-8 sm:w-8" />
-                      </div>
-                    </MovingBorder>
-                    <h3 className="text-lg sm:text-xl font-semibold mb-1 sm:mb-2">Technology</h3>
-                    <p className="text-xs sm:text-sm text-muted-foreground flex-grow">
-                      Software development, accessibility, and creating technology that makes a difference.
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </BackgroundGradient>
-
-            {/* Finance Card */}
-            <BackgroundGradient className="rounded-xl h-full">
-              <Card className="border-0 bg-background/80 backdrop-blur-sm h-full flex flex-col">
-                <CardContent className="pt-4 sm:pt-6 p-4 sm:p-6 flex-grow flex flex-col">
-                  <div className="flex flex-col items-center text-center h-full">
-                    <MovingBorder className="p-0.5" containerClassName="rounded-full mb-3 sm:mb-4">
-                      <div className="p-2 sm:p-3 rounded-full bg-background text-primary">
-                        <LineChart className="h-6 w-6 sm:h-8 sm:w-8" />
-                      </div>
-                    </MovingBorder>
-                    <h3 className="text-lg sm:text-xl font-semibold mb-1 sm:mb-2">Finance</h3>
-                    <p className="text-xs sm:text-sm text-muted-foreground flex-grow">
-                      Empowering youth through financial literacy for a secure future.
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </BackgroundGradient>
-
-            {/* Transit Card */}
-            <BackgroundGradient className="rounded-xl h-full">
-              <Card className="border-0 bg-background/80 backdrop-blur-sm h-full flex flex-col">
+              {/* Transit Card */}
+              <BackgroundGradient className="rounded-xl h-full">
+                <Card className="border-0 bg-background/80 backdrop-blur-sm h-full flex flex-col">
                 <CardContent className="pt-4 sm:pt-6 p-4 sm:p-6 flex-grow flex flex-col">
                   <div className="flex flex-col items-center text-center h-full">
                     <MovingBorder className="p-0.5" containerClassName="rounded-full mb-3 sm:mb-4">

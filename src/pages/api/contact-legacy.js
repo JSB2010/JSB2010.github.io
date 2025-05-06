@@ -1,4 +1,6 @@
-// API route for contact form submissions
+// Legacy API route for contact form submissions (Pages Router)
+// This file has been renamed to avoid conflicts with the App Router implementation
+// Use the unified API endpoint /api/contact-unified instead
 import { sendContactFormEmail } from '../../lib/email-service';
 
 export default async function handler(req, res) {

@@ -10,6 +10,7 @@ import JsonLd from "@/components/json-ld";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  display: "swap",
 });
 
 export const viewport = {
@@ -41,6 +42,11 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
+  icons: {
+    icon: "/images/Updated logo.png",
+    shortcut: "/images/Updated logo.png",
+    apple: "/images/Updated logo.png",
+  },
   openGraph: {
     title: "Jacob Barkin | Developer & Financial Education Advocate",
     description: "Developer, financial education advocate, and technology enthusiast. Explore my projects, interests, and professional journey.",
@@ -57,7 +63,6 @@ export const metadata: Metadata = {
     locale: "en_US",
     type: "website",
   },
-
   robots: {
     index: true,
     follow: true,
@@ -65,20 +70,12 @@ export const metadata: Metadata = {
       index: true,
       follow: true,
       "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
     },
   },
-
   verification: {
     google: "verification_token",
   },
   category: "technology",
-  icons: {
-    icon: "/images/Updated logo.png",
-    shortcut: "/images/Updated logo.png",
-    apple: "/images/Updated logo.png",
-  },
 };
 
 export default function RootLayout({
@@ -88,12 +85,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="icon" href="/images/Updated logo.png" sizes="any" />
-        <link rel="apple-touch-icon" href="/images/Updated logo.png" sizes="180x180" />
-        <link rel="manifest" href="/manifest.webmanifest" />
-        {/* Theme color is added in metadata */}
-      </head>
       <body className={`${inter.variable} antialiased min-h-screen bg-background`}>
         <ThemeProvider
           attribute="class"

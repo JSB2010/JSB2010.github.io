@@ -1,4 +1,6 @@
-// API route for contact form submissions using Appwrite
+// Legacy API route for contact form submissions using Appwrite (Pages Router)
+// This file has been renamed to avoid conflicts with the App Router implementation
+// Use the unified API endpoint /api/contact-unified instead
 import { Client, Databases, ID } from 'appwrite';
 import { sendContactFormEmail } from '../../lib/appwrite/email-service';
 
