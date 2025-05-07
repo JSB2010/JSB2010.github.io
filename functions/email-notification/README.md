@@ -1,66 +1,48 @@
-# Contact Form Email Notification Function
+# ⚡ Node.js Starter Function
 
-This Appwrite Function sends an email notification when a new contact form submission is received.
+A simple starter function. Edit `src/main.js` to get started and create something awesome! 🚀
 
-## Setup Instructions
+## 🧰 Usage
 
-### 1. Create the Function in Appwrite Console
+### GET /ping
 
-1. Go to your Appwrite Console
-2. Navigate to Functions
-3. Click "Create Function"
-4. Fill in the details:
-   - **Name**: Contact Form Email Notification
-   - **Runtime**: Node.js 16.0 (or newer)
-   - **Timeout**: 15 seconds
-   - **Execute permissions**: Any
+- Returns a "Pong" message.
 
-### 2. Deploy the Function
+**Response**
 
-You can deploy this function in two ways:
+Sample `200` Response:
 
-#### Option 1: Deploy from GitHub
+```text
+Pong
+```
 
-1. Connect your GitHub repository to Appwrite
-2. Select this directory (`functions/email-notification`) as the source
-3. Click "Deploy"
+### GET, POST, PUT, PATCH, DELETE /
 
-#### Option 2: Deploy Manually
+- Returns a "Learn More" JSON response.
 
-1. Zip this directory
-2. Upload the zip file to Appwrite Console
-3. Click "Deploy"
+**Response**
 
-### 3. Set Up Environment Variables
+Sample `200` Response:
 
-Add the following environment variables to your function:
+```json
+{
+  "motto": "Build like a team of hundreds_",
+  "learn": "https://appwrite.io/docs",
+  "connect": "https://appwrite.io/discord",
+  "getInspired": "https://builtwith.appwrite.io"
+}
+```
 
-- `EMAIL_USER`: Your Gmail address (e.g., jacobsamuelbarkin@gmail.com)
-- `EMAIL_PASSWORD`: Your Gmail app password
+## ⚙️ Configuration
 
-### 4. Create a Database Event Trigger
+| Setting           | Value         |
+| ----------------- | ------------- |
+| Runtime           | Node (18.0)   |
+| Entrypoint        | `src/main.js` |
+| Build Commands    | `npm install` |
+| Permissions       | `any`         |
+| Timeout (Seconds) | 15            |
 
-1. Go to your Appwrite Console
-2. Navigate to Functions > Your Function > Settings > Events
-3. Add a new event:
-   - **Event Type**: Database
-   - **Database ID**: Your database ID (e.g., contact-form-db)
-   - **Collection ID**: Your collection ID (e.g., contact-submissions)
-   - **Event**: Document Created
+## 🔒 Environment Variables
 
-## Testing
-
-You can test the function by:
-
-1. Submitting a new contact form on your website
-2. Checking your email for the notification
-3. Checking the function logs in Appwrite Console
-
-## Troubleshooting
-
-If you're not receiving emails:
-
-1. Check the function logs for errors
-2. Verify your Gmail app password is correct
-3. Check your spam folder
-4. Make sure the database event trigger is set up correctly
+No environment variables required.
