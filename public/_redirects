@@ -28,5 +28,5 @@
 /api/*              /404.html      302
 
 # Fallback for any other routes - use a special handling to avoid infinite loops
-/                   /index.html    200
+# Note: We don't need a rule for the root path as it's handled automatically
 /:path              /:path.html    200

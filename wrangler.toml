@@ -1,19 +1,16 @@
 # Optimize Cloudflare Pages build process
 name = "jacob-barkin-portfolio"
-main = "./"
 compatibility_date = "2023-10-30"
 compatibility_flags = ["nodejs_compat"]
+
+# Required for Cloudflare Pages to recognize this configuration
+pages_build_output_dir = "out"
 
 # Build configuration
 [build]
 command = "npm install && npm run build:cache"
 publish = "out"
 node_bundler = "esbuild"
-
-# Required for Cloudflare Pages to recognize this configuration
-[site]
-bucket = "out"
-pages_build_output_dir = "out"
 
 # Cache dependencies to speed up builds
 [build.environment]
