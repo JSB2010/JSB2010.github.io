@@ -8,9 +8,7 @@ const nextConfig = {
 
   // Enable build caching for faster rebuilds
   experimental: {
-    // Enable build cache
-    turboCaching: true,
-    // Enable optimized CSS
+    // Enable optimized CSS with critters for inlining critical CSS
     optimizeCss: true,
   },
 

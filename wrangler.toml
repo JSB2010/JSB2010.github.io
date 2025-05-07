@@ -6,7 +6,7 @@ compatibility_flags = ["nodejs_compat"]
 
 # Build configuration
 [build]
-command = "npm run build"
+command = "npm run build:cache"
 publish = "out"
 node_bundler = "esbuild"
 
