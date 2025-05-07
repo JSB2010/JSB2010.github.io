@@ -8,61 +8,6 @@
   background-image: linear-gradient(to right, #3b82f6, #60a5fa);
 }
 
-/* Animated floating particles */
-.particle-1,
-.particle-2,
-.particle-3 {
-  position: absolute;
-  border-radius: 50%;
-  background: linear-gradient(to right, #3b82f6, rgba(59, 130, 246, 0.5));
-  filter: blur(8px);
-}
-
-.particle-1 {
-  width: 150px;
-  height: 150px;
-  top: 20%;
-  left: 10%;
-  opacity: 0.1;
-  animation: float 15s ease-in-out infinite;
-}
-
-.particle-2 {
-  width: 200px;
-  height: 200px;
-  top: 60%;
-  right: 10%;
-  opacity: 0.15;
-  animation: float 18s ease-in-out infinite 2s;
-}
-
-.particle-3 {
-  width: 100px;
-  height: 100px;
-  bottom: 10%;
-  left: 30%;
-  opacity: 0.1;
-  animation: float 12s ease-in-out infinite 1s;
-}
-
-@keyframes float {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-  25% {
-    transform: translate3d(10px, -20px, 0);
-  }
-  50% {
-    transform: translate3d(20px, 0, 0);
-  }
-  75% {
-    transform: translate3d(10px, 20px, 0);
-  }
-  100% {
-    transform: translate3d(0, 0, 0);
-  }
-}
-
 /* Card hover effects */
 .project-card {
   transition: all 0.3s ease;
@@ -85,13 +30,6 @@
 
 .language-icon {
   background-color: var(--language-color, #8B949E);
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .particle-1, .particle-2, .particle-3 {
-    opacity: 0.05;
-  }
 }
 
 /* Dark mode adjustments */
