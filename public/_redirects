@@ -1,16 +1,31 @@
 # Redirects for Cloudflare Pages
 # SPA (Single Page Application) setup for client-side routing
 
+# Direct file access - these should be listed first for performance
+/spa-redirect.js    /spa-redirect.js 200
+/index.html         /index.html    200
+/404.html           /404.html      200
+
 # Assets should be served directly
 /_next/*            /_next/:splat  200
 /images/*           /images/:splat 200
-/spa-redirect.js    /spa-redirect.js 200
+/fonts/*            /fonts/:splat  200
+/favicon.ico        /favicon.ico   200
+/manifest.webmanifest /manifest.webmanifest 200
+/robots.txt         /robots.txt    200
+/service-worker.js  /service-worker.js 200
+/sw-register.js     /sw-register.js 200
 
-# Special route for handling client-side routing
-/index.html         /index.html    200
+# API routes should return 404 if they don't exist in static export
+/api/*              /404.html      404
 
-# Handle 404 page specially for SPA routing
-/404.html           /404.html      200
+# All other routes should be handled by the SPA
+# This avoids the infinite loop by using a more specific pattern
+/about              /index.html    200
+/projects           /index.html    200
+/contact            /index.html    200
+/public-transportation /index.html 200
+/admin/*            /index.html    200
 
-# All routes should be handled by the SPA
+# Fallback for any other routes
 /*                  /index.html    200

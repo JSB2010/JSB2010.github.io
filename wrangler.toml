@@ -10,6 +10,9 @@ command = "npm run build"
 publish = "out"
 node_bundler = "esbuild"
 
+# Required for Cloudflare Pages to recognize this configuration
+pages_build_output_dir = "out"
+
 # Cache dependencies to speed up builds
 [build.environment]
 NPM_FLAGS = "--no-audit --no-fund"

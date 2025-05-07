@@ -6,6 +6,14 @@ const nextConfig = {
   // This ensures React DevTools can connect to the React instance
   crossOrigin: 'anonymous',
 
+  // Enable build caching for faster rebuilds
+  experimental: {
+    // Enable build cache
+    turboCaching: true,
+    // Enable optimized CSS
+    optimizeCss: true,
+  },
+
   // Image configuration
   images: {
     remotePatterns: [
@@ -44,7 +52,6 @@ const nextConfig = {
   ...(process.env.NODE_ENV === 'production' ? {
     output: 'export', // Static site generation
     distDir: '.next', // Output directory for intermediate files
-    outDir: 'out', // Final output directory
     trailingSlash: true, // Add trailing slashes for better SPA routing
     // Skip specific pages with dynamic features
     skipTrailingSlashRedirect: true,
