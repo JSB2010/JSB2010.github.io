@@ -34,22 +34,18 @@ export default function AboutPage() {
     <>      
       {/* Hero Section */}
       <section className="py-12 sm:py-16 md:py-20 overflow-hidden relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-background to-background/50 dark:from-background dark:to-background/80 z-10"></div>
         <OptimizedBackgroundImage 
           src="/images/mountains-bg.jpg" 
           alt="Mountains background" 
           priority={true}
-          overlayClassName="opacity-20 dark:opacity-10"
+          overlayClassName="opacity-30 dark:opacity-20"
         />
         <div className="container relative z-20">
           <div className="max-w-3xl mx-auto text-center px-4 sm:px-6">
-            <TextRevealCard
-              text="About Me"
-              revealText="Jacob Barkin"
-              className="border-none shadow-none p-0 bg-transparent"
-            >
-              <div className="h-1 w-16 sm:w-20 bg-primary rounded-full mx-auto my-4 sm:my-6 md:my-8"></div>
-            </TextRevealCard>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
+              About Me
+            </h1>
+            <div className="h-1 w-16 sm:w-20 bg-primary rounded-full mx-auto my-4 sm:my-6 md:my-8"></div>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8">
               I&apos;m Jacob Barkin, a student developer passionate about technology, financial education, and making a positive impact through accessible solutions.
             </p>

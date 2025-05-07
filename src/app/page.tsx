@@ -70,12 +70,11 @@ export default function Home() {
   return (
     <>      {/* Hero Section */}
       <section className="relative py-12 sm:py-16 md:py-24 lg:py-28 overflow-hidden theme-mountains">
-        <div className="absolute inset-0 bg-gradient-to-b from-background to-background/50 dark:from-background dark:to-background/80 z-10"></div>
         <OptimizedBackgroundImage 
           src="/images/mountains-bg.jpg" 
           alt="Mountains background" 
           priority={true}
-          overlayClassName="opacity-20 dark:opacity-10"
+          overlayClassName="opacity-30 dark:opacity-20"
         />
 
 

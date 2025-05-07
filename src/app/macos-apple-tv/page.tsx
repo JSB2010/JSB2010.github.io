@@ -26,8 +26,7 @@ export default function MacOSAppleTVPage() {
     >
       {/* Hero Section */}
       <section className="relative py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-background to-background/50 dark:from-background dark:to-background/80 z-10"></div>
-        <div className="absolute inset-0 bg-[url('/images/mountains-bg.jpg')] bg-cover bg-center opacity-20 dark:opacity-10"></div>
+        <div className="absolute inset-0 bg-[url('/images/mountains-bg.jpg')] bg-cover bg-center opacity-30 dark:opacity-20"></div>
 
         <div className="container relative z-20">
           <div className="max-w-3xl mx-auto text-center">

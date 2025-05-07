@@ -9,7 +9,7 @@ const createJestConfig = nextJest({
 
 // Add any custom config to be passed to Jest
 const customJestConfig = {
-  setupFilesAfterEnv: ['<rootDir>/setupTests.ts'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testEnvironment: 'jest-environment-jsdom',
   moduleNameMapper: {
     // Handle module aliases
@@ -25,11 +25,6 @@ const customJestConfig = {
   },
   transformIgnorePatterns: [
     '/node_modules/(?!(@testing-library)/)',
-  ],
-  // Add specific support for Cloudflare Workers/Functions
-  testPathIgnorePatterns: [
-    '/node_modules/',
-    '/functions/api/test.js' // Skip non-test files with "test" in the name
   ]
 };
 
