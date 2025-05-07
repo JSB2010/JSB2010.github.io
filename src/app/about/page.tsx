@@ -22,6 +22,8 @@ import { TextRevealCard } from "@/components/ui/aceternity/text-reveal-card";
 import { ThreeDCard } from "@/components/ui/aceternity/3d-card";
 import { OptimizedBackgroundImage } from "@/components/ui/optimized-background-image";
 import { ResponsiveImage } from "@/components/ui/responsive-image";
+
+import { BasicImage } from "@/components/ui/basic-image";
 import { LazyLoad } from "@/components/ui/lazy-load";
 
 export const metadata: Metadata = {
@@ -31,12 +33,12 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <>      
+    <>
       {/* Hero Section */}
       <section className="py-12 sm:py-16 md:py-20 overflow-hidden relative">
-        <OptimizedBackgroundImage 
-          src="/images/mountains-bg.jpg" 
-          alt="Mountains background" 
+        <OptimizedBackgroundImage
+          src="/images/mountains-bg.jpg"
+          alt="Mountains background"
           priority={true}
           overlayClassName="opacity-30 dark:opacity-20"
         />
@@ -66,14 +68,11 @@ export default function AboutPage() {
             >
               <BackgroundGradient className="rounded-2xl h-full">
                 <div className="relative h-full w-full rounded-2xl overflow-hidden shadow-xl flex items-center justify-center">
-                  <ResponsiveImage
-                    src="/images/Jacob-City.png"
+                  {/* Direct img tag */}
+                  <img
+                    src="/images/Jacob City.png"
                     alt="Jacob Barkin"
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 640px) 280px, (max-width: 768px) 384px, 400px"
-                    priority={true}
-                    quality={90}
+                    className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent mix-blend-overlay"></div>
                 </div>

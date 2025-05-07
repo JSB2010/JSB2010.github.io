@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "optimize-images": "node scripts/optimize-images.js",
+    "optimize-all-images": "node scripts/optimize-all-images.js",
     "test:images": "node scripts/test-image-optimization.js",
     "optimize-app-icons": "node scripts/optimize-images.js && node scripts/test-image-optimization.js",
     "check-a11y": "npx @axe-core/cli http://localhost:3000 --exit",

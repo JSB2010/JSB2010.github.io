@@ -12,7 +12,7 @@ interface ResponsiveImageProps {
   width?: number;
   height?: number;
   quality?: number;
-  onLoadingComplete?: () => void;
+  onLoadingComplete?: () => void; // Deprecated, use onLoad instead
   objectFit?: "cover" | "contain" | "fill" | "none" | "scale-down";
   fill?: boolean;
 }
@@ -35,18 +35,24 @@ export function ResponsiveImage({
   fill = false,
 }: ResponsiveImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   // Handle image load complete
-  const handleLoadingComplete = () => {
+  const handleLoad = () => {
     setIsLoaded(true);
     if (onLoadingComplete) {
       onLoadingComplete();
     }
   };
 
+  // Handle image load error
+  const handleError = () => {
+    setHasError(true);
+  };
+
   // Show a simple placeholder while loading
   const imageStyles = {
-    objectFit: objectFit,
+    objectFit,
     opacity: isLoaded || priority ? 1 : 0.5, // Make fully visible if priority or loaded
     transition: "opacity 0.3s ease-in-out",
   };
@@ -55,27 +61,34 @@ export function ResponsiveImage({
     <div className={`relative overflow-hidden ${className}`} style={!fill ? { aspectRatio: `${width}/${height}` } : undefined}>
       {/* Placeholder */}
       {!isLoaded && (
-        <div 
-          className="absolute inset-0 bg-gray-200 dark:bg-gray-800 animate-pulse" 
-          style={!fill ? { aspectRatio: `${width}/${height}` } : undefined} 
+        <div
+          className="absolute inset-0 bg-gray-200 dark:bg-gray-800 animate-pulse"
+          style={!fill ? { aspectRatio: `${width}/${height}` } : undefined}
         />
       )}
-      
+
       {/* Actual image */}
-      <Image
-        src={src}
-        alt={alt}
-        width={!fill ? width : undefined}
-        height={!fill ? height : undefined}
-        priority={priority}
-        sizes={sizes}
-        className={className}
-        quality={quality}
-        onLoadingComplete={handleLoadingComplete}
-        style={imageStyles}
-        loading={priority ? "eager" : "lazy"}
-        fill={fill}
-      />
+      {!hasError ? (
+        <Image
+          src={src}
+          alt={alt}
+          width={!fill ? width : undefined}
+          height={!fill ? height : undefined}
+          priority={priority}
+          sizes={sizes}
+          className={className}
+          quality={quality}
+          onLoad={handleLoad}
+          onError={handleError}
+          style={imageStyles}
+          loading={priority ? "eager" : "lazy"}
+          fill={fill}
+        />
+      ) : (
+        <div className="absolute inset-0 flex items-center justify-center bg-red-100 dark:bg-red-900 text-red-500 dark:text-red-300">
+          <p className="text-xs">Failed to load image</p>
+        </div>
+      )}
     </div>
   );
 }

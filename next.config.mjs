@@ -53,7 +53,19 @@ const nextConfig = {
     }
   } : {}),
 
+  // Turbopack configuration for development (now stable)
+  turbopack: {
+    // Turbopack-specific rules
+    rules: {
+      // Example: Include specific directories for processing
+      include: ['src/**/*'],
+      // Example: Exclude specific file patterns
+      exclude: ['**/*.test.*', '**/__tests__/**']
+    }
+  },
+
   // Apply webpack configuration for both production and development modes
+  // This will only be used when NOT using Turbopack (e.g., in production builds)
   webpack: (config, { dev, isServer }) => {
     // Production-specific configuration
     if (!dev) {

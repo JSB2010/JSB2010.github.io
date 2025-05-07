@@ -22,6 +22,8 @@ import { OptimizedBackgroundImage } from "@/components/ui/optimized-background-i
 import { ResponsiveImage } from "@/components/ui/responsive-image";
 import { LazyLoad } from "@/components/ui/lazy-load";
 
+import { BasicImage } from "@/components/ui/basic-image";
+
 export default function Home() {
   // State to store the current greeting
   const [greeting, setGreeting] = useState("Welcome");
@@ -69,15 +71,16 @@ export default function Home() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative py-12 sm:py-16 md:py-24 lg:py-28 overflow-hidden theme-mountains">
-        <OptimizedBackgroundImage 
-          src="/images/mountains-bg.jpg" 
-          alt="Mountains background" 
+      <section className="mt-8 sm:mt-10 md:mt-12 mb-8 sm:mb-10 md:mb-12 mx-4 sm:mx-6 md:mx-8 relative py-12 sm:py-16 md:py-20 overflow-hidden theme-mountains rounded-xl shadow-lg">
+        <OptimizedBackgroundImage
+          src="/images/mountains-bg.jpg"
+          alt="Mountains background"
           priority={true}
           overlayClassName="opacity-30 dark:opacity-20"
+          className="rounded-xl"
         />
 
-        <div className="container relative z-20">
+        <div className="container px-4 sm:px-6 md:px-8 relative z-20">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div className="flex flex-col gap-6 text-center md:text-left">
               <MovingBorder
@@ -225,14 +228,13 @@ export default function Home() {
 
             <div className="flex justify-center md:justify-end mt-6 sm:mt-0">
               <BackgroundGradient className="rounded-full">
-                <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72 rounded-full overflow-hidden border-2 sm:border-4 border-background shadow-xl">                  <ResponsiveImage
-                    src="/images/Jacob-City.png"
+                <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72 rounded-full overflow-hidden border-2 sm:border-4 border-background shadow-xl">
+                  <BasicImage
+                    src="/images/jacob-profile.png"
                     alt="Jacob Barkin"
                     fill
                     className="object-cover"
-                    sizes="(max-width: 640px) 192px, (max-width: 768px) 224px, (max-width: 1024px) 256px, 288px"
                     priority={true}
-                    quality={90}
                   />
                 </div>
               </BackgroundGradient>
@@ -240,7 +242,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-      
+
       {/* Interests Section */}
       <LazyLoad className="py-12 sm:py-16 md:py-20 theme-technology relative overflow-hidden">
         <section>
@@ -350,6 +352,7 @@ export default function Home() {
       </LazyLoad>
 
       {/* Featured Projects Section */}
+
       <section className="py-12 sm:py-16 md:py-20 theme-space relative overflow-hidden">
         <div className="container relative z-10">
           <div className="flex flex-col items-center mb-8 sm:mb-12">
