@@ -67,7 +67,7 @@ export default function AboutPage() {
               <BackgroundGradient className="rounded-2xl h-full">
                 <div className="relative h-full w-full rounded-2xl overflow-hidden shadow-xl flex items-center justify-center">
                   <ResponsiveImage
-                    src="/images/Jacob City.png"
+                    src="/images/Jacob-City.png"
                     alt="Jacob Barkin"
                     fill
                     className="object-cover"

@@ -47,14 +47,14 @@ export function ResponsiveImage({
   // Show a simple placeholder while loading
   const imageStyles = {
     objectFit: objectFit,
-    opacity: isLoaded ? 1 : 0,
+    opacity: isLoaded || priority ? 1 : 0.5, // Make fully visible if priority or loaded
     transition: "opacity 0.3s ease-in-out",
   };
 
   return (
     <div className={`relative overflow-hidden ${className}`} style={!fill ? { aspectRatio: `${width}/${height}` } : undefined}>
       {/* Placeholder */}
-      {!isLoaded && !priority && (
+      {!isLoaded && (
         <div 
           className="absolute inset-0 bg-gray-200 dark:bg-gray-800 animate-pulse" 
           style={!fill ? { aspectRatio: `${width}/${height}` } : undefined} 

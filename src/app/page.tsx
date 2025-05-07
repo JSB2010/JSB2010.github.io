@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -227,7 +226,7 @@ export default function Home() {
             <div className="flex justify-center md:justify-end mt-6 sm:mt-0">
               <BackgroundGradient className="rounded-full">
                 <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72 rounded-full overflow-hidden border-2 sm:border-4 border-background shadow-xl">                  <ResponsiveImage
-                    src="/images/Jacob City.png"
+                    src="/images/Jacob-City.png"
                     alt="Jacob Barkin"
                     fill
                     className="object-cover"
