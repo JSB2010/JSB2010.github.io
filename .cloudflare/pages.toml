@@ -1,0 +1,35 @@
+# Cloudflare Pages build configuration
+# This file is used by Cloudflare Pages to configure the build process
+
+# Build command
+build.command = "npm install && npm run build:cache"
+
+# Output directory
+build.output_directory = "out"
+
+# Environment variables
+[build.environment]
+  NPM_FLAGS = "--no-audit --no-fund"
+  NODE_ENV = "production"
+
+# Configure caching behavior
+[cache]
+  enabled = true
+
+# Configure content compression
+[processing]
+  skip = false
+
+[processing.css]
+  bundle = true
+  minify = true
+
+[processing.js]
+  bundle = true
+  minify = true
+
+[processing.html]
+  pretty_urls = true
+
+[processing.images]
+  compress = true

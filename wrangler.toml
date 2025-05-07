@@ -1,66 +1,6 @@
-# Optimize Cloudflare Pages build process
+# Cloudflare Pages configuration
 name = "jacob-barkin-portfolio"
 compatibility_date = "2023-10-30"
-compatibility_flags = ["nodejs_compat"]
 
-# Required for Cloudflare Pages to recognize this configuration
+# This is the only required field for Pages
 pages_build_output_dir = "out"
-
-# Build configuration
-[build]
-command = "npm install && npm run build:cache"
-publish = "out"
-node_bundler = "esbuild"
-
-# Cache dependencies to speed up builds
-[build.environment]
-NPM_FLAGS = "--no-audit --no-fund"
-NODE_ENV = "production"
-
-# Add content compression
-[build.processing]
-skip_processing = false
-
-[build.processing.css]
-bundle = true
-minify = true
-
-[build.processing.js]
-bundle = true
-minify = true
-
-[build.processing.html]
-pretty_urls = true
-
-[build.processing.images]
-compress = true
-
-# Configure caching behavior
-[cache]
-# Cache build dependencies for faster builds
-[cache.build]
-enabled = true
-
-# Define redirects
-[[redirects]]
-from = "/*"
-to = "/index.html"
-status = 200
-force = false
-conditions = {Workers = false}
-
-# Configure custom headers (in addition to _headers file)
-[[headers]]
-for = "/fonts/*"
-[headers.values]
-Cache-Control = "public, max-age=31536000, immutable"
-
-[[headers]]
-for = "/_next/static/*"
-[headers.values]
-Cache-Control = "public, max-age=31536000, immutable"
-
-# Configure environment variables for production
-[env.production]
-NODE_ENV = "production"
-NEXT_PUBLIC_SITE_URL = "https://jsb2010.github.io"
