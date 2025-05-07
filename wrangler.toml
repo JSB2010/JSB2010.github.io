@@ -7,7 +7,7 @@ compatibility_flags = ["nodejs_compat"]
 # Build configuration
 [build]
 command = "npm run build"
-publish = ".next"
+publish = "out"
 node_bundler = "esbuild"
 
 # Cache dependencies to speed up builds

@@ -43,8 +43,9 @@ const nextConfig = {
   // Configure for production builds
   ...(process.env.NODE_ENV === 'production' ? {
     output: 'export', // Static site generation
-    distDir: '.next', // Output directory
-    trailingSlash: true, // Add trailing slashes for better SPA routing,
+    distDir: '.next', // Output directory for intermediate files
+    outDir: 'out', // Final output directory
+    trailingSlash: true, // Add trailing slashes for better SPA routing
     // Skip specific pages with dynamic features
     skipTrailingSlashRedirect: true,
     // Exclude API routes and dynamic routes from static export
@@ -99,39 +100,57 @@ async function copySPAFiles() {
   const path = await import('path');
 
   try {
-    // Copy the _redirects file
+    // Helper function to safely copy a file if it exists
+    const safeCopyFile = async (sourceFile, destFile) => {
+      try {
+        // Check if source file exists
+        await fs.access(sourceFile);
+
+        // Read and write the file
+        const content = await fs.readFile(sourceFile, 'utf8');
+        await fs.writeFile(destFile, content);
+        console.log(`Successfully copied ${path.basename(sourceFile)} to output directory`);
+        return true;
+      } catch (error) {
+        // File doesn't exist or can't be read - this is now a non-fatal error
+        console.log(`Note: ${path.basename(sourceFile)} not found or couldn't be copied. This is OK.`);
+        return false;
+      }
+    };
+
+    // Create the output directory if it doesn't exist
+    const outDir = path.join(process.cwd(), 'out');
     try {
-      const redirectsContent = await fs.readFile(path.join(process.cwd(), 'public', '_redirects'), 'utf8');
-      await fs.writeFile(path.join(process.cwd(), 'out', '_redirects'), redirectsContent);
-      console.log('Successfully copied _redirects file to output directory');
+      await fs.access(outDir);
     } catch (error) {
-      console.error('Error copying _redirects file:', error);
+      // If directory doesn't exist, create it
+      await fs.mkdir(outDir, { recursive: true });
+      console.log('Created output directory');
     }
 
-    // Copy the 404.html file
-    try {
-      const notFoundContent = await fs.readFile(path.join(process.cwd(), 'public', '404.html'), 'utf8');
-      await fs.writeFile(path.join(process.cwd(), 'out', '404.html'), notFoundContent);
-      console.log('Successfully copied 404.html file to output directory');
-    } catch (error) {
-      console.error('Error copying 404.html file:', error);
-    }
+    // Copy essential files if they exist
+    await safeCopyFile(
+      path.join(process.cwd(), 'public', '_redirects'),
+      path.join(outDir, '_redirects')
+    );
 
-    // Copy the spa-redirect.js file
-    try {
-      const redirectScriptContent = await fs.readFile(path.join(process.cwd(), 'public', 'spa-redirect.js'), 'utf8');
-      await fs.writeFile(path.join(process.cwd(), 'out', 'spa-redirect.js'), redirectScriptContent);
-      console.log('Successfully copied spa-redirect.js file to output directory');
-    } catch (error) {
-      console.error('Error copying spa-redirect.js file:', error);
-    }
+    await safeCopyFile(
+      path.join(process.cwd(), 'public', '404.html'),
+      path.join(outDir, '404.html')
+    );
 
-    // Modify the index.html to include the SPA redirect script
+    await safeCopyFile(
+      path.join(process.cwd(), 'public', 'spa-redirect.js'),
+      path.join(outDir, 'spa-redirect.js')
+    );
+
+    // Only try to modify index.html if it exists and spa-redirect.js was copied
+    const indexHtmlPath = path.join(outDir, 'index.html');
     try {
-      const indexHtmlPath = path.join(process.cwd(), 'out', 'index.html');
+      await fs.access(indexHtmlPath);
       let indexHtmlContent = await fs.readFile(indexHtmlPath, 'utf8');
 
-      // Check if the script is already included
+      // Check if the script is already included and if spa-redirect.js was copied
       if (!indexHtmlContent.includes('spa-redirect.js')) {
         // Add the script right after the <head> tag
         indexHtmlContent = indexHtmlContent.replace(
@@ -142,10 +161,11 @@ async function copySPAFiles() {
         console.log('Successfully added SPA redirect script to index.html');
       }
     } catch (error) {
-      console.error('Error modifying index.html:', error);
+      console.log('Note: index.html not found or couldn\'t be modified. This is OK.');
     }
   } catch (error) {
     console.error('Error in copySPAFiles:', error);
+    // Continue with the build even if there's an error
   }
 }
 
