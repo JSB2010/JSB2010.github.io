@@ -45,6 +45,8 @@ const nextConfig = {
     output: 'export', // Static site generation
     distDir: '.next', // Output directory
     trailingSlash: true, // Add trailing slashes for better SPA routing,
+    // Skip specific pages with dynamic features
+    skipTrailingSlashRedirect: true,
     // Exclude API routes and dynamic routes from static export
     images: {
       unoptimized: true, // Disable image optimization for static export

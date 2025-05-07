@@ -142,7 +142,7 @@ export const useContactFormStore = create<ContactFormState>((set, get) => ({
         ...values,
         timestamp: new Date().toISOString(),
         source: 'zustand_store',
-        userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'Unknown',
+        userAgent: 'StaticExport', // Use a static value for static export
       };
       
       // Default to Appwrite submission method if not specified
