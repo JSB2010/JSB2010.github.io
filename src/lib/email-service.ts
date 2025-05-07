@@ -21,6 +21,32 @@ export interface EmailData {
   userAgent?: string;
 }
 
+/**
+ * Validates an email address format and checks for disposable domains
+ * @param email The email address to validate
+ * @returns An object containing validation result and error message if any
+ */
+export function validateEmail(email: string): { valid: boolean; reason?: string } {
+  // Simple regex validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return { valid: false, reason: 'Invalid email format' };
+  }
+
+  // Simple check for disposable email domains
+  const disposableDomains = [
+    'tempmail.com', 'throwawaymail.com', 'mailinator.com', 'guerrillamail.com',
+    'yopmail.com', 'maildrop.cc', 'temp-mail.org', 'fake-email.com'
+  ];
+  
+  const domain = email.split('@')[1].toLowerCase();
+  if (disposableDomains.includes(domain)) {
+    return { valid: false, reason: 'Disposable email domains are not allowed' };
+  }
+
+  return { valid: true };
+}
+
 // Email configuration
 const emailConfig = {
   host: 'smtp.gmail.com',

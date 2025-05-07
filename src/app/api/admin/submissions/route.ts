@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
-import { getContactFormSubmissions, Query } from '@/lib/appwrite';
-import { logger } from '@/lib/appwrite';
+// Import appwrite SDK directly since we don't have a local wrapper
+import { Client, Databases, Query } from 'appwrite';
+import { logger } from '@/lib/logger';
 import { env } from '@/lib/env';
 import {
   createSuccessResponse,

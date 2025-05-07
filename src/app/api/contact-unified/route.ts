@@ -3,12 +3,12 @@
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { Client, Databases, ID } from 'appwrite';
-import { validateEmail } from '@/lib/email-service';
+// Import directly from email-service
 import { EmailTemplateType } from '@/lib/email-templates';
 import { queueEmail } from '@/lib/email-queue';
 import { incrementRateLimit } from '@/lib/rate-limiter';
 import { detectSpam } from '@/lib/spam-detector';
-import { logger } from '@/lib/appwrite';
+import { logger } from '@/lib/logger';
 import { env } from '@/lib/env';
 import { 
   createSuccessResponse, 
@@ -29,6 +29,15 @@ const contactFormSchema = z.object({
   userAgent: z.string().optional(),
   method: z.enum(['appwrite', 'email', 'api']).optional()
 });
+
+// Simple email validation function since we're missing it from import
+function validateEmail(email: string): { valid: boolean; reason?: string } {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return { valid: false, reason: 'Invalid email format' };
+  }
+  return { valid: true };
+}
 
 // Initialize Appwrite client (server-side)
 const initAppwrite = () => {

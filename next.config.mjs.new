@@ -40,15 +40,14 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
 
+  // Configuration for Turbopack
+  turbopack: {},
+
   // Configure for production builds
   ...(process.env.NODE_ENV === 'production' ? {
     output: 'export', // Static site generation
     distDir: '.next', // Output directory
-    trailingSlash: true, // Add trailing slashes for better SPA routing,
-    // Exclude API routes and dynamic routes from static export
-    images: {
-      unoptimized: true, // Disable image optimization for static export
-    }
+    trailingSlash: true, // Add trailing slashes for better SPA routing
   } : {}),
 
   // Apply webpack configuration for both production and development modes
