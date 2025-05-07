@@ -11,6 +11,14 @@
 /service-worker.js  /service-worker.js 200
 /sw-register.js     /sw-register.js 200
 
+# Specific routes for SPA pages - list these before wildcards for performance
+/about              /about.html    200
+/projects           /projects.html 200
+/contact            /contact.html  200
+/public-transportation /public-transportation.html 200
+/admin              /admin.html    200
+/admin/submissions  /admin/submissions.html 200
+
 # Assets should be served directly
 /_next/*            /_next/:splat  200
 /images/*           /images/:splat 200
@@ -19,15 +27,6 @@
 # API routes should be handled specially
 /api/*              /404.html      302
 
-# Specific routes for SPA pages
-/about              /about.html    200
-/projects           /projects.html 200
-/contact            /contact.html  200
-/public-transportation /public-transportation.html 200
-
-# Admin routes
-/admin              /admin.html    200
-/admin/submissions  /admin/submissions.html 200
-
-# Fallback for any other routes - use a 302 redirect to avoid infinite loops
-/*                  /index.html    302
+# Fallback for any other routes - use a special handling to avoid infinite loops
+/                   /index.html    200
+/:path              /:path.html    200
