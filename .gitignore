@@ -67,3 +67,10 @@ next-env.d.ts
 # IDE
 .idea
 .vscode
+
+# Backup files
+*.new
+*.fixed
+*.bak
+*.backup
+*.old
