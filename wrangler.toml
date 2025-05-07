@@ -11,6 +11,8 @@ publish = "out"
 node_bundler = "esbuild"
 
 # Required for Cloudflare Pages to recognize this configuration
+[site]
+bucket = "out"
 pages_build_output_dir = "out"
 
 # Cache dependencies to speed up builds
