@@ -20,6 +20,7 @@
     "setup-appwrite-enhanced": "node scripts/setup-appwrite-enhanced.js",
     "test:email": "node scripts/test-email-notification.js",
     "setup-appwrite-complete": "node scripts/setup-appwrite-complete.js",
+    "setup-appwrite-function": "node scripts/setup-appwrite-function.js",
     "backup-appwrite": "node scripts/backup-appwrite-data.js backup",
     "list-appwrite-backups": "node scripts/backup-appwrite-data.js list",
     "restore-appwrite-backup": "node scripts/backup-appwrite-data.js restore"

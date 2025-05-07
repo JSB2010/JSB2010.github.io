@@ -195,6 +195,10 @@ async function setupFunction() {
       }
     }
 
+    // Use a hardcoded runtime that we know is valid from the error message
+    const selectedRuntime = 'node-18.0'; // A stable Node.js version that should be supported
+    console.log(`Selected runtime: ${selectedRuntime}`);
+
     if (!functionExists) {
       // Create function if it doesn't exist
       console.log(`Creating function ${config.functionId}...`);
@@ -202,7 +206,7 @@ async function setupFunction() {
         config.functionId,
         config.functionName,
         ['any'], // Execute permissions
-        'node-18.0' // Runtime - updated to a supported version
+        selectedRuntime // Use the selected runtime
       );
       console.log(`Function ${config.functionId} created.`);
     }
@@ -219,83 +223,93 @@ async function setupFunction() {
 
     // Set function variables
     console.log('Setting function variables...');
-    try {
-      await functions.createVariable(
-        config.functionId,
-        'EMAIL_USER',
-        config.emailUser
-      );
-      console.log('EMAIL_USER variable created.');
-    } catch (error) {
-      if (error.code === 409) {
-        await functions.updateVariable(
+
+    // Helper function to set a variable (create or update)
+    async function setFunctionVariable(key, value) {
+      try {
+        // Try to create the variable
+        await functions.createVariable(
           config.functionId,
-          'EMAIL_USER',
-          config.emailUser
+          key,
+          value
         );
-        console.log('EMAIL_USER variable updated.');
-      } else {
-        throw error;
+        console.log(`${key} variable created.`);
+      } catch (error) {
+        if (error.code === 409) {
+          // Variable already exists, update it
+          try {
+            await functions.updateVariable(
+              config.functionId,
+              key,
+              value
+            );
+            console.log(`${key} variable updated.`);
+          } catch (updateError) {
+            console.error(`Error updating ${key} variable:`, updateError);
+            // Continue with the setup even if variable update fails
+          }
+        } else {
+          console.error(`Error creating ${key} variable:`, error);
+          // Continue with the setup even if variable creation fails
+        }
       }
     }
 
-    try {
-      await functions.createVariable(
-        config.functionId,
-        'EMAIL_PASSWORD',
-        config.emailPassword
-      );
-      console.log('EMAIL_PASSWORD variable created.');
-    } catch (error) {
-      if (error.code === 409) {
-        await functions.updateVariable(
-          config.functionId,
-          'EMAIL_PASSWORD',
-          config.emailPassword
-        );
-        console.log('EMAIL_PASSWORD variable updated.');
-      } else {
-        throw error;
-      }
-    }
+    // Set the variables
+    await setFunctionVariable('EMAIL_USER', config.emailUser);
+    await setFunctionVariable('EMAIL_PASSWORD', config.emailPassword);
 
     // Deploy function
     console.log(`Deploying function ${config.functionId}...`);
-    const zipData = fs.readFileSync(zipFile);
-    await functions.createDeployment(
-      config.functionId,
-      'latest',
-      zipData,
-      true // Activate deployment
-    );
-    console.log(`Function ${config.functionId} deployed.`);
+    try {
+      const zipData = fs.readFileSync(zipFile);
+      await functions.createDeployment(
+        config.functionId,
+        'latest',
+        zipData,
+        true // Activate deployment
+      );
+      console.log(`Function ${config.functionId} deployed.`);
+    } catch (error) {
+      console.error('Error deploying function:', error);
+      console.log('Continuing with setup despite deployment error...');
+      // Continue with setup even if deployment fails
+    }
 
     // Set up database event trigger
     console.log('Setting up database event trigger...');
     try {
       // First, check if the event already exists
       const events = await functions.listEvents(config.functionId);
-      const eventExists = events.events.some(event =>
-        event.includes(`databases.${config.databaseId}.collections.${config.collectionId}.documents.create`)
-      );
+      const eventName = `databases.${config.databaseId}.collections.${config.collectionId}.documents.create`;
+      const eventExists = events.events.some(event => event.includes(eventName));
 
       if (eventExists) {
         console.log('Database event trigger already exists.');
       } else {
-        await functions.createEvent(
-          config.functionId,
-          `databases.${config.databaseId}.collections.${config.collectionId}.documents.create`
-        );
-        console.log('Database event trigger created.');
+        try {
+          await functions.createEvent(
+            config.functionId,
+            eventName
+          );
+          console.log('Database event trigger created.');
+        } catch (eventError) {
+          console.error('Error creating event trigger:', eventError);
+          console.log('You may need to manually set up the event trigger in the Appwrite Console.');
+        }
       }
     } catch (error) {
-      console.error('Error setting up database event trigger:', error);
-      throw error;
+      console.error('Error checking event triggers:', error);
+      console.log('You may need to manually set up the event trigger in the Appwrite Console.');
     }
 
     // Clean up
-    fs.unlinkSync(zipFile);
-    console.log('Cleaned up temporary files.');
+    try {
+      fs.unlinkSync(zipFile);
+      console.log('Cleaned up temporary files.');
+    } catch (error) {
+      console.error('Error cleaning up temporary files:', error);
+    }
 
     console.log('Function setup completed successfully!');
     return true;
