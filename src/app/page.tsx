@@ -142,7 +142,7 @@ export default function Home() {
                   variant="outline"
                   asChild
                   size="default"
-                  className="border-primary/20 hover:bg-primary/5 text-sm sm:text-base h-10 sm:h-11"
+                  className="border-primary/20 hover:bg-primary/15 hover:text-primary text-sm sm:text-base h-10 sm:h-11"
                 >
                   <Link href="/about">
                     <User className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
