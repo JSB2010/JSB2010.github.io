@@ -177,6 +177,11 @@ async function submitViaEmail(
   try {
     logger.info('Preparing email submission', { emailAddress });
 
+    // Check if we're in a browser environment
+    if (typeof window === 'undefined') {
+      throw new Error('Cannot open email client from server-side code');
+    }
+
     // Create mailto link
     const subject = encodeURIComponent(`Contact Form: ${data.subject}`);
     const body = encodeURIComponent(
@@ -195,9 +200,26 @@ async function submitViaEmail(
     };
   } catch (error) {
     logger.error('Error opening email client', error);
-    return {
-      success: false,
-      message: 'Failed to open email client. Please try again or contact directly via email.',
-    };
+
+    // Fallback to displaying instructions if email client fails to open
+    try {
+      // Create a formatted message for manual copying
+      const subject = `Contact Form: ${data.subject}`;
+      const body = `Name: ${data.name}\nEmail: ${data.email}\n\nMessage:\n${data.message}`;
+
+      console.log('Please send an email to', emailAddress);
+      console.log('Subject:', subject);
+      console.log('Body:', body);
+
+      return {
+        success: true,
+        message: 'Failed to open email client automatically. Please manually send an email to ' + emailAddress + ' with the information you provided.',
+      };
+    } catch (fallbackError) {
+      return {
+        success: false,
+        message: 'Failed to open email client. Please try again or contact directly via email: ' + emailAddress,
+      };
+    }
   }
 }

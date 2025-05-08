@@ -106,21 +106,13 @@ const statusLogEntrySchema = z.object({
   updatedBy: z.string().default('system')
 });
 
-// Contact form submission schema
+// Contact form submission schema - simplified to match Appwrite collection schema
 export const contactFormSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
   email: z.string().email({ message: "Please enter a valid email address" }),
   subject: z.string().min(3, { message: "Subject must be at least 3 characters" }),
   message: z.string().min(10, { message: "Message must be at least 10 characters" }),
-  timestamp: z.string().optional(),
-  userAgent: z.string().optional(),
-  source: z.string().optional(),
-  ipAddress: z.string().optional(),
-  status: z.enum(['new', 'read', 'replied', 'archived']).default('new').optional(),
-  priority: z.number().min(1).max(5).default(3).optional(),
-  tags: z.array(z.string()).optional(),
-  statusLog: z.array(statusLogEntrySchema).optional(),
-  lastUpdated: z.string().optional(),
+  // Remove all other fields that don't exist in the Appwrite collection schema
 });
 
 export type ContactFormData = z.infer<typeof contactFormSchema>;
@@ -173,23 +165,25 @@ const MAX_RETRIES = 3;
  * @param data Form data to submit
  * @returns Promise with submission result
  */
-export async function submitContactForm(data: ContactFormData, retryCount = 0): Promise<{ 
-  success: boolean; 
-  id?: string; 
+export async function submitContactForm(data: ContactFormData, retryCount = 0): Promise<{
+  success: boolean;
+  id?: string;
   message: string;
   error?: any;
 }> {
   try {
-    // Validate data against schema
-    const validatedData = contactFormSchema.parse({
-      ...data,
-      timestamp: data.timestamp || new Date().toISOString(),
-      userAgent: data.userAgent || (typeof navigator !== 'undefined' ? navigator.userAgent : 'Unknown'),
-      source: data.source || 'website_contact_form',
-      status: data.status || 'new', // Set default status to 'new'
-      priority: data.priority || 3, // Set default priority to medium (3)
-      tags: data.tags || [] // Initialize empty tags array
-    });
+    // Only include fields that are defined in the Appwrite collection schema
+    // Based on the error, we need to remove fields that don't exist in the schema
+    const submissionData = {
+      name: data.name,
+      email: data.email,
+      subject: data.subject,
+      message: data.message,
+      // Exclude timestamp, userAgent, source, status, priority, tags
+    };
+
+    // Validate the simplified data against a minimal schema
+    const validatedData = contactFormSchema.parse(submissionData);
 
     // Log submission attempt
     logger.info('Submitting contact form data', {
@@ -338,7 +332,7 @@ export async function getContactFormSubmissions(limit = 10, queries: any[] = [])
  * @returns Promise with update result
  */
 export async function updateSubmissionStatus(
-  id: string, 
+  id: string,
   status: 'new' | 'read' | 'replied' | 'archived',
   updatedBy: string = 'system'
 ) {
@@ -381,7 +375,7 @@ export async function updateSubmissionStatus(
       config.databaseId,
       config.collectionId,
       id,
-      { 
+      {
         status,
         statusLog: [...existingStatusLog, statusChangeLog],
         lastUpdated: new Date().toISOString()

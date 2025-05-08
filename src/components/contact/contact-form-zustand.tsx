@@ -29,7 +29,7 @@ export function ContactFormZustand() {
   // Add initial debug log
   useEffect(() => {
     addDebugLog('Contact form component mounted');
-    
+
     // Clean up on unmount
     return () => {
       resetForm();
@@ -40,7 +40,7 @@ export function ContactFormZustand() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     addDebugLog('Form submission initiated');
-    
+
     await submitForm({ method: SubmissionMethod.APPWRITE });
   };
 
@@ -74,10 +74,10 @@ export function ContactFormZustand() {
             <p className="text-gray-500 dark:text-gray-400">No logs yet. Submit the form to see debug information.</p>
           ) : (
             debugLogs.map((log, index) => {
-              const logClass = log.includes('ERROR') 
-                ? 'text-red-600 dark:text-red-400' 
-                : log.includes('SUCCESS') 
-                  ? 'text-green-600 dark:text-green-400' 
+              const logClass = log.includes('ERROR')
+                ? 'text-red-600 dark:text-red-400'
+                : log.includes('SUCCESS')
+                  ? 'text-green-600 dark:text-green-400'
                   : 'text-gray-800 dark:text-gray-200';
 
               return (
@@ -91,13 +91,88 @@ export function ContactFormZustand() {
         <p className="mt-2 text-xs text-yellow-700 dark:text-yellow-400">
           Form state: {JSON.stringify({ values, errors, isSubmitting, isSuccess }, null, 2)}
         </p>
+        <div className="mt-2 p-2 bg-gray-100 dark:bg-gray-800 rounded text-xs font-mono">
+          <p className="font-semibold">Network Status:</p>
+          <p>Online: {navigator?.onLine ? 'Yes' : 'No'}</p>
+          <p>Appwrite Endpoint: {process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'Not defined'}</p>
+          <p>Project ID: {process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID ? 'Defined' : 'Not defined'}</p>
+          <p>Database ID: {process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID || 'Not defined'}</p>
+          <p>Collection ID: {process.env.NEXT_PUBLIC_APPWRITE_CONTACT_COLLECTION_ID || 'Not defined'}</p>
+
+          <div className="mt-2 flex gap-2">
+            <button
+              type="button"
+              onClick={testAppwriteConnection}
+              className="text-xs px-2 py-1 bg-blue-200 dark:bg-blue-800 text-blue-800 dark:text-blue-200 rounded"
+            >
+              Test Appwrite Connection
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                addDebugLog('Checking browser network status...');
+                addDebugLog(`Browser reports online: ${navigator?.onLine ? 'Yes' : 'No'}`);
+
+                // Try to fetch a known reliable endpoint
+                fetch('https://www.google.com/favicon.ico', { mode: 'no-cors', cache: 'no-store' })
+                  .then(() => addDebugLog('Internet connectivity test successful'))
+                  .catch(err => addDebugLog(`Internet connectivity test failed: ${err.message}`));
+              }}
+              className="text-xs px-2 py-1 bg-green-200 dark:bg-green-800 text-green-800 dark:text-green-200 rounded"
+            >
+              Test Internet
+            </button>
+          </div>
+        </div>
       </div>
     );
   };
 
+  // Force debug panel to be visible in development mode
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development' && !showDebug) {
+      toggleDebug();
+    }
+  }, [showDebug, toggleDebug]);
+
+  // Function to test Appwrite connectivity
+  const testAppwriteConnection = async () => {
+    addDebugLog('Testing Appwrite connectivity...');
+
+    try {
+      // Import Appwrite client directly
+      const { client, databases, config } = await import('@/lib/appwrite');
+
+      addDebugLog(`Appwrite config: ${JSON.stringify({
+        endpoint: config.endpoint,
+        projectId: config.projectId ? 'defined' : 'undefined',
+        databaseId: config.databaseId,
+        collectionId: config.collectionId
+      })}`);
+
+      // Try a simple health check by pinging the Appwrite server
+      const response = await fetch(`${config.endpoint}/health`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        addDebugLog(`Appwrite health check successful: ${JSON.stringify(data)}`);
+      } else {
+        addDebugLog(`ERROR: Appwrite health check failed with status ${response.status}`);
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      addDebugLog(`ERROR: Failed to test Appwrite connection: ${errorMessage}`);
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-      {/* Debug Panel - only shown in development mode */}
+      {/* Debug Panel - always shown in development mode */}
       {process.env.NODE_ENV === 'development' && <DebugPanel />}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
@@ -191,6 +266,13 @@ export function ContactFormZustand() {
                 >
                   Try Again
                 </button>
+                <button
+                  type="button"
+                  onClick={() => submitForm({ method: SubmissionMethod.EMAIL })}
+                  className="inline-flex items-center justify-center px-3 py-1.5 text-xs font-medium rounded-md bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 hover:bg-red-200 dark:hover:bg-red-800/30 transition-colors"
+                >
+                  Use Email Fallback
+                </button>
                 <a
                   href={`mailto:Jacobsamuelbarkin@gmail.com?subject=${encodeURIComponent(
                     `Contact Form: ${values.subject || 'Message from website'}`
@@ -199,7 +281,7 @@ export function ContactFormZustand() {
                   )}`}
                   className="inline-flex items-center justify-center px-3 py-1.5 text-xs font-medium rounded-md bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 hover:bg-red-200 dark:hover:bg-red-800/30 transition-colors"
                 >
-                  Send via Email Instead
+                  Open Email Client
                 </a>
               </div>
             </div>
