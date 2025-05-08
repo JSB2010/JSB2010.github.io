@@ -8,7 +8,9 @@ import {
   Code,
   ExternalLink,
   Laptop,
-  Monitor
+  Monitor,
+  Tv,
+  Server
 } from "lucide-react";
 import { ProjectCard as GitHubProjectCard } from "@/components/project-card";
 import { fetchUserRepositories, transformRepoToProjectCard } from "@/lib/github";
@@ -20,7 +22,7 @@ import "./projects-fixed.css";
 
 export const metadata: Metadata = {
   title: "Projects | Jacob Barkin",
-  description: "Explore Jacob Barkin's projects in technology, financial education, and public transportation research.",
+  description: "Explore Jacob Barkin's projects in technology, technology consulting, and public transportation research.",
 };
 
 // Project data
@@ -28,11 +30,11 @@ const projects = [
   {
     id: "ask-the-kidz",
     title: "Ask The Kidz",
-    description: "A platform dedicated to empowering youth through financial education, providing resources and guidance for building a secure financial future.",
+    description: "A technology consulting business providing tech support and solutions for various devices, software, and smart home setups. Helping people solve their technology challenges with personalized service.",
     image: undefined,
     icon: <LineChart className="h-16 w-16 text-white" />,
     gradient: "from-blue-500 to-purple-600",
-    tags: ["Financial Education", "Youth Empowerment"],
+    tags: ["Technology Consulting", "Tech Support"],
     link: "https://www.askthekidz.com",
     github: null,
     featured: true,
@@ -57,30 +59,42 @@ const projects = [
     icon: <Code className="h-16 w-16 text-white" />,
     gradient: "from-indigo-500 to-blue-600",
     tags: ["Next.js", "Tailwind CSS", "shadcn UI"],
-    link: "/",
+    link: "/portfolio-website",
     github: "https://github.com/JSB2010/JSB2010.github.io",
     featured: true,
   },
   {
+    id: "raspberry-pi-homelab",
+    title: "Raspberry Pi 5 Homelab",
+    description: "Building a powerful homelab using a Raspberry Pi 5 with Docker containers, accessible from anywhere using Tailscale and Cloudflare Tunnels.",
+    image: undefined,
+    icon: <Server className="h-16 w-16 text-white" />,
+    gradient: "from-green-500 to-teal-600",
+    tags: ["Docker", "Self-Hosting", "Raspberry Pi"],
+    link: "/raspberry-pi-homelab",
+    github: null,
+    featured: false,
+  },
+  {
     id: "macbook-pro-opencore",
-    title: "MacBook Pro OpenCore",
-    description: "A guide and configuration for installing macOS on older MacBook Pro models using OpenCore bootloader.",
+    title: "MacBook Pro Revitalization",
+    description: "How I breathed new life into my 2010 MacBook Pro by installing every macOS version from 10.7 to 12.0 on different partitions using OpenCore bootloader.",
     image: undefined,
     icon: <Laptop className="h-16 w-16 text-white" />,
     gradient: "from-gray-600 to-gray-800",
-    tags: ["macOS", "OpenCore", "Hardware"],
+    tags: ["macOS", "OpenCore", "Hardware Modification"],
     link: "/macbook-pro-opencore",
     github: null,
     featured: false,
   },
   {
     id: "macos-apple-tv",
-    title: "macOS Apple TV Integration",
-    description: "A project exploring the integration between macOS and Apple TV for enhanced media experiences.",
+    title: "Apple TV macOS Conversion",
+    description: "How I transformed a 1st generation Apple TV into a fully functional Mac computer by installing macOS on it.",
     image: undefined,
-    icon: <Monitor className="h-16 w-16 text-white" />,
+    icon: <Tv className="h-16 w-16 text-white" />,
     gradient: "from-red-500 to-pink-600",
-    tags: ["macOS", "Apple TV", "Integration"],
+    tags: ["macOS", "Apple TV", "Hardware Modification"],
     link: "/macos-apple-tv",
     github: null,
     featured: false,
@@ -122,7 +136,7 @@ export default async function ProjectsPage() {
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4 sm:mb-6 gradient-text">My Projects</h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-              Explore my work across technology, financial education, and public transportation research.
+              Explore my work across technology, technology consulting, and public transportation research.
             </p>
           </div>
         </div>

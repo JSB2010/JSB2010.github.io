@@ -8,11 +8,13 @@ import {
   SiJavascript,
   SiPython,
   SiAppwrite,
-  SiReact
+  SiReact,
+  SiFirebase,
+  SiOpenai
 } from "react-icons/si";
 
 // Import additional icon sets for technologies that might not be in simple-icons
-import { FaUniversalAccess, FaMobileAlt, FaGraduationCap, FaGlobeAmericas } from "react-icons/fa";
+import { FaUniversalAccess, FaMobileAlt, FaGraduationCap, FaGlobeAmericas, FaBriefcase, FaMoneyBillWave, FaUsers } from "react-icons/fa";
 
 // Import Aceternity UI components
 import { BackgroundGradient } from "@/components/ui/aceternity/background-gradient";
@@ -60,15 +62,9 @@ export default function AboutPage() {
         <Spotlight className="hidden md:block" />
         <div className="container relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
-            <ThreeDCard
-              className="relative aspect-square max-w-xs sm:max-w-sm md:max-w-md mx-auto md:mx-0 rounded-2xl overflow-hidden"
-              rotationIntensity={5}
-              glareOpacity={0.2}
-              glareSize={0.6}
-            >
+            <div className="relative aspect-square max-w-xs sm:max-w-sm md:max-w-md mx-auto md:mx-0 rounded-2xl overflow-hidden">
               <BackgroundGradient className="rounded-2xl h-full">
                 <div className="relative h-full w-full rounded-2xl overflow-hidden shadow-xl flex items-center justify-center">
-                  {/* Direct img tag */}
                   <img
                     src="/images/Jacob City.png"
                     alt="Jacob Barkin"
@@ -77,7 +73,7 @@ export default function AboutPage() {
                   <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent mix-blend-overlay"></div>
                 </div>
               </BackgroundGradient>
-            </ThreeDCard>
+            </div>
 
             <div className="px-4 sm:px-6 md:px-0 mt-6 md:mt-0">
               <TextRevealCard
@@ -90,13 +86,13 @@ export default function AboutPage() {
                   I&apos;m a freshman at Kent Denver School with a focus on computer science, technology, and financial education. My passion for technology began at an early age, and I&apos;ve been developing my skills in programming and web development ever since.
                 </p>
                 <p>
-                  Beyond technology, I&apos;m deeply committed to financial education for youth. I believe that understanding personal finance is a critical life skill that should be accessible to everyone, especially young people who are just beginning to navigate the financial world.
+                  Beyond technology, I&apos;m deeply committed to financial education and literacy for youth. As a Youth Advisory Board Member at Young Americans Center For Financial Education, I work to promote financial literacy and help young people develop essential money management skills. I believe that understanding personal finance is a critical life skill that should be accessible to everyone, especially young people who are just beginning to navigate the financial world.
                 </p>
                 <p>
                   I&apos;m also interested in public transportation systems and their impact on communities. I research and advocate for improved public transit, focusing on accessibility and sustainability.
                 </p>
                 <p>
-                  Through my projects and initiatives, I aim to combine these interests to create meaningful solutions that help people learn, grow, and navigate the world more effectively.
+                  Through my projects and initiatives, I aim to combine these interests to create meaningful solutions that help people learn, grow, and navigate both the technological and financial aspects of the modern world more effectively.
                 </p>
               </div>
             </div>
@@ -145,15 +141,85 @@ export default function AboutPage() {
                       Actively involved in technology clubs and programming initiatives. Pursuing coursework in computer science, mathematics, and financial literacy.
                     </p>
 
-                    <Link
-                      href="https://www.kentdenver.org/"
+                    <a
+                      href="https://kentdenver.org"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center text-primary hover:underline text-sm sm:text-base"
                     >
                       <FaGlobeAmericas className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
                       Visit School Website
-                    </Link>
+                    </a>
+                  </Card>
+                </BackgroundGradient>
+              </div>
+            </div>
+          </div>
+        </section>
+      </LazyLoad>
+
+      {/* Work Experience Section - Lazy loaded */}
+      <LazyLoad className="relative overflow-hidden">
+        <section className="py-10 sm:py-12 md:py-16">
+          <div className="container relative z-10 px-4 sm:px-6">
+            <TextRevealCard
+              text="Work Experience"
+              revealText="Professional Journey"
+              className="border-none shadow-none p-0 bg-transparent mb-8 sm:mb-10 md:mb-12 mx-auto text-center"
+            />
+
+            <div className="max-w-3xl mx-auto">
+              <div className="relative pl-6 sm:pl-8 pb-8 sm:pb-12 border-l-2 border-primary/30 last:border-0">
+                <MovingBorder className="p-0.5" containerClassName="absolute top-0 left-0 -translate-x-1/2 rounded-full" duration={5000}>
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-background flex items-center justify-center">
+                    <FaBriefcase className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
+                  </div>
+                </MovingBorder>
+
+                <BackgroundGradient className="rounded-xl">
+                  <Card className="border-0 bg-background/80 backdrop-blur-sm p-4 sm:p-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 sm:mb-4">
+                      <h3 className="text-lg sm:text-xl font-semibold">Young Americans Center For Financial Education</h3>
+                      <span className="text-sm text-muted-foreground mt-1 sm:mt-0">2023 - Present</span>
+                    </div>
+
+                    <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+                      <MovingBorder className="p-0.5" containerClassName="rounded-md" duration={5000}>
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-background rounded-md p-1 flex items-center justify-center">
+                          <FaUsers className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+                        </div>
+                      </MovingBorder>
+                      <div>
+                        <p className="font-medium text-sm sm:text-base">Youth Advisory Board Member</p>
+                        <p className="text-xs sm:text-sm text-muted-foreground">Financial Education & Leadership</p>
+                      </div>
+                    </div>
+
+                    <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">
+                      As a member of the Youth Advisory Board, I provide insights and perspectives on banking products, services, and programs designed for young people. I collaborate with a diverse group of students from across Colorado to advise Young Americans Bank and the nonprofit programs of Young Americans Center for Financial Education. This role has allowed me to develop skills in leadership, business etiquette, and financial literacy while serving as an ambassador for the organization at special events and functions.
+                    </p>
+
+                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                      <a
+                        href="https://yacenter.org"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center text-primary hover:underline text-sm sm:text-base"
+                      >
+                        <FaGlobeAmericas className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
+                        Visit Organization Website
+                      </a>
+
+                      <a
+                        href="https://yacenter.org/about-us/youth-board/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center text-primary hover:underline text-sm sm:text-base"
+                      >
+                        <FaUsers className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
+                        Learn About the Youth Board
+                      </a>
+                    </div>
                   </Card>
                 </BackgroundGradient>
               </div>
@@ -177,7 +243,7 @@ export default function AboutPage() {
               I&apos;ve developed a diverse set of skills across various technologies and disciplines.
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
               <ThreeDCard
                 className="h-full w-full"
                 rotationIntensity={5}
@@ -185,9 +251,8 @@ export default function AboutPage() {
                 glareSize={0.4}
               >
                 <SkillCard
-                  icon={<SiHtml5 className="h-6 w-6" />}
+                  icon={<SiHtml5 className="h-full w-full" />}
                   title="HTML5"
-                  level={90}
                 />
               </ThreeDCard>
 
@@ -198,9 +263,8 @@ export default function AboutPage() {
                 glareSize={0.4}
               >
                 <SkillCard
-                  icon={<SiCss3 className="h-6 w-6" />}
+                  icon={<SiCss3 className="h-full w-full" />}
                   title="CSS3"
-                  level={85}
                 />
               </ThreeDCard>
 
@@ -211,9 +275,8 @@ export default function AboutPage() {
                 glareSize={0.4}
               >
                 <SkillCard
-                  icon={<SiJavascript className="h-6 w-6" />}
+                  icon={<SiJavascript className="h-full w-full" />}
                   title="JavaScript"
-                  level={80}
                 />
               </ThreeDCard>
 
@@ -224,9 +287,8 @@ export default function AboutPage() {
                 glareSize={0.4}
               >
                 <SkillCard
-                  icon={<SiPython className="h-6 w-6" />}
+                  icon={<SiPython className="h-full w-full" />}
                   title="Python"
-                  level={75}
                 />
               </ThreeDCard>
 
@@ -237,22 +299,8 @@ export default function AboutPage() {
                 glareSize={0.4}
               >
                 <SkillCard
-                  icon={<SiAppwrite className="h-6 w-6" />}
-                  title="Appwrite"
-                  level={70}
-                />
-              </ThreeDCard>
-
-              <ThreeDCard
-                className="h-full w-full"
-                rotationIntensity={5}
-                glareOpacity={0.1}
-                glareSize={0.4}
-              >
-                <SkillCard
-                  icon={<SiReact className="h-6 w-6" />}
+                  icon={<SiReact className="h-full w-full" />}
                   title="React"
-                  level={85}
                 />
               </ThreeDCard>
 
@@ -263,9 +311,44 @@ export default function AboutPage() {
                 glareSize={0.4}
               >
                 <SkillCard
-                  icon={<FaUniversalAccess className="h-6 w-6" />}
+                  icon={<SiFirebase className="h-full w-full" />}
+                  title="Firebase"
+                />
+              </ThreeDCard>
+
+              <ThreeDCard
+                className="h-full w-full"
+                rotationIntensity={5}
+                glareOpacity={0.1}
+                glareSize={0.4}
+              >
+                <SkillCard
+                  icon={<SiAppwrite className="h-full w-full" />}
+                  title="Appwrite"
+                />
+              </ThreeDCard>
+
+              <ThreeDCard
+                className="h-full w-full"
+                rotationIntensity={5}
+                glareOpacity={0.1}
+                glareSize={0.4}
+              >
+                <SkillCard
+                  icon={<SiOpenai className="h-full w-full" />}
+                  title="AI Integration"
+                />
+              </ThreeDCard>
+
+              <ThreeDCard
+                className="h-full w-full"
+                rotationIntensity={5}
+                glareOpacity={0.1}
+                glareSize={0.4}
+              >
+                <SkillCard
+                  icon={<FaUniversalAccess className="h-full w-full" />}
                   title="Accessibility"
-                  level={85}
                 />
               </ThreeDCard>
 
@@ -276,9 +359,8 @@ export default function AboutPage() {
                 glareSize={0.4}
               >
                 <SkillCard
-                  icon={<FaMobileAlt className="h-6 w-6" />}
+                  icon={<FaMobileAlt className="h-full w-full" />}
                   title="Responsive Design"
-                  level={90}
                 />
               </ThreeDCard>
 
@@ -289,9 +371,8 @@ export default function AboutPage() {
                 glareSize={0.4}
               >
                 <SkillCard
-                  icon={<FaGraduationCap className="h-6 w-6" />}
+                  icon={<FaGraduationCap className="h-full w-full" />}
                   title="Education"
-                  level={95}
                 />
               </ThreeDCard>
             </div>
@@ -302,28 +383,20 @@ export default function AboutPage() {
   );
 }
 
-function SkillCard({ icon, title, level }: Readonly<{ icon: React.ReactNode, title: string, level: number }>) {
+function SkillCard({ icon, title }: Readonly<{ icon: React.ReactNode, title: string }>) {
   return (
     <BackgroundGradient className="rounded-xl h-full">
       <Card className="overflow-hidden border-0 bg-background/80 backdrop-blur-sm h-full">
-        <CardContent className="p-4 sm:p-6">
-          <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-            <MovingBorder className="p-0.5" containerClassName="rounded-md" duration={5000}>
-              <div className="p-1.5 sm:p-2 rounded-md bg-background text-primary">
+        <CardContent className="p-4 sm:p-6 flex flex-col items-center text-center">
+          <MovingBorder className="p-0.5 mb-4" containerClassName="rounded-full" duration={5000}>
+            <div className="p-3 sm:p-4 rounded-full bg-background text-primary flex items-center justify-center">
+              <div className="h-8 w-8 sm:h-10 sm:w-10">
                 {icon}
               </div>
-            </MovingBorder>
-            <h3 className="text-sm sm:text-base font-medium">{title}</h3>
-          </div>
-
-          <div className="w-full h-2 sm:h-3 bg-muted rounded-full overflow-hidden">
-            <div
-              className={`h-full bg-gradient-to-r from-primary to-accent rounded-full transition-all duration-1000 ease-out skill-progress-${level}`}
-            ></div>
-          </div>
-          <div className="mt-1 sm:mt-2 text-right text-xs sm:text-sm text-muted-foreground">
-            {level}%
-          </div>
+            </div>
+          </MovingBorder>
+          <h3 className="text-base sm:text-lg font-medium mb-2">{title}</h3>
+          <div className="w-16 h-1 bg-primary/30 rounded-full mx-auto"></div>
         </CardContent>
       </Card>
     </BackgroundGradient>

@@ -25,11 +25,11 @@ export const viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: "Jacob Barkin | Developer & Financial Education Advocate",
+    default: "Jacob Barkin | Developer & Technology Consultant",
     template: "%s | Jacob Barkin"
   },
-  description: "Jacob Barkin - Developer, financial education advocate, and technology enthusiast. Explore my projects, interests, and professional journey.",
-  keywords: ["Jacob Barkin", "Developer", "Financial Education", "Web Development", "Next.js", "Portfolio", "Technology", "Accessibility", "Public Transportation Research"],
+  description: "Jacob Barkin - Developer, technology consultant, and technology enthusiast. Explore my projects, interests, and professional journey.",
+  keywords: ["Jacob Barkin", "Developer", "Technology Consulting", "Web Development", "Next.js", "Portfolio", "Technology", "Accessibility", "Public Transportation Research"],
   authors: [{ name: "Jacob Barkin", url: "https://github.com/JSB2010" }],
   creator: "Jacob Barkin",
   publisher: "Jacob Barkin",
@@ -48,8 +48,8 @@ export const metadata: Metadata = {
     apple: "/images/Updated logo.png",
   },
   openGraph: {
-    title: "Jacob Barkin | Developer & Financial Education Advocate",
-    description: "Developer, financial education advocate, and technology enthusiast. Explore my projects, interests, and professional journey.",
+    title: "Jacob Barkin | Developer & Technology Consultant",
+    description: "Developer, technology consultant, and technology enthusiast. Explore my projects, interests, and professional journey.",
     url: "https://jsb2010.github.io",
     siteName: "Jacob Barkin Portfolio",
     images: [

@@ -1,0 +1,20 @@
+total 1200
+drwxr-xr-x@ 35 jbarkin28  staff    1120 May  2 21:33 .
+drwxr-xr-x  78 jbarkin28  staff    2496 May  7 20:57 ..
+-rw-r--r--@  1 jbarkin28  staff    8654 May  2 21:33 about-styles.css
+-rw-r--r--@  1 jbarkin28  staff    4804 May  2 21:33 about.html
+-rw-r--r--@  1 jbarkin28  staff    4136 May  2 21:33 animations.js
+-rw-r--r--@  1 jbarkin28  staff    8003 May  2 21:33 common.js
+-rw-r--r--@  1 jbarkin28  staff   55062 May  2 21:33 consolidated.css
+-rw-r--r--@  1 jbarkin28  staff    9773 May  2 21:33 contact-styles.css
+-rw-r--r--@  1 jbarkin28  staff   10112 May  2 21:33 contact.html
+-rw-r--r--@  1 jbarkin28  staff   11603 May  2 21:33 floating-nav.css
+-rw-r--r--@  1 jbarkin28  staff    2447 May  2 21:33 footer.html
+-rw-r--r--@  1 jbarkin28  staff    3610 May  2 21:33 global-fix.js
+-rw-r--r--@  1 jbarkin28  staff   10486 May  2 21:33 header-styles.css
+-rw-r--r--@  1 jbarkin28  staff    2588 May  2 21:33 header.html
+-rw-r--r--@  1 jbarkin28  staff    4763 May  2 21:33 header.js
+drwxr-xr-x@  8 jbarkin28  staff     256 May  2 21:33 images
+-rw-r--r--@  1 jbarkin28  staff   22036 May  2 21:33 immersive-mountains.js
+-rw-r--r--@  1 jbarkin28  staff   22903 May  2 21:33 index.html
+-rw-r--r--@  1 jbarkin28  staff   12110 May  2 21:33 macbook-pro-opencore.html

@@ -5,24 +5,26 @@ import { Button } from "@/components/ui/button";
 import { ProjectDetail } from "@/components/projects/project-detail";
 import {
   Laptop,
-  Download,
   FileCode,
   Terminal,
   HardDrive,
   Cpu,
-  AlertCircle
+  ExternalLink,
+  Clock,
+  Layers,
+  GitBranch
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "MacBook Pro OpenCore Guide | Jacob Barkin",
-  description: "A comprehensive guide for installing macOS on older MacBook Pro models using OpenCore bootloader.",
+  title: "MacBook Pro OpenCore Project | Jacob Barkin",
+  description: "How I revitalized my 2010 MacBook Pro by installing multiple macOS versions (10.7-12.0) using OpenCore bootloader.",
 };
 
 export default function MacbookProOpencorePage() {
   return (
     <ProjectDetail
       projectId="macbook-pro-opencore"
-      projectName="MacBook Pro OpenCore Guide"
+      projectName="MacBook Pro OpenCore Project"
       showFeedback={true}
     >
       {/* Hero Section */}
@@ -31,38 +33,38 @@ export default function MacbookProOpencorePage() {
 
         <div className="container relative z-20">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">MacBook Pro OpenCore Guide</h1>
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">MacBook Pro Revitalization Project</h1>
             <div className="h-1 w-20 bg-primary rounded-full mx-auto mb-8"></div>
             <p className="text-xl text-muted-foreground">
-              A comprehensive guide for installing macOS on older MacBook Pro models using the OpenCore bootloader.
+              How I breathed new life into my 2010 MacBook Pro by installing every macOS version from 10.7 to 12.0 on different partitions.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Introduction Section */}
+      {/* Project Overview Section */}
       <section className="py-16">
         <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl font-bold mb-6">What is OpenCore?</h2>
+              <h2 className="text-3xl font-bold mb-6">Project Overview</h2>
               <div className="space-y-4 text-muted-foreground">
                 <p>
-                  OpenCore is an open-source bootloader designed to work with macOS, providing a clean, modern approach to booting macOS on both Apple and non-Apple hardware.
+                  In this personal project, I successfully revitalized my 2010 MacBook Pro by implementing multi-boot capabilities across multiple macOS versions, from Lion (10.7) all the way to Monterey (12.0).
                 </p>
                 <p>
-                  Unlike older bootloaders, OpenCore focuses on security, stability, and proper implementation of Apple's boot process. It allows for a more native experience and better compatibility with macOS updates.
+                  For macOS versions 10.14 (Mojave) and above, I needed to use OpenCore bootloader since Apple dropped official support for my hardware. This required custom configurations, kernel extensions, and ACPI patches to make everything work properly.
                 </p>
                 <p>
-                  This guide specifically focuses on using OpenCore to install and run modern versions of macOS on older MacBook Pro models that are no longer officially supported by Apple.
+                  The result was a fully functional machine that could boot into six different macOS versions, allowing me to test software compatibility across operating systems and extend the useful life of my hardware by several years.
                 </p>
               </div>
 
               <div className="mt-8">
-                <Button asChild>
-                  <Link href="#download-section">
-                    <Download className="mr-2 h-5 w-5" />
-                    Download Configuration Files
+                <Button asChild variant="outline">
+                  <Link href="#resources-section">
+                    <ExternalLink className="mr-2 h-5 w-5" />
+                    Useful Resources
                   </Link>
                 </Button>
               </div>
@@ -77,10 +79,10 @@ export default function MacbookProOpencorePage() {
         </div>
       </section>
 
-      {/* Compatibility Section */}
+      {/* Technical Details Section */}
       <section className="py-16 bg-muted/50">
         <div className="container">
-          <h2 className="text-3xl font-bold text-center mb-12">Supported MacBook Pro Models</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">Technical Details</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <Card className="bg-card hover:shadow-lg transition-shadow">
@@ -89,9 +91,9 @@ export default function MacbookProOpencorePage() {
                   <div className="p-3 rounded-full bg-primary/10 mb-4">
                     <Laptop className="h-8 w-8 text-primary" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">MacBook Pro (Mid 2012)</h3>
+                  <h3 className="text-xl font-semibold mb-2">Hardware Specs</h3>
                   <p className="text-muted-foreground">
-                    13-inch and 15-inch models with Intel Ivy Bridge processors. Can run up to macOS Monterey with OpenCore.
+                    MacBook Pro (Mid 2010) with Intel Core 2 Duo processor, upgraded to 8GB RAM and 1TB SSD for improved performance.
                   </p>
                 </div>
               </CardContent>
@@ -101,11 +103,11 @@ export default function MacbookProOpencorePage() {
               <CardContent className="pt-6">
                 <div className="flex flex-col items-center text-center">
                   <div className="p-3 rounded-full bg-primary/10 mb-4">
-                    <Laptop className="h-8 w-8 text-primary" />
+                    <Layers className="h-8 w-8 text-primary" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">MacBook Pro (Late 2011)</h3>
+                  <h3 className="text-xl font-semibold mb-2">OS Versions</h3>
                   <p className="text-muted-foreground">
-                    13-inch, 15-inch, and 17-inch models with Intel Sandy Bridge processors. Can run up to macOS Big Sur with OpenCore.
+                    Successfully installed macOS 10.7 (Lion), 10.8 (Mountain Lion), 10.9 (Mavericks), 10.10 (Yosemite), 10.11 (El Capitan), 10.12 (Sierra), 10.13 (High Sierra), 10.14 (Mojave), 10.15 (Catalina), 11.0 (Big Sur), and 12.0 (Monterey).
                   </p>
                 </div>
               </CardContent>
@@ -115,11 +117,11 @@ export default function MacbookProOpencorePage() {
               <CardContent className="pt-6">
                 <div className="flex flex-col items-center text-center">
                   <div className="p-3 rounded-full bg-primary/10 mb-4">
-                    <Laptop className="h-8 w-8 text-primary" />
+                    <GitBranch className="h-8 w-8 text-primary" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">MacBook Pro (Mid 2010)</h3>
+                  <h3 className="text-xl font-semibold mb-2">Boot Management</h3>
                   <p className="text-muted-foreground">
-                    13-inch, 15-inch, and 17-inch models with Intel Arrandale processors. Can run up to macOS Catalina with OpenCore.
+                    Used OpenCore bootloader for macOS 10.14+ and native boot for earlier versions, with a custom boot menu to select between operating systems.
                   </p>
                 </div>
               </CardContent>
@@ -128,74 +130,127 @@ export default function MacbookProOpencorePage() {
         </div>
       </section>
 
-      {/* Installation Steps */}
+      {/* Challenges & Solutions */}
       <section className="py-16">
         <div className="container">
-          <h2 className="text-3xl font-bold mb-12">Installation Guide</h2>
+          <h2 className="text-3xl font-bold mb-12">Challenges & Solutions</h2>
 
           <div className="space-y-12">
-            <InstallationStep
+            <ChallengeItem
               number={1}
-              title="Prepare Your MacBook Pro"
-              description="Back up all your important data before proceeding. This process will erase your drive and install a fresh copy of macOS."
+              title="Hardware Compatibility"
+              challenge="My 2010 MacBook Pro wasn't officially supported by macOS versions after High Sierra."
+              solution="Used OpenCore bootloader with custom kexts to enable hardware support for newer macOS versions."
               icon={<HardDrive />}
             />
 
-            <InstallationStep
+            <ChallengeItem
               number={2}
-              title="Download OpenCore and Configuration Files"
-              description="Download the latest version of OpenCore and the pre-configured EFI files for your specific MacBook Pro model."
-              icon={<Download />}
-            />
-
-            <InstallationStep
-              number={3}
-              title="Create a Bootable macOS Installer"
-              description="Use the 'createinstallmedia' command in Terminal to create a bootable USB installer with your desired macOS version."
-              icon={<Terminal />}
-            />
-
-            <InstallationStep
-              number={4}
-              title="Configure OpenCore for Your Model"
-              description="Modify the config.plist file to match your specific MacBook Pro model and hardware configuration."
-              icon={<FileCode />}
-            />
-
-            <InstallationStep
-              number={5}
-              title="Install macOS"
-              description="Boot from the USB installer using OpenCore and follow the on-screen instructions to install macOS on your MacBook Pro."
+              title="Graphics Acceleration"
+              challenge="The NVIDIA GeForce 320M GPU in my MacBook Pro lacked proper drivers in newer macOS versions."
+              solution="Implemented custom framebuffer patches and GPU configuration to enable basic acceleration."
               icon={<Laptop />}
             />
 
-            <InstallationStep
-              number={6}
-              title="Post-Installation"
-              description="Install additional kexts and patches as needed to enable all hardware features like Wi-Fi, Bluetooth, and graphics acceleration."
-              icon={<Cpu />}
+            <ChallengeItem
+              number={3}
+              title="Multi-Boot Configuration"
+              challenge="Managing multiple macOS installations on a single drive with a seamless boot experience."
+              solution="Created a custom partition scheme with separate EFI partitions and configured OpenCore to detect all installations."
+              icon={<Layers />}
+            />
+
+            <ChallengeItem
+              number={4}
+              title="ACPI Patching"
+              challenge="Modern macOS versions required ACPI tables that weren't available on my older hardware."
+              solution="Created custom DSDT and SSDT patches to provide the necessary hardware information to the OS."
+              icon={<FileCode />}
+            />
+
+            <ChallengeItem
+              number={5}
+              title="Performance Optimization"
+              challenge="Newer macOS versions were sluggish on the older hardware."
+              solution="Disabled unnecessary services, optimized system configurations, and upgraded to an SSD for a 2x performance boost."
+              icon={<Clock />}
             />
           </div>
         </div>
       </section>
 
-      {/* Download Section */}
-      <section id="download-section" className="py-16 bg-muted/50">
+      {/* Results Section */}
+      <section className="py-16 bg-muted/50">
         <div className="container">
-          <h2 className="text-3xl font-bold text-center mb-12">Download Configuration Files</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">Project Results</h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <Card className="bg-card hover:shadow-lg transition-shadow">
+              <CardContent className="pt-6">
+                <div className="flex flex-col items-center text-center">
+                  <div className="p-3 rounded-full bg-primary/10 mb-4">
+                    <Layers className="h-8 w-8 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">11 OS Versions</h3>
+                  <p className="text-muted-foreground mb-6">
+                    Successfully installed and configured 11 different macOS versions on a single machine.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-card hover:shadow-lg transition-shadow">
+              <CardContent className="pt-6">
+                <div className="flex flex-col items-center text-center">
+                  <div className="p-3 rounded-full bg-primary/10 mb-4">
+                    <Clock className="h-8 w-8 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">Extended Lifespan</h3>
+                  <p className="text-muted-foreground mb-6">
+                    Added 5+ years of usability to a machine that Apple had officially discontinued support for.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-card hover:shadow-lg transition-shadow">
+              <CardContent className="pt-6">
+                <div className="flex flex-col items-center text-center">
+                  <div className="p-3 rounded-full bg-primary/10 mb-4">
+                    <Cpu className="h-8 w-8 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">100% Functionality</h3>
+                  <p className="text-muted-foreground mb-6">
+                    All hardware components working properly, including Wi-Fi, Bluetooth, graphics, and USB ports.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Resources Section */}
+      <section id="resources-section" className="py-16">
+        <div className="container">
+          <h2 className="text-3xl font-bold text-center mb-12">Useful Resources</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <Card className="bg-card hover:shadow-lg transition-shadow">
               <CardContent className="pt-6">
                 <div className="flex flex-col items-center text-center">
                   <div className="p-3 rounded-full bg-primary/10 mb-4">
-                    <Download className="h-8 w-8 text-primary" />
+                    <FileCode className="h-8 w-8 text-primary" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">MacBook Pro (2010-2012) EFI</h3>
+                  <h3 className="text-xl font-semibold mb-2">OpenCore Documentation</h3>
                   <p className="text-muted-foreground mb-6">
-                    Pre-configured OpenCore EFI files for MacBook Pro models from 2010 to 2012.
+                    The official OpenCore documentation provides detailed information about configuring the bootloader for various hardware.
                   </p>
-                  <Button>Download EFI Files</Button>
+                  <Button asChild>
+                    <Link href="https://dortania.github.io/OpenCore-Install-Guide/" target="_blank" rel="noopener noreferrer">
+                      Visit Documentation
+                    </Link>
+                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -204,44 +259,20 @@ export default function MacbookProOpencorePage() {
               <CardContent className="pt-6">
                 <div className="flex flex-col items-center text-center">
                   <div className="p-3 rounded-full bg-primary/10 mb-4">
-                    <FileCode className="h-8 w-8 text-primary" />
+                    <Terminal className="h-8 w-8 text-primary" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">Configuration Guide</h3>
+                  <h3 className="text-xl font-semibold mb-2">MacRumors Legacy Mac Forums</h3>
                   <p className="text-muted-foreground mb-6">
-                    Detailed PDF guide with step-by-step instructions for configuring OpenCore for your specific model.
+                    A community of users working on keeping older Mac hardware running with modern software.
                   </p>
-                  <Button>Download Guide</Button>
+                  <Button asChild>
+                    <Link href="https://forums.macrumors.com/forums/mac-notebooks.102/" target="_blank" rel="noopener noreferrer">
+                      Visit Forums
+                    </Link>
+                  </Button>
                 </div>
               </CardContent>
             </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Warning Section */}
-      <section className="py-16">
-        <div className="container">
-          <div className="bg-card rounded-xl p-8 shadow-md border-l-4 border-yellow-500">
-            <div className="flex items-start gap-4">
-              <div className="p-2 rounded-full bg-yellow-500/10 text-yellow-500">
-                <AlertCircle className="h-6 w-6" />
-              </div>
-
-              <div>
-                <h2 className="text-2xl font-bold mb-4">Important Disclaimer</h2>
-                <div className="space-y-4 text-muted-foreground">
-                  <p>
-                    This guide is provided for educational purposes only. Installing macOS on unsupported hardware may violate Apple's End User License Agreement (EULA).
-                  </p>
-                  <p>
-                    I am not responsible for any damage that may occur to your hardware or data during this process. Always back up your important files before proceeding.
-                  </p>
-                  <p>
-                    Some features may not work perfectly on unsupported hardware, and you may experience issues with certain applications or system updates.
-                  </p>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -249,15 +280,17 @@ export default function MacbookProOpencorePage() {
   );
 }
 
-function InstallationStep({
+function ChallengeItem({
   number,
   title,
-  description,
+  challenge,
+  solution,
   icon
 }: Readonly<{
   number: number,
   title: string,
-  description: string,
+  challenge: string,
+  solution: string,
   icon: React.ReactNode
 }>) {
   return (
@@ -266,7 +299,7 @@ function InstallationStep({
         <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary text-primary-foreground font-bold text-lg">
           {number}
         </div>
-        {number < 6 && (
+        {number < 5 && (
           <div className="absolute top-12 bottom-0 left-1/2 w-0.5 -translate-x-1/2 bg-primary/20 h-16"></div>
         )}
       </div>
@@ -278,8 +311,12 @@ function InstallationStep({
           </div>
           <h3 className="text-xl font-semibold">{title}</h3>
         </div>
-        <p className="text-muted-foreground">{description}</p>
+        <div className="space-y-2">
+          <p className="text-muted-foreground"><strong>Challenge:</strong> {challenge}</p>
+          <p className="text-muted-foreground"><strong>Solution:</strong> {solution}</p>
+        </div>
       </div>
     </div>
   );
 }
+

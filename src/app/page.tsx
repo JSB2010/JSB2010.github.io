@@ -11,6 +11,7 @@ import {
   User,
   ArrowRight
 } from "lucide-react";
+import { FaMoneyBillWave } from "react-icons/fa";
 import { useEffect, useState } from "react";
 
 // Import Aceternity UI components
@@ -21,6 +22,7 @@ import { StaticTextCard } from "@/components/ui/aceternity/static-text-card";
 import { OptimizedBackgroundImage } from "@/components/ui/optimized-background-image";
 import { ResponsiveImage } from "@/components/ui/responsive-image";
 import { LazyLoad } from "@/components/ui/lazy-load";
+import { EqualHeightGrid } from "@/components/ui/equal-height-grid";
 
 import { BasicImage } from "@/components/ui/basic-image";
 
@@ -104,7 +106,7 @@ export default function Home() {
                 textSize="text-3xl sm:text-4xl md:text-5xl"
               >
                 <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mt-4 sm:mt-6">
-                  Developer & Financial Education Advocate
+                  Developer & Technology Consultant
                 </p>
               </StaticTextCard>
 
@@ -113,16 +115,19 @@ export default function Home() {
                   <Laptop className="h-3 w-3" /> Developer
                 </span>
                 <span className="px-2 sm:px-3 py-1 rounded-full bg-secondary/10 text-secondary text-xs sm:text-sm flex items-center gap-1">
-                  <LineChart className="h-3 w-3" /> Finance
+                  <LineChart className="h-3 w-3" /> Tech Support
                 </span>
                 <span className="px-2 sm:px-3 py-1 rounded-full bg-accent/10 text-accent text-xs sm:text-sm flex items-center gap-1">
                   <Code className="h-3 w-3" /> Projects
                 </span>
+                <span className="px-2 sm:px-3 py-1 rounded-full bg-blue-500/10 text-blue-500 text-xs sm:text-sm flex items-center gap-1">
+                  <FaMoneyBillWave className="h-3 w-3" /> Financial Literacy
+                </span>
               </div>
 
               <p className="text-sm sm:text-base text-muted-foreground max-w-md mx-auto md:mx-0">
-                I&apos;m passionate about technology, financial education, and making a positive impact.
-                With a focus on accessibility and innovation, I develop solutions that help people learn and grow.
+                I&apos;m passionate about technology, technology consulting, financial literacy, and making a positive impact.
+                With a focus on accessibility and innovation, I develop solutions that help people solve their technology challenges while also advocating for youth financial education.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-2 justify-center md:justify-start">
@@ -257,7 +262,7 @@ export default function Home() {
               </TextRevealCard>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
               {/* Technology Card */}
               <BackgroundGradient className="rounded-xl h-full">
                 <Card className="border-0 bg-background/80 backdrop-blur-sm h-full flex flex-col">
@@ -277,7 +282,7 @@ export default function Home() {
                 </Card>
               </BackgroundGradient>
 
-              {/* Finance Card */}
+              {/* Tech Support Card */}
               <BackgroundGradient className="rounded-xl h-full">
                 <Card className="border-0 bg-background/80 backdrop-blur-sm h-full flex flex-col">
                   <CardContent className="pt-4 sm:pt-6 p-4 sm:p-6 flex-grow flex flex-col">
@@ -287,9 +292,28 @@ export default function Home() {
                           <LineChart className="h-6 w-6 sm:h-8 sm:w-8" />
                         </div>
                       </MovingBorder>
-                      <h3 className="text-lg sm:text-xl font-semibold mb-1 sm:mb-2">Finance</h3>
+                      <h3 className="text-lg sm:text-xl font-semibold mb-1 sm:mb-2">Tech Support</h3>
                       <p className="text-xs sm:text-sm text-muted-foreground flex-grow">
-                        Empowering youth through financial literacy for a secure future.
+                        Providing personalized technology consulting and solutions for various devices and software.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </BackgroundGradient>
+
+              {/* Financial Literacy Card */}
+              <BackgroundGradient className="rounded-xl h-full">
+                <Card className="border-0 bg-background/80 backdrop-blur-sm h-full flex flex-col">
+                  <CardContent className="pt-4 sm:pt-6 p-4 sm:p-6 flex-grow flex flex-col">
+                    <div className="flex flex-col items-center text-center h-full">
+                      <MovingBorder className="p-0.5" containerClassName="rounded-full mb-3 sm:mb-4">
+                        <div className="p-2 sm:p-3 rounded-full bg-background text-primary">
+                          <FaMoneyBillWave className="h-6 w-6 sm:h-8 sm:w-8" />
+                        </div>
+                      </MovingBorder>
+                      <h3 className="text-lg sm:text-xl font-semibold mb-1 sm:mb-2">Financial Literacy</h3>
+                      <p className="text-xs sm:text-sm text-muted-foreground flex-grow">
+                        Promoting financial education for youth and helping young people develop essential money management skills.
                       </p>
                     </div>
                   </CardContent>
@@ -365,7 +389,7 @@ export default function Home() {
             </TextRevealCard>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+          <EqualHeightGrid>
             {/* Ask The Kidz */}
             <Link href="https://www.askthekidz.com" target="_blank" rel="noopener noreferrer" className="block h-full">
               <BackgroundGradient className="rounded-xl h-full">
@@ -379,16 +403,16 @@ export default function Home() {
                       </MovingBorder>
                     </div>
                   </div>
-                  <div className="p-4 sm:p-5 md:p-6">
+                  <div className="p-4 sm:p-5 md:p-6 card-content">
                     <h3 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3 text-foreground group-hover:text-primary transition-colors">
                       Ask The Kidz
                     </h3>
                     <p className="text-sm text-muted-foreground mb-3 sm:mb-4 line-clamp-3 sm:line-clamp-none">
-                      A platform dedicated to empowering youth through financial education, providing resources and guidance for building a secure financial future.
+                      A technology consulting business providing tech support and solutions for various devices, software, and smart home setups. Helping people solve their technology challenges with personalized service.
                     </p>
                     <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                      <span className="px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-primary/10 text-primary text-xs">Financial Education</span>
-                      <span className="px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-secondary/10 text-secondary text-xs">Youth Empowerment</span>
+                      <span className="px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-primary/10 text-primary text-xs">Technology Consulting</span>
+                      <span className="px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-secondary/10 text-secondary text-xs">Tech Support</span>
                     </div>
                   </div>
                 </Card>
@@ -408,7 +432,7 @@ export default function Home() {
                       </MovingBorder>
                     </div>
                   </div>
-                  <div className="p-4 sm:p-5 md:p-6">
+                  <div className="p-4 sm:p-5 md:p-6 card-content">
                     <h3 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3 text-foreground group-hover:text-primary transition-colors">
                       Public Transportation Research
                     </h3>
@@ -426,7 +450,7 @@ export default function Home() {
             </Link>
 
             {/* Portfolio Website */}
-            <Link href="/projects" className="block h-full">
+            <Link href="/portfolio-website" className="block h-full">
               <BackgroundGradient className="rounded-xl h-full">
                 <Card className="border-0 bg-background/80 backdrop-blur-sm h-full">
                   <div className="relative h-36 sm:h-40 md:h-48 overflow-hidden rounded-t-xl">
@@ -438,7 +462,7 @@ export default function Home() {
                       </MovingBorder>
                     </div>
                   </div>
-                  <div className="p-4 sm:p-5 md:p-6">
+                  <div className="p-4 sm:p-5 md:p-6 card-content">
                     <h3 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3 text-foreground group-hover:text-primary transition-colors">
                       Portfolio Website
                     </h3>
@@ -454,7 +478,7 @@ export default function Home() {
                 </Card>
               </BackgroundGradient>
             </Link>
-          </div>
+          </EqualHeightGrid>
 
           <div className="flex justify-center mt-8 sm:mt-10 md:mt-12">
             <MovingBorder className="p-0.5 rounded-lg">
