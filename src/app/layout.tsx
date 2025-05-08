@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     address: true,
     telephone: true,
   },
-  metadataBase: new URL("https://jsb2010.github.io"),
+  metadataBase: new URL("https://jacobbarkin.com"),
   alternates: {
     canonical: "/",
   },
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Jacob Barkin | Developer & Technology Consultant",
     description: "Developer, technology consultant, and technology enthusiast. Explore my projects, interests, and professional journey.",
-    url: "https://jsb2010.github.io",
+    url: "https://jacobbarkin.com",
     siteName: "Jacob Barkin Portfolio",
     images: [
       {

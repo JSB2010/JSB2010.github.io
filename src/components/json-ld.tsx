@@ -1,7 +1,7 @@
 'use client';
 
 export default function JsonLd() {
-  const baseUrl = 'https://jsb2010.github.io';
+  const baseUrl = 'https://jacobbarkin.com';
 
   // Base person schema
   const personSchema = {

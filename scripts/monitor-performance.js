@@ -8,7 +8,7 @@ const execAsync = promisify(exec);
 
 // Configuration
 const config = {
-  siteUrl: 'https://jsb2010.github.io',
+  siteUrl: 'https://jacobbarkin.com',
   lighthouseEndpoint: 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed',
   pagesEndpoint: 'https://api.cloudflare.com/client/v4/accounts/{accountId}/pages/projects/{projectName}/deployments',
   metricsOutputPath: path.join(process.cwd(), 'performance-metrics'),
@@ -85,14 +85,14 @@ async function collectCloudflareDeploymentMetrics() {
     });
 
     const data = await response.json();
-    
+
     if (!data.success) {
       throw new Error(data.errors[0].message || 'Unknown Cloudflare API error');
     }
 
     // Get the latest deployment
     const latestDeployment = data.result[0];
-    
+
     return {
       timestamp: new Date().toISOString(),
       deploymentId: latestDeployment.id,
@@ -140,7 +140,7 @@ async function collectAllMetrics() {
 // Generate HTML report
 function generateHtmlReport(results, timestamp) {
   const reportFile = path.join(config.metricsOutputPath, `report-${timestamp}.html`);
-  
+
   let html = `
   <!DOCTYPE html>
   <html lang="en">
@@ -164,11 +164,11 @@ function generateHtmlReport(results, timestamp) {
   </head>
   <body>
     <h1>Performance Report - ${new Date(timestamp).toLocaleString()}</h1>
-    
+
     <div class="section">
       <h2>Pages Performance</h2>
   `;
-  
+
   // Add page metrics
   for (const [page, metrics] of Object.entries(results.pages)) {
     if (metrics.error) {
@@ -179,13 +179,13 @@ function generateHtmlReport(results, timestamp) {
       </div>`;
       continue;
     }
-    
+
     const getScoreClass = (score) => {
       if (score >= 90) return 'good';
       if (score >= 75) return 'average';
       return 'poor';
     };
-    
+
     html += `
     <div class="metric-card">
       <h3>${page}</h3>
@@ -233,15 +233,15 @@ function generateHtmlReport(results, timestamp) {
       </table>
     </div>`;
   }
-  
+
   // Add Cloudflare deployment metrics
   html += `
     </div>
-    
+
     <div class="section">
       <h2>Cloudflare Deployment</h2>
   `;
-  
+
   if (!results.cloudflare) {
     html += `<p>No Cloudflare deployment metrics available. Ensure CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN are set.</p>`;
   } else if (results.cloudflare.error) {
@@ -273,16 +273,16 @@ function generateHtmlReport(results, timestamp) {
       </table>
     </div>`;
   }
-  
+
   html += `
     </div>
-    
+
     <div class="section">
       <h2>Recommendations</h2>
       <div class="metric-card">
         <ul>
   `;
-  
+
   // Generate recommendations based on metrics
   const allMetrics = Object.values(results.pages).filter(m => !m.error);
   if (allMetrics.length > 0) {
@@ -290,26 +290,26 @@ function generateHtmlReport(results, timestamp) {
     const avgLCP = allMetrics.reduce((sum, m) => sum + m.largestContentfulPaint, 0) / allMetrics.length;
     const avgTTI = allMetrics.reduce((sum, m) => sum + m.timeToInteractive, 0) / allMetrics.length;
     const avgCLS = allMetrics.reduce((sum, m) => sum + m.cumulativeLayoutShift, 0) / allMetrics.length;
-    
+
     if (avgPerformance < 90) {
       html += `<li>Overall performance score (${Math.round(avgPerformance)}%) could be improved. Consider further optimizations.</li>`;
     }
-    
+
     if (avgLCP > 2500) {
       html += `<li>Largest Contentful Paint (${(avgLCP / 1000).toFixed(2)}s) is above the recommended 2.5s. Consider optimizing critical rendering path.</li>`;
     }
-    
+
     if (avgTTI > 3500) {
       html += `<li>Time to Interactive (${(avgTTI / 1000).toFixed(2)}s) is above the recommended 3.5s. Consider reducing JavaScript execution time.</li>`;
     }
-    
+
     if (avgCLS > 0.1) {
       html += `<li>Cumulative Layout Shift (${avgCLS.toFixed(3)}) is above the recommended 0.1. Fix elements that shift during page load.</li>`;
     }
   } else {
     html += `<li>No metrics available to generate recommendations.</li>`;
   }
-  
+
   html += `
         </ul>
       </div>
@@ -317,7 +317,7 @@ function generateHtmlReport(results, timestamp) {
   </body>
   </html>
   `;
-  
+
   fs.writeFileSync(reportFile, html);
   console.log(`HTML report generated: ${reportFile}`);
 }

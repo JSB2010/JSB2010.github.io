@@ -5,7 +5,7 @@ export const dynamic = 'force-static';
 export const revalidate = 86400; // Revalidate once per day
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://jsb2010.github.io';
+  const baseUrl = 'https://jacobbarkin.com';
 
   // Define all routes in your application
   const routes = [

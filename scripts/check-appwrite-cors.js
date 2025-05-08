@@ -18,7 +18,6 @@ const domainsToCheck = [
   'http://localhost:3001',
   'https://jacobbarkin.com',
   'https://www.jacobbarkin.com',
-  'https://jsb2010.github.io',
   'https://modern-redesign-shadcn.jsb2010-github-io.pages.dev'
 ];
 

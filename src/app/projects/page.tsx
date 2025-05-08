@@ -60,7 +60,7 @@ const projects = [
     gradient: "from-indigo-500 to-blue-600",
     tags: ["Next.js", "Tailwind CSS", "shadcn UI"],
     link: "/portfolio-website",
-    github: "https://github.com/JSB2010/JSB2010.github.io",
+    github: "https://github.com/JSB2010/jacobbarkin.com",
     featured: true,
   },
   {

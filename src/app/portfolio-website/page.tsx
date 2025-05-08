@@ -50,7 +50,7 @@ export default function PortfolioWebsitePage() {
               A modern, responsive portfolio website built with Next.js, Tailwind CSS, and shadcn UI, featuring accessibility and dark mode support.
             </p>
             <div className="flex flex-wrap gap-2 sm:gap-3 justify-center">
-              <Link href="https://github.com/JSB2010/JSB2010.github.io" target="_blank" rel="noopener noreferrer">
+              <Link href="https://github.com/JSB2010/jacobbarkin.com" target="_blank" rel="noopener noreferrer">
                 <Button variant="outline" className="gap-2">
                   <Github className="h-4 w-4" />
                   View Source
@@ -500,7 +500,7 @@ export default function PortfolioWebsitePage() {
                 <div className="mt-8 text-center">
                   <p className="mb-4 font-medium">Interested in the technical details?</p>
                   <div className="flex flex-wrap gap-4 justify-center">
-                    <Link href="https://github.com/JSB2010/JSB2010.github.io" target="_blank" rel="noopener noreferrer">
+                    <Link href="https://github.com/JSB2010/jacobbarkin.com" target="_blank" rel="noopener noreferrer">
                       <Button className="gap-2">
                         <Github className="h-4 w-4" />
                         View Source Code
