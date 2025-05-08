@@ -180,7 +180,7 @@ export default function AboutPage() {
                   <Card className="border-0 bg-background/80 backdrop-blur-sm p-4 sm:p-6">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 sm:mb-4">
                       <h3 className="text-lg sm:text-xl font-semibold">Young Americans Center For Financial Education</h3>
-                      <span className="text-sm text-muted-foreground mt-1 sm:mt-0">2023 - Present</span>
+                      <span className="text-sm text-muted-foreground mt-1 sm:mt-0">2024 - Present</span>
                     </div>
 
                     <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
