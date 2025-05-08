@@ -2,15 +2,16 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    // Define known application routes
-    const appRoutes = [
-      '/about',
-      '/projects',
-      '/contact',
-      '/public-transportation',
-      '/macbook-pro-opencore',
-      '/macos-apple-tv'
-    ];
+    // Define known application routes and their corresponding HTML files
+    const routeMap = {
+      '/': '/index.html',
+      '/about': '/about/index.html',
+      '/projects': '/projects/index.html',
+      '/contact': '/contact/index.html',
+      '/public-transportation': '/public-transportation/index.html',
+      '/macbook-pro-opencore': '/macbook-pro-opencore/index.html',
+      '/macos-apple-tv': '/macos-apple-tv/index.html'
+    };
 
     // Check if the request is for a static asset
     if (
@@ -29,9 +30,9 @@ export default {
       return env.ASSETS.fetch(request);
     }
 
-    // For app routes or the root path, serve index.html
-    if (url.pathname === '/' || appRoutes.includes(url.pathname)) {
-      return env.ASSETS.fetch(`${url.origin}/index.html`);
+    // For known routes, serve the corresponding HTML file
+    if (routeMap[url.pathname]) {
+      return env.ASSETS.fetch(`${url.origin}${routeMap[url.pathname]}`);
     }
 
     // For any other routes, try to fetch the actual resource first

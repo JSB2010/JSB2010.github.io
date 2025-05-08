@@ -12,12 +12,14 @@
 /sw-register.js     /sw-register.js 200
 
 # Specific routes for SPA pages - list these before wildcards for performance
-/about              /about.html    200
-/projects           /projects.html 200
-/contact            /contact.html  200
-/public-transportation /public-transportation.html 200
-/admin              /admin.html    200
-/admin/submissions  /admin/submissions.html 200
+/about              /about/index.html    200
+/projects           /projects/index.html 200
+/contact            /contact/index.html  200
+/public-transportation /public-transportation/index.html 200
+/macbook-pro-opencore /macbook-pro-opencore/index.html 200
+/macos-apple-tv     /macos-apple-tv/index.html 200
+/admin              /admin/index.html    200
+/admin/submissions  /admin/submissions/index.html 200
 
 # Assets should be served directly
 /_next/*            /_next/:splat  200
@@ -29,4 +31,5 @@
 
 # Fallback for any other routes - use a special handling to avoid infinite loops
 # Note: We don't need a rule for the root path as it's handled automatically
-/:path              /:path.html    200
+/:path              /:path/index.html    200
+/*                  /index.html          200
