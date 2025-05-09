@@ -234,11 +234,11 @@ export const useContactFormStore = create<ContactFormState>((set, get) => ({
             addDebugLog(`Error details: ${JSON.stringify(result.error)}`);
           }
 
-          // Update state on error
+          // Update state on error with a more user-friendly message
           set({
             isSuccess: false,
             isSubmitting: false,
-            errorMessage: result.message,
+            errorMessage: "We're having trouble submitting your message through our system. Please try using the 'Email Fallback' button below, or contact us directly via email.",
           });
         }
       } catch (innerError) {
@@ -249,7 +249,7 @@ export const useContactFormStore = create<ContactFormState>((set, get) => ({
         set({
           isSuccess: false,
           isSubmitting: false,
-          errorMessage: `Network request failed: ${errorMsg}. Please try again later.`
+          errorMessage: "We're having trouble connecting to our server. Please try the 'Email Fallback' option below, or contact us directly via email."
         });
       }
     } catch (error) {
@@ -272,11 +272,11 @@ export const useContactFormStore = create<ContactFormState>((set, get) => ({
       // Log the error
       logger.error('Unexpected error in form submission', error);
 
-      // Update state on error
+      // Update state on error with a user-friendly message
       set({
         isSuccess: false,
         isSubmitting: false,
-        errorMessage: `Network request failed: ${errorMessage}`,
+        errorMessage: "We're having trouble processing your message. Please try the 'Email Fallback' option below, or contact us directly via email.",
       });
     }
   },

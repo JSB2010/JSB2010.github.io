@@ -10,9 +10,24 @@ const createClient = () => {
     .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://nyc.cloud.appwrite.io/v1')
     .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '6816ef35001da24d113d');
 
-  // Add custom headers if needed
-  // This is a workaround for CORS issues
-  // client.setHeader('X-Custom-Header', 'value');
+  // Add custom headers for CORS
+  // This helps with cross-origin requests from production domains
+  client.setHeader('X-Appwrite-Response-Format', '1.0.0');
+
+  // Add CORS headers for production domain
+  const allowedOrigins = [
+    'https://jacobbarkin.com',
+    'https://www.jacobbarkin.com',
+    'https://jacobbarkin-com.pages.dev'
+  ];
+
+  // Get the current origin if in browser environment
+  if (typeof window !== 'undefined') {
+    const origin = window.location.origin;
+    if (allowedOrigins.includes(origin)) {
+      client.setHeader('Origin', origin);
+    }
+  }
 
   return client;
 };
@@ -34,6 +49,16 @@ export async function submitContactForm(data: {
   [key: string]: any;
 }) {
   try {
+    // Log submission attempt with environment info
+    console.log('Contact form submission attempt:', {
+      environment: process.env.NODE_ENV,
+      endpoint: process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT,
+      projectId: process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID ? 'defined' : 'undefined',
+      databaseId: process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID,
+      collectionId: process.env.NEXT_PUBLIC_APPWRITE_CONTACT_COLLECTION_ID,
+      origin: typeof window !== 'undefined' ? window.location.origin : 'server-side'
+    });
+
     // Only include fields that are explicitly defined in the Appwrite collection schema
     // Based on the error, we need to be very careful about field names
     const submissionData = {
@@ -44,6 +69,12 @@ export async function submitContactForm(data: {
       // Remove timestamp, userAgent, and source as they might not match the schema exactly
     };
 
+    console.log('Submitting data to Appwrite:', {
+      databaseId,
+      collectionId: contactSubmissionsCollectionId,
+      data: submissionData
+    });
+
     // Create document in Appwrite
     const document = await databases.createDocument(
       databaseId,
@@ -52,18 +83,40 @@ export async function submitContactForm(data: {
       submissionData
     );
 
+    console.log('Form submission successful:', document.$id);
+
     return {
       success: true,
       id: document.$id,
       message: 'Form submitted successfully'
     };
   } catch (error) {
+    // Log detailed error information
     console.error('Error submitting contact form:', error);
+
+    // Get more details about the error
+    let errorDetails = 'Unknown error';
+    let errorCode = 'unknown';
+
+    if (error instanceof Error) {
+      errorDetails = error.message;
+      // Check for Appwrite specific error properties
+      if ('code' in error) {
+        errorCode = (error as any).code;
+      }
+      if ('type' in error) {
+        errorDetails += ` (Type: ${(error as any).type})`;
+      }
+      if ('response' in error) {
+        console.error('Appwrite error response:', (error as any).response);
+      }
+    }
 
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
-      message: 'Failed to submit form'
+      error: errorDetails,
+      errorCode,
+      message: 'Failed to submit form. Please try again or contact us directly via email.'
     };
   }
 }

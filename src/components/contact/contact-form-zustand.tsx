@@ -337,7 +337,20 @@ export function ContactFormZustand() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => submitForm({ method: SubmissionMethod.EMAIL })}
+                  onClick={() => {
+                    // Create a mailto link with the form data
+                    const mailtoLink = `mailto:Jacobsamuelbarkin@gmail.com?subject=${encodeURIComponent(
+                      `Contact Form: ${values.subject || 'Message from website'}`
+                    )}&body=${encodeURIComponent(
+                      `Name: ${values.name || ''}\nEmail: ${values.email || ''}\n\nMessage:\n${values.message || ''}`
+                    )}`;
+
+                    // Open the mailto link in a new window
+                    window.open(mailtoLink, '_blank');
+
+                    // Log the fallback action
+                    addDebugLog('Using email fallback - opening mailto link');
+                  }}
                   className="inline-flex items-center justify-center px-3 py-1.5 text-xs font-medium rounded-md bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 hover:bg-red-200 dark:hover:bg-red-800/30 transition-colors"
                 >
                   Use Email Fallback
