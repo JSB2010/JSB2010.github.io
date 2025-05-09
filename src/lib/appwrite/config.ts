@@ -4,7 +4,7 @@ import { Client, Databases, ID } from 'appwrite';
 // Fallback values for development - DO NOT USE IN PRODUCTION
 const fallbackConfig = {
   endpoint: 'https://nyc.cloud.appwrite.io/v1',
-  projectId: '6816ef35001da24d113d',
+  projectId: '', // This should be set in environment variables
   databaseId: 'contact-form-db',
   collectionId: 'contact-submissions'
 };

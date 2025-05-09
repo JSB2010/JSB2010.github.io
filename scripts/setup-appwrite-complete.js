@@ -7,17 +7,36 @@ const { promisify } = require('util');
 const exec = promisify(require('child_process').exec);
 
 // Appwrite configuration
+// Load environment variables from .env file if available
+require('dotenv').config();
+
 const config = {
-  endpoint: 'https://nyc.cloud.appwrite.io/v1',
-  projectId: '6816ef35001da24d113d',
-  apiKey: 'standard_7d784a84611fcf1ae8cd17b74b6ff1ad9ccf978a455f44079e9065d00b8e3ff24cfe194256497e540d40c7f3b46d99ac8522c28cdd753e2ce6369b07541838a399aafde729244907b6b8e4e47f6ca4264a08fa08660d7174405c2272085df741d96ef263aa7e7a8432ebc33f713fec24feab263afd1c2aae909927560752ca28',
-  databaseId: 'contact-form-db',
-  collectionId: 'contact-submissions',
-  functionId: 'contact-email-notification',
+  endpoint: process.env.APPWRITE_ENDPOINT || 'https://nyc.cloud.appwrite.io/v1',
+  projectId: process.env.APPWRITE_PROJECT_ID || '',
+  apiKey: process.env.APPWRITE_API_KEY || '',
+  databaseId: process.env.APPWRITE_DATABASE_ID || 'contact-form-db',
+  collectionId: process.env.APPWRITE_CONTACT_COLLECTION_ID || 'contact-submissions',
+  functionId: process.env.APPWRITE_FUNCTION_ID || 'contact-email-notification',
   functionName: 'Contact Form Email Notification',
-  emailUser: 'jacobsamuelbarkin@gmail.com',
-  emailPassword: 'dwzm vsxv gipu tlsi'
+  emailUser: process.env.EMAIL_USER || '',
+  emailPassword: process.env.EMAIL_PASSWORD || ''
 };
+
+// Validate required configuration
+if (!config.projectId) {
+  console.error('Error: APPWRITE_PROJECT_ID is required. Please set it in your .env file or as an environment variable.');
+  process.exit(1);
+}
+
+if (!config.apiKey) {
+  console.error('Error: APPWRITE_API_KEY is required. Please set it in your .env file or as an environment variable.');
+  process.exit(1);
+}
+
+if (!config.emailUser || !config.emailPassword) {
+  console.error('Error: EMAIL_USER and EMAIL_PASSWORD are required. Please set them in your .env file or as environment variables.');
+  process.exit(1);
+}
 
 // Initialize Appwrite client
 const client = new Client();
