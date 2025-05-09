@@ -27,10 +27,7 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'cdn.simpleicons.org',
       },
-      {
-        protocol: 'https',
-        hostname: 'firebasestorage.googleapis.com',
-      },
+
     ],
     // Unoptimize images in production for Cloudflare Pages
     unoptimized: process.env.NODE_ENV === 'production',
