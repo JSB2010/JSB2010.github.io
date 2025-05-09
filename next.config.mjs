@@ -6,40 +6,45 @@ const nextConfig = {
   // This ensures React DevTools can connect to the React instance
   crossOrigin: 'anonymous',
 
-  // Add Content Security Policy headers
+  // Note: Headers are defined in public/_headers for static export
+  // This configuration is kept for development mode only
   async headers() {
-    return [
-      {
-        // Apply these headers to all routes
-        source: '/:path*',
-        headers: [
-          {
-            key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdn.honey.io; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://nyc.cloud.appwrite.io https://*.appwrite.io https://api.github.com https://www.google-analytics.com https://www.google.com; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; manifest-src 'self'; worker-src 'self' blob:;"
-          },
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff'
-          },
-          {
-            key: 'X-Frame-Options',
-            value: 'DENY'
-          },
-          {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block'
-          },
-          {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin'
-          },
-          {
-            key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=()'
-          }
-        ]
-      }
-    ];
+    // Only apply headers in development mode, not in production with static export
+    if (process.env.NODE_ENV === 'development') {
+      return [
+        {
+          // Apply these headers to all routes
+          source: '/:path*',
+          headers: [
+            {
+              key: 'Content-Security-Policy',
+              value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdn.honey.io; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://nyc.cloud.appwrite.io https://*.appwrite.io https://api.github.com https://www.google-analytics.com https://www.google.com; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; manifest-src 'self'; worker-src 'self' blob:;"
+            },
+            {
+              key: 'X-Content-Type-Options',
+              value: 'nosniff'
+            },
+            {
+              key: 'X-Frame-Options',
+              value: 'DENY'
+            },
+            {
+              key: 'X-XSS-Protection',
+              value: '1; mode=block'
+            },
+            {
+              key: 'Referrer-Policy',
+              value: 'strict-origin-when-cross-origin'
+            },
+            {
+              key: 'Permissions-Policy',
+              value: 'camera=(), microphone=(), geolocation=()'
+            }
+          ]
+        }
+      ];
+    }
+    return []; // Return empty array in production
   },
 
   // Enable build caching for faster rebuilds
@@ -125,26 +130,24 @@ const nextConfig = {
         // Enable tree shaking to remove unused code
         config.optimization.usedExports = true;
 
-        // Split chunks for better caching
+        // Use a simpler and more robust chunk splitting configuration
         config.optimization.splitChunks = {
           chunks: 'all',
-          maxInitialRequests: Infinity,
-          minSize: 20000,
           cacheGroups: {
             vendor: {
+              name: 'vendor',
               test: /[\\/]node_modules[\\/]/,
-              name(module) {
-                // Get the name. E.g. node_modules/packageName/sub/path
-                // or node_modules/packageName
-                const packageName = module.context.match(
-                  /[\\/]node_modules[\\/](.*?)([\\/]|$)/
-                )[1];
-
-                // Create a clean package name for better readability in bundles
-                return `npm.${packageName.replace('@', '')}`;
-              },
+              chunks: 'all',
+              priority: 10
             },
-          },
+            common: {
+              name: 'common',
+              minChunks: 2,
+              chunks: 'all',
+              priority: 5,
+              reuseExistingChunk: true
+            }
+          }
         };
       }
     }
