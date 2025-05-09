@@ -99,7 +99,7 @@ export function ContactFormZustand() {
           <p>Database ID: {process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID || 'Not defined'}</p>
           <p>Collection ID: {process.env.NEXT_PUBLIC_APPWRITE_CONTACT_COLLECTION_ID || 'Not defined'}</p>
 
-          <div className="mt-2 flex gap-2">
+          <div className="mt-2 flex flex-wrap gap-2">
             <button
               type="button"
               onClick={testAppwriteConnection}
@@ -122,6 +122,86 @@ export function ContactFormZustand() {
             >
               Test Internet
             </button>
+            <button
+              type="button"
+              onClick={async () => {
+                addDebugLog('Checking environment variables...');
+                try {
+                  const response = await fetch('/api/debug-env');
+                  if (response.ok) {
+                    const data = await response.json();
+                    addDebugLog(`Environment: ${data.environment}`);
+
+                    // Log client-side variables
+                    if (data.config) {
+                      if (data.config.NEXT_PUBLIC_APPWRITE_ENDPOINT) {
+                        addDebugLog(`Endpoint: ${data.config.NEXT_PUBLIC_APPWRITE_ENDPOINT}`);
+                      }
+                      if (data.config.NEXT_PUBLIC_APPWRITE_PROJECT_ID) {
+                        addDebugLog(`Project ID: ${data.config.NEXT_PUBLIC_APPWRITE_PROJECT_ID}`);
+                      }
+                      if (data.config.NEXT_PUBLIC_APPWRITE_DATABASE_ID) {
+                        addDebugLog(`Database ID: ${data.config.NEXT_PUBLIC_APPWRITE_DATABASE_ID}`);
+                      }
+                      if (data.config.NEXT_PUBLIC_APPWRITE_CONTACT_COLLECTION_ID) {
+                        addDebugLog(`Collection ID: ${data.config.NEXT_PUBLIC_APPWRITE_CONTACT_COLLECTION_ID}`);
+                      }
+
+                      // Log server-side variable status
+                      if (data.config.appwriteEndpointDefined !== undefined) {
+                        addDebugLog(`Server Endpoint Defined: ${data.config.appwriteEndpointDefined}`);
+                        addDebugLog(`Server Project ID Defined: ${data.config.appwriteProjectIdDefined}`);
+                        addDebugLog(`Server Database ID Defined: ${data.config.appwriteDatabaseIdDefined}`);
+                        addDebugLog(`Server Collection ID Defined: ${data.config.appwriteCollectionIdDefined}`);
+                      }
+                    }
+                  } else {
+                    addDebugLog(`Error checking env: ${response.status}`);
+                  }
+                } catch (error) {
+                  addDebugLog(`Error checking env: ${error instanceof Error ? error.message : 'Unknown error'}`);
+                }
+              }}
+              className="text-xs px-2 py-1 bg-purple-200 dark:bg-purple-800 text-purple-800 dark:text-purple-200 rounded"
+            >
+              Check Environment
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                addDebugLog('Testing direct Appwrite API...');
+
+                // Try a direct API call to Appwrite
+                const endpoint = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://nyc.cloud.appwrite.io/v1';
+                const projectId = process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '6816ef35001da24d113d';
+
+                fetch(`${endpoint}/health`, {
+                  method: 'GET',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'X-Appwrite-Project': projectId
+                  }
+                })
+                .then(response => {
+                  if (response.ok) {
+                    addDebugLog('Appwrite API health check successful');
+                    return response.json();
+                  } else {
+                    addDebugLog(`Appwrite API health check failed: ${response.status}`);
+                    throw new Error(`Status: ${response.status}`);
+                  }
+                })
+                .then(data => {
+                  addDebugLog(`Appwrite version: ${data.version || 'unknown'}`);
+                })
+                .catch(error => {
+                  addDebugLog(`Appwrite API error: ${error.message}`);
+                });
+              }}
+              className="text-xs px-2 py-1 bg-orange-200 dark:bg-orange-800 text-orange-800 dark:text-orange-200 rounded"
+            >
+              Test Direct API
+            </button>
           </div>
         </div>
       </div>
@@ -129,8 +209,13 @@ export function ContactFormZustand() {
   };
 
   // Force debug panel to be visible in development mode
+  // or if the URL has a debug parameter
   useEffect(() => {
-    if (process.env.NODE_ENV === 'development' && !showDebug) {
+    const shouldShowDebug =
+      process.env.NODE_ENV === 'development' ||
+      (typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('debug'));
+
+    if (shouldShowDebug && !showDebug) {
       toggleDebug();
     }
   }, [showDebug, toggleDebug]);
@@ -239,10 +324,15 @@ export function ContactFormZustand() {
     }
   };
 
+  // Check if debug mode should be enabled
+  const isDebugMode =
+    process.env.NODE_ENV === 'development' ||
+    (typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('debug'));
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-      {/* Debug Panel - always shown in development mode */}
-      {process.env.NODE_ENV === 'development' && <DebugPanel />}
+      {/* Debug Panel - shown in development mode or when debug parameter is present */}
+      {isDebugMode && <DebugPanel />}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <div className="space-y-1.5 sm:space-y-2">

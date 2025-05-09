@@ -1,6 +1,29 @@
 // Custom Appwrite client with CORS workarounds
 import { Client, Databases, ID } from 'appwrite';
 
+// Global error handler for unhandled promise rejections
+if (typeof window !== 'undefined') {
+  window.addEventListener('unhandledrejection', function(event) {
+    console.error('UNHANDLED PROMISE REJECTION:', event.reason);
+
+    // Try to get more details if it's an Appwrite error
+    if (event.reason && typeof event.reason === 'object') {
+      if ('code' in event.reason) {
+        console.error('Error code:', (event.reason as any).code);
+      }
+      if ('type' in event.reason) {
+        console.error('Error type:', (event.reason as any).type);
+      }
+      if ('message' in event.reason) {
+        console.error('Error message:', (event.reason as any).message);
+      }
+      if ('response' in event.reason) {
+        console.error('Error response:', (event.reason as any).response);
+      }
+    }
+  });
+}
+
 // Initialize Appwrite client
 const createClient = () => {
   const client = new Client();
