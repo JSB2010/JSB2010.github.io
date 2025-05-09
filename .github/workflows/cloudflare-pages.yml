@@ -25,15 +25,45 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Set default environment variables
+        id: set-env-vars
+        run: |
+          echo "APPWRITE_ENDPOINT=${{ secrets.NEXT_PUBLIC_APPWRITE_ENDPOINT }}" >> $GITHUB_ENV
+          echo "APPWRITE_PROJECT_ID=${{ secrets.NEXT_PUBLIC_APPWRITE_PROJECT_ID }}" >> $GITHUB_ENV
+          echo "APPWRITE_DATABASE_ID=${{ secrets.NEXT_PUBLIC_APPWRITE_DATABASE_ID }}" >> $GITHUB_ENV
+          echo "APPWRITE_COLLECTION_ID=${{ secrets.NEXT_PUBLIC_APPWRITE_COLLECTION_ID }}" >> $GITHUB_ENV
+          echo "APPWRITE_BUCKET_ID=${{ secrets.NEXT_PUBLIC_APPWRITE_BUCKET_ID }}" >> $GITHUB_ENV
+          echo "APPWRITE_FUNCTION_ID=${{ secrets.NEXT_PUBLIC_APPWRITE_FUNCTION_ID }}" >> $GITHUB_ENV
+
+          # Set default values if secrets are not available
+          if [ -z "${{ secrets.NEXT_PUBLIC_APPWRITE_ENDPOINT }}" ]; then
+            echo "APPWRITE_ENDPOINT=https://nyc.cloud.appwrite.io/v1" >> $GITHUB_ENV
+          fi
+          if [ -z "${{ secrets.NEXT_PUBLIC_APPWRITE_PROJECT_ID }}" ]; then
+            echo "APPWRITE_PROJECT_ID=6816ef35001da24d113d" >> $GITHUB_ENV
+          fi
+          if [ -z "${{ secrets.NEXT_PUBLIC_APPWRITE_DATABASE_ID }}" ]; then
+            echo "APPWRITE_DATABASE_ID=default-db" >> $GITHUB_ENV
+          fi
+          if [ -z "${{ secrets.NEXT_PUBLIC_APPWRITE_COLLECTION_ID }}" ]; then
+            echo "APPWRITE_COLLECTION_ID=contact-submissions" >> $GITHUB_ENV
+          fi
+          if [ -z "${{ secrets.NEXT_PUBLIC_APPWRITE_BUCKET_ID }}" ]; then
+            echo "APPWRITE_BUCKET_ID=default-bucket" >> $GITHUB_ENV
+          fi
+          if [ -z "${{ secrets.NEXT_PUBLIC_APPWRITE_FUNCTION_ID }}" ]; then
+            echo "APPWRITE_FUNCTION_ID=default-function" >> $GITHUB_ENV
+          fi
+
       - name: Build project
         run: npm run build:cache
         env:
-          NEXT_PUBLIC_APPWRITE_ENDPOINT: ${{ secrets.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://nyc.cloud.appwrite.io/v1' }}
-          NEXT_PUBLIC_APPWRITE_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '6816ef35001da24d113d' }}
-          NEXT_PUBLIC_APPWRITE_DATABASE_ID: ${{ secrets.NEXT_PUBLIC_APPWRITE_DATABASE_ID || 'default-db' }}
-          NEXT_PUBLIC_APPWRITE_COLLECTION_ID: ${{ secrets.NEXT_PUBLIC_APPWRITE_COLLECTION_ID || 'contact-submissions' }}
-          NEXT_PUBLIC_APPWRITE_BUCKET_ID: ${{ secrets.NEXT_PUBLIC_APPWRITE_BUCKET_ID || 'default-bucket' }}
-          NEXT_PUBLIC_APPWRITE_FUNCTION_ID: ${{ secrets.NEXT_PUBLIC_APPWRITE_FUNCTION_ID || 'default-function' }}
+          NEXT_PUBLIC_APPWRITE_ENDPOINT: ${{ env.APPWRITE_ENDPOINT }}
+          NEXT_PUBLIC_APPWRITE_PROJECT_ID: ${{ env.APPWRITE_PROJECT_ID }}
+          NEXT_PUBLIC_APPWRITE_DATABASE_ID: ${{ env.APPWRITE_DATABASE_ID }}
+          NEXT_PUBLIC_APPWRITE_COLLECTION_ID: ${{ env.APPWRITE_COLLECTION_ID }}
+          NEXT_PUBLIC_APPWRITE_BUCKET_ID: ${{ env.APPWRITE_BUCKET_ID }}
+          NEXT_PUBLIC_APPWRITE_FUNCTION_ID: ${{ env.APPWRITE_FUNCTION_ID }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload build artifact
