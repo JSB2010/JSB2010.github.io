@@ -42,15 +42,48 @@ appwrite functions createDeployment \
 | Entrypoint        | src/main.js               |
 | Build Commands    | npm install               |
 | Timeout (Seconds) | 15                        |
-| Events            | databases.*.collections.contact-submissions.documents.*.create |
+| Events            | None (triggered via HTTP endpoint) |
 
 ## 📝 How It Works
 
-1. The function is triggered when a new document is created in the contact-submissions collection
-2. It extracts the contact form data from the document
+1. The function receives a POST request directly from the contact form
+2. It validates the required fields (name, email, message)
 3. It formats an email with the submission details
 4. It sends the email using Nodemailer and Gmail SMTP
-5. It returns a success or error response
+5. It returns a JSON response with success or error information
+
+## 📊 Request Format
+
+The function expects a POST request with a JSON body containing:
+
+```json
+{
+  "name": "Visitor Name",
+  "email": "visitor@example.com",
+  "message": "Hello, I'd like to get in touch...",
+  "phone": "123-456-7890" // Optional
+}
+```
+
+## 📬 Response Format
+
+### Success Response
+
+```json
+{
+  "success": true,
+  "message": "Contact form submission received and notification sent"
+}
+```
+
+### Error Responses
+
+```json
+{
+  "success": false,
+  "message": "Error message explaining what went wrong"
+}
+```
 
 ## 🔍 Troubleshooting
 
