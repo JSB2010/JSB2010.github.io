@@ -58,26 +58,37 @@ jobs:
           echo "Listing all available functions in the project:"
           appwrite functions list
 
+          # Save the function list to a file for better analysis
+          appwrite functions list --json > function_list.json
+          cat function_list.json
+
+          # Print the function ID we're looking for
+          echo "Looking for function ID: ${{ secrets.APPWRITE_EMAIL_FUNCTION_ID }}"
+
+      - name: Create or Update Function
+        id: function_setup
+        run: |
+          # Always try to create the function - if it exists, we'll get an error but continue
+          echo "Attempting to create function (will continue if it already exists)..."
+          appwrite functions create \
+            --name "Contact Form Email Notification" \
+            --runtime node-18.0 \
+            --execute '["any"]' \
+            --function-id ${{ secrets.APPWRITE_EMAIL_FUNCTION_ID }} || echo "Function may already exist, continuing..."
+
+          # Verify the function exists now
+          echo "Verifying function exists..."
+          appwrite functions get --function-id ${{ secrets.APPWRITE_EMAIL_FUNCTION_ID }} || {
+            echo "::error::Function still doesn't exist after creation attempt. Please check the function ID and permissions."
+            exit 1
+          }
+
+          echo "Function verified. Ready for deployment."
+
       - name: Deploy Email Notification Function
         run: |
           cd functions/email-notification-updated
 
-          # First try to create the function if it doesn't exist
-          echo "Checking if function exists or needs to be created..."
-          FUNCTION_EXISTS=$(appwrite functions list --json | grep -c "${{ secrets.APPWRITE_EMAIL_FUNCTION_ID }}" || echo "0")
-
-          if [ "$FUNCTION_EXISTS" = "0" ]; then
-            echo "Function does not exist. Creating new function..."
-            appwrite functions create \
-              --name "Contact Form Email Notification" \
-              --runtime node-18.0 \
-              --execute '["any"]' \
-              --function-id ${{ secrets.APPWRITE_EMAIL_FUNCTION_ID }}
-          else
-            echo "Function exists. Proceeding with deployment..."
-          fi
-
-          # Now deploy to the function
           echo "Deploying function code..."
           appwrite functions create-deployment \
             --function-id ${{ secrets.APPWRITE_EMAIL_FUNCTION_ID }} \
