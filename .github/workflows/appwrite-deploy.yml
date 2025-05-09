@@ -50,8 +50,8 @@ jobs:
       - name: Deploy Email Notification Function
         run: |
           cd functions/email-notification-updated
-          appwrite functions createDeployment \
-            --functionId ${{ secrets.APPWRITE_EMAIL_FUNCTION_ID }} \
+          appwrite functions create-deployment \
+            --function-id ${{ secrets.APPWRITE_EMAIL_FUNCTION_ID }} \
             --entrypoint src/main.js \
             --code .
 
