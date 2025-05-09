@@ -118,6 +118,34 @@ const nextConfig = {
             });
           }
         });
+
+        // Use deterministic names for better caching
+        config.optimization.moduleIds = 'deterministic';
+
+        // Enable tree shaking to remove unused code
+        config.optimization.usedExports = true;
+
+        // Split chunks for better caching
+        config.optimization.splitChunks = {
+          chunks: 'all',
+          maxInitialRequests: Infinity,
+          minSize: 20000,
+          cacheGroups: {
+            vendor: {
+              test: /[\\/]node_modules[\\/]/,
+              name(module) {
+                // Get the name. E.g. node_modules/packageName/sub/path
+                // or node_modules/packageName
+                const packageName = module.context.match(
+                  /[\\/]node_modules[\\/](.*?)([\\/]|$)/
+                )[1];
+
+                // Create a clean package name for better readability in bundles
+                return `npm.${packageName.replace('@', '')}`;
+              },
+            },
+          },
+        };
       }
     }
 
@@ -129,6 +157,14 @@ const nextConfig = {
     }
 
     return config;
+  },
+
+  // Add compiler options for production
+  compiler: {
+    // Remove console.log in production
+    removeConsole: process.env.NODE_ENV === 'production' ? {
+      exclude: ['error', 'warn'],
+    } : false,
   },
 };
 
