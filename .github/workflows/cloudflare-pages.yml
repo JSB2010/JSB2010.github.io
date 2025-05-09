@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build_and_deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -28,15 +28,48 @@ jobs:
       - name: Build project
         run: npm run build:cache
         env:
-          NEXT_PUBLIC_APPWRITE_ENDPOINT: ${{ secrets.NEXT_PUBLIC_APPWRITE_ENDPOINT }}
-          NEXT_PUBLIC_APPWRITE_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_APPWRITE_PROJECT_ID }}
-          NEXT_PUBLIC_APPWRITE_DATABASE_ID: ${{ secrets.NEXT_PUBLIC_APPWRITE_DATABASE_ID }}
-          NEXT_PUBLIC_APPWRITE_COLLECTION_ID: ${{ secrets.NEXT_PUBLIC_APPWRITE_COLLECTION_ID }}
-          NEXT_PUBLIC_APPWRITE_BUCKET_ID: ${{ secrets.NEXT_PUBLIC_APPWRITE_BUCKET_ID }}
-          NEXT_PUBLIC_APPWRITE_FUNCTION_ID: ${{ secrets.NEXT_PUBLIC_APPWRITE_FUNCTION_ID }}
+          NEXT_PUBLIC_APPWRITE_ENDPOINT: ${{ secrets.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://nyc.cloud.appwrite.io/v1' }}
+          NEXT_PUBLIC_APPWRITE_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '6816ef35001da24d113d' }}
+          NEXT_PUBLIC_APPWRITE_DATABASE_ID: ${{ secrets.NEXT_PUBLIC_APPWRITE_DATABASE_ID || 'default-db' }}
+          NEXT_PUBLIC_APPWRITE_COLLECTION_ID: ${{ secrets.NEXT_PUBLIC_APPWRITE_COLLECTION_ID || 'contact-submissions' }}
+          NEXT_PUBLIC_APPWRITE_BUCKET_ID: ${{ secrets.NEXT_PUBLIC_APPWRITE_BUCKET_ID || 'default-bucket' }}
+          NEXT_PUBLIC_APPWRITE_FUNCTION_ID: ${{ secrets.NEXT_PUBLIC_APPWRITE_FUNCTION_ID || 'default-function' }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-output
+          path: out/
+          retention-days: 1
+
+  # This job only runs if Cloudflare secrets are available and we're not in a PR
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/modern-redesign-shadcn'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: build-output
+          path: out
+
+      - name: Check if Cloudflare secrets exist
+        id: check-secrets
+        run: |
+          if [[ -n "${{ secrets.CLOUDFLARE_API_TOKEN }}" && -n "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" ]]; then
+            echo "secrets_exist=true" >> $GITHUB_OUTPUT
+          else
+            echo "secrets_exist=false" >> $GITHUB_OUTPUT
+            echo "::warning::Cloudflare API token or Account ID not set. Skipping deployment."
+          fi
+
       - name: Deploy to Cloudflare Pages
+        if: steps.check-secrets.outputs.secrets_exist == 'true'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}

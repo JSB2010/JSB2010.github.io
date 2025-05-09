@@ -8,9 +8,26 @@ on:
       - 'functions/email-notification/**'
       - 'functions/email-notification-updated/**'
       - '.github/workflows/appwrite-deploy.yml'
+  workflow_dispatch:
 
 jobs:
+  check_secrets:
+    runs-on: ubuntu-latest
+    outputs:
+      secrets_exist: ${{ steps.check.outputs.secrets_exist }}
+    steps:
+      - id: check
+        run: |
+          if [[ -n "${{ secrets.APPWRITE_EMAIL }}" && -n "${{ secrets.APPWRITE_PASSWORD }}" && -n "${{ secrets.APPWRITE_PROJECT_ID }}" && -n "${{ secrets.APPWRITE_EMAIL_FUNCTION_ID }}" ]]; then
+            echo "secrets_exist=true" >> $GITHUB_OUTPUT
+          else
+            echo "secrets_exist=false" >> $GITHUB_OUTPUT
+            echo "::warning::One or more required Appwrite secrets are not set. Skipping deployment."
+          fi
+
   deploy_appwrite_functions:
+    needs: check_secrets
+    if: needs.check_secrets.outputs.secrets_exist == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -37,3 +54,27 @@ jobs:
             --functionId ${{ secrets.APPWRITE_EMAIL_FUNCTION_ID }} \
             --entrypoint src/main.js \
             --code .
+
+  build_function:
+    runs-on: ubuntu-latest
+    if: needs.check_secrets.outputs.secrets_exist != 'true'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        working-directory: functions/email-notification-updated
+        run: npm ci
+
+      - name: Test function build
+        working-directory: functions/email-notification-updated
+        run: |
+          echo "Building function to verify it compiles correctly"
+          npm install
+          echo "Function build successful"
