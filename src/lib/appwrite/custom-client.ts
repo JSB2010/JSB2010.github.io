@@ -4,16 +4,16 @@ import { Client, Databases, ID } from 'appwrite';
 // Initialize Appwrite client
 const createClient = () => {
   const client = new Client();
-  
+
   // Configure Appwrite client
   client
     .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://nyc.cloud.appwrite.io/v1')
     .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '6816ef35001da24d113d');
-  
+
   // Add custom headers if needed
   // This is a workaround for CORS issues
   // client.setHeader('X-Custom-Header', 'value');
-  
+
   return client;
 };
 
@@ -34,14 +34,16 @@ export async function submitContactForm(data: {
   [key: string]: any;
 }) {
   try {
-    // Add additional fields
+    // Only include fields that are explicitly defined in the Appwrite collection schema
+    // Based on the error, we need to be very careful about field names
     const submissionData = {
-      ...data,
-      timestamp: new Date().toISOString(),
-      userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'Unknown',
-      source: 'website_contact_form_direct_sdk'
+      name: data.name,
+      email: data.email,
+      subject: data.subject || 'Contact Form Submission',
+      message: data.message
+      // Remove timestamp, userAgent, and source as they might not match the schema exactly
     };
-    
+
     // Create document in Appwrite
     const document = await databases.createDocument(
       databaseId,
@@ -49,7 +51,7 @@ export async function submitContactForm(data: {
       ID.unique(),
       submissionData
     );
-    
+
     return {
       success: true,
       id: document.$id,
@@ -57,7 +59,7 @@ export async function submitContactForm(data: {
     };
   } catch (error) {
     console.error('Error submitting contact form:', error);
-    
+
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',

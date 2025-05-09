@@ -147,14 +147,13 @@ export const useContactFormStore = create<ContactFormState>((set, get) => ({
         return;
       }
 
-      // Prepare submission data - only include fields that exist in the Appwrite schema
-      // Based on the error, the Appwrite collection doesn't have timestamp, source, or userAgent fields
+      // Prepare submission data with only the fields that exist in the Appwrite schema
       const submissionData = {
         name: values.name,
         email: values.email,
-        subject: values.subject,
-        message: values.message,
-        // Remove timestamp, source, and userAgent as they're not in the schema
+        subject: values.subject || 'Contact Form Submission',
+        message: values.message
+        // Remove all other fields to ensure exact match with Appwrite collection schema
       };
 
       // Default to Appwrite submission method if not specified
@@ -176,11 +175,42 @@ export const useContactFormStore = create<ContactFormState>((set, get) => ({
 
       // Submit the form using the API with timeout
       try {
-        // Race the API call against the timeout - submissionData already simplified above
-        const result = await Promise.race([
+        // Try direct SDK submission first, then fall back to API if that fails
+      let result;
+
+      try {
+        // Import the custom client directly
+        const { submitContactForm: submitDirectly } = await import('@/lib/appwrite/custom-client');
+
+        // Submit using the direct SDK method
+        addDebugLog('Attempting direct SDK submission...');
+        result = await Promise.race([
+          submitDirectly(submissionData),
+          timeoutPromise
+        ]);
+
+        if (result.success) {
+          addDebugLog('Direct SDK submission successful!');
+        } else {
+          addDebugLog(`Direct SDK submission failed: ${result.message}`);
+          addDebugLog('Falling back to API submission...');
+
+          // Fall back to API submission
+          result = await Promise.race([
+            apiSubmitContactForm(submissionData, submissionConfig),
+            timeoutPromise
+          ]);
+        }
+      } catch (sdkError) {
+        addDebugLog(`SDK submission error: ${sdkError instanceof Error ? sdkError.message : 'Unknown error'}`);
+        addDebugLog('Falling back to API submission...');
+
+        // Fall back to API submission
+        result = await Promise.race([
           apiSubmitContactForm(submissionData, submissionConfig),
           timeoutPromise
         ]);
+      }
 
         if (result.success) {
           addDebugLog(`Form submitted successfully with ID: ${result.id}`);
@@ -253,6 +283,10 @@ export const useContactFormStore = create<ContactFormState>((set, get) => ({
 
   // Action to add a debug log
   addDebugLog: (message) => {
+    // Always log to console regardless of environment
+    console.log(`[ContactForm] ${message}`);
+
+    // Only update state in development mode
     if (process.env.NODE_ENV !== 'development') return;
 
     const timestamp = new Date().toISOString().split('T')[1].split('.')[0]; // HH:MM:SS format

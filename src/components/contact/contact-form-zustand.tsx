@@ -141,28 +141,97 @@ export function ContactFormZustand() {
 
     try {
       // Import Appwrite client directly
-      const { client, databases, config } = await import('@/lib/appwrite');
+      const { client, config } = await import('@/lib/appwrite');
 
-      addDebugLog(`Appwrite config: ${JSON.stringify({
+      addDebugLog(`Appwrite client-side config: ${JSON.stringify({
         endpoint: config.endpoint,
         projectId: config.projectId ? 'defined' : 'undefined',
         databaseId: config.databaseId,
         collectionId: config.collectionId
       })}`);
 
-      // Try a simple health check by pinging the Appwrite server
-      const response = await fetch(`${config.endpoint}/health`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      // Step 1: Test client-side SDK initialization
+      addDebugLog('Step 1: Testing Appwrite client SDK initialization...');
+      try {
+        // Check if client is properly initialized
+        if (client) {
+          addDebugLog('Appwrite client SDK initialized successfully');
+        } else {
+          addDebugLog('ERROR: Appwrite client SDK initialization failed');
+          return;
+        }
+      } catch (clientError) {
+        const clientErrorMsg = clientError instanceof Error ? clientError.message : 'Unknown client error';
+        addDebugLog(`ERROR: Appwrite client SDK error: ${clientErrorMsg}`);
+        return;
+      }
 
-      if (response.ok) {
-        const data = await response.json();
-        addDebugLog(`Appwrite health check successful: ${JSON.stringify(data)}`);
-      } else {
-        addDebugLog(`ERROR: Appwrite health check failed with status ${response.status}`);
+      // Step 2: Test form validation
+      addDebugLog('Step 2: Testing form validation...');
+
+      // Create a test submission
+      const testSubmission = {
+        name: 'Test User',
+        email: 'test@example.com',
+        subject: 'Connection Test',
+        message: 'This is a test message to verify Appwrite connectivity.'
+      };
+
+      try {
+        // Validate the test submission against the schema
+        const { contactFormSchema } = await import('@/lib/appwrite');
+        const validationResult = contactFormSchema.safeParse(testSubmission);
+
+        if (validationResult.success) {
+          addDebugLog('Form validation successful');
+        } else {
+          addDebugLog(`ERROR: Form validation failed: ${JSON.stringify(validationResult.error)}`);
+          return;
+        }
+      } catch (validationError) {
+        const validationErrorMsg = validationError instanceof Error ? validationError.message : 'Unknown validation error';
+        addDebugLog(`ERROR: Validation test failed with exception: ${validationErrorMsg}`);
+        return;
+      }
+
+      // Step 3: Test server-side Appwrite connection
+      addDebugLog('Step 3: Testing server-side Appwrite connection...');
+      try {
+        const response = await fetch('/api/test-appwrite', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+
+          // Log the test results
+          addDebugLog(`Server-side test results: ${data.success ? 'SUCCESS' : 'FAILED'}`);
+
+          // Log individual test results
+          Object.entries(data.tests).forEach(([testName, result]: [string, any]) => {
+            if (result.success) {
+              addDebugLog(`✅ ${testName}: ${result.message}`);
+            } else {
+              addDebugLog(`❌ ${testName}: ${result.message}`);
+            }
+          });
+
+          // Overall result
+          if (data.success) {
+            addDebugLog('All tests passed! The contact form should work properly.');
+            addDebugLog('Try submitting the form with real data to test the full functionality.');
+          } else {
+            addDebugLog('Some tests failed. Please check the server-side configuration.');
+          }
+        } else {
+          addDebugLog(`ERROR: Server-side test failed with status ${response.status}`);
+        }
+      } catch (serverError) {
+        const serverErrorMsg = serverError instanceof Error ? serverError.message : 'Unknown server error';
+        addDebugLog(`ERROR: Server-side test failed with exception: ${serverErrorMsg}`);
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';

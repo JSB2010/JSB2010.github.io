@@ -106,13 +106,13 @@ const statusLogEntrySchema = z.object({
   updatedBy: z.string().default('system')
 });
 
-// Contact form submission schema - simplified to match Appwrite collection schema
+// Contact form submission schema - simplified to match exactly what's in the Appwrite collection
 export const contactFormSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
   email: z.string().email({ message: "Please enter a valid email address" }),
   subject: z.string().min(3, { message: "Subject must be at least 3 characters" }),
-  message: z.string().min(10, { message: "Message must be at least 10 characters" }),
-  // Remove all other fields that don't exist in the Appwrite collection schema
+  message: z.string().min(10, { message: "Message must be at least 10 characters" })
+  // Remove all other fields to ensure exact match with Appwrite collection schema
 });
 
 export type ContactFormData = z.infer<typeof contactFormSchema>;
@@ -163,23 +163,29 @@ const MAX_RETRIES = 3;
 /**
  * Submit contact form data to Appwrite database with retry mechanism
  * @param data Form data to submit
+ * @param retryCount Number of retry attempts (internal use)
+ * @param testOnly If true, only tests connectivity without actually submitting data
  * @returns Promise with submission result
  */
-export async function submitContactForm(data: ContactFormData, retryCount = 0): Promise<{
+export async function submitContactForm(
+  data: ContactFormData,
+  retryCount = 0,
+  testOnly = false
+): Promise<{
   success: boolean;
   id?: string;
   message: string;
   error?: any;
 }> {
   try {
-    // Only include fields that are defined in the Appwrite collection schema
-    // Based on the error, we need to remove fields that don't exist in the schema
+    // Only include fields that are explicitly defined in the Appwrite collection schema
+    // Based on the error, we need to be very careful about field names
     const submissionData = {
       name: data.name,
       email: data.email,
-      subject: data.subject,
-      message: data.message,
-      // Exclude timestamp, userAgent, source, status, priority, tags
+      subject: data.subject || 'Contact Form Submission',
+      message: data.message
+      // Remove timestamp, userAgent, source, and ipAddress as they might not match the schema exactly
     };
 
     // Validate the simplified data against a minimal schema
@@ -190,8 +196,17 @@ export async function submitContactForm(data: ContactFormData, retryCount = 0): 
       name: validatedData.name,
       email: validatedData.email,
       subject: validatedData.subject,
-      timestamp: validatedData.timestamp,
     });
+
+    // If this is just a test, don't actually create the document
+    if (testOnly || data.source === 'connectivity_test_do_not_save') {
+      logger.info('Test mode: Skipping actual document creation');
+      return {
+        success: true,
+        id: 'test-' + ID.unique(),
+        message: 'Connection test successful. No document was created.'
+      };
+    }
 
     // Create document in Appwrite database
     const document = await databases.createDocument(
@@ -205,8 +220,7 @@ export async function submitContactForm(data: ContactFormData, retryCount = 0): 
     logger.info('Contact form submitted successfully', {
       id: document.$id,
       name: validatedData.name,
-      email: validatedData.email,
-      timestamp: validatedData.timestamp
+      email: validatedData.email
     });
 
     return {
