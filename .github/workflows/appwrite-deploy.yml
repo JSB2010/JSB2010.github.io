@@ -45,7 +45,7 @@ jobs:
       - name: Login to Appwrite
         run: |
           echo 'y' | appwrite login --email ${{ secrets.APPWRITE_EMAIL }} --password ${{ secrets.APPWRITE_PASSWORD }}
-          appwrite client --projectId ${{ secrets.APPWRITE_PROJECT_ID }}
+          appwrite client --project-id ${{ secrets.APPWRITE_PROJECT_ID }}
 
       - name: Deploy Email Notification Function
         run: |
