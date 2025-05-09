@@ -44,8 +44,8 @@ jobs:
 
       - name: Login to Appwrite
         run: |
-          echo 'y' | appwrite login --email ${{ secrets.APPWRITE_EMAIL }} --password ${{ secrets.APPWRITE_PASSWORD }}
-          appwrite client --project-id ${{ secrets.APPWRITE_PROJECT_ID }}
+          echo 'y' | appwrite login --email ${{ secrets.APPWRITE_EMAIL }} --password ${{ secrets.APPWRITE_PASSWORD }} --endpoint https://nyc.cloud.appwrite.io/v1
+          appwrite client --project-id ${{ secrets.APPWRITE_PROJECT_ID }} --endpoint https://nyc.cloud.appwrite.io/v1
 
       - name: Deploy Email Notification Function
         run: |
@@ -54,7 +54,9 @@ jobs:
             --function-id ${{ secrets.APPWRITE_EMAIL_FUNCTION_ID }} \
             --entrypoint src/main.js \
             --code . \
-            --activate true
+            --activate true \
+            --endpoint https://nyc.cloud.appwrite.io/v1 \
+            --verbose
 
   build_function:
     runs-on: ubuntu-latest
