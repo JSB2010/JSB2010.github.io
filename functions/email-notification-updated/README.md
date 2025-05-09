@@ -1,48 +1,61 @@
-# ⚡ Node.js Starter Function
+# 📧 Email Notification Function for Contact Form
 
-A simple starter function. Edit `src/main.js` to get started and create something awesome! 🚀
+This function sends email notifications when new contact form submissions are received in the Appwrite database.
 
-## 🧰 Usage
+## 🔐 Environment Variables
 
-### GET /ping
+This function requires the following environment variables:
 
-- Returns a "Pong" message.
+| Variable        | Description                                  |
+|-----------------|----------------------------------------------|
+| EMAIL_USER      | Your Gmail address (e.g., your@gmail.com)    |
+| EMAIL_PASSWORD  | Your Gmail app password                      |
 
-**Response**
+**Note:** For Gmail, you need to use an App Password instead of your regular password. You can create one at https://myaccount.google.com/apppasswords
 
-Sample `200` Response:
+## 🚀 Deployment
 
-```text
-Pong
-```
+### Using Appwrite Console
 
-### GET, POST, PUT, PATCH, DELETE /
+1. Navigate to your Appwrite Console
+2. Click on Functions in the side menu
+3. Select your function
+4. Click on the Deploy tab
+5. Upload the code from this directory
+6. Set the required environment variables
 
-- Returns a "Learn More" JSON response.
+### Using Appwrite CLI
 
-**Response**
-
-Sample `200` Response:
-
-```json
-{
-  "motto": "Build like a team of hundreds_",
-  "learn": "https://appwrite.io/docs",
-  "connect": "https://appwrite.io/discord",
-  "getInspired": "https://builtwith.appwrite.io"
-}
+```bash
+cd functions/email-notification-updated
+appwrite functions createDeployment \
+  --functionId=YOUR_FUNCTION_ID \
+  --entrypoint=src/main.js \
+  --code=.
 ```
 
 ## ⚙️ Configuration
 
-| Setting           | Value         |
-| ----------------- | ------------- |
-| Runtime           | Node (18.0)   |
-| Entrypoint        | `src/main.js` |
-| Build Commands    | `npm install` |
-| Permissions       | `any`         |
-| Timeout (Seconds) | 15            |
+| Setting           | Value                     |
+|-------------------|---------------------------|
+| Runtime           | Node.js (18.0)            |
+| Entrypoint        | src/main.js               |
+| Build Commands    | npm install               |
+| Timeout (Seconds) | 15                        |
+| Events            | databases.*.collections.contact-submissions.documents.*.create |
 
-## 🔒 Environment Variables
+## 📝 How It Works
 
-No environment variables required.
+1. The function is triggered when a new document is created in the contact-submissions collection
+2. It extracts the contact form data from the document
+3. It formats an email with the submission details
+4. It sends the email using Nodemailer and Gmail SMTP
+5. It returns a success or error response
+
+## 🔍 Troubleshooting
+
+If you're not receiving emails:
+- Check the function logs in the Appwrite Console
+- Verify your Gmail app password is correct
+- Check your spam folder
+- Make sure the database event trigger is set up correctly

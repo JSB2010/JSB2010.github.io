@@ -1,48 +1,25 @@
-# ⚡ Node.js Starter Function
+# 📧 Email Notification Function (Legacy Version)
 
-A simple starter function. Edit `src/main.js` to get started and create something awesome! 🚀
+This is the legacy version of the email notification function. Please use the updated version in the `email-notification-updated` directory instead.
 
-## 🧰 Usage
+## 🔐 Environment Variables
 
-### GET /ping
+This function requires the following environment variables:
 
-- Returns a "Pong" message.
-
-**Response**
-
-Sample `200` Response:
-
-```text
-Pong
-```
-
-### GET, POST, PUT, PATCH, DELETE /
-
-- Returns a "Learn More" JSON response.
-
-**Response**
-
-Sample `200` Response:
-
-```json
-{
-  "motto": "Build like a team of hundreds_",
-  "learn": "https://appwrite.io/docs",
-  "connect": "https://appwrite.io/discord",
-  "getInspired": "https://builtwith.appwrite.io"
-}
-```
+| Variable        | Description                                  |
+|-----------------|----------------------------------------------|
+| EMAIL_USER      | Your Gmail address (e.g., your@gmail.com)    |
+| EMAIL_PASSWORD  | Your Gmail app password                      |
 
 ## ⚙️ Configuration
 
-| Setting           | Value         |
-| ----------------- | ------------- |
-| Runtime           | Node (18.0)   |
-| Entrypoint        | `src/main.js` |
-| Build Commands    | `npm install` |
-| Permissions       | `any`         |
-| Timeout (Seconds) | 15            |
+| Setting           | Value                     |
+|-------------------|---------------------------|
+| Runtime           | Node.js (18.0)            |
+| Entrypoint        | src/main.js               |
+| Build Commands    | npm install               |
+| Timeout (Seconds) | 15                        |
 
-## 🔒 Environment Variables
+## ⚠️ Deprecation Notice
 
-No environment variables required.
+This function has been replaced by the improved version in the `email-notification-updated` directory. Please use that version instead for all new deployments.

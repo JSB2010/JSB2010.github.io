@@ -10,7 +10,7 @@ This is a modern redesign of my personal portfolio website using Next.js and sha
 - **Theme Switching**: [next-themes](https://github.com/pacocoursey/next-themes)
 - **Icons**: [Lucide React](https://lucide.dev/guide/packages/lucide-react)
 - **Animations**: [Aceternity UI](https://ui.aceternity.com/) components
-- **Backend**: [Firebase](https://firebase.google.com/) (Firestore, Functions, Analytics)
+- **Backend**: [Appwrite](https://appwrite.io/) (Database, Functions, Storage)
 - **Form Handling**: [React Hook Form](https://react-hook-form.com/) with [Zod](https://zod.dev/) validation
 - **Static Export**: Configured for Cloudflare Pages deployment
 
@@ -24,7 +24,7 @@ This is a modern redesign of my personal portfolio website using Next.js and sha
 - Turbopack for faster development
 - Blue-to-green gradient theme
 - GitHub project integration
-- Firebase-powered contact form with email notifications
+- Appwrite-powered contact form with email notifications
 - Project view tracking and analytics
 - User feedback system for projects
 - SEO optimized with proper metadata
@@ -39,11 +39,11 @@ This is a modern redesign of my personal portfolio website using Next.js and sha
 npm install
 ```
 
-3. Set up Firebase:
-   - Create a Firebase project at [firebase.google.com](https://firebase.google.com/)
-   - Enable Firestore, Functions, and Analytics
-   - Copy the Firebase configuration to `.env.local` (use `.env.local.example` as a template)
-   - Set up email configuration for contact form notifications (see Firebase Setup section)
+3. Set up Appwrite:
+   - Create an Appwrite project at [cloud.appwrite.io](https://cloud.appwrite.io/)
+   - Set up the database, collection, and functions
+   - Copy the Appwrite configuration to `.env.local` (use `.env.local.example` as a template)
+   - Set up email configuration for contact form notifications (see Appwrite Setup Guide)
 
 4. Run the development server:
 
@@ -118,24 +118,22 @@ If React Developer Tools isn't connecting to your application:
   - `src/components/ui/aceternity/*` - Aceternity UI components
   - `src/components/contact/*` - Contact form components
   - `src/components/projects/*` - Project-related components
-  - `src/components/firebase/*` - Firebase integration components
+  - `src/components/appwrite/*` - Appwrite integration components
   - `src/components/project-card.tsx` - Project card component
   - `src/components/header.tsx` - Site header
   - `src/components/footer.tsx` - Site footer
   - `src/components/theme-toggle.tsx` - Theme toggle button
 - `src/lib/*` - Utility functions and libraries
-  - `src/lib/firebase/*` - Firebase configuration and utilities
+  - `src/lib/appwrite/*` - Appwrite configuration and utilities
   - `src/lib/github.ts` - GitHub API integration
   - `src/lib/utils.ts` - General utility functions
-- `functions/*` - Firebase Cloud Functions
-  - `functions/src/index.ts` - Cloud Functions implementation
+- `functions/*` - Appwrite Functions
+  - `functions/email-notification-updated/*` - Email notification function
 - `public/*` - Static assets
   - `public/images/*` - Images used throughout the site
 - `next.config.js` - Next.js configuration
 - `tailwind.config.js` - Tailwind CSS configuration
-- `firebase.json` - Firebase configuration
-- `firestore.rules` - Firestore security rules
-- `firestore.indexes.json` - Firestore indexes configuration
+- `wrangler.toml` - Cloudflare Pages configuration
 
 ## Adding New shadcn UI Components
 
@@ -151,49 +149,45 @@ For example:
 npx shadcn@latest add accordion
 ```
 
-## Firebase Setup
+## Appwrite Setup
 
-This project uses Firebase for backend functionality. Follow these steps to set up Firebase:
+This project uses Appwrite for backend functionality. Follow these steps to set up Appwrite:
 
-1. Create a Firebase project at [firebase.google.com](https://firebase.google.com/)
+1. Create an Appwrite project at [cloud.appwrite.io](https://cloud.appwrite.io/)
 
-2. Enable the following Firebase services:
-   - Firestore Database
-   - Firebase Functions
-   - Firebase Analytics (optional)
+2. Set up the following Appwrite services:
+   - Database (for contact form submissions)
+   - Functions (for email notifications)
+   - Storage (optional, for future use)
 
-3. Set up Firebase CLI:
+3. Set up Appwrite CLI (optional):
    ```bash
-   npm install -g firebase-tools
-   firebase login
-   firebase init
+   npm install -g appwrite-cli
+   appwrite login
    ```
 
-   Select the following features:
-   - Firestore
-   - Functions
-   - Hosting (optional)
+4. Configure the contact form database and collection:
+   - Create a database (e.g., "contact-form-db")
+   - Create a collection named "contact-submissions"
+   - Add attributes for name, email, subject, message, etc.
+   - Set appropriate permissions (allow create for guests)
 
-4. Configure email for contact form:
-   ```bash
-   firebase functions:config:set email.host="smtp.gmail.com" email.port="587" email.secure="false" email.user="your-email@gmail.com" email.pass="your-app-password"
-   ```
+5. Set up the email notification function:
+   - Create a function in the Appwrite Console
+   - Deploy the code from `functions/email-notification-updated`
+   - Configure environment variables for email (EMAIL_USER, EMAIL_PASSWORD)
+   - Set up a database event trigger for new submissions
 
-   Note: For Gmail, you need to use an App Password instead of your regular password. You can create one at https://myaccount.google.com/apppasswords
+6. Update `.env.local` with your Appwrite configuration (use `.env.example` as a template)
 
-5. Deploy Firebase Functions:
-   ```bash
-   firebase deploy --only functions
-   ```
-
-6. Update `.env.local` with your Firebase configuration (use `.env.example` as a template)
-
-7. **Important: Securing Firebase API Keys**
-   - Firebase API keys for client-side code are designed to be public, but should still be protected
-   - This project uses environment variables to store Firebase configuration
-   - The `.env.local` file is included in `.gitignore` to prevent committing API keys to the repository
+7. **Important: Securing Appwrite API Keys**
+   - Appwrite API keys should be kept secure and never exposed in client-side code
+   - This project uses environment variables to store Appwrite configuration
+   - The `.env.local` file is included in `.gitignore` to prevent committing API keys
    - For production, add these environment variables to your hosting platform (Cloudflare Pages)
    - See the Deployment section for instructions on adding environment variables to Cloudflare Pages
+
+For detailed setup instructions, see the [Appwrite Setup Guide](APPWRITE_SETUP_GUIDE.md).
 
 ## Deployment
 
@@ -212,32 +206,25 @@ npm run build
    - Build command: `npm run build`
    - Build output directory: `out`
    - Node.js version: 20.x or later
-   - Environment variables: Add your Firebase configuration variables from `.env.local` to Cloudflare Pages environment variables:
+   - Environment variables: Add your Appwrite configuration variables from `.env.local` to Cloudflare Pages environment variables:
      - Go to your Cloudflare Pages project
      - Navigate to Settings > Environment variables
      - Add each variable from `.env.local` as a production environment variable
      - Make sure to add all the following variables:
 
-       **Firebase Client Configuration:**
-       - `NEXT_PUBLIC_FIREBASE_API_KEY`
-       - `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`
-       - `NEXT_PUBLIC_FIREBASE_PROJECT_ID`
-       - `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`
-       - `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`
-       - `NEXT_PUBLIC_FIREBASE_APP_ID`
-       - `NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID`
+       **Appwrite Client Configuration:**
+       - `NEXT_PUBLIC_APPWRITE_ENDPOINT`
+       - `NEXT_PUBLIC_APPWRITE_PROJECT_ID`
+       - `NEXT_PUBLIC_APPWRITE_DATABASE_ID`
+       - `NEXT_PUBLIC_APPWRITE_CONTACT_COLLECTION_ID`
+       - `NEXT_PUBLIC_APPWRITE_BUCKET_ID` (if using Storage)
 
-       **Firebase Admin Configuration:**
-       - `FIREBASE_PROJECT_ID`
+       **Appwrite Server Configuration:**
+       - `APPWRITE_API_KEY` (for server-side operations)
+       - `APPWRITE_ENDPOINT`
+       - `APPWRITE_PROJECT_ID`
 
-       **Email Configuration (for reference):**
-       - `FIREBASE_EMAIL_HOST`
-       - `FIREBASE_EMAIL_PORT`
-       - `FIREBASE_EMAIL_SECURE`
-       - `FIREBASE_EMAIL_USER`
-       - `FIREBASE_EMAIL_PASS`
-
-       **reCAPTCHA Configuration:**
+       **reCAPTCHA Configuration (if using):**
        - `NEXT_PUBLIC_RECAPTCHA_SITE_KEY`
 
 Alternatively, you can deploy to any platform that supports static sites, such as GitHub Pages or Netlify, but Cloudflare Pages is the recommended platform.
@@ -289,8 +276,8 @@ npm run check-a11y
 
 This project uses GitHub Actions for CI/CD:
 
-- **CI Workflow**: Runs linting, tests, and build on every push and pull request
-- **Lighthouse CI**: Checks performance, accessibility, best practices, and SEO
+- **Cloudflare Pages Workflow**: Builds and deploys the site to Cloudflare Pages
+- **Appwrite Deploy Workflow**: Deploys Appwrite functions when changes are made
 
 ## Branch Information
 
