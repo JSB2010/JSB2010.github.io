@@ -53,9 +53,32 @@ jobs:
           # Set the project
           appwrite client --project-id ${{ secrets.APPWRITE_PROJECT_ID }}
 
+      - name: List Available Functions
+        run: |
+          echo "Listing all available functions in the project:"
+          appwrite functions list
+
       - name: Deploy Email Notification Function
         run: |
           cd functions/email-notification-updated
+
+          # First try to create the function if it doesn't exist
+          echo "Checking if function exists or needs to be created..."
+          FUNCTION_EXISTS=$(appwrite functions list --json | grep -c "${{ secrets.APPWRITE_EMAIL_FUNCTION_ID }}" || echo "0")
+
+          if [ "$FUNCTION_EXISTS" = "0" ]; then
+            echo "Function does not exist. Creating new function..."
+            appwrite functions create \
+              --name "Contact Form Email Notification" \
+              --runtime node-18.0 \
+              --execute '["any"]' \
+              --function-id ${{ secrets.APPWRITE_EMAIL_FUNCTION_ID }}
+          else
+            echo "Function exists. Proceeding with deployment..."
+          fi
+
+          # Now deploy to the function
+          echo "Deploying function code..."
           appwrite functions create-deployment \
             --function-id ${{ secrets.APPWRITE_EMAIL_FUNCTION_ID }} \
             --entrypoint src/main.js \
