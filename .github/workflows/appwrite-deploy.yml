@@ -1,0 +1,39 @@
+name: Deploy Appwrite Functions
+
+on:
+  push:
+    branches:
+      - modern-redesign-shadcn
+    paths:
+      - 'functions/email-notification/**'
+      - 'functions/email-notification-updated/**'
+      - '.github/workflows/appwrite-deploy.yml'
+
+jobs:
+  deploy_appwrite_functions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Appwrite CLI
+        run: npm install -g appwrite-cli
+
+      - name: Login to Appwrite
+        run: |
+          echo 'y' | appwrite login --email ${{ secrets.APPWRITE_EMAIL }} --password ${{ secrets.APPWRITE_PASSWORD }}
+          appwrite client --projectId ${{ secrets.APPWRITE_PROJECT_ID }}
+
+      - name: Deploy Email Notification Function
+        run: |
+          cd functions/email-notification-updated
+          appwrite functions createDeployment \
+            --functionId ${{ secrets.APPWRITE_EMAIL_FUNCTION_ID }} \
+            --entrypoint src/main.js \
+            --code .
