@@ -14,6 +14,7 @@ import {
   Layers,
   Download
 } from "lucide-react";
+import { PageHero } from "@/components/ui/page-hero";
 
 export const metadata: Metadata = {
   title: "Apple TV macOS Project | Jacob Barkin",
@@ -28,19 +29,19 @@ export default function MacOSAppleTVPage() {
       showFeedback={true}
     >
       {/* Hero Section */}
-      <section className="relative py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/images/mountains-bg.jpg')] bg-cover bg-center opacity-30 dark:opacity-20"></div>
-
-        <div className="container relative z-20">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">Apple TV macOS Conversion</h1>
-            <div className="h-1 w-20 bg-primary rounded-full mx-auto mb-8"></div>
-            <p className="text-xl text-muted-foreground">
-              How I transformed a 1st generation Apple TV into a fully functional Mac by installing macOS on it.
-            </p>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        title="Apple TV macOS Conversion"
+        description="How I transformed a 1st generation Apple TV into a fully functional Mac computer by installing macOS on it."
+        backgroundImage="/images/mountains-bg.jpg"
+        tags={["macOS", "Apple TV", "Hardware Modification", "Patchstick"]}
+        badge="Hardware Project"
+        badgeIcon={true}
+        cta={{
+          text: "View Resources",
+          href: "#resources-section",
+          icon: <ExternalLink className="ml-2 h-4 w-4" />
+        }}
+      />
 
       {/* Project Overview Section */}
       <section className="py-16">

@@ -17,6 +17,7 @@ import { fetchUserRepositories, transformRepoToProjectCard } from "@/lib/github"
 import { OptimizedBackgroundImage } from "@/components/ui/optimized-background-image";
 import { ResponsiveImage } from "@/components/ui/responsive-image";
 import { LazyLoad } from "@/components/ui/lazy-load";
+import { PageHero } from "@/components/ui/page-hero";
 
 import "./projects-fixed.css";
 
@@ -117,30 +118,14 @@ export default async function ProjectsPage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative py-12 sm:py-16 md:py-24 overflow-hidden">
-        <OptimizedBackgroundImage
-          src="/images/mountains-bg.jpg"
-          alt="Mountains background"
-          priority={true}
-          overlayClassName="opacity-30 dark:opacity-20"
-        />
-
-        <div className="container relative z-20 px-4 sm:px-6">
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-primary/10 text-primary text-xs sm:text-sm font-medium mx-auto mb-4 sm:mb-6">
-              <span className="relative flex h-2.5 sm:h-3 w-2.5 sm:w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 sm:h-3 w-2.5 sm:w-3 bg-primary"></span>
-              </span>
-              <span className="ml-1 sm:ml-2">Portfolio Showcase</span>
-            </div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4 sm:mb-6 gradient-text">My Projects</h1>
-            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-              Explore my work across technology, technology consulting, and public transportation research.
-            </p>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        title="My Projects"
+        description="Explore my work across technology, technology consulting, and public transportation research."
+        backgroundImage="/images/mountains-bg.jpg"
+        badge="Portfolio Showcase"
+        badgeIcon={true}
+        tags={["Technology", "Research", "Open Source"]}
+      />
 
       {/* Project Categories Navigation */}
       <section className="py-4 sm:py-6 md:py-8 border-b border-border/40 sticky top-0 bg-background/80 backdrop-blur-md z-30">

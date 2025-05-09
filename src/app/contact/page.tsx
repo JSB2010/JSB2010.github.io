@@ -7,6 +7,7 @@ import { Mail } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { OptimizedBackgroundImage } from "@/components/ui/optimized-background-image";
 import { LazyLoad } from "@/components/ui/lazy-load";
+import { PageHero } from "@/components/ui/page-hero";
 
 // Configure this page for static export
 export const dynamic = "force-static";
@@ -21,24 +22,14 @@ export default function ContactPage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative py-12 sm:py-16 md:py-20 overflow-hidden">
-        <OptimizedBackgroundImage 
-          src="/images/mountains-bg.jpg" 
-          alt="Mountains background" 
-          priority={true}
-          overlayClassName="opacity-30 dark:opacity-20"
-        />
-
-        <div className="container relative z-20 px-4 sm:px-6">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 sm:mb-6">Get In Touch</h1>
-            <div className="h-1 w-16 sm:w-20 bg-primary rounded-full mx-auto mb-4 sm:mb-6 md:mb-8"></div>
-            <p className="text-base sm:text-lg md:text-xl text-muted-foreground">
-              Have a question or want to collaborate? I&apos;d love to hear from you!
-            </p>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        title="Get In Touch"
+        description="Have a question or want to collaborate? I'd love to hear from you!"
+        backgroundImage="/images/mountains-bg.jpg"
+        badge="Always Open to Connect"
+        badgeIcon={true}
+        tags={["Collaboration", "Questions", "Feedback"]}
+      />
 
       {/* Contact Form Section */}
       <LazyLoad>

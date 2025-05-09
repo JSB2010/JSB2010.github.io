@@ -233,9 +233,52 @@
     @apply rounded-xl border border-border/40 bg-card/80 backdrop-blur-sm transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1;
   }
 
-  /* Gradient text */
+  /* Skill card styling */
+  .skill-card-noise {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.05;
+  }
+
+  .skill-card-gradient-0 { background: linear-gradient(135deg, hsla(0, 80%, 65%, 0.25), transparent 40%, hsla(120, 80%, 65%, 0.25)); }
+  .skill-card-gradient-30 { background: linear-gradient(135deg, hsla(30, 80%, 65%, 0.25), transparent 40%, hsla(150, 80%, 65%, 0.25)); }
+  .skill-card-gradient-60 { background: linear-gradient(135deg, hsla(60, 80%, 65%, 0.25), transparent 40%, hsla(180, 80%, 65%, 0.25)); }
+  .skill-card-gradient-90 { background: linear-gradient(135deg, hsla(90, 80%, 65%, 0.25), transparent 40%, hsla(210, 80%, 65%, 0.25)); }
+  .skill-card-gradient-120 { background: linear-gradient(135deg, hsla(120, 80%, 65%, 0.25), transparent 40%, hsla(240, 80%, 65%, 0.25)); }
+  .skill-card-gradient-150 { background: linear-gradient(135deg, hsla(150, 80%, 65%, 0.25), transparent 40%, hsla(270, 80%, 65%, 0.25)); }
+  .skill-card-gradient-180 { background: linear-gradient(135deg, hsla(180, 80%, 65%, 0.25), transparent 40%, hsla(300, 80%, 65%, 0.25)); }
+  .skill-card-gradient-210 { background: linear-gradient(135deg, hsla(210, 80%, 65%, 0.25), transparent 40%, hsla(330, 80%, 65%, 0.25)); }
+  .skill-card-gradient-240 { background: linear-gradient(135deg, hsla(240, 80%, 65%, 0.25), transparent 40%, hsla(0, 80%, 65%, 0.25)); }
+  .skill-card-gradient-270 { background: linear-gradient(135deg, hsla(270, 80%, 65%, 0.25), transparent 40%, hsla(30, 80%, 65%, 0.25)); }
+  .skill-card-gradient-300 { background: linear-gradient(135deg, hsla(300, 80%, 65%, 0.25), transparent 40%, hsla(60, 80%, 65%, 0.25)); }
+  .skill-card-gradient-330 { background: linear-gradient(135deg, hsla(330, 80%, 65%, 0.25), transparent 40%, hsla(90, 80%, 65%, 0.25)); }
+
+  .skill-card-glow-0 { box-shadow: 0 0 20px 2px hsla(0, 80%, 65%, 0.15); }
+  .skill-card-glow-30 { box-shadow: 0 0 20px 2px hsla(30, 80%, 65%, 0.15); }
+  .skill-card-glow-60 { box-shadow: 0 0 20px 2px hsla(60, 80%, 65%, 0.15); }
+  .skill-card-glow-90 { box-shadow: 0 0 20px 2px hsla(90, 80%, 65%, 0.15); }
+  .skill-card-glow-120 { box-shadow: 0 0 20px 2px hsla(120, 80%, 65%, 0.15); }
+  .skill-card-glow-150 { box-shadow: 0 0 20px 2px hsla(150, 80%, 65%, 0.15); }
+  .skill-card-glow-180 { box-shadow: 0 0 20px 2px hsla(180, 80%, 65%, 0.15); }
+  .skill-card-glow-210 { box-shadow: 0 0 20px 2px hsla(210, 80%, 65%, 0.15); }
+  .skill-card-glow-240 { box-shadow: 0 0 20px 2px hsla(240, 80%, 65%, 0.15); }
+  .skill-card-glow-270 { box-shadow: 0 0 20px 2px hsla(270, 80%, 65%, 0.15); }
+  .skill-card-glow-300 { box-shadow: 0 0 20px 2px hsla(300, 80%, 65%, 0.15); }
+  .skill-card-glow-330 { box-shadow: 0 0 20px 2px hsla(330, 80%, 65%, 0.15); }
+
+  /* Gradient text for page heroes */
   .gradient-text {
-    @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-accent;
+    background-size: 200% auto;
+    animation: textShimmer 8s ease-in-out infinite alternate;
+  }
+
+  @keyframes textShimmer {
+    0% {
+      background-position: 0% center;
+    }
+    100% {
+      background-position: 100% center;
+    }
   }
 
   /* Particle animations */
@@ -254,8 +297,77 @@
     }
   }
 
+  @keyframes float-slow {
+    0% {
+      transform: translateY(0) translateX(0);
+      opacity: 0.3;
+    }
+    50% {
+      transform: translateY(-10px) translateX(5px);
+      opacity: 0.7;
+    }
+    100% {
+      transform: translateY(0) translateX(0);
+      opacity: 0.3;
+    }
+  }
+
+  @keyframes float-medium {
+    0% {
+      transform: translateY(0) translateX(0);
+      opacity: 0.4;
+    }
+    33% {
+      transform: translateY(-7px) translateX(7px);
+      opacity: 0.6;
+    }
+    66% {
+      transform: translateY(5px) translateX(-5px);
+      opacity: 0.7;
+    }
+    100% {
+      transform: translateY(0) translateX(0);
+      opacity: 0.4;
+    }
+  }
+
+  @keyframes float-fast {
+    0% {
+      transform: translateY(0) translateX(0);
+      opacity: 0.3;
+    }
+    25% {
+      transform: translateY(-5px) translateX(3px);
+      opacity: 0.5;
+    }
+    50% {
+      transform: translateY(0) translateX(6px);
+      opacity: 0.7;
+    }
+    75% {
+      transform: translateY(4px) translateX(-2px);
+      opacity: 0.5;
+    }
+    100% {
+      transform: translateY(0) translateX(0);
+      opacity: 0.3;
+    }
+  }
+
   .animate-float {
     animation: float 15s ease-in-out infinite;
+  }
+
+  .animate-float-slow {
+    animation: float-slow 8s ease-in-out infinite;
+  }
+
+  .animate-float-medium {
+    animation: float-medium 6s ease-in-out infinite;
+  }
+
+  .animate-float-fast {
+    animation: float-fast 4s ease-in-out infinite;
   }
 
   /* Particle positions */

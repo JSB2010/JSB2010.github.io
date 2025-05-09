@@ -14,6 +14,7 @@ import {
   Layers,
   GitBranch
 } from "lucide-react";
+import { PageHero } from "@/components/ui/page-hero";
 
 export const metadata: Metadata = {
   title: "MacBook Pro OpenCore Project | Jacob Barkin",
@@ -28,19 +29,19 @@ export default function MacbookProOpencorePage() {
       showFeedback={true}
     >
       {/* Hero Section */}
-      <section className="relative py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/images/mountains-bg.jpg')] bg-cover bg-center opacity-30 dark:opacity-20"></div>
-
-        <div className="container relative z-20">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">MacBook Pro Revitalization Project</h1>
-            <div className="h-1 w-20 bg-primary rounded-full mx-auto mb-8"></div>
-            <p className="text-xl text-muted-foreground">
-              How I breathed new life into my 2010 MacBook Pro by installing every macOS version from 10.7 to 12.0 on different partitions.
-            </p>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        title="MacBook Pro Revitalization"
+        description="How I breathed new life into my 2010 MacBook Pro by installing every macOS version from 10.7 to 12.0 on different partitions using OpenCore."
+        backgroundImage="/images/mountains-bg.jpg"
+        tags={["macOS", "OpenCore", "Hardware Modification", "Multi-Boot"]}
+        badge="Hardware Project"
+        badgeIcon={true}
+        cta={{
+          text: "View Resources",
+          href: "#resources-section",
+          icon: <ExternalLink className="ml-2 h-4 w-4" />
+        }}
+      />
 
       {/* Project Overview Section */}
       <section className="py-16">

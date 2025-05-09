@@ -8,6 +8,9 @@ interface BackgroundGradientProps {
   containerClassName?: string;
   animate?: boolean;
   children?: React.ReactNode;
+  gradientPosition?: { x: number, y: number };
+  index?: number;
+  useGlobalGradient?: boolean;
 }
 
 export const BackgroundGradient = ({
@@ -15,6 +18,9 @@ export const BackgroundGradient = ({
   containerClassName = "",
   animate = true,
   children,
+  gradientPosition,
+  index = 0,
+  useGlobalGradient = false,
 }: BackgroundGradientProps) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
@@ -47,6 +53,35 @@ export const BackgroundGradient = ({
     setIsHovered(false);
   };
 
+  // Generate gradient colors based on position in the grid
+  const getGradientStyle = () => {
+    if (useGlobalGradient && gradientPosition) {
+      // Calculate hue based on position (0-360)
+      const baseHue = 180; // Starting hue
+      const hueRange = 240; // Range of hues to use
+
+      // Create a continuous gradient across all cards
+      const hue1 = (baseHue + gradientPosition.x * hueRange) % 360;
+      const hue2 = (baseHue + ((gradientPosition.x + 0.5) % 1) * hueRange) % 360;
+
+      // Use HSL for better control over the gradient
+      return {
+        background: `linear-gradient(135deg,
+          hsla(${hue1}, 80%, 65%, 0.25),
+          transparent 40%,
+          hsla(${hue2}, 80%, 65%, 0.25))`,
+      };
+    }
+
+    // Default gradient if not using global gradient
+    return {
+      background: `linear-gradient(135deg,
+        rgba(var(--primary-rgb), 0.2),
+        transparent 40%,
+        rgba(var(--accent-rgb), 0.2))`,
+    };
+  };
+
   return (
     <div
       ref={containerRef}
@@ -68,9 +103,10 @@ export const BackgroundGradient = ({
       />
       <div
         className={cn(
-          "absolute inset-0 z-10 bg-gradient-to-br from-primary/20 via-transparent to-accent/20 opacity-100 transition-opacity duration-500",
+          "absolute inset-0 z-10 opacity-100 transition-opacity duration-500",
           className
         )}
+        style={getGradientStyle()}
       />
       {children}
     </div>

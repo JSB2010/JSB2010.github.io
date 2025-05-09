@@ -15,6 +15,7 @@ import {
   Film,
   Activity
 } from "lucide-react";
+import { PageHero } from "@/components/ui/page-hero";
 
 export const metadata: Metadata = {
   title: "Raspberry Pi 5 Homelab | Jacob Barkin",
@@ -29,19 +30,19 @@ export default function RaspberryPiHomelabPage() {
       showFeedback={true}
     >
       {/* Hero Section */}
-      <section className="relative py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/images/mountains-bg.jpg')] bg-cover bg-center opacity-30 dark:opacity-20"></div>
-
-        <div className="container relative z-20">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">Raspberry Pi 5 Homelab</h1>
-            <div className="h-1 w-20 bg-primary rounded-full mx-auto mb-8"></div>
-            <p className="text-xl text-muted-foreground">
-              Building a powerful and accessible homelab using a Raspberry Pi 5, Docker containers, Tailscale, and Cloudflare Tunnels.
-            </p>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        title="Raspberry Pi 5 Homelab"
+        description="Building a powerful and accessible homelab using a Raspberry Pi 5, Docker containers, Tailscale, and Cloudflare Tunnels."
+        backgroundImage="/images/mountains-bg.jpg"
+        tags={["Docker", "Self-Hosting", "Raspberry Pi", "Homelab"]}
+        badge="Hardware Project"
+        badgeIcon={true}
+        cta={{
+          text: "View Resources",
+          href: "#resources-section",
+          icon: <ExternalLink className="ml-2 h-4 w-4" />
+        }}
+      />
 
       {/* Project Overview Section */}
       <section className="py-16">

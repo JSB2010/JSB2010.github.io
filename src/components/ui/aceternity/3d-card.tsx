@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 
 interface ThreeDCardProps {
   children: React.ReactNode;
@@ -13,6 +13,9 @@ interface ThreeDCardProps {
   glareOpacity?: number;
   glareSize?: number;
   showGlare?: boolean;
+  gradientPosition?: { x: number, y: number };
+  index?: number;
+  totalItems?: number;
 }
 
 export const ThreeDCard = ({
@@ -25,34 +28,37 @@ export const ThreeDCard = ({
   glareOpacity = 0.3,
   glareSize = 0.4,
   showGlare = true,
+  gradientPosition,
+  index,
+  totalItems,
 }: ThreeDCardProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const glareRef = useRef<HTMLDivElement>(null);
 
   const [rotation, setRotation] = useState({ x: 0, y: 0 });
-  const [glarePosition, setGlarePosition] = useState({ x: 0, y: 0 });
+  const [glarePosition, setGlarePosition] = useState({ x: 50, y: 50 });
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current || !cardRef.current) return;
 
     const containerRect = containerRef.current.getBoundingClientRect();
-    
+
     // Calculate mouse position relative to the container
     const mouseX = e.clientX - containerRect.left;
     const mouseY = e.clientY - containerRect.top;
-    
+
     // Calculate rotation based on mouse position
     // Convert to percentage (-0.5 to 0.5) then multiply by rotation intensity
     const rotateY = ((mouseX / containerRect.width) - 0.5) * rotationIntensity;
     const rotateX = ((mouseY / containerRect.height) - 0.5) * -rotationIntensity;
-    
+
     // Update rotation state
     setRotation({ x: rotateX, y: rotateY });
-    
+
     // Update glare position if glare is enabled
-    if (showGlare && glareRef.current) {
+    if (showGlare) {
       const glareX = (mouseX / containerRect.width) * 100;
       const glareY = (mouseY / containerRect.height) * 100;
       setGlarePosition({ x: glareX, y: glareY });
@@ -68,10 +74,22 @@ export const ThreeDCard = ({
     setRotation({ x: 0, y: 0 });
   };
 
+  // Pass props to children
+  const childrenWithProps = React.Children.map(children, (child) => {
+    if (React.isValidElement(child)) {
+      return React.cloneElement(child, {
+        gradientPosition,
+        index,
+        // Don't pass totalItems to avoid React DOM prop warning
+      });
+    }
+    return child;
+  });
+
   return (
     <div
       ref={containerRef}
-      className={cn("perspective-1000px w-full h-full", containerClassName)}
+      className={cn("perspective-[1000px] w-full h-full", containerClassName)}
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -106,7 +124,9 @@ export const ThreeDCard = ({
             />
           </div>
         )}
-        <div className={cn("h-full w-full", className)}>{children}</div>
+        <div className={cn("h-full w-full", className)}>
+          {childrenWithProps}
+        </div>
       </div>
     </div>
   );

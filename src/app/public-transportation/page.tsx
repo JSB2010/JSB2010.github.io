@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { OptimizedBackgroundImage } from "@/components/ui/optimized-background-image";
 import { LazyLoad } from "@/components/ui/lazy-load";
+import { PageHero } from "@/components/ui/page-hero";
 
 // Configure for static export
 export const dynamic = "force-static";
@@ -34,24 +35,14 @@ export default function PublicTransportationPage() {
       projectName="Public Transportation Research"
     >
       {/* Hero Section */}
-      <section className="relative py-16 md:py-20 overflow-hidden">
-        <OptimizedBackgroundImage 
-          src="/images/mountains-bg.jpg" 
-          alt="Mountains background" 
-          priority={true}
-          overlayClassName="opacity-30 dark:opacity-20"
-        />
-
-        <div className="container relative z-20">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">Public Transportation Research</h1>
-            <p className="text-xl text-muted-foreground mb-8">
-              Because of my vision, I am unable to drive, so I take public transit as much as possible.
-              I like to do research on our current systems, and how to improve them.
-            </p>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        title="Public Transportation Research"
+        description="Because of my vision, I am unable to drive, so I take public transit as much as possible. I like to do research on our current systems, and how to improve them."
+        backgroundImage="/images/mountains-bg.jpg"
+        tags={["Accessibility", "Sustainability", "Public Transit"]}
+        badge="Research Project"
+        badgeIcon={true}
+      />
 
       {/* Overview Section */}
       <LazyLoad className="bg-muted/30">

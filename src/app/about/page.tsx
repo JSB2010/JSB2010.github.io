@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Metadata } from "next";
+import React, { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 // Import actual programming language and technology icons
 import {
@@ -10,11 +11,14 @@ import {
   SiAppwrite,
   SiReact,
   SiFirebase,
-  SiOpenai
+  SiOpenai,
+  SiNextdotjs,
+  SiTailwindcss,
+  SiTypescript
 } from "react-icons/si";
 
 // Import additional icon sets for technologies that might not be in simple-icons
-import { FaUniversalAccess, FaMobileAlt, FaGraduationCap, FaGlobeAmericas, FaBriefcase, FaMoneyBillWave, FaUsers } from "react-icons/fa";
+import { FaUniversalAccess, FaMobileAlt, FaGraduationCap, FaGlobeAmericas, FaBriefcase, FaMoneyBillWave, FaUsers, FaCode } from "react-icons/fa";
 
 // Import Aceternity UI components
 import { BackgroundGradient } from "@/components/ui/aceternity/background-gradient";
@@ -22,8 +26,10 @@ import { MovingBorder } from "@/components/ui/aceternity/moving-border";
 import { Spotlight } from "@/components/ui/aceternity/spotlight";
 import { TextRevealCard } from "@/components/ui/aceternity/text-reveal-card";
 import { ThreeDCard } from "@/components/ui/aceternity/3d-card";
+import { GradientSkillsContainer } from "@/components/ui/aceternity/gradient-skills-container";
 import { OptimizedBackgroundImage } from "@/components/ui/optimized-background-image";
 import { ResponsiveImage } from "@/components/ui/responsive-image";
+import { PageHero } from "@/components/ui/page-hero";
 
 import { BasicImage } from "@/components/ui/basic-image";
 import { LazyLoad } from "@/components/ui/lazy-load";
@@ -37,25 +43,12 @@ export default function AboutPage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="py-12 sm:py-16 md:py-20 overflow-hidden relative">
-        <OptimizedBackgroundImage
-          src="/images/mountains-bg.jpg"
-          alt="Mountains background"
-          priority={true}
-          overlayClassName="opacity-30 dark:opacity-20"
-        />
-        <div className="container relative z-20">
-          <div className="max-w-3xl mx-auto text-center px-4 sm:px-6">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
-              About Me
-            </h1>
-            <div className="h-1 w-16 sm:w-20 bg-primary rounded-full mx-auto my-4 sm:my-6 md:my-8"></div>
-            <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8">
-              I&apos;m Jacob Barkin, a student developer passionate about technology, financial education, and making a positive impact through accessible solutions.
-            </p>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        title="About Me"
+        description="I'm Jacob Barkin, a student developer passionate about technology, financial education, and making a positive impact through accessible solutions."
+        backgroundImage="/images/mountains-bg.jpg"
+        tags={["Developer", "Student", "Financial Education", "Accessibility"]}
+      />
 
       {/* Bio Section */}
       <section className="py-10 sm:py-12 md:py-16 relative overflow-hidden">
@@ -243,7 +236,7 @@ export default function AboutPage() {
               I&apos;ve developed a diverse set of skills across various technologies and disciplines.
             </p>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
+            <GradientSkillsContainer columns={4} rows={3}>
               <ThreeDCard
                 className="h-full w-full"
                 rotationIntensity={5}
@@ -251,7 +244,7 @@ export default function AboutPage() {
                 glareSize={0.4}
               >
                 <SkillCard
-                  icon={<SiHtml5 className="h-full w-full" />}
+                  icon={<SiHtml5 className="h-6 w-6" />}
                   title="HTML5"
                 />
               </ThreeDCard>
@@ -263,7 +256,7 @@ export default function AboutPage() {
                 glareSize={0.4}
               >
                 <SkillCard
-                  icon={<SiCss3 className="h-full w-full" />}
+                  icon={<SiCss3 className="h-6 w-6" />}
                   title="CSS3"
                 />
               </ThreeDCard>
@@ -275,7 +268,7 @@ export default function AboutPage() {
                 glareSize={0.4}
               >
                 <SkillCard
-                  icon={<SiJavascript className="h-full w-full" />}
+                  icon={<SiJavascript className="h-6 w-6" />}
                   title="JavaScript"
                 />
               </ThreeDCard>
@@ -287,7 +280,19 @@ export default function AboutPage() {
                 glareSize={0.4}
               >
                 <SkillCard
-                  icon={<SiPython className="h-full w-full" />}
+                  icon={<SiTypescript className="h-6 w-6" />}
+                  title="TypeScript"
+                />
+              </ThreeDCard>
+
+              <ThreeDCard
+                className="h-full w-full"
+                rotationIntensity={5}
+                glareOpacity={0.1}
+                glareSize={0.4}
+              >
+                <SkillCard
+                  icon={<SiPython className="h-6 w-6" />}
                   title="Python"
                 />
               </ThreeDCard>
@@ -299,7 +304,7 @@ export default function AboutPage() {
                 glareSize={0.4}
               >
                 <SkillCard
-                  icon={<SiReact className="h-full w-full" />}
+                  icon={<SiReact className="h-6 w-6" />}
                   title="React"
                 />
               </ThreeDCard>
@@ -311,7 +316,31 @@ export default function AboutPage() {
                 glareSize={0.4}
               >
                 <SkillCard
-                  icon={<SiFirebase className="h-full w-full" />}
+                  icon={<SiNextdotjs className="h-6 w-6" />}
+                  title="Next.js"
+                />
+              </ThreeDCard>
+
+              <ThreeDCard
+                className="h-full w-full"
+                rotationIntensity={5}
+                glareOpacity={0.1}
+                glareSize={0.4}
+              >
+                <SkillCard
+                  icon={<SiTailwindcss className="h-6 w-6" />}
+                  title="Tailwind CSS"
+                />
+              </ThreeDCard>
+
+              <ThreeDCard
+                className="h-full w-full"
+                rotationIntensity={5}
+                glareOpacity={0.1}
+                glareSize={0.4}
+              >
+                <SkillCard
+                  icon={<SiFirebase className="h-6 w-6" />}
                   title="Firebase"
                 />
               </ThreeDCard>
@@ -323,7 +352,7 @@ export default function AboutPage() {
                 glareSize={0.4}
               >
                 <SkillCard
-                  icon={<SiAppwrite className="h-full w-full" />}
+                  icon={<SiAppwrite className="h-6 w-6" />}
                   title="Appwrite"
                 />
               </ThreeDCard>
@@ -335,7 +364,7 @@ export default function AboutPage() {
                 glareSize={0.4}
               >
                 <SkillCard
-                  icon={<SiOpenai className="h-full w-full" />}
+                  icon={<SiOpenai className="h-6 w-6" />}
                   title="AI Integration"
                 />
               </ThreeDCard>
@@ -347,35 +376,11 @@ export default function AboutPage() {
                 glareSize={0.4}
               >
                 <SkillCard
-                  icon={<FaUniversalAccess className="h-full w-full" />}
+                  icon={<FaUniversalAccess className="h-6 w-6" />}
                   title="Accessibility"
                 />
               </ThreeDCard>
-
-              <ThreeDCard
-                className="h-full w-full"
-                rotationIntensity={5}
-                glareOpacity={0.1}
-                glareSize={0.4}
-              >
-                <SkillCard
-                  icon={<FaMobileAlt className="h-full w-full" />}
-                  title="Responsive Design"
-                />
-              </ThreeDCard>
-
-              <ThreeDCard
-                className="h-full w-full"
-                rotationIntensity={5}
-                glareOpacity={0.1}
-                glareSize={0.4}
-              >
-                <SkillCard
-                  icon={<FaGraduationCap className="h-full w-full" />}
-                  title="Education"
-                />
-              </ThreeDCard>
-            </div>
+            </GradientSkillsContainer>
           </div>
         </section>
       </LazyLoad>
@@ -383,22 +388,62 @@ export default function AboutPage() {
   );
 }
 
-function SkillCard({ icon, title }: Readonly<{ icon: React.ReactNode, title: string }>) {
+function SkillCard({
+  icon,
+  title,
+  gradientPosition,
+  index,
+  totalItems,
+}: Readonly<{
+  icon: React.ReactNode,
+  title: string,
+  gradientPosition?: { x: number, y: number },
+  index?: number,
+  totalItems?: number,
+}>) {
   return (
-    <BackgroundGradient className="rounded-xl h-full">
-      <Card className="overflow-hidden border-0 bg-background/80 backdrop-blur-sm h-full">
-        <CardContent className="p-4 sm:p-6 flex flex-col items-center text-center">
-          <MovingBorder className="p-0.5 mb-4" containerClassName="rounded-full" duration={5000}>
-            <div className="p-3 sm:p-4 rounded-full bg-background text-primary flex items-center justify-center">
-              <div className="h-8 w-8 sm:h-10 sm:w-10">
-                {icon}
+    <div className="group h-full perspective-[1000px] transform-gpu transition-all duration-300 hover:scale-[1.03]">
+      <BackgroundGradient
+        className="rounded-xl h-full"
+        gradientPosition={gradientPosition}
+        index={index}
+        useGlobalGradient={true}
+      >
+        <Card className="overflow-hidden border-0 bg-background/80 backdrop-blur-sm h-full relative group-hover:shadow-xl transition-all duration-300">
+          {/* Glass morphism effect */}
+          <div className="absolute inset-0 bg-white/5 backdrop-blur-[2px] rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+          {/* Noise texture overlay */}
+          <div className="absolute inset-0 rounded-xl mix-blend-overlay pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 skill-card-noise"></div>
+
+          <CardContent className="p-4 sm:p-6 flex flex-col items-center text-center relative z-10">
+            <MovingBorder
+              className="p-0.5 mb-4 transition-all duration-300 group-hover:p-1"
+              containerClassName="rounded-full shadow-md"
+              duration={4000}
+            >
+              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-background text-primary flex items-center justify-center relative overflow-hidden group-hover:bg-background/90 transition-all duration-300">
+                {/* Particle effect container */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+                  <div className="absolute top-0 left-1/2 w-1 h-1 rounded-full bg-primary/40 animate-float-slow"></div>
+                  <div className="absolute bottom-1/4 left-1/4 w-1 h-1 rounded-full bg-primary/40 animate-float-medium"></div>
+                  <div className="absolute top-1/3 right-1/4 w-1 h-1 rounded-full bg-primary/40 animate-float-fast"></div>
+                </div>
+
+                <div className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transform transition-transform duration-300 group-hover:scale-110 relative z-10">
+                  {icon}
+                </div>
               </div>
-            </div>
-          </MovingBorder>
-          <h3 className="text-base sm:text-lg font-medium mb-2">{title}</h3>
-          <div className="w-16 h-1 bg-primary/30 rounded-full mx-auto"></div>
-        </CardContent>
-      </Card>
-    </BackgroundGradient>
+            </MovingBorder>
+
+            <h3 className="text-base sm:text-lg md:text-xl font-medium mb-2 transition-all duration-300 group-hover:tracking-wide">
+              {title}
+            </h3>
+
+            <div className="w-16 h-1 bg-primary/30 rounded-full mx-auto group-hover:w-20 group-hover:bg-primary/50 transition-all duration-300"></div>
+          </CardContent>
+        </Card>
+      </BackgroundGradient>
+    </div>
   );
 }

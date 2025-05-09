@@ -23,6 +23,7 @@ import { OptimizedBackgroundImage } from "@/components/ui/optimized-background-i
 import { ResponsiveImage } from "@/components/ui/responsive-image";
 import { BasicImage } from "@/components/ui/basic-image";
 import { LazyLoad } from "@/components/ui/lazy-load";
+import { PageHero } from "@/components/ui/page-hero";
 
 export const metadata: Metadata = {
   title: "Portfolio Website | Jacob Barkin",
@@ -33,33 +34,18 @@ export default function PortfolioWebsitePage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="py-12 sm:py-16 md:py-20 overflow-hidden relative">
-        <OptimizedBackgroundImage
-          src="/images/code-bg.jpg"
-          alt="Code background"
-          priority={true}
-          overlayClassName="opacity-30 dark:opacity-20"
-        />
-        <div className="container relative z-20">
-          <div className="max-w-3xl mx-auto text-center px-4 sm:px-6">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
-              Portfolio Website Project
-            </h1>
-            <div className="h-1 w-16 sm:w-20 bg-primary rounded-full mx-auto my-4 sm:my-6 md:my-8"></div>
-            <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8">
-              A modern, responsive portfolio website built with Next.js, Tailwind CSS, and shadcn UI, featuring accessibility and dark mode support.
-            </p>
-            <div className="flex flex-wrap gap-2 sm:gap-3 justify-center">
-              <Link href="https://github.com/JSB2010/jacobbarkin.com" target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" className="gap-2">
-                  <Github className="h-4 w-4" />
-                  View Source
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        title="Portfolio Website Project"
+        description="A modern, responsive portfolio website built with Next.js, Tailwind CSS, and shadcn UI, featuring accessibility and dark mode support."
+        backgroundImage="/images/code-bg.jpg"
+        tags={["Next.js", "Tailwind CSS", "shadcn UI", "Accessibility"]}
+        cta={{
+          text: "View Source",
+          href: "https://github.com/JSB2010/jacobbarkin.com",
+          icon: <Github className="ml-2 h-4 w-4" />,
+          external: true
+        }}
+      />
 
       {/* Project Overview */}
       <section className="py-10 sm:py-12 md:py-16">
