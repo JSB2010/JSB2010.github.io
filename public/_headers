@@ -4,19 +4,19 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self'; connect-src 'self' *.cloudflareinsights.com; frame-src 'self'; object-src 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.cloudflareinsights.com https://cdn.jsdelivr.net https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdn.honey.io; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' *.cloudflareinsights.com https://nyc.cloud.appwrite.io https://*.appwrite.io https://api.github.com https://www.google-analytics.com https://www.google.com; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; manifest-src 'self'; worker-src 'self' blob:;
 
 # Cache control for static assets
 /images/*
   Cache-Control: public, max-age=31536000, immutable
-  
+
 /favicon.ico
   Cache-Control: public, max-age=86400
-  
+
 # JavaScript and CSS files
 /*.js
   Cache-Control: public, max-age=604800, stale-while-revalidate=86400
-  
+
 /*.css
   Cache-Control: public, max-age=604800, stale-while-revalidate=86400
 
