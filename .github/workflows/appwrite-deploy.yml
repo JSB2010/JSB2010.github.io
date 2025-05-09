@@ -53,7 +53,8 @@ jobs:
           appwrite functions create-deployment \
             --function-id ${{ secrets.APPWRITE_EMAIL_FUNCTION_ID }} \
             --entrypoint src/main.js \
-            --code .
+            --code . \
+            --activate true
 
   build_function:
     runs-on: ubuntu-latest
