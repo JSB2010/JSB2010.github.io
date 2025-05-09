@@ -73,12 +73,16 @@ jobs:
           appwrite functions create \
             --name "Contact Form Email Notification" \
             --runtime node-18.0 \
-            --execute '["any"]' \
+            --execute any \
             --function-id ${{ secrets.APPWRITE_EMAIL_FUNCTION_ID }} || echo "Function may already exist, continuing..."
+
+          # List functions again to see if our function is now visible
+          echo "Listing functions after creation attempt:"
+          appwrite functions list
 
           # Verify the function exists now
           echo "Verifying function exists..."
-          appwrite functions get --function-id ${{ secrets.APPWRITE_EMAIL_FUNCTION_ID }} || {
+          appwrite functions get --function-id ${{ secrets.APPWRITE_EMAIL_FUNCTION_ID }} --verbose || {
             echo "::error::Function still doesn't exist after creation attempt. Please check the function ID and permissions."
             exit 1
           }
@@ -94,7 +98,8 @@ jobs:
             --function-id ${{ secrets.APPWRITE_EMAIL_FUNCTION_ID }} \
             --entrypoint src/main.js \
             --code . \
-            --activate true
+            --activate true \
+            --verbose
 
   build_function:
     runs-on: ubuntu-latest
