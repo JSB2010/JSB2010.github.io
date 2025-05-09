@@ -148,7 +148,27 @@ function createClient() {
     .setProject(config.projectId);
 
   // Add custom headers for CORS if needed
-  // client.setHeader('X-Custom-Header', 'value');
+  try {
+    if (typeof client.setHeader === 'function') {
+      // Add CORS headers for production domain
+      const allowedOrigins = [
+        'https://jacobbarkin.com',
+        'https://www.jacobbarkin.com',
+        'https://jacobbarkin-com.pages.dev',
+        'https://modern-redesign-shadcn.jsb2010-github-io.pages.dev'
+      ];
+
+      // Get the current origin if in browser environment
+      if (typeof window !== 'undefined') {
+        const origin = window.location.origin;
+        if (allowedOrigins.includes(origin)) {
+          client.setHeader('Origin', origin);
+        }
+      }
+    }
+  } catch (error) {
+    console.warn('Error setting Appwrite headers:', error);
+  }
 
   return client;
 }
