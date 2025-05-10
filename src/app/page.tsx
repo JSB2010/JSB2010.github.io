@@ -11,7 +11,7 @@ import {
   User,
   ArrowRight
 } from "lucide-react";
-import { FaMoneyBillWave } from "react-icons/fa";
+import { FaMoneyBillWave, FaRunning, FaSkiing } from "react-icons/fa";
 import { useEffect, useState } from "react";
 
 // Import Aceternity UI components
@@ -100,16 +100,14 @@ export default function Home() {
                 </div>
               </MovingBorder>
 
-              <StaticTextCard
-                text="Jacob Barkin"
-                className="border-none shadow-none p-0 bg-transparent"
-                gradientText={true}
-                textSize="text-3xl sm:text-4xl md:text-5xl"
-              >
+              <div className="border-none shadow-none p-0 bg-transparent">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text">
+                  Jacob Barkin
+                </h1>
                 <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mt-4 sm:mt-6">
                   Developer & Technology Consultant
                 </p>
-              </StaticTextCard>
+              </div>
 
               <div className="flex flex-wrap gap-2 sm:gap-3 justify-center md:justify-start">
                 <span className="px-2 sm:px-3 py-1 rounded-full bg-primary/10 text-primary text-xs sm:text-sm flex items-center gap-1">
@@ -127,34 +125,32 @@ export default function Home() {
               </div>
 
               <p className="text-sm sm:text-base text-muted-foreground max-w-md mx-auto md:mx-0">
-                I&apos;m passionate about technology, technology consulting, financial literacy, and making a positive impact.
+                I&apos;m passionate about technology, financial literacy, and making a positive impact.
                 With a focus on accessibility and innovation, I develop solutions that help people solve their technology challenges while also advocating for youth financial education.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-2 justify-center md:justify-start">
-                <BackgroundGradient className="rounded-xl">
-                  <Button
-                    asChild
-                    size="default"
-                    className="bg-primary hover:opacity-90 transition-opacity border-none text-sm sm:text-base h-10 sm:h-11"
-                  >
-                    <Link href="/projects">
+                <Link href="/projects">
+                  <BackgroundGradient className="rounded-xl">
+                    <Button
+                      size="default"
+                      className="bg-primary hover:opacity-90 transition-opacity border-none text-sm sm:text-base h-10 sm:h-11 flex items-center"
+                    >
                       <Code className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                       View My Projects
-                    </Link>
-                  </Button>
-                </BackgroundGradient>
-                <Button
-                  variant="outline"
-                  asChild
-                  size="default"
-                  className="border-primary/20 hover:bg-primary/15 hover:text-primary text-sm sm:text-base h-10 sm:h-11"
-                >
-                  <Link href="/about">
+                    </Button>
+                  </BackgroundGradient>
+                </Link>
+                <Link href="/about">
+                  <Button
+                    variant="outline"
+                    size="default"
+                    className="border-primary/20 hover:bg-primary/15 hover:text-primary text-sm sm:text-base h-10 sm:h-11 flex items-center"
+                  >
                     <User className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                     About Me
-                  </Link>
-                </Button>
+                  </Button>
+                </Link>
               </div>
 
               <div className="flex gap-3 sm:gap-4 mt-2 justify-center md:justify-start">
@@ -254,17 +250,17 @@ export default function Home() {
       <LazyLoad className="py-12 sm:py-16 md:py-20 theme-technology relative overflow-hidden">
         <section>
           <div className="container relative z-10">
-            <div className="flex flex-col items-center mb-8 sm:mb-12">
+            <div className="flex flex-col items-center text-center mb-8 sm:mb-12">
               <TextRevealCard
                 text="My Interests"
                 revealText="Explore My Passions"
-                className="border-none shadow-none p-0 bg-transparent"
+                className="border-none shadow-none p-0 bg-transparent text-center"
               >
                 <div className="h-1 w-16 sm:w-20 bg-gradient-blue-green rounded-full mx-auto mt-3 sm:mt-4"></div>
               </TextRevealCard>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 justify-items-center mx-auto max-w-screen-xl">
               {/* Technology Card */}
               <BackgroundGradient className="rounded-xl h-full">
                 <Card className="border-0 bg-background/80 backdrop-blur-sm h-full flex flex-col">
@@ -372,6 +368,44 @@ export default function Home() {
                 </CardContent>
               </Card>
             </BackgroundGradient>
+
+            {/* Running Card */}
+            <BackgroundGradient className="rounded-xl h-full">
+              <Card className="border-0 bg-background/80 backdrop-blur-sm h-full flex flex-col">
+                <CardContent className="pt-4 sm:pt-6 p-4 sm:p-6 flex-grow flex flex-col">
+                  <div className="flex flex-col items-center text-center h-full">
+                    <MovingBorder className="p-0.5" containerClassName="rounded-full mb-3 sm:mb-4">
+                      <div className="p-2 sm:p-3 rounded-full bg-background text-primary">
+                        <FaRunning className="h-6 w-6 sm:h-8 sm:w-8" />
+                      </div>
+                    </MovingBorder>
+                    <h3 className="text-lg sm:text-xl font-semibold mb-1 sm:mb-2">Running</h3>
+                    <p className="text-xs sm:text-sm text-muted-foreground flex-grow">
+                      Passionate about cross country running, competing in races and enjoying the physical and mental benefits of the sport.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </BackgroundGradient>
+
+            {/* Skiing Card */}
+            <BackgroundGradient className="rounded-xl h-full">
+              <Card className="border-0 bg-background/80 backdrop-blur-sm h-full flex flex-col">
+                <CardContent className="pt-4 sm:pt-6 p-4 sm:p-6 flex-grow flex flex-col">
+                  <div className="flex flex-col items-center text-center h-full">
+                    <MovingBorder className="p-0.5" containerClassName="rounded-full mb-3 sm:mb-4">
+                      <div className="p-2 sm:p-3 rounded-full bg-background text-primary">
+                        <FaSkiing className="h-6 w-6 sm:h-8 sm:w-8" />
+                      </div>
+                    </MovingBorder>
+                    <h3 className="text-lg sm:text-xl font-semibold mb-1 sm:mb-2">Skiing</h3>
+                    <p className="text-xs sm:text-sm text-muted-foreground flex-grow">
+                      Skiing at Breckenridge since I was 3 years old, enjoying the thrill of the slopes and the beautiful mountain scenery.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </BackgroundGradient>
           </div>
         </div>
       </section>
@@ -381,11 +415,11 @@ export default function Home() {
 
       <section className="py-12 sm:py-16 md:py-20 theme-space relative overflow-hidden">
         <div className="container relative z-10">
-          <div className="flex flex-col items-center mb-8 sm:mb-12">
+          <div className="flex flex-col items-center text-center mb-8 sm:mb-12">
             <TextRevealCard
               text="Featured Projects"
               revealText="Explore My Work"
-              className="border-none shadow-none p-0 bg-transparent"
+              className="border-none shadow-none p-0 bg-transparent text-center"
             >
               <div className="h-1 w-16 sm:w-20 bg-gradient-blue-green rounded-full mx-auto mt-3 sm:mt-4"></div>
             </TextRevealCard>
