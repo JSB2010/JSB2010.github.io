@@ -2,22 +2,14 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  LineChart,
-  Train,
-  Code,
-  ExternalLink,
-  Laptop,
-  Monitor,
-  Tv,
-  Server
-} from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { ProjectCard as GitHubProjectCard } from "@/components/project-card";
 import { fetchUserRepositories, transformRepoToProjectCard } from "@/lib/github";
 import { OptimizedBackgroundImage } from "@/components/ui/optimized-background-image";
 import { ResponsiveImage } from "@/components/ui/responsive-image";
 import { LazyLoad } from "@/components/ui/lazy-load";
 import { PageHero } from "@/components/ui/page-hero";
+import { ProjectThumbnail, ProjectThumbnailType } from "@/components/project-thumbnails";
 
 import "./projects-fixed.css";
 
@@ -33,7 +25,7 @@ const projects = [
     title: "Ask The Kidz",
     description: "A technology consulting business providing tech support and solutions for various devices, software, and smart home setups. Helping people solve their technology challenges with personalized service.",
     image: undefined,
-    icon: <LineChart className="h-16 w-16 text-white" />,
+    thumbnailType: "tech-consulting" as ProjectThumbnailType,
     gradient: "from-blue-500 to-purple-600",
     tags: ["Technology Consulting", "Tech Support"],
     link: "https://www.askthekidz.com",
@@ -45,7 +37,7 @@ const projects = [
     title: "Public Transportation Research",
     description: "Comprehensive research on public transportation systems in Colorado, focusing on accessibility improvements and sustainable solutions.",
     image: undefined,
-    icon: <Train className="h-16 w-16 text-white" />,
+    thumbnailType: "transportation" as ProjectThumbnailType,
     gradient: "from-green-500 to-teal-600",
     tags: ["Research", "Accessibility", "Sustainability"],
     link: "/public-transportation",
@@ -57,7 +49,7 @@ const projects = [
     title: "Portfolio Website",
     description: "A modern, responsive portfolio website showcasing my projects, skills, and interests with a focus on accessibility and user experience.",
     image: undefined,
-    icon: <Code className="h-16 w-16 text-white" />,
+    thumbnailType: "portfolio" as ProjectThumbnailType,
     gradient: "from-indigo-500 to-blue-600",
     tags: ["Next.js", "Tailwind CSS", "shadcn UI"],
     link: "/portfolio-website",
@@ -69,7 +61,7 @@ const projects = [
     title: "Raspberry Pi 5 Homelab",
     description: "Building a powerful homelab using a Raspberry Pi 5 with Docker containers, accessible from anywhere using Tailscale and Cloudflare Tunnels.",
     image: undefined,
-    icon: <Server className="h-16 w-16 text-white" />,
+    thumbnailType: "homelab" as ProjectThumbnailType,
     gradient: "from-green-500 to-teal-600",
     tags: ["Docker", "Self-Hosting", "Raspberry Pi"],
     link: "/raspberry-pi-homelab",
@@ -81,7 +73,7 @@ const projects = [
     title: "MacBook Pro Revitalization",
     description: "How I breathed new life into my 2010 MacBook Pro by installing every macOS version from 10.7 to 12.0 on different partitions using OpenCore bootloader.",
     image: undefined,
-    icon: <Laptop className="h-16 w-16 text-white" />,
+    thumbnailType: "macbook" as ProjectThumbnailType,
     gradient: "from-gray-600 to-gray-800",
     tags: ["macOS", "OpenCore", "Hardware Modification"],
     link: "/macbook-pro-opencore",
@@ -93,7 +85,7 @@ const projects = [
     title: "Apple TV macOS Conversion",
     description: "How I transformed a 1st generation Apple TV into a fully functional Mac computer by installing macOS on it.",
     image: undefined,
-    icon: <Tv className="h-16 w-16 text-white" />,
+    thumbnailType: "apple-tv" as ProjectThumbnailType,
     gradient: "from-red-500 to-pink-600",
     tags: ["macOS", "Apple TV", "Hardware Modification"],
     link: "/macos-apple-tv",
@@ -290,7 +282,7 @@ interface FeaturedProject {
   description: string;
   link: string;
   image?: string;
-  icon?: React.ReactNode;
+  thumbnailType: ProjectThumbnailType;
   gradient: string;
   tags: string[];
   github?: string | null;
@@ -305,7 +297,7 @@ function ProjectCard({ project }: Readonly<{ project: FeaturedProject }>) {
       className="block h-full group"
     >
       <Card className="h-full hover:shadow-lg transition-all duration-300 overflow-hidden group project-card">
-        <div className={`h-36 sm:h-40 md:h-48 bg-gradient-to-r ${project.gradient} flex items-center justify-center relative overflow-hidden`}>
+        <div className="h-36 sm:h-40 md:h-48 relative overflow-hidden">
           {project.image ? (
             <ResponsiveImage
               src={project.image}
@@ -317,9 +309,11 @@ function ProjectCard({ project }: Readonly<{ project: FeaturedProject }>) {
               sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
             />
           ) : (
-            <div className="transition-transform duration-300 group-hover:scale-110 scale-75 sm:scale-90 md:scale-100">
-              {project.icon}
-            </div>
+            <ProjectThumbnail
+              type={project.thumbnailType}
+              gradient={project.gradient}
+              className="transition-transform duration-300 group-hover:scale-105"
+            />
           )}
 
           {/* Hover overlay */}
