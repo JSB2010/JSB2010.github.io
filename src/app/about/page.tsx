@@ -34,6 +34,9 @@ import { PageHero } from "@/components/ui/page-hero";
 import { BasicImage } from "@/components/ui/basic-image";
 import { LazyLoad } from "@/components/ui/lazy-load";
 
+// Import Education Section component
+import { EducationSection } from "@/components/education/education-section";
+
 export const metadata: Metadata = {
   title: "About Me | Jacob Barkin",
   description: "Learn more about Jacob Barkin, my background, education, and skills in technology and financial education.",
@@ -97,55 +100,36 @@ export default function AboutPage() {
       <LazyLoad className="bg-muted/50 relative overflow-hidden">
         <section className="py-10 sm:py-12 md:py-16">
           <div className="container relative z-10 px-4 sm:px-6">
-            <TextRevealCard
-              text="Education"
-              revealText="My Learning Path"
-              className="border-none shadow-none p-0 bg-transparent mb-8 sm:mb-10 md:mb-12 mx-auto text-center"
-            />
+            <div className="flex flex-col items-center mb-8 sm:mb-10">
+              <TextRevealCard
+                text="Education"
+                revealText="My Learning Path"
+                className="border-none shadow-none p-0 bg-transparent mx-auto text-center"
+              />
+              <div className="h-1 w-16 sm:w-20 bg-gradient-to-r from-blue-500 to-green-500 rounded-full mx-auto mt-3 sm:mt-4 mb-4"></div>
 
-            <div className="max-w-3xl mx-auto">
-              <div className="relative pl-6 sm:pl-8 pb-8 sm:pb-12 border-l-2 border-primary/30 last:border-0">
-                <MovingBorder className="p-0.5" containerClassName="absolute top-0 left-0 -translate-x-1/2 rounded-full" duration={5000}>
-                  <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-background flex items-center justify-center">
-                    <FaGraduationCap className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
-                  </div>
-                </MovingBorder>
-
-                <BackgroundGradient className="rounded-xl">
-                  <Card className="border-0 bg-background/80 backdrop-blur-sm p-4 sm:p-6">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 sm:mb-4">
-                      <h3 className="text-lg sm:text-xl font-semibold">Kent Denver School</h3>
-                      <span className="text-sm text-muted-foreground mt-1 sm:mt-0">2024 - 2028</span>
-                    </div>
-
-                    <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
-                      <MovingBorder className="p-0.5" containerClassName="rounded-md" duration={5000}>
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-background rounded-md p-1 flex items-center justify-center">
-                          <FaGraduationCap className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
-                        </div>
-                      </MovingBorder>
-                      <div>
-                        <p className="font-medium text-sm sm:text-base">Freshman</p>
-                        <p className="text-xs sm:text-sm text-muted-foreground">Focus on Computer Science & Technology</p>
-                      </div>
-                    </div>
-
-                    <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">
-                      Actively involved in technology clubs and programming initiatives. Pursuing coursework in computer science, mathematics, and financial literacy.
-                    </p>
-
-                    <a
-                      href="https://kentdenver.org"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center text-primary hover:underline text-sm sm:text-base"
-                    >
-                      <FaGlobeAmericas className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
-                      Visit School Website
-                    </a>
-                  </Card>
-                </BackgroundGradient>
+              <div className="flex items-center justify-center bg-muted/30 backdrop-blur-sm rounded-full px-4 py-2 border border-border/50">
+                <FaGraduationCap className="h-4 w-4 sm:h-5 sm:w-5 mr-2 text-primary" />
+                <span className="text-sm sm:text-base font-medium">Kent Denver School</span>
+                <span className="mx-2 text-muted-foreground">•</span>
+                <span className="text-xs sm:text-sm text-muted-foreground">High School</span>
+                <span className="mx-2 text-muted-foreground">•</span>
+                <span className="text-xs sm:text-sm text-muted-foreground">2024-2028</span>
+                <a
+                  href="https://kentdenver.org"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ml-2 text-primary hover:text-primary/80 transition-colors"
+                  aria-label="Visit Kent Denver School website"
+                >
+                  <FaGlobeAmericas className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                </a>
               </div>
+            </div>
+
+            {/* Education Section component */}
+            <div className="max-w-3xl mx-auto">
+              <EducationSection />
             </div>
           </div>
         </section>
@@ -406,7 +390,6 @@ function SkillCard({
       <BackgroundGradient
         className="rounded-xl h-full"
         gradientPosition={gradientPosition}
-        index={index}
         useGlobalGradient={true}
       >
         <Card className="overflow-hidden border-0 bg-background/80 backdrop-blur-sm h-full relative group-hover:shadow-xl transition-all duration-300">
