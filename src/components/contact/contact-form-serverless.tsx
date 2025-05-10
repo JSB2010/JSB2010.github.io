@@ -24,7 +24,7 @@ export function ContactFormServerless() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [debugLogs, setDebugLogs] = useState<string[]>([]);
-  const [showDebug, setShowDebug] = useState(true); // Set to true to show debug panel by default
+  const [showDebug, setShowDebug] = useState(false); // Set to false to hide debug panel in production
 
   // Function to add a log message to the debug panel
   const addDebugLog = (message: string) => {

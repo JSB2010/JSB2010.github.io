@@ -6,15 +6,17 @@ const archiver = require('archiver');
 const { promisify } = require('util');
 const exec = promisify(require('child_process').exec);
 
-// Appwrite configuration
+// Appwrite configuration - load from environment variables
+require('dotenv').config({ path: '.env.local' });
+
 const config = {
-  endpoint: 'https://nyc.cloud.appwrite.io/v1',
-  projectId: '6816ef35001da24d113d',
-  apiKey: 'standard_7d784a84611fcf1ae8cd17b74b6ff1ad9ccf978a455f44079e9065d00b8e3ff24cfe194256497e540d40c7f3b46d99ac8522c28cdd753e2ce6369b07541838a399aafde729244907b6b8e4e47f6ca4264a08fa08660d7174405c2272085df741d96ef263aa7e7a8432ebc33f713fec24feab263afd1c2aae909927560752ca28',
-  functionId: 'contact-email-notification',
+  endpoint: process.env.APPWRITE_ENDPOINT || 'https://nyc.cloud.appwrite.io/v1',
+  projectId: process.env.APPWRITE_PROJECT_ID || '',
+  apiKey: process.env.APPWRITE_API_KEY || '',
+  functionId: process.env.APPWRITE_FUNCTION_ID || 'contact-email-notification',
   functionName: 'Contact Form Email Notification',
-  emailUser: 'jacobsamuelbarkin@gmail.com',
-  emailPassword: 'dwzm vsxv gipu tlsi'
+  emailUser: process.env.EMAIL_USER || '',
+  emailPassword: process.env.EMAIL_PASSWORD || ''
 };
 
 // Initialize Appwrite client
