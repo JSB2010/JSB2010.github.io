@@ -25,6 +25,7 @@ This is a modern redesign of my personal portfolio website using Next.js and sha
 - Blue-to-green gradient theme
 - GitHub project integration
 - Appwrite-powered contact form with email notifications
+- Admin dashboard for contact form submissions
 - Project view tracking and analytics
 - User feedback system for projects
 - SEO optimized with proper metadata
@@ -65,6 +66,8 @@ npm run dev
 - `npm test` - Run Jest unit tests
 - `npm run test:watch` - Run Jest in watch mode
 - `npm run test:coverage` - Run Jest with coverage reporting
+- `npm run setup-appwrite-auth` - Set up admin user for the admin dashboard
+- `npm run update-appwrite-schema` - Update Appwrite schema to add isRead field for the admin dashboard
 
 ## Using React Developer Tools
 
@@ -188,6 +191,32 @@ This project uses Appwrite for backend functionality. Follow these steps to set 
    - See the Deployment section for instructions on adding environment variables to Cloudflare Pages
 
 For detailed setup instructions, see the [Appwrite Setup Guide](APPWRITE_SETUP_GUIDE.md).
+
+## Admin Dashboard Setup
+
+This project includes an admin dashboard for managing contact form submissions. To set up the admin dashboard:
+
+1. Make sure you have set up Appwrite as described above
+
+2. Check the Appwrite schema:
+   ```bash
+   npm run update-appwrite-schema
+   ```
+   This script will verify that your Appwrite collection is properly set up.
+
+3. Create an admin user for the dashboard:
+   ```bash
+   npm run setup-appwrite-auth
+   ```
+   Follow the prompts to create an admin user with email and password
+
+4. Access the admin dashboard at `/admin/dashboard` (you'll need to log in with the credentials you created)
+
+The admin dashboard provides the following features:
+- View all contact form submissions
+- Search and filter submissions
+- Delete submissions
+- View submission details
 
 ## Deployment
 

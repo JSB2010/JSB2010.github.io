@@ -110,6 +110,11 @@ export default function Footer() {
                   Contact
                 </Link>
               </li>
+              <li>
+                <Link href="/admin/dashboard" className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors">
+                  Admin
+                </Link>
+              </li>
             </ul>
           </div>
 
