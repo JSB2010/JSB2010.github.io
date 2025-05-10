@@ -23,6 +23,7 @@ import { OptimizedBackgroundImage } from "@/components/ui/optimized-background-i
 import { ResponsiveImage } from "@/components/ui/responsive-image";
 import { LazyLoad } from "@/components/ui/lazy-load";
 import { EqualHeightGrid } from "@/components/ui/equal-height-grid";
+import Image from "next/image";
 
 import { BasicImage } from "@/components/ui/basic-image";
 
@@ -234,12 +235,13 @@ export default function Home() {
             <div className="flex justify-center md:justify-end mt-6 sm:mt-0">
               <BackgroundGradient className="rounded-full">
                 <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72 rounded-full overflow-hidden border-2 sm:border-4 border-background shadow-xl">
-                  <BasicImage
-                    src="/images/jacob-profile.png"
+                  <Image
+                    src="/images/Jacob City.png"
                     alt="Jacob Barkin"
                     fill
                     className="object-cover"
                     priority={true}
+                    quality={90}
                   />
                 </div>
               </BackgroundGradient>
