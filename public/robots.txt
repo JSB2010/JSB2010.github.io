@@ -1,3 +1,6 @@
+# Jacob Barkin Portfolio - Robots.txt
+# Updated: 2024-05-07
+
 # Allow all crawlers
 User-agent: *
 Allow: /
@@ -9,3 +12,30 @@ Sitemap: https://jacobbarkin.com/sitemap.xml
 Disallow: /api/
 Disallow: /_next/
 Disallow: /*.json$
+Disallow: /admin/
+Disallow: /admin/*
+Disallow: /.github/
+Disallow: /node_modules/
+Disallow: /functions/
+Disallow: /scripts/
+Disallow: /docs/
+
+# Specific rules for major crawlers
+User-agent: Googlebot
+Allow: /
+Disallow: /admin/
+Disallow: /_next/
+
+User-agent: Bingbot
+Allow: /
+Disallow: /admin/
+Disallow: /_next/
+
+User-agent: DuckDuckBot
+Allow: /
+Disallow: /admin/
+Disallow: /_next/
+
+# Crawl delay for bots
+User-agent: *
+Crawl-delay: 1

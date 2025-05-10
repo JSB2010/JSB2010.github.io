@@ -21,6 +21,7 @@ export const viewport = {
   userScalable: true,
   viewportFit: "cover",
   themeColor: "#3b82f6",
+  colorScheme: "dark light",
 };
 
 export const metadata: Metadata = {
@@ -29,7 +30,7 @@ export const metadata: Metadata = {
     template: "%s | Jacob Barkin"
   },
   description: "Jacob Barkin - Developer, technology consultant, and technology enthusiast. Explore my projects, interests, and professional journey.",
-  keywords: ["Jacob Barkin", "Developer", "Technology Consulting", "Web Development", "Next.js", "Portfolio", "Technology", "Accessibility", "Public Transportation Research"],
+  keywords: ["Jacob Barkin", "Developer", "Technology Consulting", "Web Development", "Next.js", "Portfolio", "Technology", "Accessibility", "Public Transportation Research", "High School Student", "Kent Denver School", "Financial Education"],
   authors: [{ name: "Jacob Barkin", url: "https://github.com/JSB2010" }],
   creator: "Jacob Barkin",
   publisher: "Jacob Barkin",
@@ -63,6 +64,14 @@ export const metadata: Metadata = {
     locale: "en_US",
     type: "website",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Jacob Barkin | Developer & Technology Consultant",
+    description: "Developer, technology consultant, and technology enthusiast. Explore my projects, interests, and professional journey.",
+    images: ["/images/Updated logo.png"],
+    creator: "@jacobbarkin",
+    site: "@jacobbarkin",
+  },
   robots: {
     index: true,
     follow: true,
@@ -70,12 +79,17 @@ export const metadata: Metadata = {
       index: true,
       follow: true,
       "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
   verification: {
     google: "verification_token",
   },
   category: "technology",
+  applicationName: "Jacob Barkin Portfolio",
+  referrer: "origin-when-cross-origin",
+  keywords: ["Jacob Barkin", "Developer", "Technology Consulting", "Web Development", "Next.js", "Portfolio", "Technology", "Accessibility", "Public Transportation Research", "High School Student", "Kent Denver School", "Financial Education"],
 };
 
 export default function RootLayout({
