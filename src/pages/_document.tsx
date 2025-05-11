@@ -6,6 +6,8 @@ export default function Document() {
       <Head>
         {/* Add the SPA redirect script */}
         <script src="/spa-redirect.js" />
+        {/* Add favicon link */}
+        <link rel="icon" href="/favicon.ico" sizes="any" />
       </Head>
       <body>
         <Main />
