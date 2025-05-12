@@ -33,27 +33,11 @@ const createClient = () => {
     .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://nyc.cloud.appwrite.io/v1')
     .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '6816ef35001da24d113d');
 
-  // Add custom headers for CORS - safely check if setHeader exists first
+  // Set response format to 1.0.0 for better compatibility
   try {
     // Check if setHeader method exists before calling it
     if (typeof client.setHeader === 'function') {
       client.setHeader('X-Appwrite-Response-Format', '1.0.0');
-
-      // Add CORS headers for production domain
-      const allowedOrigins = [
-        'https://jacobbarkin.com',
-        'https://www.jacobbarkin.com',
-        'https://jacobbarkin-com.pages.dev',
-        'https://modern-redesign-shadcn.jsb2010-github-io.pages.dev'
-      ];
-
-      // Get the current origin if in browser environment
-      if (typeof window !== 'undefined') {
-        const origin = window.location.origin;
-        if (allowedOrigins.includes(origin)) {
-          client.setHeader('Origin', origin);
-        }
-      }
     } else {
       console.warn('Appwrite client.setHeader method not available - skipping custom headers');
     }
