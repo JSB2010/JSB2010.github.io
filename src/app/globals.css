@@ -578,29 +578,103 @@
     .particle-3,
     .particle-4,
     .particle-5 {
-      opacity: 0.3;
+      opacity: 0.2;
+      display: none;
     }
 
     /* Adjust card layouts for mobile */
-    .card-container {
+    .card-container,
+    .grid-container,
+    div[class*="grid-cols-"] {
       @apply grid-cols-1 gap-4;
     }
 
     /* Improve spacing on mobile */
     section {
-      @apply py-8;
+      @apply py-6;
+    }
+
+    /* Reduce padding for better content space */
+    .container, main {
+      @apply px-3;
     }
 
     /* Fix overflow issues on mobile */
     .overflow-x-auto {
       scroll-behavior: smooth;
     }
+
+    /* Adjust font sizes for better readability */
+    h1 {
+      @apply text-2xl leading-tight;
+    }
+
+    h2 {
+      @apply text-xl leading-tight;
+    }
+
+    h3 {
+      @apply text-lg leading-tight;
+    }
+
+    /* Improve card spacing and layout */
+    .card {
+      @apply p-4;
+    }
+
+    /* Optimize card content for mobile */
+    .card-content {
+      @apply text-sm;
+    }
+
+    /* Improve project cards on mobile */
+    .project-card {
+      @apply shadow-sm;
+    }
+
+    /* Optimize image containers for mobile */
+    .image-container {
+      @apply max-h-40;
+    }
+
+    /* Reduce margin and padding */
+    .responsive-p {
+      @apply p-3;
+    }
+
+    .responsive-m {
+      @apply m-3;
+    }
+
+    .responsive-gap {
+      @apply gap-3;
+    }
+
+    /* Optimize hero sections */
+    .theme-mountains,
+    .theme-technology,
+    .theme-aviation,
+    .theme-space,
+    .theme-transit {
+      @apply py-6 px-3 rounded-lg;
+    }
   }
 
   /* Touch device optimizations */
   @media (hover: none) {
-    .project-card:hover {
+    /* Disable hover effects that don't work well on touch */
+    .project-card:hover,
+    .card-modern:hover,
+    .card:hover {
       transform: translateY(0);
+      box-shadow: none;
+    }
+
+    /* Replace hover with active states for touch */
+    .project-card:active,
+    .card-modern:active,
+    .card:active {
+      @apply bg-muted/30;
     }
 
     /* Make hover states work with touch */
@@ -610,6 +684,43 @@
 
     .hover-touch:active {
       @apply scale-95;
+    }
+
+    /* Improve button feedback on touch */
+    button:active,
+    a:active,
+    [role="button"]:active {
+      @apply opacity-70;
+    }
+
+    /* Disable complex hover animations */
+    .project-card:hover .project-card-icon,
+    .project-card:hover .project-card-image::after,
+    .project-card:hover .project-card-title {
+      transform: none;
+      opacity: 1;
+    }
+
+    /* Optimize 3D effects for touch */
+    .ThreeDCard {
+      transform: none !important;
+      transition: none !important;
+    }
+
+    /* Improve scrolling on touch devices */
+    body {
+      scroll-behavior: smooth;
+    }
+
+    /* Optimize tap feedback */
+    a, button, [role="button"] {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    /* Improve form elements on touch */
+    input, textarea, select {
+      font-size: 16px; /* Prevents iOS zoom on focus */
     }
   }
 }

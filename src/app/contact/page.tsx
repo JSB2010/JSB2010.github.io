@@ -3,8 +3,8 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ContactFormZustand } from "@/components/contact/contact-form-zustand";
-import { Mail } from "lucide-react";
-import { FaGithub, FaLinkedin } from "react-icons/fa";
+import { Mail, Github, Linkedin } from "lucide-react";
+import { SocialIcons } from "@/components/ui/social-icons";
 import { OptimizedBackgroundImage } from "@/components/ui/optimized-background-image";
 import { LazyLoad } from "@/components/ui/lazy-load";
 import { PageHero } from "@/components/ui/page-hero";
@@ -62,7 +62,7 @@ export default function ContactPage() {
                   />
 
                   <ContactCard
-                    icon={<FaLinkedin className="h-6 w-6" />}
+                    icon={<Linkedin className="h-6 w-6" />}
                     title="LinkedIn"
                     description="Connect with me professionally and stay updated on my career journey."
                     actionText="Connect on LinkedIn"
@@ -71,7 +71,7 @@ export default function ContactPage() {
                   />
 
                   <ContactCard
-                    icon={<FaGithub className="h-6 w-6" />}
+                    icon={<Github className="h-6 w-6" />}
                     title="GitHub"
                     description="Check out my code repositories and development projects."
                     actionText="Follow on GitHub"
@@ -107,20 +107,20 @@ function ContactCard({
     <Card className="overflow-hidden">
       <div className={`h-1.5 sm:h-2 bg-gradient-to-r ${gradient}`}></div>
       <CardContent className="pt-4 sm:pt-6 p-4 sm:p-6">
-        <div className="flex items-start gap-3 sm:gap-4">
-          <div className="p-2 sm:p-3 rounded-full bg-primary/10 text-primary">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-4">
+          <div className="p-3 rounded-full bg-primary/10 text-primary flex items-center justify-center">
             {icon}
           </div>
 
-          <div className="flex-1">
-            <h3 className="text-sm sm:text-base font-semibold mb-0.5 sm:mb-1">{title}</h3>
-            <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4">{description}</p>
+          <div className="flex-1 text-center sm:text-left">
+            <h3 className="text-base font-semibold mb-1">{title}</h3>
+            <p className="text-sm text-muted-foreground mb-3 sm:mb-4">{description}</p>
 
             <Button
               asChild
               variant="outline"
               size="sm"
-              className="h-8 sm:h-9 text-xs sm:text-sm"
+              className="h-9 text-sm w-full sm:w-auto"
             >
               <Link
                 href={actionLink}

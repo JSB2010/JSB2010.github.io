@@ -56,16 +56,34 @@ export function PageHero({
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Calculate parallax and opacity effects
-  const parallaxOffset = scrollY * 0.4;
-  const contentOpacity = Math.max(1 - scrollY / 500, 0.2);
-  const contentTransform = `translateY(${Math.min(scrollY * 0.1, 20)}px)`;
+  // Check if we're on a mobile device
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+
+    // Initial check
+    checkMobile();
+
+    // Add event listener for resize
+    window.addEventListener('resize', checkMobile);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Calculate parallax and opacity effects - reduce intensity on mobile
+  const parallaxOffset = isMobile ? scrollY * 0.2 : scrollY * 0.4;
+  const contentOpacity = Math.max(1 - scrollY / (isMobile ? 300 : 500), 0.2);
+  const contentTransform = `translateY(${Math.min(scrollY * (isMobile ? 0.05 : 0.1), isMobile ? 10 : 20)}px)`;
 
   return (
     <section
       ref={heroRef}
       className={cn(
-        "relative py-12 md:py-16 lg:py-20 overflow-hidden",
+        "relative py-8 sm:py-12 md:py-16 lg:py-20 overflow-hidden",
         className
       )}
     >
@@ -116,52 +134,57 @@ export function PageHero({
           )}
 
           {/* Title */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-0 text-foreground">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-0 text-foreground leading-tight">
             {title}
           </h1>
 
           {/* Decorative Line */}
-          <div className="h-1.5 w-20 sm:w-24 md:w-28 bg-primary rounded-full mx-auto mt-2 sm:mt-3 md:mt-4 mb-3 sm:mb-4 md:mb-5 transition-all duration-500 hover:w-32"></div>
+          <div className="h-1 sm:h-1.5 w-16 sm:w-20 md:w-24 bg-primary rounded-full mx-auto mt-2 sm:mt-3 md:mt-4 mb-2 sm:mb-3 md:mb-4 transition-all duration-500 hover:w-24 sm:hover:w-32"></div>
 
           {/* Description */}
-          <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-4 sm:mb-5 max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base md:text-lg text-muted-foreground mb-3 sm:mb-4 max-w-2xl mx-auto">
             {description}
           </p>
 
           {/* Tags */}
           {tags && tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 justify-center mb-4 sm:mb-5">
-              {tags.map((tag, index) => (
+            <div className="flex flex-wrap gap-1.5 sm:gap-2 justify-center mb-3 sm:mb-4">
+              {tags.slice(0, isMobile ? 3 : tags.length).map((tag, index) => (
                 <span
                   key={index}
-                  className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium backdrop-blur-md"
+                  className="px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-primary/10 text-primary text-xs font-medium backdrop-blur-md"
                 >
                   {tag}
                 </span>
               ))}
+              {isMobile && tags.length > 3 && (
+                <span className="px-2 py-0.5 rounded-full bg-muted/50 text-muted-foreground text-xs font-medium backdrop-blur-md">
+                  +{tags.length - 3} more
+                </span>
+              )}
             </div>
           )}
 
           {/* Call to Action Buttons */}
           {(cta || secondaryCta) && (
-            <div className="flex flex-wrap gap-3 sm:gap-4 justify-center">
+            <div className={`flex ${isMobile ? 'flex-col' : 'flex-wrap'} gap-2 sm:gap-3 justify-center ${isMobile ? 'w-full max-w-xs mx-auto' : ''}`}>
               {cta && (
                 <Button
                   asChild
-                  size="lg"
-                  className="group"
+                  size={isMobile ? "default" : "lg"}
+                  className={`group ${isMobile ? 'w-full' : ''}`}
                 >
                   <Link
                     href={cta.href}
                     target={cta.external ? "_blank" : undefined}
                     rel={cta.external ? "noopener noreferrer" : undefined}
                   >
-                    {cta.text}
+                    <span className="truncate">{cta.text}</span>
                     {cta.icon || (
-                      <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                      <ArrowRight className="ml-1 sm:ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4 transition-transform duration-300 group-hover:translate-x-1 flex-shrink-0" />
                     )}
                     {cta.external && (
-                      <ExternalLink className="ml-2 h-4 w-4" />
+                      <ExternalLink className="ml-1 sm:ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
                     )}
                   </Link>
                 </Button>
@@ -170,20 +193,20 @@ export function PageHero({
                 <Button
                   asChild
                   variant="outline"
-                  size="lg"
-                  className="group"
+                  size={isMobile ? "default" : "lg"}
+                  className={`group ${isMobile ? 'w-full' : ''}`}
                 >
                   <Link
                     href={secondaryCta.href}
                     target={secondaryCta.external ? "_blank" : undefined}
                     rel={secondaryCta.external ? "noopener noreferrer" : undefined}
                   >
-                    {secondaryCta.text}
+                    <span className="truncate">{secondaryCta.text}</span>
                     {secondaryCta.icon || (
                       secondaryCta.external ? (
-                        <ExternalLink className="ml-2 h-4 w-4" />
+                        <ExternalLink className="ml-1 sm:ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
                       ) : (
-                        <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                        <ArrowRight className="ml-1 sm:ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4 transition-transform duration-300 group-hover:translate-x-1 flex-shrink-0" />
                       )
                     )}
                   </Link>

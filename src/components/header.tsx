@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { SignInButton } from "@/components/auth/sign-in-button";
@@ -19,6 +20,12 @@ const navItems = [
 
 export default function Header() {
   const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+
+  // Close the menu when the route changes
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -64,62 +71,70 @@ export default function Header() {
         </nav>
 
         {/* Mobile Navigation */}
-        <Sheet defaultOpen={false}>
+        <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild className="md:hidden">
             <Button
               variant="outline"
               size="icon"
-              className="border-primary/20 hover:bg-primary/5 h-10 w-10 rounded-full"
+              className="border-primary/20 hover:bg-primary/5 h-12 w-12 rounded-full"
               aria-label="Open menu"
             >
-              <Menu className="h-5 w-5" />
+              <Menu className="h-6 w-6" />
               <span className="sr-only">Toggle menu</span>
             </Button>
           </SheetTrigger>
           <SheetContent
             side="right"
-            className="border-l-primary/20 w-[280px] sm:w-[350px]"
+            className="border-l-primary/20 w-full max-w-[350px] p-0"
             aria-label="Navigation Menu"
           >
             <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
             <SheetDescription className="sr-only">Navigation links for Jacob Barkin&apos;s website</SheetDescription>
-            <div className="flex items-center gap-2 mb-8">
-              <div className="w-10 h-10 overflow-hidden">
-                <Image
-                  src="/images/Updated logo.png"
-                  alt="Jacob Barkin Logo"
-                  width={40}
-                  height={40}
-                  className="object-contain"
-                  priority
-                />
+
+            {/* Mobile Header */}
+            <div className="flex items-center justify-between p-4 border-b">
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 overflow-hidden">
+                  <Image
+                    src="/images/Updated logo.png"
+                    alt="Jacob Barkin Logo"
+                    width={40}
+                    height={40}
+                    className="object-contain"
+                    priority
+                  />
+                </div>
+                <span className="font-bold text-xl gradient-text">Jacob Barkin</span>
               </div>
-              <span className="font-bold text-xl gradient-text">Jacob Barkin</span>
+              <ThemeToggle />
             </div>
-            <nav className="flex flex-col gap-2">
+
+            {/* Mobile Navigation Links */}
+            <nav className="flex flex-col p-2">
               {navItems.map((item) => (
                 <Link
                   key={item.path}
                   href={item.path}
-                  className={`flex items-center text-base font-medium transition-all hover:text-primary p-3 rounded-md ${
+                  className={`flex items-center justify-between text-base font-medium transition-all p-4 rounded-lg mb-1 ${
                     pathname === item.path
                       ? "text-primary bg-primary/10 font-semibold"
-                      : "text-muted-foreground hover:bg-muted/50"
+                      : "text-muted-foreground hover:bg-muted/50 active:bg-muted"
                   }`}
                 >
-                  {item.name}
+                  <span className="text-lg">{item.name}</span>
                   {pathname === item.path && (
-                    <div className="ml-2 h-1.5 w-1.5 rounded-full bg-primary"></div>
+                    <div className="h-2 w-2 rounded-full bg-primary"></div>
                   )}
                 </Link>
               ))}
-              <div className="mt-6 pt-6 border-t flex flex-col gap-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Theme mode</span>
-                  <ThemeToggle />
-                </div>
-              </div>
             </nav>
+
+            {/* Mobile Footer */}
+            <div className="absolute bottom-0 left-0 right-0 p-4 border-t mt-auto">
+              <div className="text-xs text-center text-muted-foreground">
+                &copy; {new Date().getFullYear()} Jacob Barkin
+              </div>
+            </div>
           </SheetContent>
         </Sheet>
       </div>
