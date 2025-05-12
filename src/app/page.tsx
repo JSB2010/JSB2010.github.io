@@ -105,7 +105,24 @@ export default function Home() {
                 <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text">
                   Jacob Barkin
                 </h1>
-                <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mt-4 sm:mt-6">
+
+                {/* Mobile-only image - shown between name and title */}
+                <div className="md:hidden flex justify-center mt-4 mb-4">
+                  <BackgroundGradient className="rounded-full">
+                    <div className="relative w-40 h-40 sm:w-48 sm:h-48 rounded-full overflow-hidden border-2 border-background shadow-xl">
+                      <Image
+                        src="/images/Jacob City.png"
+                        alt="Jacob Barkin"
+                        fill
+                        className="object-cover"
+                        priority={true}
+                        quality={90}
+                      />
+                    </div>
+                  </BackgroundGradient>
+                </div>
+
+                <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mt-0 md:mt-4 sm:md:mt-6">
                   Developer & Technology Consultant
                 </p>
               </div>
@@ -159,7 +176,8 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="flex justify-center md:justify-end mt-6 sm:mt-0">
+            {/* Desktop-only image - hidden on mobile */}
+            <div className="hidden md:flex justify-center md:justify-end mt-6 sm:mt-0">
               <BackgroundGradient className="rounded-full">
                 <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72 rounded-full overflow-hidden border-2 sm:border-4 border-background shadow-xl">
                   <Image
