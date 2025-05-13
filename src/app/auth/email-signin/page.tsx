@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/auth/auth-provider";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -54,6 +54,28 @@ export default function EmailSignInPage() {
   // Destructure form values for easier access
   const { email } = formData;
 
+  const handleSignIn = useCallback(async (emailToUse: string) => {
+    setIsProcessing(true);
+    setError(null);
+
+    try {
+      const success = await signInWithEmailLink(emailToUse);
+
+      if (success) {
+        setIsSuccess(true);
+        // Clear saved form data on successful sign-in
+        resetFormData();
+      } else {
+        setError("Failed to sign in. Please try again.");
+      }
+    } catch (err) {
+      setError("An error occurred during sign-in. Please try again.");
+      console.error("Sign-in error:", err);
+    } finally {
+      setIsProcessing(false);
+    }
+  }, [setIsProcessing, setError, signInWithEmailLink, setIsSuccess, resetFormData]);
+
   useEffect(() => {
     // Check if this is a sign-in link
     if (typeof window !== "undefined" && isSignInWithEmailLink(window.location.href)) {
@@ -65,7 +87,7 @@ export default function EmailSignInPage() {
         handleSignIn(savedEmail);
       }
     }
-  }, [isSignInWithEmailLink, updateFormData]);
+  }, [isSignInWithEmailLink, updateFormData, handleSignIn]);
 
   // Redirect if user is already signed in
   useEffect(() => {
@@ -86,28 +108,6 @@ export default function EmailSignInPage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     updateFormData({ [name]: value });
-  };
-
-  const handleSignIn = async (emailToUse: string) => {
-    setIsProcessing(true);
-    setError(null);
-
-    try {
-      const success = await signInWithEmailLink(emailToUse);
-
-      if (success) {
-        setIsSuccess(true);
-        // Clear saved form data on successful sign-in
-        resetFormData();
-      } else {
-        setError("Failed to sign in. Please try again.");
-      }
-    } catch (err) {
-      setError("An error occurred during sign-in. Please try again.");
-      console.error("Sign-in error:", err);
-    } finally {
-      setIsProcessing(false);
-    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {

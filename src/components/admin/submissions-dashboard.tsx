@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { formatDistanceToNow } from "date-fns";
 import {
   Card,
   CardContent,
@@ -48,7 +49,8 @@ import {
   ArrowLeft,
   ArrowRight,
   Download,
-  Clock
+  Clock,
+  Trash2
 } from "lucide-react";
 import { submissionsService, ContactSubmission } from "@/lib/appwrite/submissions";
 import { Query } from "appwrite";

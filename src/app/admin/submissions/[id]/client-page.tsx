@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -62,19 +62,19 @@ interface Submission {
 export default function SubmissionDetailPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const { id } = params;
-  
+
   const [apiKey, setApiKey] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submission, setSubmission] = useState<Submission | null>(null);
-  
+
   // Form state
   const [status, setStatus] = useState<'new' | 'read' | 'replied' | 'archived'>('new');
   const [priority, setPriority] = useState<number>(3);
   const [tags, setTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState('');
-  
+
   // Check if authenticated
   useEffect(() => {
     const storedApiKey = localStorage.getItem('adminApiKey');
@@ -85,30 +85,14 @@ export default function SubmissionDetailPage({ params }: { params: { id: string 
       router.push('/admin');
     }
   }, [router]);
-  
-  // Fetch submission when id or apiKey changes
-  useEffect(() => {
-    if (apiKey && id) {
-      fetchSubmission();
-    }
-  }, [apiKey, id]);
-  
-  // Update form state when submission changes
-  useEffect(() => {
-    if (submission) {
-      setStatus(submission.status || 'new');
-      setPriority(submission.priority || 3);
-      setTags(submission.tags || []);
-    }
-  }, [submission]);
-  
+
   // Fetch submission from the API
-  const fetchSubmission = async () => {
+  const fetchSubmission = useCallback(async () => {
     if (!apiKey || !id) return;
-    
+
     setIsLoading(true);
     setError(null);
-    
+
     try {
       // Fetch submission
       const response = await fetch(`/api/admin/submissions/${id}`, {
@@ -116,7 +100,7 @@ export default function SubmissionDetailPage({ params }: { params: { id: string 
           'Authorization': `Bearer ${apiKey}`
         }
       });
-      
+
       if (!response.ok) {
         if (response.status === 401) {
           // Unauthorized - redirect to login page
@@ -124,18 +108,18 @@ export default function SubmissionDetailPage({ params }: { params: { id: string 
           router.push('/admin');
           return;
         }
-        
+
         if (response.status === 404) {
           setError('Submission not found');
           setIsLoading(false);
           return;
         }
-        
+
         throw new Error(`API error: ${response.status}`);
       }
-      
+
       const data = await response.json();
-      
+
       if (data.success) {
         setSubmission(data.submission);
       } else {
@@ -147,43 +131,59 @@ export default function SubmissionDetailPage({ params }: { params: { id: string 
     } finally {
       setIsLoading(false);
     }
-  };
-  
+  }, [apiKey, id, router]);
+
+  // Fetch submission when id or apiKey changes
+  useEffect(() => {
+    if (apiKey && id) {
+      fetchSubmission();
+    }
+  }, [apiKey, id, fetchSubmission]);
+
+  // Update form state when submission changes
+  useEffect(() => {
+    if (submission) {
+      setStatus(submission.status || 'new');
+      setPriority(submission.priority || 3);
+      setTags(submission.tags || []);
+    }
+  }, [submission]);
+
   // Save changes to the submission
   const saveChanges = async () => {
     if (!apiKey || !id || !submission) return;
-    
+
     setIsSaving(true);
     setError(null);
-    
+
     try {
       // Prepare update data
       const updateData: any = {};
-      
+
       // Only include fields that have changed
       if (status !== submission.status) {
         updateData.status = status;
       }
-      
+
       if (priority !== submission.priority) {
         updateData.priority = priority;
       }
-      
+
       // Compare tags arrays
-      const tagsChanged = 
-        tags.length !== (submission.tags?.length || 0) || 
+      const tagsChanged =
+        tags.length !== (submission.tags?.length || 0) ||
         tags.some((tag, i) => tag !== (submission.tags || [])[i]);
-      
+
       if (tagsChanged) {
         updateData.tags = tags;
       }
-      
+
       // If nothing has changed, don't make the API call
       if (Object.keys(updateData).length === 0) {
         setIsSaving(false);
         return;
       }
-      
+
       // Update submission
       const response = await fetch(`/api/admin/submissions/${id}`, {
         method: 'PATCH',
@@ -193,7 +193,7 @@ export default function SubmissionDetailPage({ params }: { params: { id: string 
         },
         body: JSON.stringify(updateData)
       });
-      
+
       if (!response.ok) {
         if (response.status === 401) {
           // Unauthorized - redirect to login page
@@ -201,12 +201,12 @@ export default function SubmissionDetailPage({ params }: { params: { id: string 
           router.push('/admin');
           return;
         }
-        
+
         throw new Error(`API error: ${response.status}`);
       }
-      
+
       const data = await response.json();
-      
+
       if (data.success) {
         // Update local submission data
         if (data.submission) {
@@ -225,32 +225,32 @@ export default function SubmissionDetailPage({ params }: { params: { id: string 
       setIsSaving(false);
     }
   };
-  
+
   // Add a new tag
   const addTag = () => {
     if (!newTag.trim()) return;
-    
+
     // Don't add duplicate tags
     if (tags.includes(newTag.trim())) {
       setNewTag('');
       return;
     }
-    
+
     setTags([...tags, newTag.trim()]);
     setNewTag('');
   };
-  
+
   // Remove a tag
   const removeTag = (tagToRemove: string) => {
     setTags(tags.filter(tag => tag !== tagToRemove));
   };
-  
+
   // Format date
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
   };
-  
+
   // Render status badge
   const renderStatusBadge = (statusValue: string) => {
     const colorClass = statusColors[statusValue] || 'bg-gray-100 text-gray-800';
@@ -260,7 +260,7 @@ export default function SubmissionDetailPage({ params }: { params: { id: string 
       </Badge>
     );
   };
-  
+
   // Render priority badge
   const renderPriorityBadge = (priorityValue: number) => {
     const colorClass = priorityColors[priorityValue] || 'bg-gray-100 text-gray-800';
@@ -270,29 +270,29 @@ export default function SubmissionDetailPage({ params }: { params: { id: string 
       </Badge>
     );
   };
-  
+
   // Handle back button
   const handleBack = () => {
     router.push('/admin/submissions');
   };
-  
+
   // Handle email reply
   const handleEmailReply = () => {
     if (!submission) return;
-    
+
     // Create mailto link
     const subject = `Re: ${submission.subject}`;
     const body = `\n\n-------- Original Message --------\nFrom: ${submission.name}\nEmail: ${submission.email}\nDate: ${formatDate(submission.$createdAt)}\nSubject: ${submission.subject}\n\n${submission.message}`;
-    
+
     window.location.href = `mailto:${submission.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    
+
     // Update status to replied if it's not already
     if (status !== 'replied') {
       setStatus('replied');
       saveChanges();
     }
   };
-  
+
   return (
     <div className="container py-8">
       <div className="mb-4">
@@ -304,7 +304,7 @@ export default function SubmissionDetailPage({ params }: { params: { id: string 
           Back to Submissions
         </Button>
       </div>
-      
+
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin mb-4" />
@@ -330,19 +330,19 @@ export default function SubmissionDetailPage({ params }: { params: { id: string 
                   From {submission.name} ({submission.email})
                 </CardDescription>
               </CardHeader>
-              
+
               <CardContent>
                 <Tabs defaultValue="message">
                   <TabsList>
                     <TabsTrigger value="message">Message</TabsTrigger>
                     <TabsTrigger value="history">History</TabsTrigger>
                   </TabsList>
-                  
+
                   <TabsContent value="message" className="pt-4">
                     <div className="p-4 bg-muted rounded-md whitespace-pre-wrap">
                       {submission.message}
                     </div>
-                    
+
                     <div className="mt-6 flex flex-col sm:flex-row gap-3">
                       <Button
                         onClick={handleEmailReply}
@@ -351,7 +351,7 @@ export default function SubmissionDetailPage({ params }: { params: { id: string 
                         <Mail className="mr-2 h-4 w-4" />
                         Reply via Email
                       </Button>
-                      
+
                       <Button
                         variant="outline"
                         className="flex-1"
@@ -362,7 +362,7 @@ export default function SubmissionDetailPage({ params }: { params: { id: string 
                       </Button>
                     </div>
                   </TabsContent>
-                  
+
                   <TabsContent value="history" className="pt-4">
                     {submission.statusLog && submission.statusLog.length > 0 ? (
                       <div className="space-y-4">
@@ -390,14 +390,14 @@ export default function SubmissionDetailPage({ params }: { params: { id: string 
               </CardContent>
             </Card>
           </div>
-          
+
           {/* Sidebar */}
           <div>
             <Card>
               <CardHeader>
                 <CardTitle>Details</CardTitle>
               </CardHeader>
-              
+
               <CardContent>
                 <div className="space-y-6">
                   {/* Status */}
@@ -418,7 +418,7 @@ export default function SubmissionDetailPage({ params }: { params: { id: string 
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   {/* Priority */}
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Priority</label>
@@ -438,7 +438,7 @@ export default function SubmissionDetailPage({ params }: { params: { id: string 
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   {/* Tags */}
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Tags</label>
@@ -483,7 +483,7 @@ export default function SubmissionDetailPage({ params }: { params: { id: string 
                       </Button>
                     </div>
                   </div>
-                  
+
                   {/* Metadata */}
                   <div className="space-y-2 pt-4 border-t">
                     <div className="flex items-center gap-2 text-sm">
@@ -491,7 +491,7 @@ export default function SubmissionDetailPage({ params }: { params: { id: string 
                       <span className="text-muted-foreground">Submitted:</span>
                       <span>{formatDate(submission.$createdAt)}</span>
                     </div>
-                    
+
                     {submission.lastUpdated && (
                       <div className="flex items-center gap-2 text-sm">
                         <Clock className="h-4 w-4 text-muted-foreground" />
@@ -499,7 +499,7 @@ export default function SubmissionDetailPage({ params }: { params: { id: string 
                         <span>{formatDate(submission.lastUpdated)}</span>
                       </div>
                     )}
-                    
+
                     {submission.source && (
                       <div className="flex items-center gap-2 text-sm">
                         <Tag className="h-4 w-4 text-muted-foreground" />
@@ -508,7 +508,7 @@ export default function SubmissionDetailPage({ params }: { params: { id: string 
                       </div>
                     )}
                   </div>
-                  
+
                   {/* Save button */}
                   <Button
                     className="w-full"

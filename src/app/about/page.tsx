@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { Metadata } from "next";
-import React, { useMemo } from "react";
+import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 // Import actual programming language and technology icons
 import {
@@ -18,7 +17,7 @@ import {
 } from "react-icons/si";
 
 // Import additional icon sets for technologies that might not be in simple-icons
-import { FaUniversalAccess, FaMobileAlt, FaGraduationCap, FaGlobeAmericas, FaBriefcase, FaMoneyBillWave, FaUsers, FaCode } from "react-icons/fa";
+import { FaUniversalAccess, FaGraduationCap, FaGlobeAmericas, FaBriefcase, FaUsers } from "react-icons/fa";
 
 // Import Aceternity UI components
 import { BackgroundGradient } from "@/components/ui/aceternity/background-gradient";
@@ -27,11 +26,7 @@ import { Spotlight } from "@/components/ui/aceternity/spotlight";
 import { TextRevealCard } from "@/components/ui/aceternity/text-reveal-card";
 import { ThreeDCard } from "@/components/ui/aceternity/3d-card";
 import { GradientSkillsContainer } from "@/components/ui/aceternity/gradient-skills-container";
-import { OptimizedBackgroundImage } from "@/components/ui/optimized-background-image";
-import { ResponsiveImage } from "@/components/ui/responsive-image";
 import { PageHero } from "@/components/ui/page-hero";
-
-import { BasicImage } from "@/components/ui/basic-image";
 import { LazyLoad } from "@/components/ui/lazy-load";
 
 // Import Education Section component
@@ -376,14 +371,10 @@ function SkillCard({
   icon,
   title,
   gradientPosition,
-  index,
-  totalItems,
 }: Readonly<{
   icon: React.ReactNode,
   title: string,
   gradientPosition?: { x: number, y: number },
-  index?: number,
-  totalItems?: number,
 }>) {
   return (
     <div className="group h-full perspective-[1000px] transform-gpu transition-all duration-300 hover:scale-[1.03]">

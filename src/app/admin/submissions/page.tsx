@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -65,17 +65,17 @@ export default function AdminSubmissionsPage() {
   const [error, setError] = useState<string | null>(null);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [totalSubmissions, setTotalSubmissions] = useState(0);
-  
+
   // Pagination state
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
   const [page, setPage] = useState(1);
-  
+
   // Filtering state
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [priorityFilter, setPriorityFilter] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState('');
-  
+
   // Sorting state
   const [orderBy, setOrderBy] = useState('$createdAt');
   const [orderType, setOrderType] = useState('desc');
@@ -96,15 +96,15 @@ export default function AdminSubmissionsPage() {
     if (apiKey) {
       fetchSubmissions();
     }
-  }, [apiKey, limit, offset, statusFilter, priorityFilter, orderBy, orderType]);
+  }, [apiKey, fetchSubmissions]);
 
   // Fetch submissions from the API
-  const fetchSubmissions = async () => {
+  const fetchSubmissions = useCallback(async () => {
     if (!apiKey) return;
-    
+
     setIsLoading(true);
     setError(null);
-    
+
     try {
       // Build query parameters
       const params = new URLSearchParams({
@@ -113,22 +113,22 @@ export default function AdminSubmissionsPage() {
         orderBy,
         orderType
       });
-      
+
       if (statusFilter) {
         params.append('status', statusFilter);
       }
-      
+
       if (priorityFilter) {
         params.append('priority', priorityFilter);
       }
-      
+
       // Fetch submissions
       const response = await fetch(`/api/admin/submissions?${params.toString()}`, {
         headers: {
           'Authorization': `Bearer ${apiKey}`
         }
       });
-      
+
       if (!response.ok) {
         if (response.status === 401) {
           // Unauthorized - redirect to login page
@@ -136,12 +136,12 @@ export default function AdminSubmissionsPage() {
           router.push('/admin');
           return;
         }
-        
+
         throw new Error(`API error: ${response.status}`);
       }
-      
+
       const data = await response.json();
-      
+
       if (data.success) {
         setSubmissions(data.submissions);
         setTotalSubmissions(data.total);
@@ -154,13 +154,13 @@ export default function AdminSubmissionsPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [apiKey, limit, offset, statusFilter, priorityFilter, orderBy, orderType, router]);
 
   // Handle page change
   const handlePageChange = (newPage: number) => {
     const totalPages = Math.ceil(totalSubmissions / limit);
     if (newPage < 1 || newPage > totalPages) return;
-    
+
     setPage(newPage);
     setOffset((newPage - 1) * limit);
   };
@@ -218,7 +218,7 @@ export default function AdminSubmissionsPage() {
             </Button>
           </div>
         </CardHeader>
-        
+
         <CardContent>
           {/* Filters */}
           <div className="flex flex-col sm:flex-row gap-3 mb-6">
@@ -231,7 +231,7 @@ export default function AdminSubmissionsPage() {
                 prefix={<Search className="h-4 w-4 text-muted-foreground" />}
               />
             </div>
-            
+
             <div className="flex gap-2">
               <Select
                 value={statusFilter}
@@ -248,7 +248,7 @@ export default function AdminSubmissionsPage() {
                   <SelectItem value="archived">Archived</SelectItem>
                 </SelectContent>
               </Select>
-              
+
               <Select
                 value={priorityFilter}
                 onValueChange={setPriorityFilter}
@@ -267,14 +267,14 @@ export default function AdminSubmissionsPage() {
               </Select>
             </div>
           </div>
-          
+
           {/* Error message */}
           {error && (
             <div className="p-3 mb-4 bg-red-100 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md text-red-800 dark:text-red-300 text-sm">
               {error}
             </div>
           )}
-          
+
           {/* Submissions table */}
           <div className="rounded-md border">
             <Table>
@@ -347,13 +347,13 @@ export default function AdminSubmissionsPage() {
               </TableBody>
             </Table>
           </div>
-          
+
           {/* Pagination */}
           <div className="flex items-center justify-between mt-4">
             <div className="text-sm text-muted-foreground">
               Showing {offset + 1}-{Math.min(offset + limit, totalSubmissions)} of {totalSubmissions} submissions
             </div>
-            
+
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
@@ -363,11 +363,11 @@ export default function AdminSubmissionsPage() {
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
-              
+
               <span className="text-sm">
                 Page {page} of {Math.max(1, Math.ceil(totalSubmissions / limit))}
               </span>
-              
+
               <Button
                 variant="outline"
                 size="icon"
