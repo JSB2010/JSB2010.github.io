@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { authService, AuthUser, AuthError } from "@/lib/appwrite/auth";
-import { proxyAuthService } from "@/lib/appwrite/proxy-auth";
+import { directAuthService } from "@/lib/appwrite/direct-auth";
 
 // Define the authentication context type
 interface AdminAuthContextType {
@@ -37,16 +37,16 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Try with proxy first
+        // Try with direct auth first
         try {
-          const currentUser = await proxyAuthService.getCurrentUser();
+          const currentUser = await directAuthService.getCurrentUser();
           setUser(currentUser);
           return;
-        } catch (proxyErr) {
-          console.warn("Proxy auth failed, falling back to direct auth:", proxyErr);
+        } catch (directErr) {
+          console.warn("Direct auth failed, falling back to original auth:", directErr);
         }
 
-        // Fall back to direct auth if proxy fails
+        // Fall back to original auth if direct auth fails
         const currentUser = await authService.getCurrentUser();
         setUser(currentUser);
       } catch (err) {
@@ -65,9 +65,9 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
     setError(null);
 
     try {
-      // Try with proxy first
+      // Try with direct auth first
       try {
-        const result = await proxyAuthService.signIn(email, password);
+        const result = await directAuthService.signIn(email, password);
 
         if ('type' in result) {
           // This is an error
@@ -78,11 +78,11 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
           setUser(result);
           return true;
         }
-      } catch (proxyErr) {
-        console.warn("Proxy auth failed, falling back to direct auth:", proxyErr);
+      } catch (directErr) {
+        console.warn("Direct auth failed, falling back to original auth:", directErr);
       }
 
-      // Fall back to direct auth if proxy fails
+      // Fall back to original auth if direct auth fails
       const result = await authService.signIn(email, password);
 
       if ('type' in result) {
@@ -107,18 +107,18 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
     setLoading(true);
 
     try {
-      // Try with proxy first
+      // Try with direct auth first
       try {
-        const success = await proxyAuthService.signOut();
+        const success = await directAuthService.signOut();
         if (success) {
           setUser(null);
           return success;
         }
-      } catch (proxyErr) {
-        console.warn("Proxy auth failed, falling back to direct auth:", proxyErr);
+      } catch (directErr) {
+        console.warn("Direct auth failed, falling back to original auth:", directErr);
       }
 
-      // Fall back to direct auth if proxy fails
+      // Fall back to original auth if direct auth fails
       const success = await authService.signOut();
       if (success) {
         setUser(null);

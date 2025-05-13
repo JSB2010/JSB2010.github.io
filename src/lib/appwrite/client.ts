@@ -4,7 +4,7 @@ import { Client } from 'appwrite';
 // Fallback values for development - DO NOT USE IN PRODUCTION
 const fallbackConfig = {
   endpoint: 'https://nyc.cloud.appwrite.io/v1',
-  projectId: '', // This should be set in environment variables
+  projectId: '6816ef35001da24d113d', // This should be set in environment variables
 };
 
 /**
@@ -23,6 +23,10 @@ export function createClient(): Client {
   try {
     if (typeof client.setHeader === 'function') {
       client.setHeader('X-Appwrite-Response-Format', '1.0.0');
+
+      // Add SameSite=None and Secure to cookies
+      client.setHeader('Cookie-SameSite', 'None');
+      client.setHeader('Cookie-Secure', 'true');
     }
   } catch (error) {
     console.warn('Error setting Appwrite headers:', error);
