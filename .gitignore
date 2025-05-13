@@ -28,6 +28,10 @@ node_modules
 **/.next/trace
 **/.next/types/**
 
+# API routes (not compatible with static export)
+/src/app/api/
+src/app/api/
+
 # Specific large files
 node_modules/@next/swc-darwin-arm64/next-swc.darwin-arm64.node
 .next/cache/webpack/server-production/0.pack

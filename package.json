@@ -5,8 +5,10 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "dev:no-turbo": "next dev",
-    "build": "next build",
-    "build:cache": "next build --no-lint",
+    "clean": "rm -rf .next out",
+    "clean:api": "node scripts/clean-api-routes.js",
+    "build": "npm run clean:api && next build",
+    "build:cache": "npm run clean:api && next build --no-lint",
     "start": "next start",
     "lint": "next lint",
     "optimize-images": "node scripts/optimize-images.js",
