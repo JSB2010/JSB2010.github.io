@@ -19,8 +19,7 @@ import { SiNextdotjs, SiReact, SiTailwindcss, SiTypescript, SiAppwrite } from "r
 import { BackgroundGradient } from "@/components/ui/aceternity/background-gradient";
 import { MovingBorder } from "@/components/ui/aceternity/moving-border";
 import { TextRevealCard } from "@/components/ui/aceternity/text-reveal-card";
-import { OptimizedBackgroundImage } from "@/components/ui/optimized-background-image";
-import { ResponsiveImage } from "@/components/ui/responsive-image";
+
 import { BasicImage } from "@/components/ui/basic-image";
 import { LazyLoad } from "@/components/ui/lazy-load";
 import { PageHero } from "@/components/ui/page-hero";
@@ -476,7 +475,7 @@ export default function PortfolioWebsitePage() {
                 </div>
 
                 <p>
-                  The most significant lesson was the value of planning and architecture. Taking the time to properly design the component structure and data flow before implementation saved countless hours of refactoring later. The transition from static to dynamic wasn't just about using new technologies—it was about adopting a new mindset focused on modularity, reusability, and user experience.
+                  The most significant lesson was the value of planning and architecture. Taking the time to properly design the component structure and data flow before implementation saved countless hours of refactoring later. The transition from static to dynamic wasn&apos;t just about using new technologies—it was about adopting a new mindset focused on modularity, reusability, and user experience.
                 </p>
 
                 <p>

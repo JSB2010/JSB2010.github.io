@@ -15,7 +15,7 @@ import {
   Building,
   ArrowRight
 } from "lucide-react";
-import { OptimizedBackgroundImage } from "@/components/ui/optimized-background-image";
+
 import { LazyLoad } from "@/components/ui/lazy-load";
 import { PageHero } from "@/components/ui/page-hero";
 
@@ -127,7 +127,7 @@ export default function PublicTransportationPage() {
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Environmental Impact</h3>
                 <p className="text-muted-foreground">
-                  Evaluating how expanded public transit can reduce carbon emissions and improve air quality. The research calculates potential emission reductions from increased ridership and fleet electrification, showing how transit improvements align with Colorado's climate goals.
+                  Evaluating how expanded public transit can reduce carbon emissions and improve air quality. The research calculates potential emission reductions from increased ridership and fleet electrification, showing how transit improvements align with Colorado&apos;s climate goals.
                 </p>
               </Card>
             </div>
@@ -147,13 +147,13 @@ export default function PublicTransportationPage() {
                   <h3 className="text-2xl font-semibold mb-4">RTD Bus Network Analysis</h3>
                   <div className="space-y-4 text-muted-foreground">
                     <p>
-                      This comprehensive analysis of RTD's bus network reveals significant service disparities across the Denver metro area. Using GIS mapping and demographic data, the research shows that low-income neighborhoods and communities of color often have less frequent and less reliable service despite higher transit dependency.
+                      This comprehensive analysis of RTD&apos;s bus network reveals significant service disparities across the Denver metro area. Using GIS mapping and demographic data, the research shows that low-income neighborhoods and communities of color often have less frequent and less reliable service despite higher transit dependency.
                     </p>
                     <p>
                       The study found that 42% of high-transit-need areas have service gaps during evenings and weekends, and 38% of bus stops lack adequate accessibility features like shelters, benches, and ADA-compliant boarding areas. The research proposes a network redesign that would increase service frequency in underserved areas without requiring significant additional resources.
                     </p>
                     <p>
-                      The analysis also examines the impact of RTD's recent service cuts and recommends prioritizing service restoration based on equity considerations and ridership potential.
+                      The analysis also examines the impact of RTD&apos;s recent service cuts and recommends prioritizing service restoration based on equity considerations and ridership potential.
                     </p>
                   </div>
                   <div className="flex flex-wrap gap-2 mt-4">
@@ -201,7 +201,7 @@ export default function PublicTransportationPage() {
                   <h3 className="text-2xl font-semibold mb-4">Light Rail Accessibility Study</h3>
                   <div className="space-y-4 text-muted-foreground">
                     <p>
-                      This detailed accessibility audit of RTD's light rail system reveals significant inconsistencies across the network. The study included on-site evaluations of all 54 rail stations, interviews with riders with disabilities, and comparisons with accessibility standards from transit systems in Portland, Seattle, and Minneapolis.
+                      This detailed accessibility audit of RTD&apos;s light rail system reveals significant inconsistencies across the network. The study included on-site evaluations of all 54 rail stations, interviews with riders with disabilities, and comparisons with accessibility standards from transit systems in Portland, Seattle, and Minneapolis.
                     </p>
                     <p>
                       The research found that while newer stations built after 2010 generally meet or exceed ADA requirements, 23 older stations have critical accessibility deficiencies including insufficient platform tactile warnings, problematic gaps between platforms and trains, and inadequate audio announcements for visually impaired riders.
@@ -226,10 +226,10 @@ export default function PublicTransportationPage() {
                       This research examines how to create a more seamless transportation system by better integrating RTD services with other mobility options including bike sharing, scooters, ride-hailing, and pedestrian infrastructure. The study includes detailed case studies of successful multimodal integration in cities like Portland, Minneapolis, and Vancouver.
                     </p>
                     <p>
-                      The research identifies critical "first mile/last mile" connection challenges in the Denver region, where 28% of bus stops and 35% of rail stations lack safe, convenient connections to surrounding neighborhoods. It proposes specific improvements including enhanced bike parking at transit hubs, dedicated pickup/dropoff zones for ride-hailing services, and improved pedestrian pathways.
+                      The research identifies critical &quot;first mile/last mile&quot; connection challenges in the Denver region, where 28% of bus stops and 35% of rail stations lack safe, convenient connections to surrounding neighborhoods. It proposes specific improvements including enhanced bike parking at transit hubs, dedicated pickup/dropoff zones for ride-hailing services, and improved pedestrian pathways.
                     </p>
                     <p>
-                      The study also evaluates RTD's fare structure and mobile app, recommending improvements to create a more integrated payment system that would allow riders to seamlessly use multiple transportation modes with a single payment method.
+                      The study also evaluates RTD&apos;s fare structure and mobile app, recommending improvements to create a more integrated payment system that would allow riders to seamlessly use multiple transportation modes with a single payment method.
                     </p>
                   </div>
                   <div className="flex flex-wrap gap-2 mt-4">
@@ -276,7 +276,7 @@ export default function PublicTransportationPage() {
           <div className="container text-center">
             <h2 className="text-3xl font-bold mb-4">Join the Conversation</h2>
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-              This research highlights how improved public transportation can create more equitable, sustainable, and accessible communities. If you have insights about Colorado transit systems or want to discuss potential collaborations on transit advocacy, I'd love to connect with you. Together, we can work toward transportation systems that serve everyone.
+              This research highlights how improved public transportation can create more equitable, sustainable, and accessible communities. If you have insights about Colorado transit systems or want to discuss potential collaborations on transit advocacy, I&apos;d love to connect with you. Together, we can work toward transportation systems that serve everyone.
             </p>
             <Button asChild size="lg">
               <Link href="/contact">

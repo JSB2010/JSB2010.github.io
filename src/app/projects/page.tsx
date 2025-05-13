@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ExternalLink, Github } from "lucide-react";
 import { ProjectCard as GitHubProjectCard } from "@/components/project-card";
 import { fetchUserRepositories, transformRepoToProjectCard } from "@/lib/github";
-import { OptimizedBackgroundImage } from "@/components/ui/optimized-background-image";
+
 import { ResponsiveImage } from "@/components/ui/responsive-image";
 import { LazyLoad } from "@/components/ui/lazy-load";
 import { PageHero } from "@/components/ui/page-hero";

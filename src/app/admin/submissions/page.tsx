@@ -2,13 +2,13 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, RefreshCw, Search, Filter, ChevronLeft, ChevronRight, Eye, Edit } from 'lucide-react';
+import { Loader2, RefreshCw, Search, ChevronLeft, ChevronRight, Eye, Edit } from 'lucide-react';
 
 // Status badge colors
 const statusColors: Record<string, string> = {
@@ -67,7 +67,7 @@ export default function AdminSubmissionsPage() {
   const [totalSubmissions, setTotalSubmissions] = useState(0);
 
   // Pagination state
-  const [limit, setLimit] = useState(10);
+  const [limit] = useState(10);
   const [offset, setOffset] = useState(0);
   const [page, setPage] = useState(1);
 
@@ -77,8 +77,8 @@ export default function AdminSubmissionsPage() {
   const [searchQuery, setSearchQuery] = useState('');
 
   // Sorting state
-  const [orderBy, setOrderBy] = useState('$createdAt');
-  const [orderType, setOrderType] = useState('desc');
+  const [orderBy] = useState('$createdAt');
+  const [orderType] = useState('desc');
 
   // Check if authenticated
   useEffect(() => {

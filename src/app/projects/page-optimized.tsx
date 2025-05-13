@@ -8,7 +8,6 @@ import {
   Code,
   ExternalLink,
   Laptop,
-  Monitor,
   Tv,
   Server
 } from "lucide-react";

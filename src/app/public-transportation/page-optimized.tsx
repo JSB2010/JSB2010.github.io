@@ -31,9 +31,9 @@ export default function PublicTransportationPage() {
     >
       {/* Hero Section */}
       <section className="relative py-16 md:py-20 overflow-hidden">
-        <OptimizedBackgroundImage 
-          src="/images/mountains-bg.jpg" 
-          alt="Mountains background" 
+        <OptimizedBackgroundImage
+          src="/images/mountains-bg.jpg"
+          alt="Mountains background"
           priority={true}
           overlayClassName="opacity-30 dark:opacity-20"
         />
@@ -198,7 +198,7 @@ export default function PublicTransportationPage() {
                   <h3 className="text-2xl font-semibold mb-4">Light Rail Accessibility Study</h3>
                   <div className="space-y-4 text-muted-foreground">
                     <p>
-                      This study evaluates the accessibility of RTD's light rail system for people with disabilities, seniors, and families with young children. The research includes physical assessments of stations, surveys of riders, and comparison with best practices from other transit systems.
+                      This study evaluates the accessibility of RTD&apos;s light rail system for people with disabilities, seniors, and families with young children. The research includes physical assessments of stations, surveys of riders, and comparison with best practices from other transit systems.
                     </p>
                     <p>
                       Initial findings show that while newer stations have good accessibility features, many older stations require upgrades to meet current standards and user expectations.

@@ -28,7 +28,7 @@ function SubmissionRowComponent({
     try {
       const date = new Date(dateString);
       return formatDistanceToNow(date, { addSuffix: true });
-    } catch (_) {
+    } catch {
       return dateString;
     }
   };

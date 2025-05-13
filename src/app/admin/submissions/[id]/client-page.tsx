@@ -2,40 +2,16 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, ArrowLeft, Save, Mail, Trash, Clock, User, Tag, AlertTriangle } from 'lucide-react';
+import { Loader2, ArrowLeft, Save, Mail, Trash, Clock, AlertTriangle, Tag } from 'lucide-react';
 
-// Status badge colors
-const statusColors: Record<string, string> = {
-  new: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
-  read: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
-  replied: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
-  archived: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
-};
 
-// Priority badge colors
-const priorityColors: Record<number, string> = {
-  1: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
-  2: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300',
-  3: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
-  4: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
-  5: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
-};
-
-// Priority labels
-const priorityLabels: Record<number, string> = {
-  1: 'Highest',
-  2: 'High',
-  3: 'Medium',
-  4: 'Low',
-  5: 'Lowest'
-};
 
 // Submission type
 interface Submission {
@@ -158,7 +134,11 @@ export default function SubmissionDetailPage({ params }: { params: { id: string 
 
     try {
       // Prepare update data
-      const updateData: any = {};
+      const updateData: {
+        status?: 'new' | 'read' | 'replied' | 'archived';
+        priority?: number;
+        tags?: string[];
+      } = {};
 
       // Only include fields that have changed
       if (status !== submission.status) {
@@ -249,26 +229,6 @@ export default function SubmissionDetailPage({ params }: { params: { id: string 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
-  };
-
-  // Render status badge
-  const renderStatusBadge = (statusValue: string) => {
-    const colorClass = statusColors[statusValue] || 'bg-gray-100 text-gray-800';
-    return (
-      <Badge className={colorClass}>
-        {statusValue.charAt(0).toUpperCase() + statusValue.slice(1)}
-      </Badge>
-    );
-  };
-
-  // Render priority badge
-  const renderPriorityBadge = (priorityValue: number) => {
-    const colorClass = priorityColors[priorityValue] || 'bg-gray-100 text-gray-800';
-    return (
-      <Badge className={colorClass}>
-        {priorityLabels[priorityValue] || priorityValue}
-      </Badge>
-    );
   };
 
   // Handle back button
@@ -405,7 +365,7 @@ export default function SubmissionDetailPage({ params }: { params: { id: string 
                     <label className="text-sm font-medium">Status</label>
                     <Select
                       value={status}
-                      onValueChange={(value: any) => setStatus(value)}
+                      onValueChange={(value: 'new' | 'read' | 'replied' | 'archived') => setStatus(value)}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select status" />

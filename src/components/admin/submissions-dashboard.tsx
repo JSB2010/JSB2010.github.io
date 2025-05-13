@@ -11,7 +11,6 @@ import {
   CardTitle
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -27,37 +26,24 @@ import {
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import {
-  Search,
   RefreshCw,
   Calendar,
-  Mail,
-  User,
   MessageSquare,
   AlertCircle,
-  ArrowUpDown,
+  Download,
+  Trash2,
   ArrowUp,
   ArrowDown,
-  ArrowLeft,
-  ArrowRight,
-  Download,
-  Clock,
-  Trash2
+  ArrowUpDown,
+  User,
+  Mail
 } from "lucide-react";
 import { submissionsService, ContactSubmission } from "@/lib/appwrite/submissions";
 import { Query } from "appwrite";
 import { useToast } from "@/components/ui/use-toast";
 import { useFormPersistence } from "@/hooks/use-form-persistence";
-import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { SubmissionRow } from "./submission-row";
 import { StatsCard } from "./stats-card";
 import { Pagination } from "./pagination";
@@ -99,7 +85,7 @@ export function SubmissionsDashboard() {
       expiryMinutes: 60 * 24, // Keep search settings for 24 hours
       saveOnUnload: true,
       confirmOnUnload: false,
-      onRestore: (data) => {
+      onRestore: () => {
         toast({
           title: 'Search Settings Restored',
           description: 'Your previous search settings have been restored.',
@@ -303,7 +289,7 @@ export function SubmissionsDashboard() {
     try {
       const date = new Date(dateString);
       return formatDistanceToNow(date, { addSuffix: true });
-    } catch (_) {
+    } catch {
       return dateString;
     }
   }, []);
