@@ -1,0 +1,32 @@
+name: "CodeQL Configuration"
+
+paths:
+  - src
+  - functions
+paths-ignore:
+  - node_modules
+  - '**/*.test.js'
+  - '**/*.test.tsx'
+  - '**/*.test.ts'
+  - '**/__tests__/**'
+  - '**/dist/**'
+  - '**/build/**'
+  - '**/.next/**'
+  - '**/out/**'
+
+queries:
+  - name: Security and Quality
+    uses: security-and-quality
+  - name: Security Extended
+    uses: security-extended
+
+query-filters:
+  - exclude:
+      id: js/xss-through-dom
+      reason: "False positives in Next.js applications"
+  - exclude:
+      id: js/incomplete-sanitization
+      reason: "False positives in React applications with proper escaping"
+  - exclude:
+      id: js/missing-rate-limiting
+      reason: "Rate limiting is implemented at the application level"

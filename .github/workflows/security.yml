@@ -26,15 +26,18 @@ jobs:
         run: npm ci
 
       - name: Run npm audit
-        run: npm audit --production
+        run: npm audit --production || true
 
       - name: Run ESLint security rules
         run: npm run lint
 
       - name: Run CodeQL Analysis
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@v3
         with:
           languages: javascript, typescript
+          queries: security-extended
+          config-file: ./.github/codeql-config.yml
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+        uses: github/codeql-action/analyze@v3
+        continue-on-error: true

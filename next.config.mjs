@@ -51,6 +51,12 @@ const nextConfig = {
   experimental: {
     // Enable optimized CSS with critters for inlining critical CSS
     optimizeCss: true,
+    // Enable memory cache for faster builds
+    memoryBasedWorkersCount: true,
+    // Enable optimized font loading
+    optimizeFonts: true,
+    // Enable server components optimization
+    serverComponentsExternalPackages: [],
   },
 
   // Image configuration
