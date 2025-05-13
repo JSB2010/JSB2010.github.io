@@ -42,7 +42,10 @@ describe('Footer Component', () => {
   it('renders all navigation sections', () => {
     render(<Footer />);
 
-    expect(screen.getByText('Explore')).toBeInTheDocument();
+    // Use getAllByText for elements that might appear multiple times
+    const exploreHeadings = screen.getAllByText('Explore');
+    expect(exploreHeadings.length).toBeGreaterThan(0);
+
     expect(screen.getByText('Quick Links')).toBeInTheDocument();
     expect(screen.getByText('Connect')).toBeInTheDocument();
   });
@@ -54,38 +57,45 @@ describe('Footer Component', () => {
     const projectLinks = screen.getAllByText('Projects');
     expect(projectLinks.length).toBeGreaterThan(0);
 
-    expect(screen.getByText('About Me')).toBeInTheDocument();
-    expect(screen.getByText('Research')).toBeInTheDocument();
+    const aboutMeLinks = screen.getAllByText('About Me');
+    expect(aboutMeLinks.length).toBeGreaterThan(0);
+
+    const researchLinks = screen.getAllByText('Research');
+    expect(researchLinks.length).toBeGreaterThan(0);
 
     const contactLinks = screen.getAllByText('Contact');
     expect(contactLinks.length).toBeGreaterThan(0);
 
     // Quick Links section
-    expect(screen.getByText('Home')).toBeInTheDocument();
-    expect(screen.getByText('About')).toBeInTheDocument();
+    const homeLinks = screen.getAllByText('Home');
+    expect(homeLinks.length).toBeGreaterThan(0);
+
+    const aboutLinks = screen.getAllByText('About');
+    expect(aboutLinks.length).toBeGreaterThan(0);
   });
 
   it('renders social media links with correct attributes', () => {
     render(<Footer />);
 
-    // GitHub link
-    const githubLink = screen.getByLabelText('GitHub');
-    expect(githubLink).toBeInTheDocument();
-    expect(githubLink).toHaveAttribute('href', 'https://github.com/JSB2010');
-    expect(githubLink).toHaveAttribute('target', '_blank');
-    expect(githubLink).toHaveAttribute('rel', 'noopener noreferrer');
+    // GitHub link - use getAllByLabelText since there might be multiple
+    const githubLinks = screen.getAllByLabelText('GitHub');
+    expect(githubLinks.length).toBeGreaterThan(0);
+    // Check attributes on the first one
+    expect(githubLinks[0]).toHaveAttribute('href', 'https://github.com/JSB2010');
+    expect(githubLinks[0]).toHaveAttribute('target', '_blank');
+    expect(githubLinks[0]).toHaveAttribute('rel', 'noopener noreferrer');
 
     // LinkedIn link
-    const linkedinLink = screen.getByLabelText('LinkedIn');
-    expect(linkedinLink).toBeInTheDocument();
-    expect(linkedinLink).toHaveAttribute('href', 'https://www.linkedin.com/in/jacob-barkin/');
-    expect(linkedinLink).toHaveAttribute('target', '_blank');
-    expect(linkedinLink).toHaveAttribute('rel', 'noopener noreferrer');
+    const linkedinLinks = screen.getAllByLabelText('LinkedIn');
+    expect(linkedinLinks.length).toBeGreaterThan(0);
+    expect(linkedinLinks[0]).toHaveAttribute('href', 'https://www.linkedin.com/in/jacob-barkin/');
+    expect(linkedinLinks[0]).toHaveAttribute('target', '_blank');
+    expect(linkedinLinks[0]).toHaveAttribute('rel', 'noopener noreferrer');
 
     // Contact link
-    const contactLink = screen.getByLabelText('Contact');
-    expect(contactLink).toBeInTheDocument();
-    expect(contactLink).toHaveAttribute('href', '/contact');
+    const contactLinks = screen.getAllByLabelText('Contact');
+    expect(contactLinks.length).toBeGreaterThan(0);
+    expect(contactLinks[0]).toHaveAttribute('href', '/contact');
   });
 
   it('renders the build technology information', () => {

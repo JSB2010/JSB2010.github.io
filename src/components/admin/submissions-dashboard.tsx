@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   Card,
   CardContent,
@@ -14,7 +14,6 @@ import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow
@@ -38,24 +37,30 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import {
   Search,
   RefreshCw,
-  Eye,
   Calendar,
   Mail,
   User,
   MessageSquare,
   AlertCircle,
-  Trash2,
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
   ArrowLeft,
   ArrowRight,
-  Download
+  Download,
+  Clock
 } from "lucide-react";
 import { submissionsService, ContactSubmission } from "@/lib/appwrite/submissions";
 import { Query } from "appwrite";
-import { formatDistanceToNow } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
+import { useFormPersistence } from "@/hooks/use-form-persistence";
+import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { SubmissionRow } from "./submission-row";
+import { StatsCard } from "./stats-card";
+import { Pagination } from "./pagination";
+import { PageSizeSelector } from "./page-size-selector";
+import { SearchForm } from "./search-form";
 
 export function SubmissionsDashboard() {
   const { toast } = useToast();
@@ -65,34 +70,50 @@ export function SubmissionsDashboard() {
   const [loading, setLoading] = useState(true);
   const [statsLoading, setStatsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
   const [selectedSubmission, setSelectedSubmission] = useState<ContactSubmission | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [sortField, setSortField] = useState<string>("$createdAt");
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
-  const [pageSize, setPageSize] = useState<number>(10);
+
+  // Initial form values for search and pagination
+  const initialValues = {
+    searchQuery: "",
+    currentPage: 1,
+    sortField: "$createdAt",
+    sortDirection: "desc" as "asc" | "desc",
+    pageSize: 10
+  };
+
+  // Use form persistence hook for search and pagination settings
+  const {
+    formData,
+    updateFormData,
+    resetFormData,
+    lastSaved,
+    getTimeRemaining
+  } = useFormPersistence(
+    'admin-search-form',
+    initialValues,
+    {
+      expiryMinutes: 60 * 24, // Keep search settings for 24 hours
+      saveOnUnload: true,
+      confirmOnUnload: false,
+      onRestore: (data) => {
+        toast({
+          title: 'Search Settings Restored',
+          description: 'Your previous search settings have been restored.',
+          variant: 'default',
+        });
+      }
+    }
+  );
+
+  // Destructure form values for easier access
+  const { searchQuery, currentPage, sortField, sortDirection, pageSize } = formData;
 
   // Use pageSize state instead of fixed limit
 
-  // Fetch all submissions for statistics on mount
-  useEffect(() => {
-    fetchAllSubmissionsForStats();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Fetch paginated submissions on mount and when page, search, sort, or page size changes
-  useEffect(() => {
-    const fetchData = async () => {
-      await fetchSubmissions();
-    };
-    fetchData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, searchQuery, sortField, sortDirection, pageSize]);
-
-  // Fetch all submissions for statistics
-  const fetchAllSubmissionsForStats = async () => {
+  // Fetch all submissions for statistics with useCallback
+  const fetchAllSubmissionsForStats = useCallback(async () => {
     setStatsLoading(true);
 
     try {
@@ -108,10 +129,10 @@ export function SubmissionsDashboard() {
     } finally {
       setStatsLoading(false);
     }
-  };
+  }, []);
 
-  // Fetch submissions from Appwrite
-  const fetchSubmissions = async () => {
+  // Fetch submissions from Appwrite with useCallback
+  const fetchSubmissions = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -147,34 +168,59 @@ export function SubmissionsDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, pageSize, sortField, sortDirection, searchQuery]);
 
-  // Handle sorting
-  const handleSort = (field: string) => {
+  // Fetch submissions and statistics on mount
+  useEffect(() => {
+    fetchSubmissions();
+    fetchAllSubmissionsForStats();
+  }, [fetchSubmissions, fetchAllSubmissionsForStats]);
+
+  // Handle sorting with useCallback
+  const handleSort = useCallback((field: string) => {
     if (sortField === field) {
       // Toggle direction if clicking the same field
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+      const newDirection = sortDirection === "asc" ? "desc" : "asc";
+      updateFormData({
+        sortDirection: newDirection,
+        currentPage: 1 // Reset to first page when sorting changes
+      });
     } else {
       // Set new field and default to descending
-      setSortField(field);
-      setSortDirection("desc");
+      updateFormData({
+        sortField: field,
+        sortDirection: "desc",
+        currentPage: 1 // Reset to first page when sorting changes
+      });
     }
-    // Reset to first page when sorting changes
-    setCurrentPage(1);
-  };
+  }, [sortField, sortDirection, updateFormData]);
 
-  // Handle search
-  const handleSearch = (e: React.FormEvent) => {
+  // Handle search with useCallback
+  const handleSearch = useCallback((e: React.FormEvent) => {
     e.preventDefault();
-    setCurrentPage(1); // Reset to first page when searching
+    updateFormData({ currentPage: 1 }); // Reset to first page when searching
     fetchSubmissions();
-  };
 
-  // Handle page size change
-  const handlePageSizeChange = (value: string) => {
+    // Save search settings
+    toast({
+      title: "Search settings saved",
+      description: "Your search settings will be remembered for 24 hours.",
+      variant: "default",
+    });
+  }, [updateFormData, fetchSubmissions, toast]);
+
+  // Handle search input change with useCallback
+  const handleSearchInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    updateFormData({ searchQuery: e.target.value });
+  }, [updateFormData]);
+
+  // Handle page size change with useCallback
+  const handlePageSizeChange = useCallback((value: string) => {
     const newSize = parseInt(value, 10);
-    setPageSize(newSize);
-    setCurrentPage(1); // Reset to first page when changing page size
+    updateFormData({
+      pageSize: newSize,
+      currentPage: 1 // Reset to first page when changing page size
+    });
 
     // Show toast notification
     toast({
@@ -182,18 +228,30 @@ export function SubmissionsDashboard() {
       description: `Now showing ${newSize} submissions per page.`,
       variant: "default",
     });
-  };
+  }, [updateFormData, toast]);
 
-  // Handle view submission
-  const handleViewSubmission = (submission: ContactSubmission) => {
+  // Reset search form with useCallback
+  const handleResetSearch = useCallback(() => {
+    resetFormData();
+    fetchSubmissions();
+
+    toast({
+      title: "Search reset",
+      description: "Search settings have been reset to defaults.",
+      variant: "default",
+    });
+  }, [resetFormData, fetchSubmissions, toast]);
+
+  // Handle view submission with useCallback
+  const handleViewSubmission = useCallback((submission: ContactSubmission) => {
     setSelectedSubmission(submission);
     setIsDialogOpen(true);
-  };
+  }, []);
 
   // Removed handleMarkAsRead function
 
-  // Handle delete submission
-  const handleDeleteSubmission = async (submission: ContactSubmission) => {
+  // Handle delete submission with useCallback
+  const handleDeleteSubmission = useCallback(async (submission: ContactSubmission) => {
     if (!confirm("Are you sure you want to delete this submission? This action cannot be undone.")) {
       return;
     }
@@ -233,23 +291,23 @@ export function SubmissionsDashboard() {
     } finally {
       setIsDeleting(false);
     }
-  };
+  }, [toast, selectedSubmission, fetchSubmissions, fetchAllSubmissionsForStats, setError]);
 
   // Calculate total pages
   const totalPages = Math.ceil(totalSubmissions / pageSize);
 
-  // Format date for display
-  const formatDate = (dateString: string) => {
+  // Format date for display with useCallback
+  const formatDate = useCallback((dateString: string) => {
     try {
       const date = new Date(dateString);
       return formatDistanceToNow(date, { addSuffix: true });
     } catch (_) {
       return dateString;
     }
-  };
+  }, []);
 
-  // Export submissions to CSV
-  const handleExportCSV = () => {
+  // Export submissions to CSV with useCallback
+  const handleExportCSV = useCallback(() => {
     try {
       // Create CSV content
       const headers = ["Name", "Email", "Subject", "Message", "Date", "Source", "IP Address"];
@@ -299,28 +357,36 @@ export function SubmissionsDashboard() {
         variant: "destructive",
       });
     }
-  };
+  }, [submissions, toast]);
 
-  // Calculate statistics using all submissions
-  const today = new Date();
-  const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  const todaySubmissions = allSubmissions.filter(s => {
-    const submissionDate = new Date(s.timestamp || s.$createdAt);
-    return submissionDate >= todayStart;
-  }).length;
+  // Calculate statistics using all submissions with useMemo
+  const { todaySubmissions, thisWeekSubmissions, thisMonthSubmissions } = useMemo(() => {
+    const today = new Date();
+    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const todayCount = allSubmissions.filter(s => {
+      const submissionDate = new Date(s.timestamp || s.$createdAt);
+      return submissionDate >= todayStart;
+    }).length;
 
-  const thisWeekStart = new Date(today);
-  thisWeekStart.setDate(today.getDate() - today.getDay());
-  const thisWeekSubmissions = allSubmissions.filter(s => {
-    const submissionDate = new Date(s.timestamp || s.$createdAt);
-    return submissionDate >= thisWeekStart;
-  }).length;
+    const thisWeekStart = new Date(today);
+    thisWeekStart.setDate(today.getDate() - today.getDay());
+    const thisWeekCount = allSubmissions.filter(s => {
+      const submissionDate = new Date(s.timestamp || s.$createdAt);
+      return submissionDate >= thisWeekStart;
+    }).length;
 
-  const thisMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-  const thisMonthSubmissions = allSubmissions.filter(s => {
-    const submissionDate = new Date(s.timestamp || s.$createdAt);
-    return submissionDate >= thisMonthStart;
-  }).length;
+    const thisMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+    const thisMonthCount = allSubmissions.filter(s => {
+      const submissionDate = new Date(s.timestamp || s.$createdAt);
+      return submissionDate >= thisMonthStart;
+    }).length;
+
+    return {
+      todaySubmissions: todayCount,
+      thisWeekSubmissions: thisWeekCount,
+      thisMonthSubmissions: thisMonthCount
+    };
+  }, [allSubmissions]);
 
   return (
     <div className="space-y-6">
@@ -340,95 +406,35 @@ export function SubmissionsDashboard() {
           </Button>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Submissions</CardTitle>
-            <div className="h-4 w-4 text-muted-foreground">
-              <MessageSquare className="h-4 w-4" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            {statsLoading ? (
-              <div className="flex items-center justify-center h-10">
-                <RefreshCw className="h-4 w-4 animate-spin text-muted-foreground" />
-              </div>
-            ) : (
-              <>
-                <div className="text-2xl font-bold">{allSubmissions.length}</div>
-                <p className="text-xs text-muted-foreground">
-                  All time submissions
-                </p>
-              </>
-            )}
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Today</CardTitle>
-            <div className="h-4 w-4 text-muted-foreground">
-              <Calendar className="h-4 w-4" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            {statsLoading ? (
-              <div className="flex items-center justify-center h-10">
-                <RefreshCw className="h-4 w-4 animate-spin text-muted-foreground" />
-              </div>
-            ) : (
-              <>
-                <div className="text-2xl font-bold">{todaySubmissions}</div>
-                <p className="text-xs text-muted-foreground">
-                  Submissions today
-                </p>
-              </>
-            )}
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">This Week</CardTitle>
-            <div className="h-4 w-4 text-muted-foreground">
-              <Calendar className="h-4 w-4" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            {statsLoading ? (
-              <div className="flex items-center justify-center h-10">
-                <RefreshCw className="h-4 w-4 animate-spin text-muted-foreground" />
-              </div>
-            ) : (
-              <>
-                <div className="text-2xl font-bold">{thisWeekSubmissions}</div>
-                <p className="text-xs text-muted-foreground">
-                  Submissions this week
-                </p>
-              </>
-            )}
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">This Month</CardTitle>
-            <div className="h-4 w-4 text-muted-foreground">
-              <Calendar className="h-4 w-4" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            {statsLoading ? (
-              <div className="flex items-center justify-center h-10">
-                <RefreshCw className="h-4 w-4 animate-spin text-muted-foreground" />
-              </div>
-            ) : (
-              <>
-                <div className="text-2xl font-bold">{thisMonthSubmissions}</div>
-                <p className="text-xs text-muted-foreground">
-                  Submissions this month
-                </p>
-              </>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+          <StatsCard
+            title="Total Submissions"
+            value={allSubmissions.length}
+            description="All time submissions"
+            icon={<MessageSquare className="h-4 w-4" />}
+            loading={statsLoading}
+          />
+          <StatsCard
+            title="Today"
+            value={todaySubmissions}
+            description="Submissions today"
+            icon={<Calendar className="h-4 w-4" />}
+            loading={statsLoading}
+          />
+          <StatsCard
+            title="This Week"
+            value={thisWeekSubmissions}
+            description="Submissions this week"
+            icon={<Calendar className="h-4 w-4" />}
+            loading={statsLoading}
+          />
+          <StatsCard
+            title="This Month"
+            value={thisMonthSubmissions}
+            description="Submissions this month"
+            icon={<Calendar className="h-4 w-4" />}
+            loading={statsLoading}
+          />
+        </div>
       </div>
 
       <Card>
@@ -466,21 +472,15 @@ export function SubmissionsDashboard() {
 
         <CardContent>
           {/* Search and filter */}
-          <div className="mb-6">
-            <form onSubmit={handleSearch} className="flex gap-2">
-              <div className="relative flex-1">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="search"
-                  placeholder="Search submissions..."
-                  className="pl-8"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-              <Button type="submit" disabled={loading}>Search</Button>
-            </form>
-          </div>
+          <SearchForm
+            searchQuery={searchQuery}
+            onSearchChange={handleSearchInputChange}
+            onSearch={handleSearch}
+            onReset={handleResetSearch}
+            loading={loading}
+            lastSaved={lastSaved}
+            getTimeRemaining={getTimeRemaining}
+          />
 
           {/* Error message */}
           {error && (
@@ -551,37 +551,13 @@ export function SubmissionsDashboard() {
                 </TableHeader>
                 <TableBody>
                   {submissions.map((submission) => (
-                    <TableRow key={submission.$id}>
-                      {/* Status cell removed */}
-                      <TableCell className="font-medium">{submission.name}</TableCell>
-                      <TableCell>{submission.subject}</TableCell>
-                      <TableCell className="hidden md:table-cell">
-                        {formatDate(submission.timestamp || submission.$createdAt)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleViewSubmission(submission)}
-                          >
-                            <Eye className="h-4 w-4" />
-                            <span className="sr-only">View</span>
-                          </Button>
-                          {/* Mark as read button removed */}
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDeleteSubmission(submission)}
-                            disabled={isDeleting}
-                            className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                            <span className="sr-only">Delete</span>
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
+                    <SubmissionRow
+                      key={submission.$id}
+                      submission={submission}
+                      onView={handleViewSubmission}
+                      onDelete={handleDeleteSubmission}
+                      isDeleting={isDeleting}
+                    />
                   ))}
                 </TableBody>
               </Table>
@@ -590,102 +566,17 @@ export function SubmissionsDashboard() {
 
           {/* Page size selector and pagination */}
           <div className="mt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Rows per page:</span>
-              <Select
-                value={pageSize.toString()}
-                onValueChange={handlePageSizeChange}
-              >
-                <SelectTrigger className="w-[80px] h-8">
-                  <SelectValue placeholder="10" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="5">5</SelectItem>
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="20">20</SelectItem>
-                  <SelectItem value="50">50</SelectItem>
-                  <SelectItem value="100">100</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            <PageSizeSelector
+              pageSize={pageSize}
+              onPageSizeChange={handlePageSizeChange}
+            />
 
-            {totalPages > 1 && (
-              <nav className="flex items-center space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                  disabled={currentPage === 1 || loading}
-                  className="hidden sm:flex items-center gap-1 px-2.5"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                  <span>Previous</span>
-                </Button>
-
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8 sm:hidden"
-                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                  disabled={currentPage === 1 || loading}
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                </Button>
-
-                <div className="flex items-center">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1)
-                    .filter(page =>
-                      page === 1 ||
-                      page === totalPages ||
-                      (page >= currentPage - 1 && page <= currentPage + 1)
-                    )
-                    .map((page, index, array) => {
-                      // Add ellipsis
-                      if (index > 0 && page > array[index - 1] + 1) {
-                        return (
-                          <span key={`ellipsis-${page}`} className="px-2 text-muted-foreground">
-                            ...
-                          </span>
-                        );
-                      }
-
-                      return (
-                        <Button
-                          key={page}
-                          variant={page === currentPage ? "default" : "outline"}
-                          size="icon"
-                          onClick={() => setCurrentPage(page)}
-                          disabled={loading}
-                          className="h-8 w-8 mx-0.5"
-                        >
-                          {page}
-                        </Button>
-                      );
-                    })}
-                </div>
-
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                  disabled={currentPage === totalPages || loading}
-                  className="hidden sm:flex items-center gap-1 px-2.5"
-                >
-                  <span>Next</span>
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8 sm:hidden"
-                  onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                  disabled={currentPage === totalPages || loading}
-                >
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </nav>
-            )}
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              loading={loading}
+              onPageChange={(page) => updateFormData({ currentPage: page })}
+            />
           </div>
         </CardContent>
 
