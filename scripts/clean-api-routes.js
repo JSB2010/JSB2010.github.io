@@ -27,6 +27,24 @@ function safeRemoveDir(dir) {
   }
 }
 
+// Create a .env.production file to disable API routes
+function createEnvFile() {
+  try {
+    const envFilePath = path.join(__dirname, '..', '.env.production');
+    const envContent = `
+# Disable API routes in production
+NEXT_PUBLIC_DISABLE_API_ROUTES=true
+`;
+
+    fs.writeFileSync(envFilePath, envContent);
+    console.log('Created .env.production file to disable API routes');
+    return true;
+  } catch (error) {
+    console.error('Error creating .env.production file:', error);
+    return false;
+  }
+}
+
 // Clean up API routes
 console.log('Cleaning up API routes...');
 let removedCount = 0;
@@ -37,10 +55,18 @@ for (const dir of apiDirs) {
   }
 }
 
+// Create .env.production file
+createEnvFile();
+
 // Clean the build cache
 console.log('Cleaning build cache...');
 try {
-  execSync('npm run clean', { stdio: 'inherit' });
+  // Remove .next directory
+  safeRemoveDir(path.join(__dirname, '..', '.next'));
+
+  // Remove out directory
+  safeRemoveDir(path.join(__dirname, '..', 'out'));
+
   console.log('Build cache cleaned successfully.');
 } catch (error) {
   console.error('Error cleaning build cache:', error);

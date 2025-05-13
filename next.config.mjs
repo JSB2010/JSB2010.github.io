@@ -94,18 +94,6 @@ const nextConfig = {
     // Exclude API routes and dynamic routes from static export
     images: {
       unoptimized: true, // Disable image optimization for static export
-    },
-    // Explicitly exclude API routes from the build
-    exportPathMap: async function (defaultPathMap) {
-      // Filter out any API routes
-      const filteredMap = Object.keys(defaultPathMap)
-        .filter(path => !path.startsWith('/api/'))
-        .reduce((acc, path) => {
-          acc[path] = defaultPathMap[path];
-          return acc;
-        }, {});
-
-      return filteredMap;
     }
   } : {}),
 
