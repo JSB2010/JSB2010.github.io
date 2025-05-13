@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { authService, AuthUser, AuthError } from "@/lib/appwrite/auth";
+import { proxyAuthService } from "@/lib/appwrite/proxy-auth";
 
 // Define the authentication context type
 interface AdminAuthContextType {
@@ -36,6 +37,16 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        // Try with proxy first
+        try {
+          const currentUser = await proxyAuthService.getCurrentUser();
+          setUser(currentUser);
+          return;
+        } catch (proxyErr) {
+          console.warn("Proxy auth failed, falling back to direct auth:", proxyErr);
+        }
+
+        // Fall back to direct auth if proxy fails
         const currentUser = await authService.getCurrentUser();
         setUser(currentUser);
       } catch (err) {
@@ -54,8 +65,26 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
     setError(null);
 
     try {
+      // Try with proxy first
+      try {
+        const result = await proxyAuthService.signIn(email, password);
+
+        if ('type' in result) {
+          // This is an error
+          setError(result.message);
+          return false;
+        } else {
+          // This is a user
+          setUser(result);
+          return true;
+        }
+      } catch (proxyErr) {
+        console.warn("Proxy auth failed, falling back to direct auth:", proxyErr);
+      }
+
+      // Fall back to direct auth if proxy fails
       const result = await authService.signIn(email, password);
-      
+
       if ('type' in result) {
         // This is an error
         setError(result.message);
@@ -76,8 +105,20 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
   // Sign out function
   const signOut = async (): Promise<boolean> => {
     setLoading(true);
-    
+
     try {
+      // Try with proxy first
+      try {
+        const success = await proxyAuthService.signOut();
+        if (success) {
+          setUser(null);
+          return success;
+        }
+      } catch (proxyErr) {
+        console.warn("Proxy auth failed, falling back to direct auth:", proxyErr);
+      }
+
+      // Fall back to direct auth if proxy fails
       const success = await authService.signOut();
       if (success) {
         setUser(null);
