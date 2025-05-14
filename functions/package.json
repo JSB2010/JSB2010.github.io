@@ -3,12 +3,7 @@
   "version": "1.0.0",
   "main": "lib/index.js",
   "scripts": {
-    "build": "tsc",
-    "serve": "npm run build && firebase emulators:start --only functions",
-    "shell": "npm run build && firebase functions:shell",
-    "start": "npm run shell",
-    "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
+    "build": "tsc"
   },
   "engines": {
     "node": "20"
@@ -16,10 +11,8 @@
   "keywords": [],
   "author": "Jacob Barkin",
   "license": "ISC",
-  "description": "Firebase Functions for Jacob Barkin's website",
+  "description": "Serverless Functions for Jacob Barkin's website",
   "dependencies": {
-    "firebase-admin": "^13.3.0",
-    "firebase-functions": "^6.3.2",
     "nodemailer": "^6.10.1"
   },
   "devDependencies": {
