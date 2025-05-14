@@ -9,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, RefreshCw, Search, ChevronLeft, ChevronRight, Eye, Edit } from 'lucide-react';
+import { useAdminAuth } from '@/components/admin/auth-context';
+import { ProtectedRoute } from '@/components/admin/protected-route';
 
 // Status badge colors
 const statusColors: Record<string, string> = {
@@ -60,7 +62,7 @@ interface Submission {
 
 export default function AdminSubmissionsPage() {
   const router = useRouter();
-  const [apiKey, setApiKey] = useState<string | null>(null);
+  const { user } = useAdminAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
@@ -80,81 +82,62 @@ export default function AdminSubmissionsPage() {
   const [orderBy] = useState('$createdAt');
   const [orderType] = useState('desc');
 
-  // Check if authenticated
-  useEffect(() => {
-    const storedApiKey = localStorage.getItem('adminApiKey');
-    if (storedApiKey) {
-      setApiKey(storedApiKey);
-    } else {
-      // Redirect to login page if not authenticated
-      router.push('/admin');
-    }
-  }, [router]);
-
   // Fetch submissions when filters, pagination, or sorting changes
   useEffect(() => {
-    if (apiKey) {
+    if (user) {
       fetchSubmissions();
     }
-  }, [apiKey, fetchSubmissions]);
+  }, [user, fetchSubmissions]);
 
-  // Fetch submissions from the API
+  // Fetch submissions directly from Appwrite
   const fetchSubmissions = useCallback(async () => {
-    if (!apiKey) return;
-
     setIsLoading(true);
     setError(null);
 
     try {
-      // Build query parameters
-      const params = new URLSearchParams({
-        limit: limit.toString(),
-        offset: offset.toString(),
-        orderBy,
-        orderType
-      });
+      // Import the submissions service
+      const { submissionsService } = await import('@/lib/appwrite/submissions');
 
+      // Build query array for Appwrite
+      const queries = [];
+
+      // Add status filter if selected
       if (statusFilter) {
-        params.append('status', statusFilter);
+        queries.push(`status="${statusFilter}"`);
       }
 
+      // Add priority filter if selected
       if (priorityFilter) {
-        params.append('priority', priorityFilter);
+        queries.push(`priority=${priorityFilter}`);
       }
 
-      // Fetch submissions
-      const response = await fetch(`/api/admin/submissions?${params.toString()}`, {
-        headers: {
-          'Authorization': `Bearer ${apiKey}`
+      // Add sorting
+      if (orderBy) {
+        if (orderType === 'desc') {
+          queries.push(`orderDesc("${orderBy}")`);
+        } else {
+          queries.push(`orderAsc("${orderBy}")`);
         }
-      });
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          // Unauthorized - redirect to login page
-          localStorage.removeItem('adminApiKey');
-          router.push('/admin');
-          return;
-        }
-
-        throw new Error(`API error: ${response.status}`);
       }
 
-      const data = await response.json();
+      // Fetch submissions from Appwrite
+      const result = await submissionsService.getSubmissions(limit, offset, queries);
 
-      if (data.success) {
-        setSubmissions(data.submissions);
-        setTotalSubmissions(data.total);
-      } else {
-        setError(data.error || 'Failed to fetch submissions');
-      }
-    } catch (error) {
+      // Update state with results
+      setSubmissions(result.submissions);
+      setTotalSubmissions(result.total);
+    } catch (error: any) {
       setError('An error occurred while fetching submissions');
       console.error('Fetch error:', error);
+
+      // If there's an authentication error, redirect to login
+      if (error.code === 401) {
+        router.push('/admin/login');
+      }
     } finally {
       setIsLoading(false);
     }
-  }, [apiKey, limit, offset, statusFilter, priorityFilter, orderBy, orderType, router]);
+  }, [limit, offset, statusFilter, priorityFilter, orderBy, orderType, router]);
 
   // Handle page change
   const handlePageChange = (newPage: number) => {
@@ -197,27 +180,28 @@ export default function AdminSubmissionsPage() {
   };
 
   return (
-    <div className="container py-8">
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-            <div>
-              <CardTitle>Contact Form Submissions</CardTitle>
-              <CardDescription>
-                Manage and respond to contact form submissions
-              </CardDescription>
+    <ProtectedRoute>
+      <div className="container py-8">
+        <Card>
+          <CardHeader>
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+              <div>
+                <CardTitle>Contact Form Submissions</CardTitle>
+                <CardDescription>
+                  Manage and respond to contact form submissions
+                </CardDescription>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={fetchSubmissions}
+                disabled={isLoading}
+              >
+                <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+                Refresh
+              </Button>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={fetchSubmissions}
-              disabled={isLoading}
-            >
-              <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-              Refresh
-            </Button>
-          </div>
-        </CardHeader>
+          </CardHeader>
 
         <CardContent>
           {/* Filters */}
@@ -381,5 +365,6 @@ export default function AdminSubmissionsPage() {
         </CardContent>
       </Card>
     </div>
+    </ProtectedRoute>
   );
 }

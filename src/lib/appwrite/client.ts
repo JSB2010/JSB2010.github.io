@@ -7,6 +7,15 @@ const fallbackConfig = {
   projectId: '6816ef35001da24d113d', // This should be set in environment variables
 };
 
+// Session persistence configuration
+export const sessionConfig = {
+  // Whether to use persistent sessions (true) or session-only cookies (false)
+  persistentSessions: true,
+
+  // Number of days to keep the session active (for persistent sessions)
+  sessionDuration: 30,
+};
+
 /**
  * Create and configure an Appwrite client
  * @returns Configured Appwrite client
@@ -24,9 +33,16 @@ export function createClient(): Client {
     if (typeof client.setHeader === 'function') {
       client.setHeader('X-Appwrite-Response-Format', '1.0.0');
 
-      // Add SameSite=None and Secure to cookies
+      // Add SameSite=None and Secure to cookies for cross-domain support
       client.setHeader('Cookie-SameSite', 'None');
       client.setHeader('Cookie-Secure', 'true');
+
+      // Set session duration for persistent sessions
+      if (sessionConfig.persistentSessions) {
+        // Convert days to seconds for the cookie max-age
+        const maxAge = sessionConfig.sessionDuration * 24 * 60 * 60;
+        client.setHeader('Cookie-Max-Age', maxAge.toString());
+      }
     }
   } catch (error) {
     console.warn('Error setting Appwrite headers:', error);

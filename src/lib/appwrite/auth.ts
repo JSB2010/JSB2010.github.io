@@ -1,6 +1,7 @@
 // Appwrite authentication service
 import { Client, Account, ID, Models } from 'appwrite';
 import { createClient } from './client';
+import { storeSession, clearSession, getStoredSessionId } from './session-manager';
 
 // Types
 export interface AuthUser {
@@ -69,6 +70,10 @@ export class AuthService {
     try {
       // In Appwrite v14, we use createEmailPasswordSession
       const session = await this.account.createEmailPasswordSession(email, password);
+
+      // Store session information using the session manager
+      storeSession(session.$id);
+
       const user = await this.account.get();
 
       return this.mapUser(user);
@@ -84,6 +89,10 @@ export class AuthService {
     try {
       // In Appwrite v14, we use deleteSession
       await this.account.deleteSession('current');
+
+      // Clear session data using the session manager
+      clearSession();
+
       return true;
     } catch (error) {
       console.error('Error signing out:', error);
@@ -96,9 +105,28 @@ export class AuthService {
    */
   async getCurrentUser(): Promise<AuthUser | null> {
     try {
+      // Try to get the current user directly
       const user = await this.account.get();
       return this.mapUser(user);
     } catch (error) {
+      // If that fails, try to restore the session from localStorage
+      const sessionId = getStoredSessionId();
+
+      if (sessionId) {
+        try {
+          // Try to get the session using the stored ID
+          await this.account.getSession(sessionId);
+
+          // If successful, try to get the user again
+          const user = await this.account.get();
+          return this.mapUser(user);
+        } catch (sessionError) {
+          // If session restoration fails, clean up localStorage
+          console.warn('Failed to restore session:', sessionError);
+          clearSession();
+        }
+      }
+
       return null;
     }
   }

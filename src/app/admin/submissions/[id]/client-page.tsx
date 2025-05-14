@@ -5,11 +5,12 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Loader2, ArrowLeft, Save, Mail, Trash, Clock, AlertTriangle, Tag } from 'lucide-react';
+import { useAdminAuth } from '@/components/admin/auth-context';
+import { ProtectedRoute } from '@/components/admin/protected-route';
 
 
 
@@ -38,8 +39,8 @@ interface Submission {
 export default function SubmissionDetailPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const { id } = params;
+  const { user } = useAdminAuth();
 
-  const [apiKey, setApiKey] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -51,70 +52,41 @@ export default function SubmissionDetailPage({ params }: { params: { id: string 
   const [tags, setTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState('');
 
-  // Check if authenticated
-  useEffect(() => {
-    const storedApiKey = localStorage.getItem('adminApiKey');
-    if (storedApiKey) {
-      setApiKey(storedApiKey);
-    } else {
-      // Redirect to login page if not authenticated
-      router.push('/admin');
-    }
-  }, [router]);
-
-  // Fetch submission from the API
+  // Fetch submission directly from Appwrite
   const fetchSubmission = useCallback(async () => {
-    if (!apiKey || !id) return;
+    if (!id) return;
 
     setIsLoading(true);
     setError(null);
 
     try {
-      // Fetch submission
-      const response = await fetch(`/api/admin/submissions/${id}`, {
-        headers: {
-          'Authorization': `Bearer ${apiKey}`
-        }
-      });
+      // Import the submissions service
+      const { submissionsService } = await import('@/lib/appwrite/submissions');
 
-      if (!response.ok) {
-        if (response.status === 401) {
-          // Unauthorized - redirect to login page
-          localStorage.removeItem('adminApiKey');
-          router.push('/admin');
-          return;
-        }
+      // Fetch the submission by ID
+      const result = await submissionsService.getSubmission(id);
 
-        if (response.status === 404) {
-          setError('Submission not found');
-          setIsLoading(false);
-          return;
-        }
-
-        throw new Error(`API error: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      if (data.success) {
-        setSubmission(data.submission);
-      } else {
-        setError(data.error || 'Failed to fetch submission');
-      }
-    } catch (error) {
+      // Update state with the result
+      setSubmission(result);
+    } catch (error: any) {
       setError('An error occurred while fetching the submission');
       console.error('Fetch error:', error);
+
+      // If there's an authentication error, redirect to login
+      if (error.code === 401) {
+        router.push('/admin/login');
+      }
     } finally {
       setIsLoading(false);
     }
-  }, [apiKey, id, router]);
+  }, [id, router]);
 
-  // Fetch submission when id or apiKey changes
+  // Fetch submission when user and id are available
   useEffect(() => {
-    if (apiKey && id) {
+    if (user && id) {
       fetchSubmission();
     }
-  }, [apiKey, id, fetchSubmission]);
+  }, [user, id, fetchSubmission]);
 
   // Update form state when submission changes
   useEffect(() => {
@@ -127,12 +99,15 @@ export default function SubmissionDetailPage({ params }: { params: { id: string 
 
   // Save changes to the submission
   const saveChanges = async () => {
-    if (!apiKey || !id || !submission) return;
+    if (!id || !submission || !user) return;
 
     setIsSaving(true);
     setError(null);
 
     try {
+      // Import the submissions service
+      const { submissionsService } = await import('@/lib/appwrite/submissions');
+
       // Prepare update data
       const updateData: {
         status?: 'new' | 'read' | 'replied' | 'archived';
@@ -164,43 +139,21 @@ export default function SubmissionDetailPage({ params }: { params: { id: string 
         return;
       }
 
-      // Update submission
-      const response = await fetch(`/api/admin/submissions/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
-        },
-        body: JSON.stringify(updateData)
-      });
+      // Update the submission directly in Appwrite
+      // Note: This would require adding an updateSubmission method to the submissions service
+      // For now, we'll just refetch the submission
+      await submissionsService.updateSubmission(id, updateData);
 
-      if (!response.ok) {
-        if (response.status === 401) {
-          // Unauthorized - redirect to login page
-          localStorage.removeItem('adminApiKey');
-          router.push('/admin');
-          return;
-        }
-
-        throw new Error(`API error: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      if (data.success) {
-        // Update local submission data
-        if (data.submission) {
-          setSubmission(data.submission);
-        } else {
-          // Refetch the submission to get the latest data
-          fetchSubmission();
-        }
-      } else {
-        setError(data.error || 'Failed to update submission');
-      }
-    } catch (error) {
+      // Refetch the submission to get the latest data
+      fetchSubmission();
+    } catch (error: any) {
       setError('An error occurred while updating the submission');
       console.error('Update error:', error);
+
+      // If there's an authentication error, redirect to login
+      if (error.code === 401) {
+        router.push('/admin/login');
+      }
     } finally {
       setIsSaving(false);
     }
@@ -254,16 +207,17 @@ export default function SubmissionDetailPage({ params }: { params: { id: string 
   };
 
   return (
-    <div className="container py-8">
-      <div className="mb-4">
-        <Button
-          variant="outline"
-          onClick={handleBack}
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Submissions
-        </Button>
-      </div>
+    <ProtectedRoute>
+      <div className="container py-8">
+        <div className="mb-4">
+          <Button
+            variant="outline"
+            onClick={handleBack}
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Submissions
+          </Button>
+        </div>
 
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-12">
@@ -494,5 +448,6 @@ export default function SubmissionDetailPage({ params }: { params: { id: string 
         </div>
       ) : null}
     </div>
+    </ProtectedRoute>
   );
 }

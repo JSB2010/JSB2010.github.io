@@ -1,8 +1,9 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { authService, AuthUser, AuthError } from "@/lib/appwrite/auth";
 import { directAuthService } from "@/lib/appwrite/direct-auth";
+import { sessionConfig } from "@/lib/appwrite/client";
 
 // Define the authentication context type
 interface AdminAuthContextType {
@@ -12,6 +13,7 @@ interface AdminAuthContextType {
   signIn: (email: string, password: string) => Promise<boolean>;
   signOut: () => Promise<boolean>;
   clearError: () => void;
+  checkSession: () => Promise<void>;
 }
 
 // Create the context with default values
@@ -22,6 +24,7 @@ const AdminAuthContext = createContext<AdminAuthContextType>({
   signIn: async () => false,
   signOut: async () => false,
   clearError: () => {},
+  checkSession: async () => {},
 });
 
 // Custom hook to use the auth context
@@ -32,32 +35,46 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [sessionChecked, setSessionChecked] = useState<boolean>(false);
+
+  // Function to check authentication status
+  const checkSession = useCallback(async () => {
+    if (sessionChecked) return;
+
+    setLoading(true);
+
+    try {
+      // Try with direct auth first (which includes session restoration)
+      try {
+        const currentUser = await directAuthService.getCurrentUser();
+        if (currentUser) {
+          setUser(currentUser);
+          setSessionChecked(true);
+          setLoading(false);
+          return;
+        }
+      } catch (directErr) {
+        console.warn("Direct auth failed, falling back to original auth:", directErr);
+      }
+
+      // Fall back to original auth if direct auth fails
+      const currentUser = await authService.getCurrentUser();
+      if (currentUser) {
+        setUser(currentUser);
+        setSessionChecked(true);
+      }
+    } catch (err) {
+      console.error("Error checking authentication:", err);
+    } finally {
+      setLoading(false);
+      setSessionChecked(true);
+    }
+  }, [sessionChecked]);
 
   // Check if user is authenticated on mount
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        // Try with direct auth first
-        try {
-          const currentUser = await directAuthService.getCurrentUser();
-          setUser(currentUser);
-          return;
-        } catch (directErr) {
-          console.warn("Direct auth failed, falling back to original auth:", directErr);
-        }
-
-        // Fall back to original auth if direct auth fails
-        const currentUser = await authService.getCurrentUser();
-        setUser(currentUser);
-      } catch (err) {
-        console.error("Error checking authentication:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
+    checkSession();
+  }, [checkSession]);
 
   // Sign in function
   const signIn = async (email: string, password: string): Promise<boolean> => {
@@ -145,6 +162,7 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
     signIn,
     signOut,
     clearError,
+    checkSession,
   };
 
   return (

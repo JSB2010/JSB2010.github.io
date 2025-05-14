@@ -222,15 +222,19 @@ export function useFormPersistence<T extends FormData>(
 
   // Function to reset form data
   const resetFormData = useCallback(() => {
-    setPersistenceState({
-      formData: { ...initialValues },
-      isDirty: false,
-      lastSaved: null,
-      expiresAt: null
-    });
+    try {
+      setPersistenceState({
+        formData: { ...initialValues },
+        isDirty: false,
+        lastSaved: null,
+        expiresAt: null
+      });
 
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem(storageKey);
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem(storageKey);
+      }
+    } catch (error) {
+      console.error('Error resetting form data:', error);
     }
   }, [initialValues, storageKey]);
 

@@ -1,6 +1,7 @@
 // Direct Appwrite authentication service with CORS workarounds
 import { Account, ID, Models } from 'appwrite';
 import { createClient } from './client';
+import { storeSession, clearSession, getStoredSessionId } from './session-manager';
 
 // Types
 export interface AuthUser {
@@ -64,13 +65,10 @@ export class DirectAuthService {
     try {
       // In Appwrite v14, we use createEmailPasswordSession
       const session = await this.account.createEmailPasswordSession(email, password);
-      
-      // Set cookies manually to work around CORS issues
-      if (typeof window !== 'undefined') {
-        // Store the session ID in localStorage as a fallback
-        localStorage.setItem('appwrite_session', session.$id);
-      }
-      
+
+      // Store session information using the session manager
+      storeSession(session.$id);
+
       const user = await this.account.get();
 
       return this.mapUser(user);
@@ -86,12 +84,10 @@ export class DirectAuthService {
     try {
       // In Appwrite v14, we use deleteSession
       await this.account.deleteSession('current');
-      
-      // Clear the session ID from localStorage
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('appwrite_session');
-      }
-      
+
+      // Clear session data using the session manager
+      clearSession();
+
       return true;
     } catch (error) {
       console.error('Error signing out:', error);
@@ -104,27 +100,28 @@ export class DirectAuthService {
    */
   async getCurrentUser(): Promise<AuthUser | null> {
     try {
-      // Try to get the current user
+      // Try to get the current user directly
       const user = await this.account.get();
       return this.mapUser(user);
     } catch (error) {
-      // If there's an error, try to restore the session from localStorage
-      if (typeof window !== 'undefined') {
-        const sessionId = localStorage.getItem('appwrite_session');
-        if (sessionId) {
-          try {
-            // Try to create a new session with the stored session ID
-            await this.account.getSession(sessionId);
-            const user = await this.account.get();
-            return this.mapUser(user);
-          } catch (sessionError) {
-            // If that fails, clear the session ID from localStorage
-            localStorage.removeItem('appwrite_session');
-            return null;
-          }
+      // If that fails, try to restore the session from localStorage
+      const sessionId = getStoredSessionId();
+
+      if (sessionId) {
+        try {
+          // Try to get the session using the stored ID
+          await this.account.getSession(sessionId);
+
+          // If successful, try to get the user again
+          const user = await this.account.get();
+          return this.mapUser(user);
+        } catch (sessionError) {
+          // If session restoration fails, clean up localStorage
+          console.warn('Failed to restore session:', sessionError);
+          clearSession();
         }
       }
-      
+
       return null;
     }
   }

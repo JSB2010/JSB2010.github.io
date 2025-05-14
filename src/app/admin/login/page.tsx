@@ -58,7 +58,11 @@ export default function AdminLoginPage() {
   useEffect(() => {
     if (user) {
       // Clear saved form data when user is authenticated
-      resetFormData();
+      try {
+        resetFormData();
+      } catch (err) {
+        console.error("Error resetting form data:", err);
+      }
       router.push("/admin/dashboard");
     }
   }, [user, router, resetFormData]);
@@ -84,7 +88,11 @@ export default function AdminLoginPage() {
 
       if (success) {
         // Clear saved form data on successful login
-        resetFormData();
+        try {
+          resetFormData();
+        } catch (err) {
+          console.error("Error resetting form data:", err);
+        }
         router.push("/admin/dashboard");
       }
     } catch (err) {
@@ -179,7 +187,13 @@ export default function AdminLoginPage() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={resetFormData}
+                  onClick={() => {
+                    try {
+                      resetFormData();
+                    } catch (err) {
+                      console.error("Error resetting form data:", err);
+                    }
+                  }}
                   disabled={isProcessing || loading}
                 >
                   Clear

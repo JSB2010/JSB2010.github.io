@@ -98,7 +98,26 @@ export class SubmissionsService {
     }
   }
 
-  // markAsRead method removed
+  /**
+   * Update a submission
+   * @param id Submission ID
+   * @param data Data to update
+   */
+  async updateSubmission(id: string, data: Partial<ContactSubmission>): Promise<ContactSubmission> {
+    try {
+      const submission = await this.databases.updateDocument(
+        this.databaseId,
+        this.collectionId,
+        id,
+        data
+      );
+
+      return submission as unknown as ContactSubmission;
+    } catch (error) {
+      console.error(`Error updating submission ${id}:`, error);
+      throw error;
+    }
+  }
 
   /**
    * Delete a submission
