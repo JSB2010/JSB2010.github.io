@@ -6,8 +6,10 @@ export default function Document() {
       <Head>
         {/* Add the SPA redirect script */}
         <script src="/spa-redirect.js" />
-        {/* Add favicon link */}
+        {/* Add favicon links */}
         <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/images/Updated logo.png" />
+        <link rel="apple-touch-icon" href="/images/Updated logo.png" />
       </Head>
       <body>
         <Main />
