@@ -134,7 +134,8 @@ export async function sendContactFormEmail(
     });
 
     // Send a copy to the user if requested
-    if (sendUserCopy && validateEmail(data.email)) {
+    const emailValidation = validateEmail(data.email)
+    if (sendUserCopy && emailValidation.valid) {
       try {
         // Prepare user confirmation template data
         const userTemplateData: EmailTemplateData = {
@@ -180,14 +181,6 @@ export async function sendContactFormEmail(
       message: error instanceof Error ? error.message : 'Unknown error sending email'
     };
   }
-}
-
-/**
- * Validate email address format
- */
-export function validateEmail(email: string): boolean {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
 }
 
 /**
