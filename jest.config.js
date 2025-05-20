@@ -40,6 +40,7 @@ const customJestConfig = {
     '/functions/api/test.js', // Skip non-test files with "test" in the name
     '/.next/',
     '/out/',
+    '/e2e/',
   ],
   collectCoverageFrom: [
     'src/**/*.{js,jsx,ts,tsx}',
