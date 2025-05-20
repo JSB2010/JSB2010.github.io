@@ -211,18 +211,16 @@ The website uses Next.js API routes for server-side functionality. These routes 
 
 ### Response Formatting
 
-The API uses consistent response formatting through the `formatResponse` utility:
+The API uses consistent response helpers:
 
 ```typescript
 // src/lib/api/response.ts
-export function formatResponse(success: boolean, data?: any, message?: string, statusCode = 200) {
-  const response: ApiResponse = {
-    success,
-    ...(message && { message }),
-    ...(data && { data })
-  };
-  
-  return Response.json(response, { status: statusCode });
+export function createSuccessResponse<T>(data: T, status = 200) {
+  return NextResponse.json({ success: true, data, meta: { timestamp: new Date().toISOString() } }, { status });
+}
+
+export function createErrorResponse(code: string, message: string, status = 400) {
+  return NextResponse.json({ success: false, error: { code, message }, meta: { timestamp: new Date().toISOString() } }, { status });
 }
 ```
 
@@ -234,16 +232,20 @@ API routes use centralized error handling:
 // src/lib/api/error-handler.ts
 export function handleApiError(error: unknown) {
   console.error('API Error:', error);
-  
+
   if (error instanceof AppwriteException) {
-    return formatResponse(false, null, error.message, error.code >= 400 ? error.code : 500);
+    return createErrorResponse(
+      error.code >= 400 ? String(error.code) : 'server_error',
+      error.message,
+      error.code >= 400 ? error.code : 500
+    );
   }
-  
+
   if (error instanceof ZodError) {
-    return formatResponse(false, null, 'Validation error', 400);
+    return createErrorResponse('validation_error', 'Validation error', 400);
   }
-  
-  return formatResponse(false, null, 'An unexpected error occurred', 500);
+
+  return createErrorResponse('server_error', 'An unexpected error occurred', 500);
 }
 ```
 

@@ -148,7 +148,7 @@ The contact form API uses a unified approach that supports multiple backend opti
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { databases, ID } from '@/lib/appwrite/config';
-import { formatResponse } from '@/lib/api/response';
+import { createSuccessResponse, createErrorResponse } from '@/lib/api/response';
 import { rateLimit } from '@/lib/api/rate-limiter';
 
 // Contact form schema
@@ -166,9 +166,8 @@ export async function POST(request: Request) {
     const rateLimited = await rateLimit(ip);
     
     if (rateLimited) {
-      return formatResponse(
-        false,
-        null,
+      return createErrorResponse(
+        'rate_limited',
         'Rate limit exceeded. Please try again later.',
         429
       );
@@ -181,9 +180,8 @@ export async function POST(request: Request) {
     const result = contactFormSchema.safeParse(body);
     
     if (!result.success) {
-      return formatResponse(
-        false,
-        { details: result.error.format() },
+      return createErrorResponse(
+        'validation_error',
         'Validation error',
         400
       );
@@ -207,19 +205,14 @@ export async function POST(request: Request) {
     // Trigger email notification function
     // Implementation details...
     
-    return formatResponse(
-      true,
-      {
-        id: document.$id,
-        timestamp: document.timestamp
-      },
-      'Contact form submission received'
-    );
+    return createSuccessResponse({
+      id: document.$id,
+      timestamp: document.timestamp
+    });
   } catch (error) {
     console.error('Contact form error:', error);
-    return formatResponse(
-      false,
-      null,
+    return createErrorResponse(
+      'server_error',
       'An error occurred while processing your submission',
       500
     );
@@ -466,35 +459,24 @@ The API uses a consistent error handling approach:
 // src/lib/api/error-handler.ts
 import { AppwriteException } from 'appwrite';
 import { ZodError } from 'zod';
-import { formatResponse } from './response';
+import { createSuccessResponse, createErrorResponse } from './response';
 
 export function handleApiError(error: unknown) {
   console.error('API Error:', error);
   
   if (error instanceof AppwriteException) {
-    return formatResponse(
-      false,
-      null,
+    return createErrorResponse(
+      error.code >= 400 ? String(error.code) : 'server_error',
       error.message,
       error.code >= 400 ? error.code : 500
     );
   }
   
   if (error instanceof ZodError) {
-    return formatResponse(
-      false,
-      { details: error.format() },
-      'Validation error',
-      400
-    );
+    return createErrorResponse('validation_error', 'Validation error', 400);
   }
   
-  return formatResponse(
-    false,
-    null,
-    'An unexpected error occurred',
-    500
-  );
+  return createErrorResponse('server_error', 'An unexpected error occurred', 500);
 }
 ```
 
