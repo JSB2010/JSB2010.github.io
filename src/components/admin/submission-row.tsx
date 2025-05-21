@@ -4,14 +4,16 @@ import React, { memo } from 'react';
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Eye, Trash2 } from "lucide-react";
-import { ContactSubmission } from "@/lib/appwrite/submissions";
+import { Submission } from "@/lib/firebase/submissionsService"; // Updated import
+import { Timestamp } from 'firebase/firestore';
 import { formatDistanceToNow } from "date-fns";
 
 interface SubmissionRowProps {
-  submission: ContactSubmission;
-  onView: (submission: ContactSubmission) => void;
-  onDelete: (submission: ContactSubmission) => void;
+  submission: Submission; // Use the new Submission type
+  onView: (submission: Submission) => void;
+  onDelete: (submission: Submission) => void;
   isDeleting: boolean;
+  formatDate: (timestamp: Timestamp | string | undefined) => string; // Accept Timestamp or string
 }
 
 /**
@@ -21,24 +23,16 @@ function SubmissionRowComponent({
   submission,
   onView,
   onDelete,
-  isDeleting
+  isDeleting,
+  formatDate, // Receive formatter from parent
 }: SubmissionRowProps) {
-  // Format date for display
-  const formatDate = (dateString: string) => {
-    try {
-      const date = new Date(dateString);
-      return formatDistanceToNow(date, { addSuffix: true });
-    } catch {
-      return dateString;
-    }
-  };
-
   return (
     <TableRow>
       <TableCell className="font-medium">{submission.name}</TableCell>
       <TableCell>{submission.subject}</TableCell>
       <TableCell className="hidden md:table-cell">
-        {formatDate(submission.timestamp || submission.$createdAt)}
+        {/* Use the passed formatDate prop, which can handle Firestore Timestamps */}
+        {formatDate(submission.timestamp)}
       </TableCell>
       <TableCell className="text-right">
         <div className="flex justify-end gap-2">
@@ -46,6 +40,7 @@ function SubmissionRowComponent({
             variant="ghost"
             size="sm"
             onClick={() => onView(submission)}
+            title="View submission"
           >
             <Eye className="h-4 w-4" />
             <span className="sr-only">View</span>
@@ -56,6 +51,7 @@ function SubmissionRowComponent({
             onClick={() => onDelete(submission)}
             disabled={isDeleting}
             className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30"
+            title="Delete submission"
           >
             <Trash2 className="h-4 w-4" />
             <span className="sr-only">Delete</span>

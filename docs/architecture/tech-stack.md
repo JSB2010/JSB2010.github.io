@@ -72,17 +72,14 @@ This document provides detailed information about the technologies used in the J
 
 ## Backend Technologies
 
-### Appwrite
+### Firebase
 
-[Appwrite](https://appwrite.io/) is an open-source backend server that helps you build web and mobile applications.
+[Firebase](https://firebase.google.com/) is a comprehensive app development platform by Google.
 
-**Key Features Used**:
-- **Database**: NoSQL database for storing contact form submissions
-- **Functions**: Serverless functions for email notifications
-- **Authentication**: User authentication for the admin dashboard
-- **SDK**: Client and server SDKs for interacting with Appwrite
-
-**Version**: 17.0.2 (client), 16.0.0 (server)
+**Key Services Used**:
+- **Firestore**: A NoSQL document database used for storing contact form submissions and potentially other application data.
+- **Firebase Authentication**: Handles user authentication for the admin dashboard, supporting email/password and potentially other providers.
+- **Firebase Cloud Functions**: Serverless functions used for backend logic such as processing contact form submissions and sending email notifications.
 
 ### Node.js
 

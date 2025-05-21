@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, startOfToday, startOfWeek, startOfMonth } from "date-fns";
 import {
   Card,
   CardContent,
@@ -26,7 +26,7 @@ import {
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { LoadingSpinner } from "@/components/ui/loading-spinner"; // Assuming this component exists
 import {
   RefreshCw,
   Calendar,
@@ -40,116 +40,72 @@ import {
   User,
   Mail
 } from "lucide-react";
-import { submissionsService, ContactSubmission } from "@/lib/appwrite/submissions";
-import { Query } from "appwrite";
-import { useToast } from "@/components/ui/use-toast";
-import { useFormPersistence } from "@/hooks/use-form-persistence";
-import { SubmissionRow } from "./submission-row";
-import { StatsCard } from "./stats-card";
-import { Pagination } from "./pagination";
-import { PageSizeSelector } from "./page-size-selector";
-import { SearchForm } from "./search-form";
+import {
+  Submission, // Using the Submission type from our new service
+  getSubmissions,
+  getAllSubmissions,
+  deleteSubmission as deleteSubmissionService, // aliasing to avoid name conflict
+  getSubmissionsCount
+} from "@/lib/firebase/submissionsService";
+import { Timestamp } from 'firebase/firestore';
+import { useToast } from "@/components/ui/use-toast"; // Assuming this path
+import { useFormPersistence } from "@/hooks/use-form-persistence"; // Assuming this path
+import { SubmissionRow } from "./submission-row"; // Assuming this component is adapted or generic enough
+import { StatsCard } from "./stats-card"; // Assuming this component exists
+import { Pagination } from "./pagination"; // Assuming this component exists
+import { PageSizeSelector } from "./page-size-selector"; // Assuming this component exists
+import { SearchForm } from "./search-form"; // Assuming this component exists
+
+// Define ContactSubmission if it's specifically needed, otherwise rely on Submission
+// For this refactor, we'll assume Submission from submissionsService is sufficient.
+// export type ContactSubmission = Submission;
+
 
 export function SubmissionsDashboard() {
   const { toast } = useToast();
-  const [submissions, setSubmissions] = useState<ContactSubmission[]>([]);
-  const [allSubmissions, setAllSubmissions] = useState<ContactSubmission[]>([]);
+  const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [allSubmissionsForStats, setAllSubmissionsForStats] = useState<Submission[]>([]); // For stats calculation
   const [totalSubmissions, setTotalSubmissions] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
   const [statsLoading, setStatsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedSubmission, setSelectedSubmission] = useState<ContactSubmission | null>(null);
+  const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Initial form values for search and pagination
   const initialValues = {
     searchQuery: "",
     currentPage: 1,
-    sortField: "$createdAt",
+    sortField: "timestamp", // Firestore field name
     sortDirection: "desc" as "asc" | "desc",
     pageSize: 10
   };
 
-  // Use form persistence hook for search and pagination settings
   const {
     formData,
     updateFormData,
     resetFormData,
-    lastSaved,
-    getTimeRemaining
   } = useFormPersistence(
-    'admin-search-form',
+    'admin-submissions-dashboard-settings', // Unique key for this instance
     initialValues,
-    {
-      expiryMinutes: 60 * 24, // Keep search settings for 24 hours
-      saveOnUnload: true,
-      confirmOnUnload: false,
-      onRestore: () => {
-        toast({
-          title: 'Search Settings Restored',
-          description: 'Your previous search settings have been restored.',
-          variant: 'default',
-        });
-      }
-    }
+    { expiryMinutes: 60 * 24, saveOnUnload: true }
   );
 
-  // Destructure form values for easier access
   const { searchQuery, currentPage, sortField, sortDirection, pageSize } = formData;
 
-  // Use pageSize state instead of fixed limit
-
-  // Fetch all submissions for statistics with useCallback
-  const fetchAllSubmissionsForStats = useCallback(async () => {
-    setStatsLoading(true);
-
-    try {
-      // Fetch all submissions with a large limit
-      const response = await submissionsService.getSubmissions(1000, 0, [
-        Query.orderDesc('$createdAt')
-      ]);
-
-      setAllSubmissions(response.submissions);
-    } catch (err: unknown) {
-      console.error("Error fetching statistics:", err);
-      // Don't show error for stats loading
-    } finally {
-      setStatsLoading(false);
-    }
-  }, []);
-
-  // Fetch submissions from Appwrite with useCallback
-  const fetchSubmissions = useCallback(async () => {
+  const fetchSubmissionsCallback = useCallback(async () => {
     setLoading(true);
     setError(null);
-
     try {
-      const offset = (currentPage - 1) * pageSize;
-      let response;
-
-      // Create sort query based on current sort field and direction
-      const sortQuery = sortDirection === "asc"
-        ? Query.orderAsc(sortField)
-        : Query.orderDesc(sortField);
-
-      if (searchQuery) {
-        response = await submissionsService.searchSubmissions(
-          searchQuery,
-          pageSize,
-          offset,
-          [sortQuery]
-        );
-      } else {
-        response = await submissionsService.getSubmissions(
-          pageSize,
-          offset,
-          [sortQuery]
-        );
-      }
-
-      setSubmissions(response.submissions);
-      setTotalSubmissions(response.total);
+      const filters: { status?: string; priority?: number } = {}; // Add filters if implemented
+      const sortOptions = { field: sortField, direction: sortDirection };
+      
+      // Pass searchQuery if your getSubmissions service supports it
+      const result = await getSubmissions(pageSize, currentPage, filters, sortOptions, searchQuery);
+      setSubmissions(result.submissions);
+      setTotalSubmissions(result.total);
+      setTotalPages(result.totalPages);
     } catch (err: unknown) {
       console.error("Error fetching submissions:", err);
       setError(err instanceof Error ? err.message : "Failed to fetch submissions");
@@ -157,271 +113,163 @@ export function SubmissionsDashboard() {
       setLoading(false);
     }
   }, [currentPage, pageSize, sortField, sortDirection, searchQuery]);
-
-  // Fetch submissions and statistics on mount
-  useEffect(() => {
-    fetchSubmissions();
-    fetchAllSubmissionsForStats();
-  }, [fetchSubmissions, fetchAllSubmissionsForStats]);
-
-  // Handle sorting with useCallback
-  const handleSort = useCallback((field: string) => {
-    if (sortField === field) {
-      // Toggle direction if clicking the same field
-      const newDirection = sortDirection === "asc" ? "desc" : "asc";
-      updateFormData({
-        sortDirection: newDirection,
-        currentPage: 1 // Reset to first page when sorting changes
-      });
-    } else {
-      // Set new field and default to descending
-      updateFormData({
-        sortField: field,
-        sortDirection: "desc",
-        currentPage: 1 // Reset to first page when sorting changes
-      });
+  
+  const fetchAllSubmissionsForStatsCallback = useCallback(async () => {
+    setStatsLoading(true);
+    try {
+      // Fetch all submissions (or a large enough set for accurate stats)
+      // Consider if getAllSubmissions is too heavy; getSubmissionsCount might be better for some stats.
+      const allSubs = await getAllSubmissions({ field: "timestamp", direction: "desc" });
+      setAllSubmissionsForStats(allSubs);
+    } catch (err: unknown) {
+      console.error("Error fetching all submissions for stats:", err);
+      // Not critical to show error for stats usually
+    } finally {
+      setStatsLoading(false);
     }
+  }, []);
+
+
+  useEffect(() => {
+    fetchSubmissionsCallback();
+    fetchAllSubmissionsForStatsCallback();
+  }, [fetchSubmissionsCallback, fetchAllSubmissionsForStatsCallback]);
+
+  const handleSort = useCallback((field: string) => {
+    const newDirection = (sortField === field && sortDirection === "desc") ? "asc" : "desc";
+    updateFormData({ sortField: field, sortDirection: newDirection, currentPage: 1 });
   }, [sortField, sortDirection, updateFormData]);
 
-  // Handle search with useCallback
-  const handleSearch = useCallback((e: React.FormEvent) => {
-    e.preventDefault();
-    updateFormData({ currentPage: 1 }); // Reset to first page when searching
-    fetchSubmissions();
-
-    // Save search settings
-    toast({
-      title: "Search settings saved",
-      description: "Your search settings will be remembered for 24 hours.",
-      variant: "default",
-    });
-  }, [updateFormData, fetchSubmissions, toast]);
-
-  // Handle search input change with useCallback
+  const handleSearch = useCallback((e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    updateFormData({ currentPage: 1 });
+    // fetchSubmissionsCallback will be called due to dependency change on formData
+    toast({ title: "Search updated", description: "Displaying matching submissions."});
+  }, [updateFormData, toast]);
+  
   const handleSearchInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     updateFormData({ searchQuery: e.target.value });
   }, [updateFormData]);
 
-  // Handle page size change with useCallback
   const handlePageSizeChange = useCallback((value: string) => {
-    const newSize = parseInt(value, 10);
-    updateFormData({
-      pageSize: newSize,
-      currentPage: 1 // Reset to first page when changing page size
-    });
-
-    // Show toast notification
-    toast({
-      title: "Page size updated",
-      description: `Now showing ${newSize} submissions per page.`,
-      variant: "default",
-    });
+    updateFormData({ pageSize: parseInt(value, 10), currentPage: 1 });
+    toast({ title: "Page size updated", description: `Now showing ${value} submissions per page.` });
   }, [updateFormData, toast]);
 
-  // Reset search form with useCallback
   const handleResetSearch = useCallback(() => {
-    resetFormData();
-    fetchSubmissions();
+    resetFormData(); // This will trigger a re-fetch due to formData dependency in useEffect
+    toast({ title: "Search reset", description: "Search settings have been reset." });
+  }, [resetFormData, toast]);
 
-    toast({
-      title: "Search reset",
-      description: "Search settings have been reset to defaults.",
-      variant: "default",
-    });
-  }, [resetFormData, fetchSubmissions, toast]);
 
-  // Handle view submission with useCallback
-  const handleViewSubmission = useCallback((submission: ContactSubmission) => {
+  const handleViewSubmission = useCallback((submission: Submission) => {
     setSelectedSubmission(submission);
     setIsDialogOpen(true);
   }, []);
 
-  // Removed handleMarkAsRead function
-
-  // Handle delete submission with useCallback
-  const handleDeleteSubmission = useCallback(async (submission: ContactSubmission) => {
+  const handleDeleteSubmission = useCallback(async (submission: Submission) => {
     if (!confirm("Are you sure you want to delete this submission? This action cannot be undone.")) {
       return;
     }
-
     setIsDeleting(true);
-
     try {
-      await submissionsService.deleteSubmission(submission.$id);
-
-      // Close dialog if the deleted submission is currently selected
-      if (selectedSubmission && selectedSubmission.$id === submission.$id) {
+      await deleteSubmissionService(submission.id);
+      if (selectedSubmission && selectedSubmission.id === submission.id) {
         setIsDialogOpen(false);
         setSelectedSubmission(null);
       }
-
-      // Show success toast
-      toast({
-        title: "Submission deleted",
-        description: "The submission has been successfully deleted.",
-        variant: "success",
-      });
-
-      // Refresh submissions
-      fetchSubmissions();
-      // Also refresh statistics
-      fetchAllSubmissionsForStats();
+      toast({ title: "Submission deleted", variant: "success" });
+      fetchSubmissionsCallback(); // Refresh list
+      fetchAllSubmissionsForStatsCallback(); // Refresh stats
     } catch (err: unknown) {
       console.error("Error deleting submission:", err);
-      setError(err instanceof Error ? err.message : "Failed to delete submission");
-
-      // Show error toast
-      toast({
-        title: "Error",
-        description: err instanceof Error ? err.message : "Failed to delete submission",
-        variant: "destructive",
-      });
+      const message = err instanceof Error ? err.message : "Failed to delete submission";
+      setError(message);
+      toast({ title: "Error", description: message, variant: "destructive" });
     } finally {
       setIsDeleting(false);
     }
-  }, [toast, selectedSubmission, fetchSubmissions, fetchAllSubmissionsForStats, setError]);
+  }, [toast, selectedSubmission, fetchSubmissionsCallback, fetchAllSubmissionsForStatsCallback]);
 
-  // Calculate total pages
-  const totalPages = Math.ceil(totalSubmissions / pageSize);
-
-  // Format date for display with useCallback
-  const formatDate = useCallback((dateString: string) => {
-    try {
-      const date = new Date(dateString);
-      return formatDistanceToNow(date, { addSuffix: true });
-    } catch {
-      return dateString;
+  const formatDateDisplay = useCallback((timestamp: Timestamp | string | undefined): string => {
+    if (!timestamp) return 'N/A';
+    let date: Date;
+    if (timestamp instanceof Timestamp) {
+      date = timestamp.toDate();
+    } else {
+      try {
+        date = new Date(timestamp);
+      } catch {
+        return 'Invalid Date';
+      }
     }
+    return formatDistanceToNow(date, { addSuffix: true });
   }, []);
 
-  // Export submissions to CSV with useCallback
   const handleExportCSV = useCallback(() => {
     try {
-      // Create CSV content
-      const headers = ["Name", "Email", "Subject", "Message", "Date", "Source", "IP Address"];
-      const csvRows = [headers];
+      const headers = ["ID", "Name", "Email", "Subject", "Message", "Date", "Status", "Priority", "Source", "IP Address", "User Agent"];
+      const csvRows = [headers.join(",")];
 
-      // Add data rows
-      submissions.forEach(submission => {
+      allSubmissionsForStats.forEach(sub => { // Use allSubmissionsForStats for complete export
         const row = [
-          submission.name,
-          submission.email,
-          submission.subject,
-          submission.message.replace(/"/g, '""'), // Escape quotes
-          new Date(submission.timestamp || submission.$createdAt).toISOString(),
-          submission.source || "",
-          submission.ipAddress || ""
+          sub.id,
+          `"${sub.name.replace(/"/g, '""')}"`,
+          `"${sub.email.replace(/"/g, '""')}"`,
+          `"${sub.subject.replace(/"/g, '""')}"`,
+          `"${sub.message.replace(/"/g, '""')}"`,
+          sub.timestamp instanceof Timestamp ? sub.timestamp.toDate().toISOString() : (sub.timestamp || ''),
+          sub.status,
+          sub.priority?.toString() || '',
+          `"${(sub.source || '').replace(/"/g, '""')}"`,
+          `"${(sub.ipAddress || '').replace(/"/g, '""')}"`,
+          `"${(sub.userAgent || '').replace(/"/g, '""')}"`
         ];
-        csvRows.push(row.map(cell => `"${cell}"`)); // Wrap in quotes to handle commas
+        csvRows.push(row.join(","));
       });
-
-      // Create CSV content
-      const csvContent = csvRows.map(row => row.join(",")).join("\n");
-
-      // Create download link
+      
+      const csvContent = csvRows.join("\n");
       const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.setAttribute("href", url);
       link.setAttribute("download", `contact-submissions-${new Date().toISOString().split("T")[0]}.csv`);
-      link.style.visibility = "hidden";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-
-      // Show success toast
-      toast({
-        title: "Export successful",
-        description: `${submissions.length} submissions exported to CSV.`,
-        variant: "success",
-      });
+      toast({ title: "Export successful", description: `${allSubmissionsForStats.length} submissions exported.`, variant: "success" });
     } catch (err) {
       console.error("Error exporting to CSV:", err);
-
-      // Show error toast
-      toast({
-        title: "Export failed",
-        description: "There was an error exporting submissions to CSV.",
-        variant: "destructive",
-      });
+      toast({ title: "Export failed", variant: "destructive" });
     }
-  }, [submissions, toast]);
+  }, [allSubmissionsForStats, toast]);
 
-  // Calculate statistics using all submissions with useMemo
-  const { todaySubmissions, thisWeekSubmissions, thisMonthSubmissions } = useMemo(() => {
-    const today = new Date();
-    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    const todayCount = allSubmissions.filter(s => {
-      const submissionDate = new Date(s.timestamp || s.$createdAt);
-      return submissionDate >= todayStart;
-    }).length;
-
-    const thisWeekStart = new Date(today);
-    thisWeekStart.setDate(today.getDate() - today.getDay());
-    const thisWeekCount = allSubmissions.filter(s => {
-      const submissionDate = new Date(s.timestamp || s.$createdAt);
-      return submissionDate >= thisWeekStart;
-    }).length;
-
-    const thisMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-    const thisMonthCount = allSubmissions.filter(s => {
-      const submissionDate = new Date(s.timestamp || s.$createdAt);
-      return submissionDate >= thisMonthStart;
-    }).length;
+  const stats = useMemo(() => {
+    const today = startOfToday();
+    const weekStart = startOfWeek(today);
+    const monthStart = startOfMonth(today);
 
     return {
-      todaySubmissions: todayCount,
-      thisWeekSubmissions: thisWeekCount,
-      thisMonthSubmissions: thisMonthCount
+      todaySubmissions: allSubmissionsForStats.filter(s => s.timestamp && s.timestamp.toDate() >= today).length,
+      thisWeekSubmissions: allSubmissionsForStats.filter(s => s.timestamp && s.timestamp.toDate() >= weekStart).length,
+      thisMonthSubmissions: allSubmissionsForStats.filter(s => s.timestamp && s.timestamp.toDate() >= monthStart).length,
+      total: allSubmissionsForStats.length
     };
-  }, [allSubmissions]);
+  }, [allSubmissionsForStats]);
 
   return (
     <div className="space-y-6">
-      {/* Stats Cards */}
       <div className="relative">
         <div className="absolute right-0 top-0 z-10">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={fetchAllSubmissionsForStats}
-            disabled={statsLoading}
-            className="h-8 w-8"
-            title="Refresh statistics"
-          >
+          <Button variant="ghost" size="sm" onClick={fetchAllSubmissionsForStatsCallback} disabled={statsLoading} className="h-8 w-8" title="Refresh statistics">
             <RefreshCw className={`h-4 w-4 ${statsLoading ? 'animate-spin' : ''}`} />
-            <span className="sr-only">Refresh statistics</span>
           </Button>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <StatsCard
-            title="Total Submissions"
-            value={allSubmissions.length}
-            description="All time submissions"
-            icon={<MessageSquare className="h-4 w-4" />}
-            loading={statsLoading}
-          />
-          <StatsCard
-            title="Today"
-            value={todaySubmissions}
-            description="Submissions today"
-            icon={<Calendar className="h-4 w-4" />}
-            loading={statsLoading}
-          />
-          <StatsCard
-            title="This Week"
-            value={thisWeekSubmissions}
-            description="Submissions this week"
-            icon={<Calendar className="h-4 w-4" />}
-            loading={statsLoading}
-          />
-          <StatsCard
-            title="This Month"
-            value={thisMonthSubmissions}
-            description="Submissions this month"
-            icon={<Calendar className="h-4 w-4" />}
-            loading={statsLoading}
-          />
+          <StatsCard title="Total Submissions" value={stats.total} icon={<MessageSquare className="h-4 w-4" />} loading={statsLoading} />
+          <StatsCard title="Today" value={stats.todaySubmissions} icon={<Calendar className="h-4 w-4" />} loading={statsLoading} />
+          <StatsCard title="This Week" value={stats.thisWeekSubmissions} icon={<Calendar className="h-4 w-4" />} loading={statsLoading} />
+          <StatsCard title="This Month" value={stats.thisMonthSubmissions} icon={<Calendar className="h-4 w-4" />} loading={statsLoading} />
         </div>
       </div>
 
@@ -430,109 +278,52 @@ export function SubmissionsDashboard() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <CardTitle>Contact Form Submissions</CardTitle>
-              <CardDescription>
-                Manage and view submissions from your contact form
-              </CardDescription>
+              <CardDescription>Manage and view submissions from your contact form (Firestore)</CardDescription>
             </div>
-
             <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleExportCSV}
-                disabled={loading || submissions.length === 0}
-              >
-                <Download className="h-4 w-4 mr-2" />
-                Export CSV
+              <Button variant="outline" size="sm" onClick={handleExportCSV} disabled={loading || allSubmissionsForStats.length === 0}>
+                <Download className="h-4 w-4 mr-2" /> Export CSV
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={fetchSubmissions}
-                disabled={loading}
-              >
-                <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-                Refresh
+              <Button variant="outline" size="sm" onClick={fetchSubmissionsCallback} disabled={loading}>
+                <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} /> Refresh
               </Button>
             </div>
           </div>
         </CardHeader>
 
         <CardContent>
-          {/* Search and filter */}
           <SearchForm
             searchQuery={searchQuery}
             onSearchChange={handleSearchInputChange}
-            onSearch={handleSearch}
+            onSearch={handleSearch} // Search is triggered by useEffect on formData change
             onReset={handleResetSearch}
             loading={loading}
-            lastSaved={lastSaved}
-            getTimeRemaining={getTimeRemaining}
+            // lastSaved and getTimeRemaining can be passed if useFormPersistence provides them
           />
 
-          {/* Error message */}
           {error && (
             <div className="mb-4 p-3 bg-red-100 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md text-red-800 dark:text-red-300 text-sm flex items-center">
-              <AlertCircle className="h-4 w-4 mr-2" />
-              {error}
+              <AlertCircle className="h-4 w-4 mr-2" /> {error}
             </div>
           )}
 
-          {/* Submissions table */}
           {loading ? (
-            <div className="py-8">
-              <LoadingSpinner size="lg" />
-            </div>
+            <div className="py-8"><LoadingSpinner size="lg" /></div>
           ) : submissions.length === 0 ? (
-            <div className="py-8 text-center">
-              <p className="text-muted-foreground">No submissions found</p>
-            </div>
+            <div className="py-8 text-center"><p className="text-muted-foreground">No submissions found</p></div>
           ) : (
             <div className="rounded-md border overflow-hidden">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead
-                      className="cursor-pointer hover:bg-muted/50 transition-colors"
-                      onClick={() => handleSort("name")}
-                    >
-                      <div className="flex items-center gap-1">
-                        Name
-                        {sortField === "name" && (
-                          sortDirection === "asc" ?
-                            <ArrowUp className="h-4 w-4" /> :
-                            <ArrowDown className="h-4 w-4" />
-                        )}
-                        {sortField !== "name" && <ArrowUpDown className="h-4 w-4 opacity-50" />}
-                      </div>
+                    <TableHead className="cursor-pointer hover:bg-muted/50" onClick={() => handleSort("name")}>
+                      <div className="flex items-center gap-1">Name {sortField === "name" && (sortDirection === "asc" ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />)} {sortField !== "name" && <ArrowUpDown className="h-4 w-4 opacity-50" />}</div>
                     </TableHead>
-                    <TableHead
-                      className="cursor-pointer hover:bg-muted/50 transition-colors"
-                      onClick={() => handleSort("subject")}
-                    >
-                      <div className="flex items-center gap-1">
-                        Subject
-                        {sortField === "subject" && (
-                          sortDirection === "asc" ?
-                            <ArrowUp className="h-4 w-4" /> :
-                            <ArrowDown className="h-4 w-4" />
-                        )}
-                        {sortField !== "subject" && <ArrowUpDown className="h-4 w-4 opacity-50" />}
-                      </div>
+                    <TableHead className="cursor-pointer hover:bg-muted/50" onClick={() => handleSort("subject")}>
+                      <div className="flex items-center gap-1">Subject {sortField === "subject" && (sortDirection === "asc" ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />)} {sortField !== "subject" && <ArrowUpDown className="h-4 w-4 opacity-50" />}</div>
                     </TableHead>
-                    <TableHead
-                      className="hidden md:table-cell cursor-pointer hover:bg-muted/50 transition-colors"
-                      onClick={() => handleSort("$createdAt")}
-                    >
-                      <div className="flex items-center gap-1">
-                        Date
-                        {sortField === "$createdAt" && (
-                          sortDirection === "asc" ?
-                            <ArrowUp className="h-4 w-4" /> :
-                            <ArrowDown className="h-4 w-4" />
-                        )}
-                        {sortField !== "$createdAt" && <ArrowUpDown className="h-4 w-4 opacity-50" />}
-                      </div>
+                    <TableHead className="hidden md:table-cell cursor-pointer hover:bg-muted/50" onClick={() => handleSort("timestamp")}>
+                      <div className="flex items-center gap-1">Date {sortField === "timestamp" && (sortDirection === "asc" ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />)} {sortField !== "timestamp" && <ArrowUpDown className="h-4 w-4 opacity-50" />}</div>
                     </TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
@@ -540,11 +331,12 @@ export function SubmissionsDashboard() {
                 <TableBody>
                   {submissions.map((submission) => (
                     <SubmissionRow
-                      key={submission.$id}
+                      key={submission.id}
                       submission={submission}
                       onView={handleViewSubmission}
                       onDelete={handleDeleteSubmission}
                       isDeleting={isDeleting}
+                      formatDate={formatDateDisplay} // Pass formatter
                     />
                   ))}
                 </TableBody>
@@ -552,19 +344,9 @@ export function SubmissionsDashboard() {
             </div>
           )}
 
-          {/* Page size selector and pagination */}
           <div className="mt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <PageSizeSelector
-              pageSize={pageSize}
-              onPageSizeChange={handlePageSizeChange}
-            />
-
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              loading={loading}
-              onPageChange={(page) => updateFormData({ currentPage: page })}
-            />
+            <PageSizeSelector pageSize={pageSize} onPageSizeChange={handlePageSizeChange} />
+            <Pagination currentPage={currentPage} totalPages={totalPages} loading={loading} onPageChange={(page) => updateFormData({ currentPage: page })} />
           </div>
         </CardContent>
 
@@ -576,95 +358,41 @@ export function SubmissionsDashboard() {
         </CardFooter>
       </Card>
 
-      {/* Submission details dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="sm:max-w-lg">
           {selectedSubmission && (
             <>
               <DialogHeader>
                 <DialogTitle>{selectedSubmission.subject}</DialogTitle>
-                <DialogDescription>
-                  Submission from {selectedSubmission.name}
-                </DialogDescription>
+                <DialogDescription>Submission from {selectedSubmission.name}</DialogDescription>
               </DialogHeader>
-
               <div className="space-y-4 my-4">
                 <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-2 text-sm">
-                  <div className="flex items-center text-muted-foreground">
-                    <User className="h-4 w-4 mr-2" />
-                    Name:
-                  </div>
+                  <div className="flex items-center text-muted-foreground"><User className="h-4 w-4 mr-2" />Name:</div>
                   <div className="font-medium">{selectedSubmission.name}</div>
-
-                  <div className="flex items-center text-muted-foreground">
-                    <Mail className="h-4 w-4 mr-2" />
-                    Email:
-                  </div>
-                  <div>
-                    <a
-                      href={`mailto:${selectedSubmission.email}`}
-                      className="text-primary hover:underline"
-                    >
-                      {selectedSubmission.email}
-                    </a>
-                  </div>
-
-                  <div className="flex items-center text-muted-foreground">
-                    <Calendar className="h-4 w-4 mr-2" />
-                    Date:
-                  </div>
-                  <div>{formatDate(selectedSubmission.timestamp || selectedSubmission.$createdAt)}</div>
+                  <div className="flex items-center text-muted-foreground"><Mail className="h-4 w-4 mr-2" />Email:</div>
+                  <div><a href={`mailto:${selectedSubmission.email}`} className="text-primary hover:underline">{selectedSubmission.email}</a></div>
+                  <div className="flex items-center text-muted-foreground"><Calendar className="h-4 w-4 mr-2" />Date:</div>
+                  <div>{formatDateDisplay(selectedSubmission.timestamp)}</div>
                 </div>
-
                 <div>
                   <h4 className="text-sm font-medium mb-2">Message:</h4>
-                  <div className="p-3 rounded-md bg-muted/50 whitespace-pre-wrap text-sm">
-                    {selectedSubmission.message}
-                  </div>
+                  <div className="p-3 rounded-md bg-muted/50 whitespace-pre-wrap text-sm">{selectedSubmission.message}</div>
                 </div>
-
                 {(selectedSubmission.userAgent || selectedSubmission.source || selectedSubmission.ipAddress) && (
                   <div className="border-t pt-3">
                     <h4 className="text-sm font-medium mb-2">Additional Information:</h4>
                     <div className="space-y-1 text-xs text-muted-foreground">
-                      {selectedSubmission.source && (
-                        <p>Source: {selectedSubmission.source}</p>
-                      )}
-                      {selectedSubmission.ipAddress && (
-                        <p>IP Address: {selectedSubmission.ipAddress}</p>
-                      )}
-                      {selectedSubmission.userAgent && (
-                        <p>User Agent: {selectedSubmission.userAgent}</p>
-                      )}
+                      {selectedSubmission.source && (<p>Source: {selectedSubmission.source}</p>)}
+                      {selectedSubmission.ipAddress && (<p>IP Address: {selectedSubmission.ipAddress}</p>)}
+                      {selectedSubmission.userAgent && (<p>User Agent: {selectedSubmission.userAgent}</p>)}
                     </div>
                   </div>
                 )}
               </div>
-
               <DialogFooter className="flex sm:justify-between gap-2">
-                <div className="hidden sm:flex">
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleDeleteSubmission(selectedSubmission)}
-                    disabled={isDeleting}
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Delete
-                  </Button>
-                </div>
-
-                <div className="flex gap-2 w-full sm:w-auto">
-                  {/* Mark as read button removed */}
-
-                  <Button
-                    size="sm"
-                    className="flex-1 sm:flex-initial"
-                    onClick={() => setIsDialogOpen(false)}
-                  >
-                    Close
-                  </Button>
-                </div>
+                <Button variant="destructive" size="sm" onClick={() => handleDeleteSubmission(selectedSubmission)} disabled={isDeleting} className="sm:flex hidden"><Trash2 className="h-4 w-4 mr-2" />Delete</Button>
+                <Button size="sm" className="flex-1 sm:flex-initial" onClick={() => setIsDialogOpen(false)}>Close</Button>
               </DialogFooter>
             </>
           )}

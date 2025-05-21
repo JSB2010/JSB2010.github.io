@@ -1,19 +1,21 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
-import { authService, AuthUser, AuthError } from "@/lib/appwrite/auth";
-import { directAuthService } from "@/lib/appwrite/direct-auth";
-import { sessionConfig } from "@/lib/appwrite/client";
+import {
+  User, // Your app's User type
+  signIn as firebaseSignIn,
+  signOut as firebaseSignOut,
+  onAuthUserStateChanged
+} from "@/lib/firebase/authService"; // Import from your new Firebase auth service
 
 // Define the authentication context type
 interface AdminAuthContextType {
-  user: AuthUser | null;
+  user: User | null;
   loading: boolean;
   error: string | null;
   signIn: (email: string, password: string) => Promise<boolean>;
   signOut: () => Promise<boolean>;
   clearError: () => void;
-  checkSession: () => Promise<void>;
 }
 
 // Create the context with default values
@@ -24,7 +26,6 @@ const AdminAuthContext = createContext<AdminAuthContextType>({
   signIn: async () => false,
   signOut: async () => false,
   clearError: () => {},
-  checkSession: async () => {},
 });
 
 // Custom hook to use the auth context
@@ -32,123 +33,54 @@ export const useAdminAuth = () => useContext(AdminAuthContext);
 
 // Auth provider component
 export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [sessionChecked, setSessionChecked] = useState<boolean>(false);
 
-  // Function to check authentication status
-  const checkSession = useCallback(async () => {
-    if (sessionChecked) return;
-
-    setLoading(true);
-
-    try {
-      // Try with direct auth first (which includes session restoration)
-      try {
-        const currentUser = await directAuthService.getCurrentUser();
-        if (currentUser) {
-          setUser(currentUser);
-          setSessionChecked(true);
-          setLoading(false);
-          return;
-        }
-      } catch (directErr) {
-        console.warn("Direct auth failed, falling back to original auth:", directErr);
-      }
-
-      // Fall back to original auth if direct auth fails
-      const currentUser = await authService.getCurrentUser();
-      if (currentUser) {
-        setUser(currentUser);
-        setSessionChecked(true);
-      }
-    } catch (err) {
-      console.error("Error checking authentication:", err);
-    } finally {
-      setLoading(false);
-      setSessionChecked(true);
-    }
-  }, [sessionChecked]);
-
-  // Check if user is authenticated on mount
+  // Subscribe to auth state changes
   useEffect(() => {
-    checkSession();
-  }, [checkSession]);
+    setLoading(true);
+    const unsubscribe = onAuthUserStateChanged((authUser) => {
+      setUser(authUser);
+      setLoading(false);
+    });
+    return () => unsubscribe(); // Cleanup subscription on unmount
+  }, []);
 
   // Sign in function
   const signIn = async (email: string, password: string): Promise<boolean> => {
     setLoading(true);
     setError(null);
-
     try {
-      // Try with direct auth first
-      try {
-        const result = await directAuthService.signIn(email, password);
-
-        if ('type' in result) {
-          // This is an error
-          setError(result.message);
-          return false;
-        } else {
-          // This is a user
-          setUser(result);
-          return true;
-        }
-      } catch (directErr) {
-        console.warn("Direct auth failed, falling back to original auth:", directErr);
-      }
-
-      // Fall back to original auth if direct auth fails
-      const result = await authService.signIn(email, password);
-
-      if ('type' in result) {
-        // This is an error
-        setError(result.message);
-        return false;
-      } else {
-        // This is a user
-        setUser(result);
-        return true;
-      }
+      await firebaseSignIn(email, password);
+      // User state will be updated by onAuthUserStateChanged
+      return true;
     } catch (err: any) {
-      setError(err.message || "An error occurred during sign in");
+      console.error("Sign in error in context:", err);
+      setError(err.message || "An error occurred during sign in.");
+      setLoading(false); // Ensure loading is false on error
       return false;
-    } finally {
-      setLoading(false);
     }
+    // setLoading(false) will be handled by the onAuthUserStateChanged effect
   };
 
   // Sign out function
   const signOut = async (): Promise<boolean> => {
     setLoading(true);
-
+    setError(null);
     try {
-      // Try with direct auth first
-      try {
-        const success = await directAuthService.signOut();
-        if (success) {
-          setUser(null);
-          return success;
-        }
-      } catch (directErr) {
-        console.warn("Direct auth failed, falling back to original auth:", directErr);
-      }
-
-      // Fall back to original auth if direct auth fails
-      const success = await authService.signOut();
-      if (success) {
-        setUser(null);
-      }
-      return success;
+      await firebaseSignOut();
+      // User state will be updated by onAuthUserStateChanged
+      return true;
     } catch (err: any) {
-      setError(err.message || "An error occurred during sign out");
+      console.error("Sign out error in context:", err);
+      setError(err.message || "An error occurred during sign out.");
+      setLoading(false); // Ensure loading is false on error
       return false;
-    } finally {
-      setLoading(false);
     }
+    // setLoading(false) will be handled by the onAuthUserStateChanged effect
   };
-
+  
   // Clear error function
   const clearError = () => {
     setError(null);
@@ -162,7 +94,6 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
     signIn,
     signOut,
     clearError,
-    checkSession,
   };
 
   return (

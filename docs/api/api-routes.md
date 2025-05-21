@@ -6,309 +6,63 @@ This document provides detailed information about the API routes available in th
 
 The website uses Next.js API routes for server-side functionality. These routes are located in the `src/app/api` directory and follow the Next.js App Router pattern.
 
-**Note**: For static export to Cloudflare Pages, API routes are excluded from the build. The client-side code uses Appwrite directly for most operations.
+**Note**: With the migration to Firebase, traditional Next.js API routes for backend operations like contact form submission and admin data management have been replaced by Firebase Cloud Functions and direct Firebase SDK interactions.
 
-## Available API Routes
+## Cloud Functions (Firebase)
 
-### Contact Form API
+Instead of traditional REST API endpoints for all backend logic, Firebase Cloud Functions are used.
 
-#### Unified Contact Form API
+### Callable Functions
 
-**Route**: `/api/contact-unified`
-**File**: `src/app/api/contact-unified/route.ts`
-**Method**: POST
-**Description**: Handles contact form submissions with multiple backend options (Appwrite, Email, etc.)
+#### `submitContactForm`
 
-**Request Body**:
-```json
-{
-  "name": "Visitor Name",
-  "email": "visitor@example.com",
-  "message": "Hello, I'd like to get in touch...",
-  "phone": "123-456-7890" // Optional
-}
-```
+*   **Type**: Firebase Callable Cloud Function
+*   **Location**: Defined in `functions/src/index.ts`
+*   **Invoked Via**: Firebase SDK from the client-side (e.g., in `src/components/contact/contact-form-firebase.tsx`). This is not a traditional REST API endpoint that you call with `fetch` or `axios` to a URL like `/api/submitContactForm`.
+*   **Description**: Handles new contact form submissions. It receives data from the contact form, performs validation, and stores it in the `contact-submissions` collection in Firestore.
+*   **Request Data (from client using Firebase SDK)**:
+    ```javascript
+    // Example: { name: "John Doe", email: "john@example.com", subject: "Inquiry", message: "Hello!" }
+    ```
+*   **Response (to client via Firebase SDK)**:
+    ```javascript
+    // On success: { data: { success: true, id: "firestore-document-id", message: "Form submitted successfully!" } }
+    // On error: Throws HttpsError (e.g., error.code, error.message)
+    ```
 
-**Response (Success)**:
-```json
-{
-  "success": true,
-  "message": "Contact form submission received",
-  "data": {
-    "id": "unique-document-id",
-    "timestamp": "2023-05-15T12:34:56.789Z"
-  }
-}
-```
+### Firestore Triggers
 
-**Response (Error)**:
-```json
-{
-  "success": false,
-  "message": "Error message explaining what went wrong",
-  "error": {
-    "code": "error-code",
-    "details": "Additional error details"
-  }
-}
-```
+#### `onNewSubmissionSendEmail`
 
-**Implementation Details**:
-- Validates form data using Zod schema
-- Implements rate limiting to prevent abuse
-- Detects and blocks spam submissions
-- Supports multiple backend options:
-  - Appwrite database storage
-  - Email notification via Appwrite function
-  - Fallback to direct email sending
+*   **Type**: Firebase Firestore Triggered Cloud Function
+*   **Location**: Defined in `functions/src/index.ts`
+*   **Trigger**: Automatically activates when a new document is created in the `contact-submissions` Firestore collection.
+*   **Description**: Sends an email notification (e.g., via SendGrid, configured through environment variables) to a designated admin email address when a new contact form submission is successfully stored. This function is not called directly by the client or via an HTTP request.
 
-#### Appwrite-Specific Contact Form API
+## Deprecated API Routes (Previously Appwrite-based)
 
-**Route**: `/api/contact-appwrite`
-**File**: `src/app/api/contact-appwrite/route.ts`
-**Method**: POST
-**Description**: Handles contact form submissions specifically for Appwrite backend
+The following Next.js API routes were part of the previous Appwrite integration and are now **deprecated or removed**. Their functionality has been migrated to Firebase services (Cloud Functions, Firestore direct access, Firebase Authentication).
 
-**Request/Response**: Same as the unified API
+*   **`/api/contact-unified`**: Functionality replaced by the `submitContactForm` Callable Cloud Function.
+*   **`/api/contact-appwrite`**: Specific Appwrite endpoint, now removed.
+*   **`/api/admin/submissions`**: Admin operations for listing submissions are now handled by the admin dashboard interacting directly with Firestore via `src/lib/firebase/submissionsService.ts`.
+*   **`/api/admin/submissions/[id]`**: Admin operations for getting/updating individual submissions are also handled by the admin dashboard interacting directly with Firestore via `src/lib/firebase/submissionsService.ts`.
 
-**Implementation Details**:
-- Focused specifically on Appwrite integration
-- Simplified implementation for direct Appwrite usage
-- Used as a fallback if the unified API fails
+## API Utilities (General Information)
 
-### Admin API
+While specific Next.js API routes for core backend logic are reduced, the concepts of response formatting, error handling, and rate limiting are now primarily managed within the context of Firebase Cloud Functions and Firestore Security Rules:
 
-#### List Submissions
-
-**Route**: `/api/admin/submissions`
-**File**: `src/app/api/admin/submissions/route.ts`
-**Method**: GET
-**Description**: Retrieves contact form submissions for the admin dashboard
-
-**Query Parameters**:
-- `page`: Page number (default: 1)
-- `limit`: Items per page (default: 10)
-- `status`: Filter by status (optional)
-- `sort`: Sort field (default: "timestamp")
-- `order`: Sort order (default: "desc")
-
-**Response (Success)**:
-```json
-{
-  "success": true,
-  "data": {
-    "submissions": [
-      {
-        "id": "unique-document-id",
-        "name": "Visitor Name",
-        "email": "visitor@example.com",
-        "message": "Hello, I'd like to get in touch...",
-        "phone": "123-456-7890",
-        "timestamp": "2023-05-15T12:34:56.789Z",
-        "status": "unread"
-      }
-    ],
-    "total": 42,
-    "page": 1,
-    "limit": 10,
-    "totalPages": 5
-  }
-}
-```
-
-**Response (Error)**:
-```json
-{
-  "success": false,
-  "message": "Error message explaining what went wrong"
-}
-```
-
-**Authentication**:
-- Requires API key authentication via `x-api-key` header
-- Validates against `ADMIN_API_KEY` environment variable
-
-#### Get Submission
-
-**Route**: `/api/admin/submissions/[id]`
-**File**: `src/app/api/admin/submissions/[id]/route.ts`
-**Method**: GET
-**Description**: Retrieves a specific contact form submission
-
-**URL Parameters**:
-- `id`: Submission ID
-
-**Response (Success)**:
-```json
-{
-  "success": true,
-  "data": {
-    "id": "unique-document-id",
-    "name": "Visitor Name",
-    "email": "visitor@example.com",
-    "message": "Hello, I'd like to get in touch...",
-    "phone": "123-456-7890",
-    "timestamp": "2023-05-15T12:34:56.789Z",
-    "status": "unread"
-  }
-}
-```
-
-**Response (Error)**:
-```json
-{
-  "success": false,
-  "message": "Error message explaining what went wrong"
-}
-```
-
-**Authentication**:
-- Requires API key authentication via `x-api-key` header
-- Validates against `ADMIN_API_KEY` environment variable
-
-#### Update Submission
-
-**Route**: `/api/admin/submissions/[id]`
-**File**: `src/app/api/admin/submissions/[id]/route.ts`
-**Method**: PATCH
-**Description**: Updates a specific contact form submission
-
-**URL Parameters**:
-- `id`: Submission ID
-
-**Request Body**:
-```json
-{
-  "status": "read" // Can be "unread", "read", or "archived"
-}
-```
-
-**Response (Success)**:
-```json
-{
-  "success": true,
-  "message": "Submission updated successfully",
-  "data": {
-    "id": "unique-document-id",
-    "status": "read"
-  }
-}
-```
-
-**Response (Error)**:
-```json
-{
-  "success": false,
-  "message": "Error message explaining what went wrong"
-}
-```
-
-**Authentication**:
-- Requires API key authentication via `x-api-key` header
-- Validates against `ADMIN_API_KEY` environment variable
-
-## API Utilities
-
-### Response Formatting
-
-The API uses consistent response formatting through the `formatResponse` utility:
-
-```typescript
-// src/lib/api/response.ts
-export function formatResponse(success: boolean, data?: any, message?: string, statusCode = 200) {
-  const response: ApiResponse = {
-    success,
-    ...(message && { message }),
-    ...(data && { data })
-  };
-  
-  return Response.json(response, { status: statusCode });
-}
-```
-
-### Error Handling
-
-API routes use centralized error handling:
-
-```typescript
-// src/lib/api/error-handler.ts
-export function handleApiError(error: unknown) {
-  console.error('API Error:', error);
-  
-  if (error instanceof AppwriteException) {
-    return formatResponse(false, null, error.message, error.code >= 400 ? error.code : 500);
-  }
-  
-  if (error instanceof ZodError) {
-    return formatResponse(false, null, 'Validation error', 400);
-  }
-  
-  return formatResponse(false, null, 'An unexpected error occurred', 500);
-}
-```
-
-### Rate Limiting
-
-API routes implement rate limiting to prevent abuse:
-
-```typescript
-// src/lib/api/rate-limiter.ts
-export async function rateLimit(ip: string, limit = 5, windowMs = 60000) {
-  // Implementation details...
-}
-```
-
-## Authentication
-
-The admin API routes use API key authentication:
-
-```typescript
-// src/lib/api/auth.ts
-export function validateApiKey(request: Request) {
-  const apiKey = request.headers.get('x-api-key');
-  
-  if (!apiKey || apiKey !== process.env.ADMIN_API_KEY) {
-    return false;
-  }
-  
-  return true;
-}
-```
-
-## Testing API Routes
-
-### Manual Testing
-
-You can test the API routes manually using tools like cURL or Postman:
-
-```bash
-# Test contact form submission
-curl -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Test User","email":"test@example.com","message":"This is a test message"}' \
-  http://localhost:3000/api/contact-unified
-```
-
-### Automated Testing
-
-The project includes tests for API routes using Jest and Supertest:
-
-```typescript
-// src/app/api/contact-unified/__tests__/route.test.ts
-describe('Contact Unified API', () => {
-  it('should accept valid form submissions', async () => {
-    // Test implementation...
-  });
-  
-  it('should reject submissions with missing fields', async () => {
-    // Test implementation...
-  });
-});
-```
+*   **Response Formatting**: Callable Cloud Functions return JavaScript objects or throw `HttpsError` instances. Firestore-triggered functions typically don't return HTTP responses but perform actions based on database events (e.g., sending an email).
+*   **Error Handling**: Cloud Functions use standard JavaScript `try/catch` blocks. Callable functions can throw `functions.https.HttpsError` to return structured errors to the client. Background functions log errors to Cloud Logging.
+*   **Rate Limiting**: Firebase services have built-in usage quotas and limits. For callable functions, custom rate limiting logic can be implemented within the function itself if needed (e.g., using Firestore to track request counts per user).
+*   **Authentication & Authorization**:
+    *   Callable Cloud Functions can automatically receive the invoking user's Firebase Authentication context (`context.auth`). This allows for server-side validation of user identity and permissions.
+    *   Firestore Security Rules are crucial for controlling direct database access from the client-side (e.g., admin dashboard) and can be combined with user authentication state and custom claims.
 
 ## Resources
 
-- [Next.js API Routes Documentation](https://nextjs.org/docs/app/building-your-application/routing/route-handlers)
-- [Appwrite API Documentation](https://appwrite.io/docs/apis)
-- [Zod Documentation](https://zod.dev/)
-- [HTTP Status Codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)
+- [Firebase Cloud Functions Documentation](https://firebase.google.com/docs/functions)
+- [Firestore Security Rules Documentation](https://firebase.google.com/docs/firestore/security/get-started)
+- [Firebase Authentication Documentation](https://firebase.google.com/docs/auth)
+- [Zod Documentation](https://zod.dev/) (Used for validation within Cloud Functions and client-side)
+- [HTTP Status Codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status) (Relevant for understanding HttpsError codes)

@@ -4,14 +4,14 @@ import { useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ID } from 'appwrite';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Loader2, Send, CheckCircle, AlertCircle, RefreshCw } from 'lucide-react';
-import { databases, databaseId, contactSubmissionsCollectionId, submitContactForm } from '@/lib/appwrite/custom-client';
+import { functions } from '@/lib/firebase/firebaseClient'; // Import Firebase functions service
+import { httpsCallable, HttpsCallableResult } from 'firebase/functions'; // Import httpsCallable
 
-// Form validation schema
+// Form validation schema (remains the same)
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -21,7 +21,16 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export function ContactFormAppwrite() {
+// Define the expected response type from the Firebase Function
+interface SubmitResult extends HttpsCallableResult {
+    readonly data: {
+        success: boolean;
+        id?: string;
+        message: string;
+    };
+}
+
+export function ContactFormFirebase() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -48,8 +57,8 @@ export function ContactFormAppwrite() {
   const addDebugLog = (message: string) => {
     setDebugLogs((prev) => [...prev, `${new Date().toISOString().split('T')[1].split('.')[0]} - ${message}`]);
   };
-
-  // Function to check network status
+  
+  // Function to check network status (remains the same)
   const checkNetworkStatus = () => {
     if (typeof navigator !== 'undefined') {
       return {
@@ -62,43 +71,7 @@ export function ContactFormAppwrite() {
     return { online: true, connection: 'unknown' };
   };
 
-  // Function to test Appwrite connection
-  const testAppwriteConnection = async () => {
-    addDebugLog('Testing Appwrite connection...');
-    try {
-      // Try to list documents (with a limit of 1) to test the connection
-      const result = await databases.listDocuments(
-        databaseId,
-        contactSubmissionsCollectionId,
-        [
-          // Add a filter that will likely return no results but still test the connection
-          // This avoids exposing actual submissions
-          {
-            key: 'name',
-            value: 'connection_test_' + Date.now(),
-            operator: 'equal'
-          }
-        ],
-        1
-      );
-
-      addDebugLog('✅ Appwrite connection successful!');
-      addDebugLog(`Total documents: ${result.total} (filtered)`);
-      return true;
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      addDebugLog(`❌ Appwrite connection failed: ${errorMessage}`);
-
-      if (error instanceof Error && 'code' in error) {
-        const appwriteError = error as any;
-        addDebugLog(`Error code: ${appwriteError.code}, type: ${appwriteError.type}`);
-      }
-
-      return false;
-    }
-  };
-
-  // Debug panel component
+  // Simplified Debug panel component (Appwrite connection test removed)
   const DebugPanel = () => {
     if (!showDebug) return null;
 
@@ -106,25 +79,13 @@ export function ContactFormAppwrite() {
       <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-md text-xs font-mono overflow-auto max-h-60">
         <div className="flex justify-between items-center mb-2">
           <h4 className="font-semibold">Debug Logs</h4>
-          <div className="flex space-x-2">
-            <button
-              type="button"
-              onClick={async () => {
-                addDebugLog('--- Testing Appwrite Connection ---');
-                await testAppwriteConnection();
-              }}
-              className="text-xs text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-200"
-            >
-              Test Connection
-            </button>
-            <button
-              type="button"
-              onClick={() => setDebugLogs([])}
-              className="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-            >
-              Clear
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => setDebugLogs([])}
+            className="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          >
+            Clear
+          </button>
         </div>
         {debugLogs.length === 0 ? (
           <p className="text-gray-500 dark:text-gray-400">No logs yet</p>
@@ -145,11 +106,10 @@ export function ContactFormAppwrite() {
     setErrorMessage(null);
     setDebugLogs([]); // Clear previous debug logs
 
-    // Check network status
     if (typeof window !== 'undefined') {
       const networkStatus = checkNetworkStatus();
       if (!networkStatus.online) {
-        addDebugLog("ERROR: Device is offline. Cannot connect to Appwrite.");
+        addDebugLog("ERROR: Device is offline. Cannot connect to Firebase.");
         setErrorMessage("Your device appears to be offline. Please check your internet connection and try again.");
         setIsSubmitting(false);
         return;
@@ -164,111 +124,63 @@ export function ContactFormAppwrite() {
     })}`);
 
     try {
-      // Prepare the submission data
-      const submissionData = {
+      // Get a reference to the Firebase Function
+      const submitFormFunction = httpsCallable(functions, 'submitContactForm');
+      
+      addDebugLog("Calling Firebase Cloud Function 'submitContactForm'...");
+
+      // Call the function with the form data
+      // Type assertion to SubmitResult for the response
+      const result = await submitFormFunction({
         name: data.name,
         email: data.email,
         subject: data.subject,
         message: data.message,
-        timestamp: new Date().toISOString(),
-        userAgent: navigator.userAgent,
-        source: 'website_contact_form_appwrite'
-      };
+      }) as SubmitResult;
 
-      addDebugLog(`Submission data prepared: ${JSON.stringify({
-        name: data.name,
-        email: data.email,
-        subject: data.subject,
-        messageLength: data.message.length
-      })}`);
+      addDebugLog(`Firebase Function call completed: ${JSON.stringify(result.data)}`);
 
-      // Use the custom Appwrite client directly
-      addDebugLog("Preparing direct Appwrite SDK request...");
-
-      // Set a timeout for the operation
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => {
-          reject(new Error('Request timed out after 15 seconds'));
-        }, 15000);
-      });
-
-      // Create the Appwrite promise
-      const appwritePromise = submitContactForm({
-        name: data.name,
-        email: data.email,
-        subject: data.subject,
-        message: data.message
-      });
-
-      // Race the Appwrite request against the timeout
-      addDebugLog("Sending request to Appwrite...");
-      const result = await Promise.race([appwritePromise, timeoutPromise]) as { success: boolean; message: string; id?: string };
-
-      addDebugLog(`Appwrite request completed: ${JSON.stringify(result)}`);
-
-      if (!result.success) {
-        throw new Error(result.message || 'Unknown error');
+      if (!result.data.success) {
+        // The function itself might return success: false for business logic errors
+        throw new Error(result.data.message || 'Unknown error returned by function.');
       }
 
-      addDebugLog(`Form submitted successfully with ID: ${result.id}`);
-
+      addDebugLog(`Form submitted successfully via Firebase Function with ID: ${result.data.id}`);
       setIsSuccess(true);
       reset(); // Reset form fields
 
-      // Hide success message after 5 seconds
       setTimeout(() => {
         setIsSuccess(false);
       }, 5000);
 
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-      addDebugLog(`ERROR: ${errorMessage}`);
-
-      // Add more detailed debugging for network errors
-      if (errorMessage === 'Failed to fetch') {
-        addDebugLog('Network error details:');
-        addDebugLog(`- Current URL: ${window.location.href}`);
-        addDebugLog(`- Appwrite endpoint: ${process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://nyc.cloud.appwrite.io/v1'}`);
-        addDebugLog(`- Project ID: ${process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '6816ef35001da24d113d'}`);
-        addDebugLog(`- Database ID: ${databaseId}`);
-        addDebugLog(`- Collection ID: ${contactSubmissionsCollectionId}`);
-
-        setErrorMessage('Network error: Could not connect to Appwrite. This might be due to CORS restrictions or network connectivity issues. Please try again later or use the direct email option below.');
-        setShowDebug(true); // Show debug panel automatically for network errors
-      }
-      // Check if it's a timeout error
-      else if (errorMessage.includes('timed out')) {
-        setErrorMessage('The request timed out. Please try again or use the direct email option below.');
+    } catch (error: any) {
+      let detailedErrorMessage = 'An unknown error occurred while submitting the form.';
+      if (error.code && error.message) { // Firebase Functions HttpsError
+        detailedErrorMessage = `Error: ${error.message} (Code: ${error.code})`;
+        addDebugLog(`Firebase Function Error: ${error.message} (Code: ${error.code}, Details: ${error.details})`);
+      } else if (error instanceof Error) { // Standard JS Error
+        detailedErrorMessage = error.message;
+        addDebugLog(`ERROR: ${error.message}`);
       } else {
-        setErrorMessage(`Error submitting form: ${errorMessage}`);
+        addDebugLog(`Unknown error structure: ${JSON.stringify(error)}`);
       }
+      
+      setErrorMessage(detailedErrorMessage);
 
-      // Log more details if available
-      if (error instanceof Error && 'code' in error) {
-        const appwriteError = error as any;
-        addDebugLog(`Appwrite error code: ${appwriteError.code}, type: ${appwriteError.type}`);
-
-        // Handle specific Appwrite errors
-        if (appwriteError.code === 401) {
-          setErrorMessage('Authentication error. Please try again later.');
-        } else if (appwriteError.code === 403) {
-          setErrorMessage('Permission denied. The form is currently unavailable.');
-        } else if (appwriteError.code === 429) {
-          setErrorMessage('Too many requests. Please try again later.');
-        } else if (appwriteError.code >= 500) {
-          setErrorMessage('Server error. Please try again later or use the direct email option below.');
-        }
+      // Specific error messages based on known Firebase Function error codes
+      if (error.code === 'unavailable') {
+        setErrorMessage("The service is currently unavailable. This might be a network issue or the function isn't deployed correctly. Please try again later.");
+      } else if (error.code === 'deadline-exceeded') {
+         setErrorMessage("The request timed out. Please check your internet connection and try again.");
       }
     } finally {
       setIsSubmitting(false);
     }
   };
-
-  // Direct email link component as a fallback
+  
+  // Direct email link component (remains the same)
   const DirectEmailLink = () => {
-    // Generate mailto link - using form values from React Hook Form
     const generateMailtoLink = () => {
-      // Use the watch function to get current form values safely
       const currentName = watch('name');
       const currentEmail = watch('email');
       const currentSubject = watch('subject');
@@ -278,7 +190,11 @@ export function ContactFormAppwrite() {
 
       const mailtoSubject = encodeURIComponent(currentSubject || 'Contact Form');
       const mailtoBody = encodeURIComponent(
-        `Name: ${currentName}\nEmail: ${currentEmail}\n\nMessage:\n${currentMessage || ''}`
+        `Name: ${currentName}
+Email: ${currentEmail}
+
+Message:
+${currentMessage || ''}`
       );
       return `mailto:Jacobsamuelbarkin@gmail.com?subject=${mailtoSubject}&body=${mailtoBody}`;
     };
@@ -302,7 +218,6 @@ export function ContactFormAppwrite() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
-      {/* Debug Panel */}
       <DebugPanel />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
@@ -400,7 +315,11 @@ export function ContactFormAppwrite() {
                 href={`mailto:Jacobsamuelbarkin@gmail.com?subject=${encodeURIComponent(
                   `Contact Form: ${watch('subject') ?? 'Message from website'}`
                 )}&body=${encodeURIComponent(
-                  `Name: ${watch('name') ?? ''}\nEmail: ${watch('email') ?? ''}\n\nMessage:\n${watch('message') ?? ''}`
+                  `Name: ${watch('name') ?? ''}
+Email: ${watch('email') ?? ''}
+
+Message:
+${watch('message') ?? ''}`
                 )}`}
                 className="inline-flex items-center justify-center px-3 py-1.5 text-xs font-medium rounded-md border border-red-300 dark:border-red-700 text-red-700 dark:text-red-300 bg-transparent hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
               >
@@ -428,19 +347,15 @@ export function ContactFormAppwrite() {
           </Button>
         )}
 
-        {/* Debug toggle button - visible in development and production for troubleshooting */}
         <div className="flex flex-col items-center space-y-2">
           <button
             type="button"
             onClick={() => {
               setShowDebug(!showDebug);
               if (!showDebug) {
-                // Add configuration info to debug logs when showing debug panel
-                addDebugLog('Appwrite Configuration:');
-                addDebugLog(`- Endpoint: ${process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://nyc.cloud.appwrite.io/v1'}`);
-                addDebugLog(`- Project ID: ${process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '6816ef35001da24d113d'}`);
-                addDebugLog(`- Database ID: ${databaseId}`);
-                addDebugLog(`- Collection ID: ${contactSubmissionsCollectionId}`);
+                addDebugLog('Firebase Configuration (Client):');
+                addDebugLog(`- Project ID: ${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'Not set'}`);
+                addDebugLog(`- Functions Region (Default/Assumed): Not explicitly set in client`);
                 addDebugLog(`- Environment: ${process.env.NODE_ENV}`);
               }
             }}
@@ -449,36 +364,18 @@ export function ContactFormAppwrite() {
             <RefreshCw className="h-3 w-3 mr-1" />
             {showDebug ? 'Hide Debug' : 'Show Debug'}
           </button>
-
-          <div className="flex space-x-3">
-            <a
-              href="/test-form.html"
+           {/* Test links can be updated or removed later if they are Appwrite specific */}
+           <div className="flex space-x-3">
+             <a
+              href="/test-form.html" // May need update if it's Appwrite specific
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs text-blue-400 hover:text-blue-600 dark:text-blue-500 dark:hover:text-blue-300"
             >
               Test Form
             </a>
-            <a
-              href="/test-functions.html"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-blue-400 hover:text-blue-600 dark:text-blue-500 dark:hover:text-blue-300"
-            >
-              Test Functions
-            </a>
-            <a
-              href="/test-sdk.html"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-blue-400 hover:text-blue-600 dark:text-blue-500 dark:hover:text-blue-300"
-            >
-              Test SDK
-            </a>
-          </div>
+           </div>
         </div>
-
-        {/* Direct email link as fallback */}
         <DirectEmailLink />
       </div>
     </form>

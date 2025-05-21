@@ -8,29 +8,38 @@ This document provides detailed information about the API endpoints available in
 - [Authentication](#authentication)
 - [Contact Form API](#contact-form-api)
   - [Submit Contact Form](#submit-contact-form)
-- [Admin API](#admin-api)
-  - [List Submissions](#list-submissions)
-  - [Get Submission](#get-submission)
-  - [Update Submission](#update-submission)
-- [Appwrite Integration](#appwrite-integration)
-  - [Direct Appwrite API Usage](#direct-appwrite-api-usage)
-  - [Appwrite Functions](#appwrite-functions)
-- [Error Handling](#error-handling)
-- [Rate Limiting](#rate-limiting)
+- [Firebase Cloud Functions](#firebase-cloud-functions)
+  - [Callable Function: `submitContactForm`](#callable-function-submitcontactform)
+  - [Firestore Trigger: `onNewSubmissionSendEmail`](#firestore-trigger-onnewsubmissionsendemail)
+- [Admin Data Management](#admin-data-management)
+- [Error Handling in Firebase](#error-handling-in-firebase)
+- [Rate Limiting and Quotas in Firebase](#rate-limiting-and-quotas-in-firebase)
 - [CORS Configuration](#cors-configuration)
 
 ## Overview
 
-The Jacob Barkin Portfolio website provides several API endpoints for handling contact form submissions and managing the admin dashboard. These endpoints are implemented using Next.js API routes and Appwrite backend services.
+With the migration to Firebase, the primary backend interactions for the Jacob Barkin Portfolio website are handled through Firebase services (Firestore, Firebase Authentication, and Firebase Cloud Functions) rather than traditional REST API endpoints hosted via Next.js.
 
 ### Base URLs
 
-- **Development**: `http://localhost:3000/api`
-- **Production**: `https://jacobbarkin.com/api`
+Direct REST API endpoints for core backend logic (like form submission or data querying by the admin panel) are largely deprecated. Interactions occur via the Firebase SDK.
 
-### Response Format
+### Response Format (for Callable Cloud Functions)
 
-All API responses follow a consistent format:
+Callable Cloud Functions return a Promise that resolves with a result object, or an error.
+A typical successful response from a callable function like `submitContactForm` might implicitly be:
+```json
+// Resolved promise from firebase.functions().httpsCallable('submitContactForm')(data)
+{
+  "data": { // This 'data' field is standard for callable function responses
+    "success": true,
+    "message": "Contact form submission received",
+    "id": "firestore-document-id"
+    // Other relevant data
+  }
+}
+```
+Errors are instances of `functions.https.HttpsError`.
 
 ```json
 {
@@ -45,510 +54,94 @@ All API responses follow a consistent format:
 }
 ```
 
-## Authentication
+## Authentication (Firebase)
 
-### Admin API Authentication
+Admin dashboard authentication is handled by **Firebase Authentication**.
+- **Method**: Email/Password sign-in.
+- **Session Management**: Firebase SDK handles session persistence (typically IndexedDB).
+- **Authorization**:
+    - **Callable Functions**: Can inspect `context.auth` to verify user identity (UID, token, custom claims).
+    - **Firestore Security Rules**: Control direct database access from the client (admin panel). Rules can be based on user UID, custom claims (e.g., `isAdmin`), or roles stored in Firestore.
 
-The Admin API endpoints require authentication using an API key.
+Refer to `src/lib/firebase/authService.ts` for client-side authentication logic.
 
-**Authentication Header**:
-```
-x-api-key: YOUR_API_KEY
-```
+## Firebase Cloud Functions
 
-The API key is set in the `ADMIN_API_KEY` environment variable.
+### Callable Function: `submitContactForm`
 
-### Appwrite Authentication
+This function replaces the traditional REST API endpoint for contact form submissions.
 
-For direct Appwrite API access, the admin dashboard uses email/password authentication through Appwrite's authentication service.
-
-## Contact Form API
-
-### Submit Contact Form
-
-Submits a new contact form entry.
-
-**Endpoint**: `POST /api/contact-unified`
-
-**Request Body**:
-```json
-{
-  "name": "John Doe",
-  "email": "john@example.com",
-  "message": "Hello, I'd like to discuss a project.",
-  "phone": "123-456-7890" // Optional
-}
-```
-
-**Successful Response** (200 OK):
-```json
-{
-  "success": true,
-  "message": "Contact form submission received",
-  "data": {
-    "id": "unique-document-id",
-    "timestamp": "2023-05-15T12:34:56.789Z"
-  }
-}
-```
-
-**Error Response** (400 Bad Request):
-```json
-{
-  "success": false,
-  "message": "Validation error",
-  "error": {
-    "code": "validation_error",
-    "details": {
-      "name": ["Name is required"],
-      "email": ["Invalid email address"]
+*   **Invoked Via**: Firebase SDK from the client (`src/components/contact/contact-form-firebase.tsx`).
+*   **Functionality**:
+    1.  Receives form data (`name`, `email`, `subject`, `message`).
+    2.  Performs server-side validation (e.g., using Zod or basic checks).
+    3.  Stores the validated submission into the `contact-submissions` collection in Firestore.
+    4.  Returns a success or error response to the client.
+*   **Request Data (Example)**:
+    ```javascript
+    {
+      name: "Jane Doe",
+      email: "jane@example.com",
+      subject: "Project Inquiry",
+      message: "Details about the project..."
     }
-  }
-}
-```
-
-**Error Response** (429 Too Many Requests):
-```json
-{
-  "success": false,
-  "message": "Rate limit exceeded. Please try again later.",
-  "error": {
-    "code": "rate_limit_exceeded",
-    "details": {
-      "retryAfter": 60
-    }
-  }
-}
-```
-
-**Implementation Details**:
-
-The contact form API uses a unified approach that supports multiple backend options:
-
-1. **Appwrite Database Storage**:
-   - Creates a document in the Appwrite database
-   - Stores submission details with timestamp and status
-
-2. **Email Notification**:
-   - Triggers an Appwrite function to send an email notification
-   - Formats the email with submission details
-
-3. **Validation**:
-   - Validates form data using Zod schema
-   - Checks for required fields and proper formats
-
-4. **Spam Prevention**:
-   - Implements rate limiting to prevent abuse
-   - Includes basic spam detection
-
-**Code Example**:
-
-```typescript
-// src/app/api/contact-unified/route.ts
-import { NextResponse } from 'next/server';
-import { z } from 'zod';
-import { databases, ID } from '@/lib/appwrite/config';
-import { formatResponse } from '@/lib/api/response';
-import { rateLimit } from '@/lib/api/rate-limiter';
-
-// Contact form schema
-const contactFormSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  email: z.string().email('Invalid email address'),
-  message: z.string().min(10, 'Message must be at least 10 characters'),
-  phone: z.string().optional(),
-});
-
-export async function POST(request: Request) {
-  try {
-    // Rate limiting
-    const ip = request.headers.get('x-forwarded-for') || 'unknown';
-    const rateLimited = await rateLimit(ip);
-    
-    if (rateLimited) {
-      return formatResponse(
-        false,
-        null,
-        'Rate limit exceeded. Please try again later.',
-        429
-      );
-    }
-    
-    // Parse request body
-    const body = await request.json();
-    
-    // Validate form data
-    const result = contactFormSchema.safeParse(body);
-    
-    if (!result.success) {
-      return formatResponse(
-        false,
-        { details: result.error.format() },
-        'Validation error',
-        400
-      );
-    }
-    
-    // Create document in Appwrite
-    const document = await databases.createDocument(
-      process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
-      process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_ID!,
-      ID.unique(),
-      {
-        name: result.data.name,
-        email: result.data.email,
-        message: result.data.message,
-        phone: result.data.phone || '',
-        timestamp: new Date().toISOString(),
-        status: 'unread'
-      }
-    );
-    
-    // Trigger email notification function
-    // Implementation details...
-    
-    return formatResponse(
-      true,
-      {
-        id: document.$id,
-        timestamp: document.timestamp
-      },
-      'Contact form submission received'
-    );
-  } catch (error) {
-    console.error('Contact form error:', error);
-    return formatResponse(
-      false,
-      null,
-      'An error occurred while processing your submission',
-      500
-    );
-  }
-}
-```
-
-## Admin API
-
-### List Submissions
-
-Retrieves a paginated list of contact form submissions.
-
-**Endpoint**: `GET /api/admin/submissions`
-
-**Query Parameters**:
-- `page`: Page number (default: 1)
-- `limit`: Items per page (default: 10)
-- `status`: Filter by status (optional)
-- `sort`: Sort field (default: "timestamp")
-- `order`: Sort order (default: "desc")
-
-**Authentication**: Required (API Key)
-
-**Successful Response** (200 OK):
-```json
-{
-  "success": true,
-  "data": {
-    "submissions": [
-      {
-        "id": "unique-document-id",
-        "name": "John Doe",
-        "email": "john@example.com",
-        "message": "Hello, I'd like to discuss a project.",
-        "phone": "123-456-7890",
-        "timestamp": "2023-05-15T12:34:56.789Z",
-        "status": "unread"
-      },
-      // More submissions...
-    ],
-    "total": 42,
-    "page": 1,
-    "limit": 10,
-    "totalPages": 5
-  }
-}
-```
-
-**Error Response** (401 Unauthorized):
-```json
-{
-  "success": false,
-  "message": "Unauthorized. Invalid API key.",
-  "error": {
-    "code": "unauthorized"
-  }
-}
-```
-
-### Get Submission
-
-Retrieves a specific contact form submission by ID.
-
-**Endpoint**: `GET /api/admin/submissions/[id]`
-
-**URL Parameters**:
-- `id`: Submission ID
-
-**Authentication**: Required (API Key)
-
-**Successful Response** (200 OK):
-```json
-{
-  "success": true,
-  "data": {
-    "id": "unique-document-id",
-    "name": "John Doe",
-    "email": "john@example.com",
-    "message": "Hello, I'd like to discuss a project.",
-    "phone": "123-456-7890",
-    "timestamp": "2023-05-15T12:34:56.789Z",
-    "status": "unread"
-  }
-}
-```
-
-**Error Response** (404 Not Found):
-```json
-{
-  "success": false,
-  "message": "Submission not found",
-  "error": {
-    "code": "not_found"
-  }
-}
-```
-
-### Update Submission
-
-Updates a specific contact form submission.
-
-**Endpoint**: `PATCH /api/admin/submissions/[id]`
-
-**URL Parameters**:
-- `id`: Submission ID
-
-**Request Body**:
-```json
-{
-  "status": "read" // Can be "unread", "read", or "archived"
-}
-```
-
-**Authentication**: Required (API Key)
-
-**Successful Response** (200 OK):
-```json
-{
-  "success": true,
-  "message": "Submission updated successfully",
-  "data": {
-    "id": "unique-document-id",
-    "status": "read"
-  }
-}
-```
-
-**Error Response** (400 Bad Request):
-```json
-{
-  "success": false,
-  "message": "Invalid status value",
-  "error": {
-    "code": "validation_error",
-    "details": {
-      "status": ["Status must be one of: unread, read, archived"]
-    }
-  }
-}
-```
-
-## Appwrite Integration
-
-### Direct Appwrite API Usage
-
-The website uses Appwrite's JavaScript SDK for direct API access from the client side.
-
-**Example: Creating a Contact Form Submission**:
-
-```typescript
-import { databases, ID } from '@/lib/appwrite/config';
-
-async function submitContactForm(formData) {
-  try {
-    const document = await databases.createDocument(
-      process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID,
-      process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_ID,
-      ID.unique(),
-      {
-        name: formData.name,
-        email: formData.email,
-        message: formData.message,
-        phone: formData.phone || '',
-        timestamp: new Date().toISOString(),
-        status: 'unread'
-      }
-    );
-    
-    return { success: true, data: document };
-  } catch (error) {
-    console.error('Appwrite submission error:', error);
-    return { success: false, error };
-  }
-}
-```
-
-### Appwrite Functions
-
-The website uses Appwrite Functions for serverless operations like sending email notifications.
-
-**Example: Email Notification Function**:
-
-```javascript
-// functions/email-notification-updated/src/main.js
-import nodemailer from 'nodemailer';
-
-export default async ({ req, res, log, error }) => {
-  try {
-    // Parse request body
-    const body = JSON.parse(req.body);
-    
-    // Validate required fields
-    if (!body.name || !body.email || !body.message) {
-      return res.json({
-        success: false,
-        message: 'Missing required fields'
-      }, 400);
-    }
-    
-    // Create email transporter
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD
-      }
-    });
-    
-    // Send email
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: process.env.EMAIL_USER,
-      subject: `New Contact Form Submission from ${body.name}`,
-      html: `
-        <h2>New Contact Form Submission</h2>
-        <p><strong>Name:</strong> ${body.name}</p>
-        <p><strong>Email:</strong> ${body.email}</p>
-        ${body.phone ? `<p><strong>Phone:</strong> ${body.phone}</p>` : ''}
-        <p><strong>Message:</strong></p>
-        <p>${body.message.replace(/\n/g, '<br>')}</p>
-      `
-    });
-    
-    return res.json({
+    ```
+*   **Successful Response (Example, wrapped in `data` object by SDK)**:
+    ```javascript
+    {
       success: true,
-      message: 'Email notification sent'
-    });
-  } catch (err) {
-    error(err.message);
-    return res.json({
-      success: false,
-      message: 'Error sending email notification'
-    }, 500);
-  }
-};
-```
+      id: "generated-firestore-doc-id",
+      message: "Form submitted successfully!"
+    }
+    ```
+*   **Error Response**: Throws `functions.https.HttpsError`. For example:
+    ```javascript
+    // If validation fails
+    // error.code: 'invalid-argument'
+    // error.message: 'The function must be called with a valid "name" argument.'
+    
+    // If Firestore write fails
+    // error.code: 'internal'
+    // error.message: 'Failed to save submission to database.'
+    ```
+*   **Code Location**: `functions/src/index.ts`
 
-## Error Handling
+### Firestore Trigger: `onNewSubmissionSendEmail`
 
-The API uses a consistent error handling approach:
+This function handles email notifications automatically upon new submissions.
 
-```typescript
-// src/lib/api/error-handler.ts
-import { AppwriteException } from 'appwrite';
-import { ZodError } from 'zod';
-import { formatResponse } from './response';
+*   **Trigger**: When a new document is created in the `contact-submissions` Firestore collection.
+*   **Functionality**:
+    1.  Retrieves the data from the newly created submission document.
+    2.  Formats an email message containing the submission details.
+    3.  Uses SendGrid (configured via Firebase environment variables: `sendgrid.key`, `email.to_address`, `email.from_address`) to send the email notification.
+*   **Interaction**: This function is not called directly by any client or API. It's an automated backend process.
+*   **Code Location**: `functions/src/index.ts`
 
-export function handleApiError(error: unknown) {
-  console.error('API Error:', error);
-  
-  if (error instanceof AppwriteException) {
-    return formatResponse(
-      false,
-      null,
-      error.message,
-      error.code >= 400 ? error.code : 500
-    );
-  }
-  
-  if (error instanceof ZodError) {
-    return formatResponse(
-      false,
-      { details: error.format() },
-      'Validation error',
-      400
-    );
-  }
-  
-  return formatResponse(
-    false,
-    null,
-    'An unexpected error occurred',
-    500
-  );
-}
-```
+## Admin Data Management
 
-## Rate Limiting
+Admin operations (listing, viewing, updating, deleting submissions) are no longer handled by dedicated Next.js API routes (`/api/admin/...`). Instead:
 
-The API implements rate limiting to prevent abuse:
+*   The admin dashboard (`src/app/admin/submissions/page.tsx` and related components) interacts **directly with Firestore** using the Firebase client SDK.
+*   Service functions in `src/lib/firebase/submissionsService.ts` encapsulate Firestore queries for these operations.
+*   **Security** for these operations is enforced by **Firestore Security Rules**, which should be configured to only allow authenticated admin users to read and write to the `contact-submissions` collection.
 
-```typescript
-// src/lib/api/rate-limiter.ts
-const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
-const MAX_REQUESTS = 5; // 5 requests per minute
+## Error Handling in Firebase
 
-const ipRequests = new Map<string, { count: number, timestamp: number }>();
+*   **Callable Cloud Functions**: Use `try/catch`. Throw `functions.https.HttpsError(code, message, details?)` to return structured errors to the client. Common codes include `invalid-argument`, `unauthenticated`, `permission-denied`, `not-found`, `internal`.
+*   **Firestore-triggered Functions**: Use `try/catch`. Log errors to Cloud Logging. Can optionally write error status back to Firestore if needed.
+*   **Client-Side SDK Calls**: Firebase SDK methods return Promises that reject with Firebase-specific error objects (e.g., `FirebaseError`) containing a `code` (like `auth/user-not-found`) and `message`.
 
-export async function rateLimit(ip: string): Promise<boolean> {
-  const now = Date.now();
-  const requestData = ipRequests.get(ip) || { count: 0, timestamp: now };
-  
-  // Reset count if window has passed
-  if (now - requestData.timestamp > RATE_LIMIT_WINDOW) {
-    requestData.count = 0;
-    requestData.timestamp = now;
-  }
-  
-  // Increment count
-  requestData.count++;
-  ipRequests.set(ip, requestData);
-  
-  // Check if rate limit exceeded
-  return requestData.count > MAX_REQUESTS;
-}
-```
+## Rate Limiting and Quotas in Firebase
+
+*   **Cloud Functions**: Have invocation quotas. You can set concurrent execution limits. For callable functions, implement custom rate limiting inside the function if needed (e.g., using Firestore to track recent requests per user).
+*   **Firestore**: Has usage quotas (reads, writes, deletes per second/project). Firestore Security Rules do not directly enforce rate limits but can prevent abuse through conditional access.
+*   **Firebase Authentication**: Has limits on operations like email sending for verification/password reset, and sign-in attempts.
 
 ## CORS Configuration
 
-The API includes CORS configuration to allow requests from specific origins:
+CORS is generally not an issue for:
+*   **Callable Cloud Functions**: Invoked via the Firebase SDK, which handles the underlying HTTP requests correctly. By default, callable functions allow requests from any origin unless restricted via `functions.options.cors`.
+*   **Direct Firestore Access**: Handled by the Firebase SDK. Firestore rules manage data access, not HTTP origins directly for client SDKs.
 
-```typescript
-// src/middleware.ts
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-
-export function middleware(request: NextRequest) {
-  const response = NextResponse.next();
-  
-  // Add CORS headers
-  response.headers.set('Access-Control-Allow-Origin', 'https://jacobbarkin.com');
-  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS');
-  response.headers.set('Access-Control-Allow-Headers', 'Content-Type, x-api-key');
-  
-  return response;
-}
-
-export const config = {
-  matcher: '/api/:path*',
-};
-```
+If you were to expose HTTP-triggered Cloud Functions (not callable ones) that need to be accessed from different web origins, you would configure CORS within those functions using standard Node.js middleware like `cors`.

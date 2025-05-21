@@ -9,10 +9,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, RefreshCw, Search, ChevronLeft, ChevronRight, Eye, Edit } from 'lucide-react';
-import { useAdminAuth } from '@/components/admin/auth-context';
-import { ProtectedRoute } from '@/components/admin/protected-route';
+import { useAdminAuth } from '@/components/admin/auth-context'; // Assuming this path is correct
+import { ProtectedRoute } from '@/components/admin/protected-route'; // Assuming this path is correct
+import { Submission, getSubmissions, updateSubmission } from '@/lib/firebase/submissionsService'; // Updated import
+import { Timestamp } from 'firebase/firestore';
 
-// Status badge colors
+// Status badge colors (assuming these remain relevant)
 const statusColors: Record<string, string> = {
   new: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
   read: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
@@ -38,128 +40,130 @@ const priorityLabels: Record<number, string> = {
   5: 'Lowest'
 };
 
-// Submission type
-interface Submission {
-  $id: string;
-  name: string;
-  email: string;
-  subject: string;
-  message: string;
-  timestamp: string;
-  status: 'new' | 'read' | 'replied' | 'archived';
-  priority: number;
-  tags?: string[];
-  statusLog?: Array<{
-    previousStatus?: string;
-    newStatus: string;
-    timestamp: string;
-    updatedBy: string;
-  }>;
-  lastUpdated?: string;
-  $createdAt: string;
-  $updatedAt: string;
-}
+// Note: The Submission interface is now imported from submissionsService.
+// It should look like this (or similar) in submissionsService.ts:
+// export interface Submission {
+//   id: string; // Firestore document ID
+//   name: string;
+//   email: string;
+//   subject: string;
+//   message: string;
+//   timestamp: Timestamp; // Firestore Timestamp
+//   status: 'new' | 'read' | 'replied' | 'archived';
+//   priority?: number;
+//   tags?: string[];
+//   // userAgent, ipAddress, source if you still collect them
+// }
+
 
 export default function AdminSubmissionsPage() {
   const router = useRouter();
-  const { user } = useAdminAuth();
+  const { user, loading: authLoading } = useAdminAuth(); // Get auth loading state
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [totalSubmissions, setTotalSubmissions] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
   // Pagination state
-  const [limit] = useState(10);
-  const [offset, setOffset] = useState(0);
-  const [page, setPage] = useState(1);
+  const [itemsPerPage] = useState(10); // Renamed from limit for clarity
+  const [currentPage, setCurrentPage] = useState(1); // Renamed from page
 
   // Filtering state
-  const [statusFilter, setStatusFilter] = useState<string>('');
-  const [priorityFilter, setPriorityFilter] = useState<string>('');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>(''); // 'new', 'read', etc.
+  const [priorityFilter, setPriorityFilter] = useState<number | undefined>(undefined);
+  const [searchQuery, setSearchQuery] = useState(''); // Will be handled by service if implemented
 
   // Sorting state
-  const [orderBy] = useState('$createdAt');
-  const [orderType] = useState('desc');
+  const [sortField, setSortField] = useState('timestamp'); // Default sort field
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc'); // Default sort direction
 
-  // Fetch submissions when filters, pagination, or sorting changes
-  useEffect(() => {
-    if (user) {
-      fetchSubmissions();
+  const fetchSubmissionsCallback = useCallback(async () => {
+    if (authLoading) return; // Don't fetch if auth is still loading
+    if (!user) { // If not authenticated, redirect or show message
+        setIsLoading(false);
+        // Optionally redirect to login if not handled by ProtectedRoute
+        // router.push('/admin/login'); 
+        return;
     }
-  }, [user, fetchSubmissions]);
 
-  // Fetch submissions directly from Appwrite
-  const fetchSubmissions = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
     try {
-      // Import the submissions service
-      const { submissionsService } = await import('@/lib/appwrite/submissions');
+      const filters: { status?: string; priority?: number } = {};
+      if (statusFilter) filters.status = statusFilter;
+      if (priorityFilter) filters.priority = priorityFilter;
 
-      // Build query array for Appwrite
-      const queries = [];
+      const sortOptions = { field: sortField, direction: sortDirection };
+      
+      // Pass searchQuery to getSubmissions if your service implements it
+      const result = await getSubmissions(itemsPerPage, currentPage, filters, sortOptions, searchQuery);
 
-      // Add status filter if selected
-      if (statusFilter) {
-        queries.push(`status="${statusFilter}"`);
-      }
-
-      // Add priority filter if selected
-      if (priorityFilter) {
-        queries.push(`priority=${priorityFilter}`);
-      }
-
-      // Add sorting
-      if (orderBy) {
-        if (orderType === 'desc') {
-          queries.push(`orderDesc("${orderBy}")`);
-        } else {
-          queries.push(`orderAsc("${orderBy}")`);
-        }
-      }
-
-      // Fetch submissions from Appwrite
-      const result = await submissionsService.getSubmissions(limit, offset, queries);
-
-      // Update state with results
       setSubmissions(result.submissions);
       setTotalSubmissions(result.total);
-    } catch (error: any) {
-      setError('An error occurred while fetching submissions');
-      console.error('Fetch error:', error);
-
-      // If there's an authentication error, redirect to login
-      if (error.code === 401) {
-        router.push('/admin/login');
+      setTotalPages(result.totalPages);
+    } catch (err: any) {
+      setError('An error occurred while fetching submissions.');
+      console.error('Fetch error:', err);
+      if (err.code === 'permission-denied' || err.message?.includes("Missing or insufficient permissions")) {
+         setError('Permission denied. Ensure Firestore rules are set up correctly.');
       }
     } finally {
       setIsLoading(false);
     }
-  }, [limit, offset, statusFilter, priorityFilter, orderBy, orderType, router]);
+  }, [user, authLoading, itemsPerPage, currentPage, statusFilter, priorityFilter, sortField, sortDirection, searchQuery, fetchSubmissionsCallback]); // Added fetchSubmissionsCallback to dependency array
+
+  useEffect(() => {
+    fetchSubmissionsCallback();
+  }, [fetchSubmissionsCallback]);
+
 
   // Handle page change
   const handlePageChange = (newPage: number) => {
-    const totalPages = Math.ceil(totalSubmissions / limit);
     if (newPage < 1 || newPage > totalPages) return;
-
-    setPage(newPage);
-    setOffset((newPage - 1) * limit);
+    setCurrentPage(newPage);
   };
 
-  // Handle view submission
+  // Handle view submission (can remain similar, just uses Firestore ID)
   const handleViewSubmission = (id: string) => {
-    router.push(`/admin/submissions/${id}`);
+    router.push(`/admin/submissions/${id}`); // Assuming this route exists for viewing details
+  };
+  
+  // Handle status change (example of an update operation)
+  const handleStatusChange = async (id: string, newStatus: Submission['status']) => {
+    try {
+        await updateSubmission(id, { status: newStatus });
+        // Refresh data or update local state
+        fetchSubmissionsCallback(); 
+        // Or, for a more responsive UI without refetching everything:
+        // setSubmissions(prev => prev.map(s => s.id === id ? {...s, status: newStatus} : s));
+    } catch (updateError) {
+        console.error("Error updating status:", updateError);
+        setError("Failed to update submission status.");
+    }
   };
 
-  // Format date
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+
+  // Format date from Firestore Timestamp
+  const formatDate = (timestamp: Timestamp | string | undefined): string => {
+    if (!timestamp) return 'N/A';
+    if (typeof timestamp === 'string') { // Handle cases where it might still be a string
+        try {
+            return new Date(timestamp).toLocaleDateString() + ' ' + new Date(timestamp).toLocaleTimeString();
+        } catch {
+            return 'Invalid Date';
+        }
+    }
+    // Check if it's a Firestore Timestamp object
+    if (timestamp && typeof timestamp.toDate === 'function') {
+      const date = timestamp.toDate();
+      return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+    }
+    return 'Invalid Date';
   };
 
-  // Render status badge
+  // Render status badge (can remain similar)
   const renderStatusBadge = (status: string) => {
     const colorClass = statusColors[status] || 'bg-gray-100 text-gray-800';
     return (
@@ -169,8 +173,9 @@ export default function AdminSubmissionsPage() {
     );
   };
 
-  // Render priority badge
-  const renderPriorityBadge = (priority: number) => {
+  // Render priority badge (can remain similar)
+  const renderPriorityBadge = (priority?: number) => {
+    if (priority === undefined) return <Badge>N/A</Badge>;
     const colorClass = priorityColors[priority] || 'bg-gray-100 text-gray-800';
     return (
       <Badge className={colorClass}>
@@ -178,6 +183,18 @@ export default function AdminSubmissionsPage() {
       </Badge>
     );
   };
+  
+  // Handle search input change
+  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  // Handle actual search submission (e.g., on button click or after debounce)
+  const handleSearch = () => {
+    setCurrentPage(1); // Reset to first page on new search
+    fetchSubmissionsCallback();
+  };
+
 
   return (
     <ProtectedRoute>
@@ -186,18 +203,18 @@ export default function AdminSubmissionsPage() {
           <CardHeader>
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
               <div>
-                <CardTitle>Contact Form Submissions</CardTitle>
+                <CardTitle>Contact Form Submissions (Firestore)</CardTitle>
                 <CardDescription>
-                  Manage and respond to contact form submissions
+                  Manage and respond to contact form submissions from Firestore.
                 </CardDescription>
               </div>
               <Button
                 variant="outline"
                 size="sm"
-                onClick={fetchSubmissions}
-                disabled={isLoading}
+                onClick={fetchSubmissionsCallback}
+                disabled={isLoading || authLoading}
               >
-                <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`mr-2 h-4 w-4 ${(isLoading || authLoading) ? 'animate-spin' : ''}`} />
                 Refresh
               </Button>
             </div>
@@ -206,20 +223,23 @@ export default function AdminSubmissionsPage() {
         <CardContent>
           {/* Filters */}
           <div className="flex flex-col sm:flex-row gap-3 mb-6">
-            <div className="flex-1">
+            <div className="flex-1 flex gap-2">
               <Input
-                placeholder="Search by name or email"
+                placeholder="Search by name or email (if service supports)"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={handleSearchInputChange}
                 className="h-9"
-                prefix={<Search className="h-4 w-4 text-muted-foreground" />}
               />
+               <Button onClick={handleSearch} size="sm" className="h-9" disabled={isLoading || authLoading}>
+                 <Search className="h-4 w-4 mr-2" /> Search
+               </Button>
             </div>
 
             <div className="flex gap-2">
               <Select
                 value={statusFilter}
-                onValueChange={setStatusFilter}
+                onValueChange={(value) => { setStatusFilter(value); setCurrentPage(1); }}
+                disabled={isLoading || authLoading}
               >
                 <SelectTrigger className="w-[130px] h-9">
                   <SelectValue placeholder="Status" />
@@ -234,8 +254,9 @@ export default function AdminSubmissionsPage() {
               </Select>
 
               <Select
-                value={priorityFilter}
-                onValueChange={setPriorityFilter}
+                value={priorityFilter?.toString() || ''}
+                onValueChange={(value) => { setPriorityFilter(value ? parseInt(value) : undefined); setCurrentPage(1);}}
+                disabled={isLoading || authLoading}
               >
                 <SelectTrigger className="w-[130px] h-9">
                   <SelectValue placeholder="Priority" />
@@ -252,28 +273,26 @@ export default function AdminSubmissionsPage() {
             </div>
           </div>
 
-          {/* Error message */}
           {error && (
             <div className="p-3 mb-4 bg-red-100 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md text-red-800 dark:text-red-300 text-sm">
               {error}
             </div>
           )}
 
-          {/* Submissions table */}
           <div className="rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[180px]">Date</TableHead>
-                  <TableHead>Name</TableHead>
+                  <TableHead className="w-[180px] cursor-pointer hover:bg-muted/20" onClick={() => { setSortField('timestamp'); setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc'); setCurrentPage(1); }}>Date {sortField === 'timestamp' && (sortDirection === 'asc' ? '↑' : '↓')}</TableHead>
+                  <TableHead className="cursor-pointer hover:bg-muted/20" onClick={() => { setSortField('name'); setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc'); setCurrentPage(1); }}>Name {sortField === 'name' && (sortDirection === 'asc' ? '↑' : '↓')}</TableHead>
                   <TableHead>Subject</TableHead>
-                  <TableHead className="w-[100px]">Status</TableHead>
-                  <TableHead className="w-[100px]">Priority</TableHead>
+                  <TableHead className="w-[100px] cursor-pointer hover:bg-muted/20" onClick={() => { setSortField('status'); setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc'); setCurrentPage(1); }}>Status {sortField === 'status' && (sortDirection === 'asc' ? '↑' : '↓')}</TableHead>
+                  <TableHead className="w-[100px] cursor-pointer hover:bg-muted/20" onClick={() => { setSortField('priority'); setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc'); setCurrentPage(1); }}>Priority {sortField === 'priority' && (sortDirection === 'asc' ? '↑' : '↓')}</TableHead>
                   <TableHead className="w-[100px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {isLoading ? (
+                {(isLoading || authLoading) ? (
                   <TableRow>
                     <TableCell colSpan={6} className="h-24 text-center">
                       <Loader2 className="h-6 w-6 animate-spin mx-auto" />
@@ -288,9 +307,9 @@ export default function AdminSubmissionsPage() {
                   </TableRow>
                 ) : (
                   submissions.map((submission) => (
-                    <TableRow key={submission.$id}>
+                    <TableRow key={submission.id}>
                       <TableCell className="font-mono text-xs">
-                        {formatDate(submission.$createdAt)}
+                        {formatDate(submission.timestamp)}
                       </TableCell>
                       <TableCell>
                         <div className="font-medium">{submission.name}</div>
@@ -300,7 +319,18 @@ export default function AdminSubmissionsPage() {
                         {submission.subject}
                       </TableCell>
                       <TableCell>
-                        {renderStatusBadge(submission.status)}
+                        {/* Example: Dropdown to change status */}
+                        <Select value={submission.status} onValueChange={(newStatus) => handleStatusChange(submission.id, newStatus as Submission['status'])}>
+                            <SelectTrigger className="h-8 text-xs">
+                                <SelectValue placeholder="Change status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="new">{renderStatusBadge('new')}</SelectItem>
+                                <SelectItem value="read">{renderStatusBadge('read')}</SelectItem>
+                                <SelectItem value="replied">{renderStatusBadge('replied')}</SelectItem>
+                                <SelectItem value="archived">{renderStatusBadge('archived')}</SelectItem>
+                            </SelectContent>
+                        </Select>
                       </TableCell>
                       <TableCell>
                         {renderPriorityBadge(submission.priority)}
@@ -310,19 +340,19 @@ export default function AdminSubmissionsPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => handleViewSubmission(submission.$id)}
+                            onClick={() => handleViewSubmission(submission.id)}
                             title="View details"
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
-                          <Button
+                          {/* <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => handleViewSubmission(submission.$id)}
+                            onClick={() => router.push(`/admin/submissions/${submission.id}/edit`)} // Assuming an edit page
                             title="Edit submission"
                           >
                             <Edit className="h-4 w-4" />
-                          </Button>
+                          </Button> */}
                         </div>
                       </TableCell>
                     </TableRow>
@@ -335,28 +365,29 @@ export default function AdminSubmissionsPage() {
           {/* Pagination */}
           <div className="flex items-center justify-between mt-4">
             <div className="text-sm text-muted-foreground">
-              Showing {offset + 1}-{Math.min(offset + limit, totalSubmissions)} of {totalSubmissions} submissions
+              Showing {isLoading || authLoading || submissions.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1}-
+              {Math.min(currentPage * itemsPerPage, totalSubmissions)} of {totalSubmissions} submissions
             </div>
 
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() => handlePageChange(page - 1)}
-                disabled={page === 1 || isLoading}
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1 || isLoading || authLoading}
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
 
               <span className="text-sm">
-                Page {page} of {Math.max(1, Math.ceil(totalSubmissions / limit))}
+                Page {currentPage} of {Math.max(1, totalPages)}
               </span>
 
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() => handlePageChange(page + 1)}
-                disabled={page >= Math.ceil(totalSubmissions / limit) || isLoading}
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage >= totalPages || isLoading || authLoading}
               >
                 <ChevronRight className="h-4 w-4" />
               </Button>
