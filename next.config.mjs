@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  serverExternalPackages: [], // Added here
 
   // Enable React Developer Tools in all environments
   // This ensures React DevTools can connect to the React instance
@@ -18,7 +19,7 @@ const nextConfig = {
           headers: [
             {
               key: 'Content-Security-Policy',
-              value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdn.honey.io; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://nyc.cloud.appwrite.io https://*.appwrite.io https://api.github.com https://www.google-analytics.com https://www.google.com; frame-src 'self' https://docs.google.com https://*.google.com https://1drv.ms https://*.onedrive.live.com https://*.office.com https://*.office365.com https://*.officeapps.live.com https://*.microsoftonline.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; manifest-src 'self'; worker-src 'self' blob:;"
+              value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdn.honey.io; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.github.com https://www.google-analytics.com https://www.google.com; frame-src 'self' https://docs.google.com https://*.google.com https://1drv.ms https://*.onedrive.live.com https://*.office.com https://*.office365.com https://*.officeapps.live.com https://*.microsoftonline.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; manifest-src 'self'; worker-src 'self' blob:;"
             },
             {
               key: 'X-Content-Type-Options',
@@ -53,10 +54,7 @@ const nextConfig = {
     optimizeCss: true,
     // Enable memory cache for faster builds
     memoryBasedWorkersCount: true,
-    // Enable optimized font loading
-    optimizeFonts: true,
-    // Enable server components optimization
-    serverComponentsExternalPackages: [],
+    // serverComponentsExternalPackages: [], // Removed from here
   },
 
   // Image configuration

@@ -112,7 +112,7 @@ export default function AdminSubmissionsPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [user, authLoading, itemsPerPage, currentPage, statusFilter, priorityFilter, sortField, sortDirection, searchQuery, fetchSubmissionsCallback]); // Added fetchSubmissionsCallback to dependency array
+  }, [user, authLoading, itemsPerPage, currentPage, statusFilter, priorityFilter, sortField, sortDirection, searchQuery]);
 
   useEffect(() => {
     fetchSubmissionsCallback();
