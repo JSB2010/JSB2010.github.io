@@ -59,7 +59,7 @@ export function ContactFormZustand() {
         setIsSubmitting(false);
         return;
     }
-    
+
     try {
       const submitFunction = httpsCallable(functions, 'submitContactForm');
       const result = await submitFunction({
@@ -126,7 +126,7 @@ export function ContactFormZustand() {
       </div>
     );
   };
-  
+
   useEffect(() => {
     const shouldShowDebug = process.env.NODE_ENV === 'development' ||
       (typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('debug'));
@@ -203,4 +203,3 @@ export function ContactFormZustand() {
     </form>
   );
 }
-```

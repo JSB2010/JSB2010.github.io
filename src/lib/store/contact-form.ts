@@ -1,7 +1,23 @@
 import { create } from 'zustand';
 import { z } from 'zod';
-import { contactFormSchema, logger } from '@/lib/appwrite';
-import { submitContactForm as apiSubmitContactForm, SubmissionMethod, ContactFormConfig } from '@/lib/api/contact';
+
+// Contact form validation schema
+const contactFormSchema = z.object({
+  name: z.string().min(1, 'Name is required').max(100, 'Name must be less than 100 characters'),
+  email: z.string().email('Please enter a valid email address'),
+  subject: z.string().min(1, 'Subject is required').max(200, 'Subject must be less than 200 characters'),
+  message: z.string().min(10, 'Message must be at least 10 characters').max(1000, 'Message must be less than 1000 characters'),
+});
+
+// Simple logger
+const logger = {
+  error: (message: string, error?: any) => {
+    console.error(`[ContactForm] ${message}`, error);
+  },
+  info: (message: string) => {
+    console.log(`[ContactForm] ${message}`);
+  }
+};
 
 // Define the form state type
 export type ContactFormState = {
@@ -35,7 +51,7 @@ export type ContactFormState = {
   setField: (field: keyof ContactFormState['values'], value: string) => void;
   resetForm: () => void;
   validateForm: () => boolean;
-  submitForm: (config?: Partial<ContactFormConfig>) => Promise<void>;
+  submitForm: () => Promise<void>;
   addDebugLog: (message: string) => void;
   clearDebugLogs: () => void;
   toggleDebug: () => void;
@@ -123,7 +139,7 @@ export const useContactFormStore = create<ContactFormState>((set, get) => ({
   },
 
   // Action to submit the form
-  submitForm: async (config = {}) => {
+  submitForm: async () => {
     const { values, validateForm, addDebugLog } = get();
 
     // Validate form before submission
@@ -147,109 +163,50 @@ export const useContactFormStore = create<ContactFormState>((set, get) => ({
         return;
       }
 
-      // Prepare submission data with only the fields that exist in the Appwrite schema
+      // Prepare submission data
       const submissionData = {
         name: values.name,
         email: values.email,
         subject: values.subject || 'Contact Form Submission',
-        message: values.message
-        // Remove all other fields to ensure exact match with Appwrite collection schema
+        message: values.message,
+        timestamp: new Date().toISOString()
       };
 
-      // Default to Appwrite submission method if not specified
-      const submissionConfig: Partial<ContactFormConfig> = {
-        method: SubmissionMethod.APPWRITE,
-        ...config,
-      };
+      addDebugLog('Submitting form using Firebase');
 
-      addDebugLog(`Submitting form using method: ${submissionConfig.method}`);
-      addDebugLog(`Appwrite endpoint: ${process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'Not defined'}`);
-      addDebugLog(`Project ID: ${process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID ? 'Defined' : 'Not defined'}`);
+      // Import Firebase functions
+      const { submitContactForm } = await import('@/lib/firebase/contact');
 
-      // Create a timeout promise
-      const timeoutPromise = new Promise<{ success: false, message: string }>((_, reject) => {
+      // Submit the form using Firebase
+      const result = await submitContactForm(submissionData);
+
+      if (result.success) {
+        addDebugLog(`Form submitted successfully with ID: ${result.id}`);
+
+        // Update state on success
+        set({
+          isSuccess: true,
+          isSubmitting: false,
+          errorMessage: null,
+        });
+
+        // Reset success state after 5 seconds
         setTimeout(() => {
-          reject(new Error('Request timed out after 10 seconds'));
-        }, 10000);
-      });
-
-      // Submit the form using the API with timeout
-      try {
-        // Try direct SDK submission first, then fall back to API if that fails
-      let result;
-
-      try {
-        // Import the custom client directly
-        const { submitContactForm: submitDirectly } = await import('@/lib/appwrite/custom-client');
-
-        // Submit using the direct SDK method
-        addDebugLog('Attempting direct SDK submission...');
-        result = await Promise.race([
-          submitDirectly(submissionData),
-          timeoutPromise
-        ]);
-
-        if (result.success) {
-          addDebugLog('Direct SDK submission successful!');
-        } else {
-          addDebugLog(`Direct SDK submission failed: ${result.message}`);
-          addDebugLog('Falling back to API submission...');
-
-          // Fall back to API submission
-          result = await Promise.race([
-            apiSubmitContactForm(submissionData, submissionConfig),
-            timeoutPromise
-          ]);
-        }
-      } catch (sdkError) {
-        addDebugLog(`SDK submission error: ${sdkError instanceof Error ? sdkError.message : 'Unknown error'}`);
-        addDebugLog('Falling back to API submission...');
-
-        // Fall back to API submission
-        result = await Promise.race([
-          apiSubmitContactForm(submissionData, submissionConfig),
-          timeoutPromise
-        ]);
-      }
-
-        if (result.success) {
-          addDebugLog(`Form submitted successfully with ID: ${result.id}`);
-
-          // Update state on success
-          set({
-            isSuccess: true,
-            isSubmitting: false,
-            errorMessage: null,
-          });
-
-          // Reset success state after 5 seconds
-          setTimeout(() => {
-            set(state => ({
-              isSuccess: false,
-            }));
-          }, 5000);
-        } else {
-          addDebugLog(`Form submission failed: ${result.message}`);
-          if (result.error) {
-            addDebugLog(`Error details: ${JSON.stringify(result.error)}`);
-          }
-
-          // Update state on error with a more user-friendly message
-          set({
+          set(state => ({
             isSuccess: false,
-            isSubmitting: false,
-            errorMessage: "We're having trouble submitting your message through our system. Please try using the 'Email Fallback' button below, or contact us directly via email.",
-          });
+          }));
+        }, 5000);
+      } else {
+        addDebugLog(`Form submission failed: ${result.message}`);
+        if (result.error) {
+          addDebugLog(`Error details: ${JSON.stringify(result.error)}`);
         }
-      } catch (innerError) {
-        // Handle timeout or other promise rejection
-        const errorMsg = innerError instanceof Error ? innerError.message : 'Unknown error in API call';
-        addDebugLog(`ERROR: API call failed: ${errorMsg}`);
 
+        // Update state on error with a more user-friendly message
         set({
           isSuccess: false,
           isSubmitting: false,
-          errorMessage: "We're having trouble connecting to our server. Please try the 'Email Fallback' option below, or contact us directly via email."
+          errorMessage: "We're having trouble submitting your message. Please try again or contact us directly via email.",
         });
       }
     } catch (error) {
@@ -276,7 +233,7 @@ export const useContactFormStore = create<ContactFormState>((set, get) => ({
       set({
         isSuccess: false,
         isSubmitting: false,
-        errorMessage: "We're having trouble processing your message. Please try the 'Email Fallback' option below, or contact us directly via email.",
+        errorMessage: "We're having trouble processing your message. Please try again or contact us directly via email.",
       });
     }
   },
