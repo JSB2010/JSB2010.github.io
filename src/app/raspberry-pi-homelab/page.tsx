@@ -17,33 +17,37 @@ import {
 } from "lucide-react";
 import { PageHero } from "@/components/ui/page-hero";
 
-export const metadata: Metadata = {
+const sharedMetadata = {
   title: "Raspberry Pi 5 Homelab | Jacob Barkin",
   description: "How I built a powerful homelab using a Raspberry Pi 5 with Docker containers, accessible from anywhere using Tailscale and Cloudflare Tunnels.",
+  images: [
+    {
+      url: "/images/Updated logo.png",
+      width: 800,
+      height: 600,
+      alt: "Jacob Barkin Logo",
+    },
+  ],
+};
+
+export const metadata: Metadata = {
+  title: sharedMetadata.title,
+  description: sharedMetadata.description,
   alternates: {
     canonical: "https://jacobbarkin.com/raspberry-pi-homelab",
   },
   openGraph: {
-    title: "Raspberry Pi 5 Homelab | Jacob Barkin",
-    description: "How I built a powerful homelab using a Raspberry Pi 5 with Docker containers, accessible from anywhere using Tailscale and Cloudflare Tunnels.",
+    ...sharedMetadata,
     url: "https://jacobbarkin.com/raspberry-pi-homelab",
     siteName: "Jacob Barkin Portfolio",
-    images: [
-      {
-        url: "/images/Updated logo.png",
-        width: 800,
-        height: 600,
-        alt: "Jacob Barkin Logo",
-      },
-    ],
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Raspberry Pi 5 Homelab | Jacob Barkin",
-    description: "How I built a powerful homelab using a Raspberry Pi 5 with Docker containers, accessible from anywhere using Tailscale and Cloudflare Tunnels.",
-    images: ["/images/Updated logo.png"],
+    title: sharedMetadata.title,
+    description: sharedMetadata.description,
+    images: sharedMetadata.images.map((image) => image.url),
     creator: "@jacobbarkin",
     site: "@jacobbarkin",
   },
