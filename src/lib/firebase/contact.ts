@@ -18,6 +18,11 @@ export interface SubmissionResult {
 
 export async function submitContactForm(data: ContactFormData): Promise<SubmissionResult> {
   try {
+    // Check if Firebase is properly initialized
+    if (!db) {
+      throw new Error('Firebase is not properly initialized. Please check your configuration.');
+    }
+
     // Add the document to Firestore
     const docRef = await addDoc(collection(db, 'contact_submissions'), {
       name: data.name,

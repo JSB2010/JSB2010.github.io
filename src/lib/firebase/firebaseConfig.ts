@@ -17,61 +17,78 @@ const firebaseConfigObj = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID, // Optional
 };
 
+// Check if Firebase configuration is valid
+const isFirebaseConfigValid = () => {
+  return !!(
+    firebaseConfigObj.apiKey &&
+    firebaseConfigObj.authDomain &&
+    firebaseConfigObj.projectId &&
+    firebaseConfigObj.storageBucket &&
+    firebaseConfigObj.messagingSenderId &&
+    firebaseConfigObj.appId
+  );
+};
+
 // Initialize Firebase
-let app: FirebaseApp;
-let auth: Auth;
-let db: Firestore;
-let functions: Functions;
+let app: FirebaseApp | undefined;
+let auth: Auth | undefined;
+let db: Firestore | undefined;
+let functions: Functions | undefined;
 let analytics: Analytics | undefined; // Optional
 
-if (typeof window !== 'undefined' && !getApps().length) {
-  // Client-side initialization
-  app = initializeApp(firebaseConfigObj);
-  auth = getAuth(app);
-  db = getFirestore(app);
-  functions = getFunctions(app);
-  // Initialize Analytics only if measurementId is available (Optional)
-  if (firebaseConfigObj.measurementId) {
+// Only initialize Firebase if we have valid configuration and we're in the right environment
+if (isFirebaseConfigValid()) {
+  if (typeof window !== 'undefined' && !getApps().length) {
+    // Client-side initialization
     try {
-        analytics = getAnalytics(app);
+      app = initializeApp(firebaseConfigObj);
+      auth = getAuth(app);
+      db = getFirestore(app);
+      functions = getFunctions(app);
+      // Initialize Analytics only if measurementId is available (Optional)
+      if (firebaseConfigObj.measurementId) {
+        try {
+          analytics = getAnalytics(app);
+        } catch (error) {
+          console.warn("Firebase Analytics could not be initialized:", error);
+        }
+      }
     } catch (error) {
-        console.warn("Firebase Analytics could not be initialized:", error);
+      console.error("Failed to initialize Firebase:", error);
     }
-  }
-} else if (getApps().length) {
-  // Reuse existing app instance if already initialized (client or server)
-  app = getApp();
-  auth = getAuth(app);
-  db = getFirestore(app);
-  functions = getFunctions(app);
-  if (firebaseConfigObj.measurementId) {
+  } else if (getApps().length) {
+    // Reuse existing app instance if already initialized (client or server)
     try {
-        // Check if analytics is already initialized for this app
-        // This is a simplified check; more robust checks might be needed
-        // if you have multiple app instances or complex scenarios.
-        analytics = getAnalytics(app);
+      app = getApp();
+      auth = getAuth(app);
+      db = getFirestore(app);
+      functions = getFunctions(app);
+      if (firebaseConfigObj.measurementId) {
+        try {
+          analytics = getAnalytics(app);
+        } catch (error) {
+          // Analytics might not be available in all environments
+        }
+      }
     } catch (error) {
-        // console.warn("Firebase Analytics could not be re-initialized or is not available:", error);
-        // It's common for getAnalytics to throw if called multiple times without care,
-        // or if not supported in the current environment.
+      console.error("Failed to get existing Firebase app:", error);
+    }
+  } else if (typeof window === 'undefined') {
+    // Server-side: Only initialize if we're in a safe environment
+    // Skip initialization during build time to prevent errors
+    if (process.env.NODE_ENV !== 'production' || process.env.FIREBASE_ADMIN_INIT === 'true') {
+      try {
+        app = initializeApp(firebaseConfigObj);
+        auth = getAuth(app);
+        db = getFirestore(app);
+        functions = getFunctions(app);
+      } catch (error) {
+        console.warn("Firebase initialization skipped on server-side:", error);
+      }
     }
   }
 } else {
-  // Fallback for server-side or environments where window is not defined
-  // This basic initialization might be sufficient for some server-side tasks
-  // but for Admin SDK capabilities, you'd use 'firebase-admin'.
-  // This setup is primarily for client-side Firebase.
-  app = initializeApp(firebaseConfigObj);
-  auth = getAuth(app);
-  db = getFirestore(app);
-  functions = getFunctions(app);
-   if (firebaseConfigObj.measurementId) {
-    try {
-        analytics = getAnalytics(app);
-    } catch (error) {
-        // console.warn("Firebase Analytics could not be initialized in this environment:", error);
-    }
-  }
+  console.warn("Firebase configuration is incomplete. Firebase services will not be available.");
 }
 
 // Log the configuration for debugging (only in development)
