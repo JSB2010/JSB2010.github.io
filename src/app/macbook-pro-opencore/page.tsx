@@ -19,6 +19,33 @@ import { PageHero } from "@/components/ui/page-hero";
 export const metadata: Metadata = {
   title: "MacBook Pro OpenCore Project | Jacob Barkin",
   description: "How I revitalized my 2010 MacBook Pro by installing multiple macOS versions (10.7-12.0) using OpenCore bootloader.",
+  alternates: {
+    canonical: "https://jacobbarkin.com/macbook-pro-opencore",
+  },
+  openGraph: {
+    title: "MacBook Pro OpenCore Project | Jacob Barkin",
+    description: "How I revitalized my 2010 MacBook Pro by installing multiple macOS versions (10.7-12.0) using OpenCore bootloader.",
+    url: "https://jacobbarkin.com/macbook-pro-opencore",
+    siteName: "Jacob Barkin Portfolio",
+    images: [
+      {
+        url: "/images/Updated logo.png",
+        width: 800,
+        height: 600,
+        alt: "Jacob Barkin Logo",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MacBook Pro OpenCore Project | Jacob Barkin",
+    description: "How I revitalized my 2010 MacBook Pro by installing multiple macOS versions (10.7-12.0) using OpenCore bootloader.",
+    images: ["/images/Updated logo.png"],
+    creator: "@jacobbarkin",
+    site: "@jacobbarkin",
+  },
 };
 
 export default function MacbookProOpencorePage() {

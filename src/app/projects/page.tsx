@@ -16,6 +16,33 @@ import "./projects-fixed.css";
 export const metadata: Metadata = {
   title: "Projects | Jacob Barkin",
   description: "Explore Jacob Barkin's projects in technology, technology consulting, and public transportation research.",
+  alternates: {
+    canonical: "https://jacobbarkin.com/projects",
+  },
+  openGraph: {
+    title: "Projects | Jacob Barkin",
+    description: "Explore Jacob Barkin's projects in technology, technology consulting, and public transportation research.",
+    url: "https://jacobbarkin.com/projects",
+    siteName: "Jacob Barkin Portfolio",
+    images: [
+      {
+        url: "/images/Updated logo.png",
+        width: 800,
+        height: 600,
+        alt: "Jacob Barkin Logo",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Projects | Jacob Barkin",
+    description: "Explore Jacob Barkin's projects in technology, technology consulting, and public transportation research.",
+    images: ["/images/Updated logo.png"],
+    creator: "@jacobbarkin",
+    site: "@jacobbarkin",
+  },
 };
 
 // Project data

@@ -20,6 +20,33 @@ import { PageHero } from "@/components/ui/page-hero";
 export const metadata: Metadata = {
   title: "Raspberry Pi 5 Homelab | Jacob Barkin",
   description: "How I built a powerful homelab using a Raspberry Pi 5 with Docker containers, accessible from anywhere using Tailscale and Cloudflare Tunnels.",
+  alternates: {
+    canonical: "https://jacobbarkin.com/raspberry-pi-homelab",
+  },
+  openGraph: {
+    title: "Raspberry Pi 5 Homelab | Jacob Barkin",
+    description: "How I built a powerful homelab using a Raspberry Pi 5 with Docker containers, accessible from anywhere using Tailscale and Cloudflare Tunnels.",
+    url: "https://jacobbarkin.com/raspberry-pi-homelab",
+    siteName: "Jacob Barkin Portfolio",
+    images: [
+      {
+        url: "/images/Updated logo.png",
+        width: 800,
+        height: 600,
+        alt: "Jacob Barkin Logo",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Raspberry Pi 5 Homelab | Jacob Barkin",
+    description: "How I built a powerful homelab using a Raspberry Pi 5 with Docker containers, accessible from anywhere using Tailscale and Cloudflare Tunnels.",
+    images: ["/images/Updated logo.png"],
+    creator: "@jacobbarkin",
+    site: "@jacobbarkin",
+  },
 };
 
 export default function RaspberryPiHomelabPage() {

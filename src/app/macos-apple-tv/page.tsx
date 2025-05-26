@@ -19,6 +19,33 @@ import { PageHero } from "@/components/ui/page-hero";
 export const metadata: Metadata = {
   title: "Apple TV macOS Project | Jacob Barkin",
   description: "How I installed macOS on a 1st generation Apple TV, transforming it into a functional Mac computer.",
+  alternates: {
+    canonical: "https://jacobbarkin.com/macos-apple-tv",
+  },
+  openGraph: {
+    title: "Apple TV macOS Project | Jacob Barkin",
+    description: "How I installed macOS on a 1st generation Apple TV, transforming it into a functional Mac computer.",
+    url: "https://jacobbarkin.com/macos-apple-tv",
+    siteName: "Jacob Barkin Portfolio",
+    images: [
+      {
+        url: "/images/Updated logo.png",
+        width: 800,
+        height: 600,
+        alt: "Jacob Barkin Logo",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Apple TV macOS Project | Jacob Barkin",
+    description: "How I installed macOS on a 1st generation Apple TV, transforming it into a functional Mac computer.",
+    images: ["/images/Updated logo.png"],
+    creator: "@jacobbarkin",
+    site: "@jacobbarkin",
+  },
 };
 
 export default function MacOSAppleTVPage() {

@@ -26,6 +26,33 @@ export const revalidate = false;
 export const metadata: Metadata = {
   title: "Public Transportation Research | Jacob Barkin",
   description: "Explore my research on public transportation systems in Colorado, focusing on accessibility and sustainability.",
+  alternates: {
+    canonical: "https://jacobbarkin.com/public-transportation",
+  },
+  openGraph: {
+    title: "Public Transportation Research | Jacob Barkin",
+    description: "Explore my research on public transportation systems in Colorado, focusing on accessibility and sustainability.",
+    url: "https://jacobbarkin.com/public-transportation",
+    siteName: "Jacob Barkin Portfolio",
+    images: [
+      {
+        url: "/images/Updated logo.png",
+        width: 800,
+        height: 600,
+        alt: "Jacob Barkin Logo",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Public Transportation Research | Jacob Barkin",
+    description: "Explore my research on public transportation systems in Colorado, focusing on accessibility and sustainability.",
+    images: ["/images/Updated logo.png"],
+    creator: "@jacobbarkin",
+    site: "@jacobbarkin",
+  },
 };
 
 export default function PublicTransportationPage() {
