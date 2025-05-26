@@ -16,6 +16,33 @@ export const revalidate = false;
 export const metadata: Metadata = {
   title: "Contact | Jacob Barkin",
   description: "Get in touch with Jacob Barkin for collaboration, questions, or just to say hello.",
+  alternates: {
+    canonical: "https://jacobbarkin.com/contact",
+  },
+  openGraph: {
+    title: "Contact | Jacob Barkin",
+    description: "Get in touch with Jacob Barkin for collaboration, questions, or just to say hello.",
+    url: "https://jacobbarkin.com/contact",
+    siteName: "Jacob Barkin Portfolio",
+    images: [
+      {
+        url: "/images/Updated logo.png",
+        width: 800,
+        height: 600,
+        alt: "Jacob Barkin Logo",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Contact | Jacob Barkin",
+    description: "Get in touch with Jacob Barkin for collaboration, questions, or just to say hello.",
+    images: ["/images/Updated logo.png"],
+    creator: "@jacobbarkin",
+    site: "@jacobbarkin",
+  },
 };
 
 export default function ContactPage() {

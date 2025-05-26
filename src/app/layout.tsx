@@ -40,9 +40,6 @@ export const metadata: Metadata = {
     telephone: true,
   },
   metadataBase: new URL("https://jacobbarkin.com"),
-  alternates: {
-    canonical: "/",
-  },
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
@@ -92,7 +89,6 @@ export const metadata: Metadata = {
   category: "technology",
   applicationName: "Jacob Barkin Portfolio",
   referrer: "origin-when-cross-origin",
-  keywords: ["Jacob Barkin", "Developer", "Technology Consulting", "Web Development", "Next.js", "Portfolio", "Technology", "Accessibility", "Public Transportation Research", "High School Student", "Kent Denver School", "Financial Education"],
 };
 
 export default function RootLayout({
